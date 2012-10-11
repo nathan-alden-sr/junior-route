@@ -3,7 +3,7 @@ using System.Web;
 
 using Spark;
 
-namespace NathanAlden.JuniorRouting.Diagnostics.Responses
+namespace NathanAlden.JuniorRouting.Diagnostics.Web
 {
 	public abstract class View : AbstractSparkView
 	{

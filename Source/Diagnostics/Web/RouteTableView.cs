@@ -5,7 +5,7 @@ using System.Linq;
 using NathanAlden.JuniorRouting.Core;
 using NathanAlden.JuniorRouting.Core.Restrictions;
 
-namespace NathanAlden.JuniorRouting.Diagnostics.Responses
+namespace NathanAlden.JuniorRouting.Diagnostics.Web
 {
 	public abstract class RouteTableView : View
 	{

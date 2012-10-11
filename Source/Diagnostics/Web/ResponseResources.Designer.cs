@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace NathanAlden.JuniorRouting.Diagnostics.Responses {
+namespace NathanAlden.JuniorRouting.Diagnostics.Web {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace NathanAlden.JuniorRouting.Diagnostics.Responses {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("NathanAlden.JuniorRouting.Diagnostics.Responses.ResponseResources", typeof(ResponseResources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("NathanAlden.JuniorRouting.Diagnostics.Web.ResponseResources", typeof(ResponseResources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -156,7 +156,6 @@ namespace NathanAlden.JuniorRouting.Diagnostics.Responses {
         ///}
         ///.route-table-view thead td
         ///{
-        ///	background-color: #ddd;
         ///	border: 1px solid #bbb;
         ///	font-weight: bold;
         ///	text-align: center;
@@ -166,22 +165,21 @@ namespace NathanAlden.JuniorRouting.Diagnostics.Responses {
         ///{
         ///	border: 1px solid #ddd;
         ///}
+        ///.route-table-view .request-header
+        ///{
+        ///	background-color: #fff3da;
+        ///}
+        ///.route-table-view .response-header
+        ///{
+        ///	background-color: #e6f3ff;	
+        ///}
         ///.route-table-view .flags-table
         ///{
         ///	width: 100%;
         ///}
         ///.route-table-view .flags-table td:first-child
         ///{
-        ///	width: 100%;
-        ///}
-        ///.route-table-view .flags-table td
-        ///{
-        ///	border: 0;
-        ///	padding: 0;
-        ///}
-        ///.route-table-view .flags
-        ///{
-        ///	p [rest of string was truncated]&quot;;.
+        ///	 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string route_table_view {
             get {

@@ -37,14 +37,14 @@
     <Compile Include="DiagnosticRouteHelper.cs" />
     <Compile Include="HttpRoutesExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Responses\DiagnosticsView.cs" />
-    <Compile Include="Responses\ResponseResources.Designer.cs">
+    <Compile Include="Web\DiagnosticsView.cs" />
+    <Compile Include="Web\ResponseResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>ResponseResources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Responses\RouteTableView.cs" />
-    <Compile Include="Responses\View.cs" />
+    <Compile Include="Web\RouteTableView.cs" />
+    <Compile Include="Web\View.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Junior.Common">
@@ -58,20 +58,20 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="Responses\RouteTable.spark" />
-    <None Include="Responses\Diagnostics.spark" />
-    <None Include="Responses\Layouts\Application.spark" />
+    <None Include="Web\RouteTable.spark" />
+    <None Include="Web\Diagnostics.spark" />
+    <None Include="Web\Layouts\Application.spark" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Responses\ResponseResources.resx">
+    <EmbeddedResource Include="Web\ResponseResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ResponseResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Responses\Content\common.css" />
-    <Content Include="Responses\Content\reset.css" />
-    <Content Include="Responses\Content\route-table-view.css" />
+    <Content Include="Web\Content\common.css" />
+    <Content Include="Web\Content\reset.css" />
+    <Content Include="Web\Content\route-table-view.css" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj">

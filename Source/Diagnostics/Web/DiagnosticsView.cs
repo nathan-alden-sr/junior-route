@@ -1,6 +1,6 @@
 ﻿using Junior.Common;
 
-namespace NathanAlden.JuniorRouting.Diagnostics.Responses
+namespace NathanAlden.JuniorRouting.Diagnostics.Web
 {
 	public abstract class DiagnosticsView : View
 	{

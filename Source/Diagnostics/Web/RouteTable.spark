@@ -4,7 +4,7 @@
 		<thead>
 			<tr>
 				<td class="request-header" colspan="${VisibleRestrictionTypeColumns}">Request</td>
-				<td class="response-header" rowspan="2" colspan="3">Response</td>
+				<td class="response-header" rowspan="2" colspan="4">Response</td>
 			</tr>
 			<tr>
 				<td class="request-header ${ColumnVisibilityCss<MethodRestriction>()}" rowspan="2">Methods</td>
@@ -39,6 +39,7 @@
 				<td class="request-header ${ColumnVisibilityCss<CookieRestriction>()}">Value</td>
 				<td class="request-header ${ColumnVisibilityCss<HeaderRestriction>()}">Field</td>
 				<td class="request-header ${ColumnVisibilityCss<HeaderRestriction>()}">Value</td>
+				<td class="response-header">Class</td>
 				<td class="response-header">Status Code</td>
 				<td class="response-header">Content Type</td>
 				<td class="response-header">Encoding</td>
@@ -467,8 +468,9 @@
 							<span class="unimportant">Any</span>
 						</td>
 					</else>
+					<var response="route.GetResponse()" noContentResponse="route.GetResponse() as NoContentResponse" contentResponse="route.GetResponse() as ContentResponse" />
+					<td>${response.GetType().Name}</td>
 					<td>
-						<var noContentResponse="route.GetResponse() as NoContentResponse" contentResponse="route.GetResponse() as ContentResponse" />
 						<if condition="noContentResponse != null">
 							${noContentResponse.ResponseStatusCode}${noContentResponse.ResponseSubStatusCode > 0 ? "." + noContentResponse.ResponseSubStatusCode.ToString() : ""}
 							${HttpWorkerRequest.GetStatusDescription(noContentResponse.ResponseStatusCode)}

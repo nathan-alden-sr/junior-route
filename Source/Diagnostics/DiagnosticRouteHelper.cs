@@ -3,7 +3,7 @@ using System.IO;
 
 using NathanAlden.JuniorRouting.Core;
 using NathanAlden.JuniorRouting.Core.Responses;
-using NathanAlden.JuniorRouting.Diagnostics.Responses;
+using NathanAlden.JuniorRouting.Diagnostics.Web;
 
 using Spark;
 using Spark.FileSystem;

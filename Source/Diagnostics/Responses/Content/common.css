@@ -1,0 +1,45 @@
+﻿body
+{
+	color: #000;
+	font-size: 16px;
+	font-family: Helvetica, sans-serif;
+}
+h1
+{
+	font-family: Georgia, serif;
+	font-size: 2em;
+	font-weight: normal;
+	padding-bottom: 10px;
+}
+
+#header
+{
+	background-color: #ddd;
+	font-size: 0.8em;
+	padding: 5px;
+}
+#header-links
+{
+	float: left;
+}
+#header-info
+{
+	text-align: right;
+}
+#body
+{
+	padding: 10px;
+}
+
+.invisible
+{
+	display: none;
+}
+.centered
+{
+	text-align: center;
+}
+.no-wrap
+{
+	white-space: nowrap;
+}

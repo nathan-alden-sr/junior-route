@@ -1,0 +1,101 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{C584F305-4EE6-41B8-8248-E9BF5D96CA6B}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>NathanAlden.JuniorRouting.Core</RootNamespace>
+    <AssemblyName>NathanAlden.JuniorRouting.Core</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RequestValueComparers\CaseInsensitivePlainRequestValueComparer.cs" />
+    <Compile Include="RequestValueComparers\CaseInsensitiveRegexRequestValueComparer.cs" />
+    <Compile Include="RequestValueComparers\CaseSensitivePlainRequestValueComparer.cs" />
+    <Compile Include="RequestValueComparers\CaseSensitiveRegexRequestValueComparer.cs" />
+    <Compile Include="RequestValueComparers\IRequestValueComparer.cs" />
+    <Compile Include="HttpMethod.cs" />
+    <Compile Include="HttpMethodPairMapper.cs" />
+    <Compile Include="HttpRoute.cs" />
+    <Compile Include="HttpRoutes.cs" />
+    <Compile Include="HttpRouteUrl.cs" />
+    <Compile Include="Responses\IHttpRouteResponse.cs" />
+    <Compile Include="Responses\ContentResponse.cs" />
+    <Compile Include="Responses\NoContentResponse.cs" />
+    <Compile Include="Restrictions\CookieRestriction.cs" />
+    <Compile Include="Restrictions\RefererUrlRestriction.cs" />
+    <Compile Include="Restrictions\RefererUrlQueryStringRestriction.cs" />
+    <Compile Include="Restrictions\RefererUrlAuthorityRestriction.cs" />
+    <Compile Include="Restrictions\RefererUrlFragmentRestriction.cs" />
+    <Compile Include="Restrictions\RefererUrlHostTypeRestriction.cs" />
+    <Compile Include="Restrictions\RefererUrlHostRestriction.cs" />
+    <Compile Include="Restrictions\RefererUrlLocalPathRestriction.cs" />
+    <Compile Include="Restrictions\RefererUrlPathAndQueryRestriction.cs" />
+    <Compile Include="Restrictions\RefererUrlPortRestriction.cs" />
+    <Compile Include="Restrictions\RefererUrlQueryRestriction.cs" />
+    <Compile Include="Restrictions\RefererUrlSchemeRestriction.cs" />
+    <Compile Include="Restrictions\UrlQueryRestriction.cs" />
+    <Compile Include="Restrictions\UrlPathAndQueryRestriction.cs" />
+    <Compile Include="Restrictions\UrlLocalPathRestriction.cs" />
+    <Compile Include="Restrictions\UrlHostTypeRestriction.cs" />
+    <Compile Include="Restrictions\UrlFragmentRestriction.cs" />
+    <Compile Include="Restrictions\UrlAuthorityRestriction.cs" />
+    <Compile Include="Restrictions\HeaderRestriction.cs" />
+    <Compile Include="Restrictions\UrlHostRestriction.cs" />
+    <Compile Include="Restrictions\IHttpRouteRestriction.cs" />
+    <Compile Include="Restrictions\MethodRestriction.cs" />
+    <Compile Include="Restrictions\UrlPortRestriction.cs" />
+    <Compile Include="Restrictions\RelativeUrlRestriction.cs" />
+    <Compile Include="Restrictions\UrlQueryStringRestriction.cs" />
+    <Compile Include="Restrictions\UrlRestriction.cs" />
+    <Compile Include="Restrictions\UrlSchemeRestriction.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Junior.Common">
+      <HintPath>..\packages\JuniorCommon.1.0.7\lib\net40\Junior.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Routing" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

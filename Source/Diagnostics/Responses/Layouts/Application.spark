@@ -1,0 +1,22 @@
+﻿<!DOCTYPE html>
+<html>
+	<head>
+		<title>${Title}</title>
+		<link rel="stylesheet" type="text/css" href="${RootUrl}/stylesheets/reset"/>
+		<link rel="stylesheet" type="text/css" href="${RootUrl}/stylesheets/common"/>
+		<link rel="stylesheet" type="text/css" href="${RootUrl}/stylesheets/route-table-view"/>
+	</head>
+	<body>
+		<div id="header">
+			<div id="header-links">
+				<a href="${RootUrl}">Diagnostics Home</a>
+			</div>
+			<div id="header-info">
+				Build ${AssemblyVersion}
+			</div>
+		</div>
+		<div id="body">
+			<use:view />
+		</div>
+	</body>
+</html>

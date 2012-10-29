@@ -1,9 +1,10 @@
 ﻿using System.Reflection;
-using System.Web;
+
+using Junior.Route.Common;
 
 using Spark;
 
-namespace NathanAlden.JuniorRouting.Diagnostics.Web
+namespace Junior.Route.Diagnostics.Web
 {
 	public abstract class View : AbstractSparkView
 	{
@@ -19,21 +20,17 @@ namespace NathanAlden.JuniorRouting.Diagnostics.Web
 			get;
 		}
 
+		public IUrlResolver UrlResolver
+		{
+			get;
+			set;
+		}
+
 		public string AssemblyVersion
 		{
 			get
 			{
 				return _version;
-			}
-		}
-
-		public virtual string RootUrl
-		{
-			get
-			{
-				string rootUrl = HttpRuntime.AppDomainAppVirtualPath;
-
-				return rootUrl.EndsWith("/") ? rootUrl : rootUrl + "/";
 			}
 		}
 	}

@@ -1,0 +1,60 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+
+using Junior.Common;
+using Junior.Route.AutoRouting.RestrictionMappers.Attributes;
+using Junior.Route.Routing;
+
+namespace Junior.Route.AutoRouting.RestrictionMappers
+{
+	public class RestrictionsFromAttributesMapper<T> : IRouteRestrictionMapper
+		where T : RestrictionAttribute
+	{
+		public void Map(Type type, MethodInfo method, Routing.Route route)
+		{
+			type.ThrowIfNull("type");
+			method.ThrowIfNull("method");
+			route.ThrowIfNull("route");
+
+			IEnumerable<T> attributes = method.GetCustomAttributes(typeof(T), false).Cast<T>();
+
+			foreach (T attribute in attributes)
+			{
+				attribute.Map(route);
+			}
+		}
+	}
+
+	public class RestrictionsFromAttributesMapper : IRouteRestrictionMapper
+	{
+		private readonly Type _attributeType;
+
+		public RestrictionsFromAttributesMapper(Type attributeType)
+		{
+			attributeType.ThrowIfNull("attributeType");
+
+			if (!attributeType.IsSubclassOf(typeof(RestrictionAttribute)))
+			{
+				throw new ArgumentException("Type must be a subclass of MappingAttribute.", "attributeType");
+			}
+
+			_attributeType = attributeType;
+		}
+
+		public void Map(Type type, MethodInfo method, Routing.Route route)
+		{
+			type.ThrowIfNull("type");
+			method.ThrowIfNull("method");
+			route.ThrowIfNull("route");
+
+			IEnumerable<RestrictionAttribute> attributes = method.GetCustomAttributes(_attributeType, false).Cast<RestrictionAttribute>();
+
+			foreach (RestrictionAttribute attribute in attributes)
+			{
+				attribute.Map(route);
+			}
+		}
+	}
+}

@@ -1,0 +1,157 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{FE827A72-7C6D-4AB5-830F-D14E18669F28}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Junior.Route.AutoRouting</RootNamespace>
+    <AssemblyName>Junior.Route.AutoRouting</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="IdMappers\Attributes\IdAttribute.cs" />
+    <Compile Include="IdMappers\IdAttributeMapper.cs" />
+    <Compile Include="IdMappers\IdResult.cs" />
+    <Compile Include="IdMappers\IdResultType.cs" />
+    <Compile Include="IdMappers\IIdMapper.cs" />
+    <Compile Include="IdMappers\RandomIdMapper.cs" />
+    <Compile Include="NamingStrategies\Attributes\NameAttribute.cs" />
+    <Compile Include="NamingStrategies\ClassNamespaceAndClassNameAndMethodNameStrategy.cs" />
+    <Compile Include="NamingStrategies\INamingStrategy.cs" />
+    <Compile Include="NamingStrategies\NameAttributeStrategy.cs" />
+    <Compile Include="NamingStrategies\NamingResult.cs" />
+    <Compile Include="NamingStrategies\NamingResultType.cs" />
+    <Compile Include="ParameterMappers\JsonModelMapper.cs" />
+    <Compile Include="ParameterMappers\ModelMapper.cs" />
+    <Compile Include="ParameterMappers\ModelPropertyMappers\DefaultValueMapper.cs" />
+    <Compile Include="ParameterMappers\ModelPropertyMappers\QueryStringToIConvertibleMapper.cs" />
+    <Compile Include="ParameterMappers\ModelPropertyMappers\FormToIConvertibleMapper.cs" />
+    <Compile Include="ParameterMappers\ModelPropertyMappers\IModelPropertyMapper.cs" />
+    <Compile Include="ResolvedRelativeUrlMappers\Attributes\ResolvedRelativeUrlAttribute.cs" />
+    <Compile Include="ResolvedRelativeUrlMappers\ResolvedRelativeUrlFromRelativeClassNamespaceAndClassNameMapper.cs" />
+    <Compile Include="ResolvedRelativeUrlMappers\ResolvedRelativeUrlAttributeMapper.cs" />
+    <Compile Include="ResolvedRelativeUrlMappers\IResolvedRelativeUrlMapper.cs" />
+    <Compile Include="ResolvedRelativeUrlMappers\ResolvedRelativeUrlResult.cs" />
+    <Compile Include="ResolvedRelativeUrlMappers\ResolvedRelativeUrlResultType.cs" />
+    <Compile Include="RestrictionMappers\Attributes\CookieAttribute.cs" />
+    <Compile Include="RestrictionMappers\Attributes\RefererUrlAbsolutePathAttribute.cs" />
+    <Compile Include="RestrictionMappers\Attributes\UrlAuthorityAttribute.cs" />
+    <Compile Include="RestrictionMappers\Attributes\UrlFragmentAttribute.cs" />
+    <Compile Include="RestrictionMappers\Attributes\UrlHostAttribute.cs" />
+    <Compile Include="RestrictionMappers\Attributes\UrlHostTypeAttribute.cs" />
+    <Compile Include="RestrictionMappers\Attributes\UrlPortAttribute.cs" />
+    <Compile Include="RestrictionMappers\Attributes\UrlQueryAttribute.cs" />
+    <Compile Include="RestrictionMappers\Attributes\UrlQueryStringAttribute.cs" />
+    <Compile Include="RestrictionMappers\Attributes\UrlSchemeAttribute.cs" />
+    <Compile Include="RestrictionMappers\Attributes\RefererUrlSchemeAttribute.cs" />
+    <Compile Include="RestrictionMappers\Attributes\RefererUrlQueryAttribute.cs" />
+    <Compile Include="RestrictionMappers\Attributes\RefererUrlPortAttribute.cs" />
+    <Compile Include="RestrictionMappers\Attributes\RefererUrlPathAndQueryAttribute.cs" />
+    <Compile Include="RestrictionMappers\Attributes\RefererUrlHostAttribute.cs" />
+    <Compile Include="RestrictionMappers\Attributes\RefererUrlHostTypeAttribute.cs" />
+    <Compile Include="RestrictionMappers\Attributes\RefererUrlFragmentAttribute.cs" />
+    <Compile Include="RestrictionMappers\Attributes\HeaderAttribute.cs" />
+    <Compile Include="RestrictionMappers\Attributes\MethodAttribute.cs" />
+    <Compile Include="RestrictionMappers\Attributes\RestrictionAttribute.cs" />
+    <Compile Include="RestrictionMappers\Attributes\RefererUrlAuthorityAttribute.cs" />
+    <Compile Include="RestrictionMappers\Attributes\RefererUrlQueryStringAttribute.cs" />
+    <Compile Include="RestrictionMappers\Attributes\RelativeUrlAttribute.cs" />
+    <Compile Include="RestrictionMappers\Attributes\RequestValueComparer.cs" />
+    <Compile Include="AutoRouteCollection.cs" />
+    <Compile Include="ClassFilters\AllFilter.cs" />
+    <Compile Include="ClassFilters\DerivesFilter.cs" />
+    <Compile Include="ClassFilters\DelegateFilter.cs" />
+    <Compile Include="ClassFilters\HasNamespaceAncestorFilter.cs" />
+    <Compile Include="ClassFilters\IClassFilter.cs" />
+    <Compile Include="ClassFilters\ImplementsInterfaceFilter.cs" />
+    <Compile Include="ClassFilters\InNamespaceFilter.cs" />
+    <Compile Include="ClassFilters\NameEndsWithFilter.cs" />
+    <Compile Include="ClassFilters\NameMatchesRegexPatternFilter.cs" />
+    <Compile Include="ClassFilters\NameStartsWithFilter.cs" />
+    <Compile Include="MethodFilters\DelegateFilter.cs" />
+    <Compile Include="MethodFilters\IMethodFilter.cs" />
+    <Compile Include="Containers\NewInstancePerRouteContainer.cs" />
+    <Compile Include="Containers\IContainer.cs" />
+    <Compile Include="Containers\SingleInstancePerRouteContainer.cs" />
+    <Compile Include="ParameterMappers\QueryStringToIConvertibleMapper.cs" />
+    <Compile Include="ParameterMappers\DataConversionErrorHandling.cs" />
+    <Compile Include="ParameterMappers\FormToIConvertibleMapper.cs" />
+    <Compile Include="ParameterMappers\DefaultValueMapper.cs" />
+    <Compile Include="ParameterMappers\IParameterMapper.cs" />
+    <Compile Include="ParameterMappers\MapResult.cs" />
+    <Compile Include="ParameterMappers\MapResultType.cs" />
+    <Compile Include="ResponseMappers\IRouteResponseMapper.cs" />
+    <Compile Include="ResponseMappers\RouteResponseMethodReturnTypeMapper.cs" />
+    <Compile Include="ResponseMappers\NoContentMapper.cs" />
+    <Compile Include="ResponseMappers\ParameterValueRetriever.cs" />
+    <Compile Include="RestrictionMappers\RelativeUrlFromRelativeClassNamespaceAndClassNameMapper.cs" />
+    <Compile Include="RestrictionMappers\IRouteRestrictionMapper.cs" />
+    <Compile Include="RestrictionMappers\RestrictionsFromAttributesMapper.cs" />
+    <Compile Include="RestrictionMappers\HttpMethodFromMethodsNamedAfterStandardHttpMethodsMapper.cs" />
+    <Compile Include="TypeExtensions.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Junior.Common, Version=1.0.7.0, Culture=neutral, PublicKeyToken=998713eb9a0cce30, processorArchitecture=MSIL">
+      <HintPath>..\packages\JuniorCommon.1.0.7\lib\net40\Junior.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.4.5.10\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Assets\Assets.csproj">
+      <Project>{43E62EB8-D0FB-47CA-8C73-C4958729E783}</Project>
+      <Name>Assets</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{E4F62289-63E4-4627-BC71-DE5CBA00323F}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Routing\Routing.csproj">
+      <Project>{C584F305-4EE6-41B8-8248-E9BF5D96CA6B}</Project>
+      <Name>Routing</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

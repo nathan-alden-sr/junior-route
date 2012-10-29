@@ -1,2 +1,11 @@
-﻿<h1>Routes</h1>
-<a href="${RootUrl}/route_table">View route table</a>
+﻿<if condition="!DiagnosticViewHeadings.Any()">
+	No links are registered.
+</if>
+<else>
+	<for each="var heading in DiagnosticViewHeadings">
+		<h1>${heading}</h1>
+		<for each="var link in GetDiagnosticViewLinks(heading)">
+			<div><a href="${link.Url}">${link.Description}</a></div>
+		</for>
+	</for>
+</else>

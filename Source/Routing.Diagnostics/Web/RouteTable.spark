@@ -1,0 +1,533 @@
+﻿<content name="head">
+	<link rel="stylesheet" type="text/css" href='${UrlResolver.Route("Diagnostics Route Table View CSS")}'/>
+</content>
+<content name="script">
+	<script type="text/javascript">
+		$(function() {
+			$("#showNameAndIdColumns").click(function () {
+				if ($(this).is(":checked")) {
+					$(".name-header, .id-header, .name-data, .id-data").not(".invisible").show();
+				} else {
+					$(".name-header, .id-header, .name-data, .id-data").not(".invisible").hide();
+				}
+			});
+			$("#showResolvedRelativeUrlColumn").click(function () {
+				if ($(this).is(":checked")) {
+					$(".resolved-relative-url-header, .resolved-relative-url-data").not(".invisible").show();
+				} else {
+					$(".resolved-relative-url-header, .resolved-relative-url-data").not(".invisible").hide();
+				}
+			});
+			$("#showRequestColumns").click(function () {
+				if ($(this).is(":checked")) {
+					$(".request-header, .request-data").not(".invisible").show();
+				} else {
+					$(".request-header, .request-data").not(".invisible").hide();
+				}
+			});
+			$("#showResponseColumns").click(function () {
+				if ($(this).is(":checked")) {
+					$(".response-header, .response-data").not(".invisible").show();
+				} else {
+					$(".response-header, .response-data").not(".invisible").hide();
+				}
+			});
+		});
+	</script>
+</content>
+<div class="route-table-view">
+	<h1>Route Table</h1>
+	<div class="column-filters">
+		<div><input type="checkbox" id="showNameAndIdColumns" /><label for="showNameAndIdColumns">Show Name and ID columns</label></div>
+		<div><input type="checkbox" id="showResolvedRelativeUrlColumn" checked="checked" /><label for="showResolvedRelativeUrlColumn">Show Resolved Relative URL column</label></div>
+		<div><input type="checkbox" id="showRequestColumns" checked="checked" /><label for="showRequestColumns">Show Request columns</label></div>
+		<div><input type="checkbox" id="showResponseColumns" checked="checked" /><label for="showResponseColumns">Show Response columns</label></div>
+	</div>
+	<table>
+		<thead>
+			<tr>
+				<td class="name-header" rowspan="4">Name</td>
+				<td class="id-header" rowspan="4">ID</td>
+				<td class="resolved-relative-url-header" rowspan="4">Resolved Relative URL</td>
+				<td class="request-header ${VisibleRestrictionTypeColumns == 0 ? "invisible" : ""}" colspan="${VisibleRestrictionTypeColumns}">Request Restrictions</td>
+				<td class="response-header" rowspan="3" colspan="2">Response</td>
+			</tr>
+			<tr>
+				<td class="request-header ${ColumnVisibilityCss<MethodRestriction>()}" rowspan="3">Methods</td>
+				<td class="request-header ${VisibleUrlRestrictionTypeColumns == 0 ? "invisible" : ""}" colspan="${VisibleUrlRestrictionTypeColumns}">Request URLs</td>
+				<td class="request-header ${VisibleRefererUrlRestrictionTypeColumns == 0 ? "invisible" : ""}" colspan="${VisibleRefererUrlRestrictionTypeColumns}">Referer URLs</td>
+				<td class="request-header ${ColumnVisibilityCss<CookieRestriction>()}" rowspan="2" colspan="2">Cookies</td>
+				<td class="request-header ${ColumnVisibilityCss<HeaderRestriction>()}" rowspan="2" colspan="2">Headers</td>
+				<td class="request-header ${ColumnVisibilityCss(typeof(HeaderRestriction<>))}" rowspan="2" colspan="2">Header Delegates</td>
+				<td class="request-header ${ColumnVisibilityCss<MissingHeaderRestriction>()}" rowspan="3">Missing Headers</td>
+			</tr>
+			<tr>
+				<td class="request-header ${ColumnVisibilityCss<RelativeUrlRestriction>()}" rowspan="2">Relative URLs</td>
+				<td class="request-header ${ColumnVisibilityCss<UrlSchemeRestriction>()}" rowspan="2">Schemes</td>
+				<td class="request-header ${ColumnVisibilityCss<UrlHostRestriction>()}" rowspan="2">Hosts</td>
+				<td class="request-header ${ColumnVisibilityCss<UrlHostTypeRestriction>()}" rowspan="2">Host Types</td>
+				<td class="request-header ${ColumnVisibilityCss<UrlPortRestriction>()}" rowspan="2">Ports</td>
+				<td class="request-header ${ColumnVisibilityCss<UrlAuthorityRestriction>()}" rowspan="2">Authority</td>
+				<td class="request-header ${ColumnVisibilityCss<UrlQueryRestriction>()}" rowspan="2">Queries</td>
+				<td class="request-header ${ColumnVisibilityCss<UrlQueryStringRestriction>()}" colspan="2">Query Strings</td>
+				<td class="request-header ${ColumnVisibilityCss<UrlFragmentRestriction>()}" rowspan="2">Fragments</td>
+				<td class="request-header ${ColumnVisibilityCss<RefererUrlSchemeRestriction>()}" rowspan="2">Schemes</td>
+				<td class="request-header ${ColumnVisibilityCss<RefererUrlHostRestriction>()}" rowspan="2">Hosts</td>
+				<td class="request-header ${ColumnVisibilityCss<RefererUrlHostTypeRestriction>()}" rowspan="2">Host Types</td>
+				<td class="request-header ${ColumnVisibilityCss<RefererUrlPortRestriction>()}" rowspan="2">Ports</td>
+				<td class="request-header ${ColumnVisibilityCss<RefererUrlAuthorityRestriction>()}" rowspan="2">Authority</td>
+				<td class="request-header ${ColumnVisibilityCss<RefererUrlAbsolutePathRestriction>()}" rowspan="2">Absolute Paths</td>
+				<td class="request-header ${ColumnVisibilityCss<RefererUrlQueryRestriction>()}" rowspan="2">Queries</td>
+				<td class="request-header ${ColumnVisibilityCss<RefererUrlQueryStringRestriction>()}" colspan="2">Query Strings</td>
+				<td class="request-header ${ColumnVisibilityCss<RefererUrlFragmentRestriction>()}" rowspan="2">Fragments</td>
+			</tr>
+			<tr>
+				<td class="request-header ${ColumnVisibilityCss<UrlQueryStringRestriction>()}">Field</td>
+				<td class="request-header ${ColumnVisibilityCss<UrlQueryStringRestriction>()}">Value</td>
+				<td class="request-header ${ColumnVisibilityCss<RefererUrlQueryStringRestriction>()}">Field</td>
+				<td class="request-header ${ColumnVisibilityCss<RefererUrlQueryStringRestriction>()}">Value</td>
+				<td class="request-header ${ColumnVisibilityCss<CookieRestriction>()}">Name</td>
+				<td class="request-header ${ColumnVisibilityCss<CookieRestriction>()}">Value</td>
+				<td class="request-header ${ColumnVisibilityCss<HeaderRestriction>()}">Field</td>
+				<td class="request-header ${ColumnVisibilityCss<HeaderRestriction>()}">Value</td>
+				<td class="request-header ${ColumnVisibilityCss(typeof(HeaderRestriction<>))}">Namespace</td>
+				<td class="request-header ${ColumnVisibilityCss(typeof(HeaderRestriction<>))}">Class</td>
+				<td class="response-header">Namespace</td>
+				<td class="response-header">Class Name</td>
+			</tr>
+		</thead>
+		<tbody>
+			<for each="var route in Routes">
+				<tr>
+					<td class="name-data">${route.Name}</td>
+					<td class="id-data">${route.Id}</td>
+					<td class="resolved-relative-url-data no-wrap">
+						<if condition='route.GetRestrictions<MethodRestriction>().Any(arg => String.Equals(arg.Method, "GET", StringComparison.OrdinalIgnoreCase))'>
+							<a href='${UrlResolver.Absolute("")}${route.ResolvedRelativeUrl}' target="_blank">${route.ResolvedRelativeUrl}</a>
+						</if>
+						<else>
+							${route.ResolvedRelativeUrl}
+						</else>
+					</td>
+					<td class="request-data ${ColumnVisibilityCss<MethodRestriction>()}">
+						<if condition="route.HasRestrictions<MethodRestriction>()">
+							${String.Join(", ", route.GetRestrictions<MethodRestriction>().Select(arg => arg.Method))}
+						</if>
+						<else>
+							<span class="unimportant">Any</span>
+						</else>
+					</td>
+					<td class="request-data no-wrap ${ColumnVisibilityCss<RelativeUrlRestriction>()}">
+						<if condition="route.HasRestrictions<RelativeUrlRestriction>()">
+							<table class="flags-table">
+								<tbody>
+									<for each="var restriction in route.GetRestrictions<RelativeUrlRestriction>().OrderBy(arg => arg.RelativeUrl)">
+										<tr>
+											<td>${restriction.RelativeUrl}</td>
+											<td class="flags">
+												<if condition="restriction.Comparer is CaseInsensitiveRegexRequestValueComparer || restriction.Comparer is CaseSensitiveRegexRequestValueComparer">
+													<span class="flag regular-expression-flag" title="Regular expression">RX</span>
+												</if>
+												<if condition="restriction.Comparer is CaseSensitivePlainRequestValueComparer || restriction.Comparer is CaseSensitiveRegexRequestValueComparer">
+													<span class="flag case-sensitive-flag" title="Case-sensitive">CS</span>
+												</if>
+											</td>
+										</tr>
+									</for>
+								</tbody>
+							</table>
+						</if>
+						<else>
+							<span class="unimportant">Any</span>
+						</else>
+					</td>
+					<td class="request-data ${ColumnVisibilityCss<UrlSchemeRestriction>()}">
+						<if condition="route.HasRestrictions<UrlSchemeRestriction>()">
+							${String.Join(", ", route.GetRestrictions<UrlSchemeRestriction>().Select(arg => arg.Scheme))}
+						</if>
+						<else>
+							<span class="unimportant">Any</span>
+						</else>
+					</td>
+					<td class="request-data ${ColumnVisibilityCss<UrlHostRestriction>()}">
+						<if condition="route.HasRestrictions<UrlHostRestriction>()">
+							${String.Join("<br />", route.GetRestrictions<UrlHostRestriction>().Select(arg => arg.Host))}
+						</if>
+						<else>
+							<span class="unimportant">Any</span>
+						</else>
+					</td>
+					<td class="request-data ${ColumnVisibilityCss<UrlHostTypeRestriction>()}">
+						<if condition="route.HasRestrictions<UrlHostTypeRestriction>()">
+							${String.Join(", ", route.GetRestrictions<UrlHostTypeRestriction>().Select(arg => MapUriHostNameType(arg.Type)))}
+						</if>
+						<else>
+							<span class="unimportant">Any</span>
+						</else>
+					</td>
+					<td class="request-data ${ColumnVisibilityCss<UrlPortRestriction>()}">
+						<if condition="route.HasRestrictions<UrlPortRestriction>()">
+							${String.Join(", ", route.GetRestrictions<UrlPortRestriction>().Select(arg => arg.Port))}
+						</if>
+						<else>
+							<span class="unimportant">Any</span>
+						</else>
+					</td>
+					<td class="request-data ${ColumnVisibilityCss<UrlAuthorityRestriction>()}">
+						<if condition="route.HasRestrictions<UrlAuthorityRestriction>()">
+							${String.Join("<br />", route.GetRestrictions<UrlAuthorityRestriction>().Select(arg => arg.Authority))}
+						</if>
+						<else>
+							<span class="unimportant">Any</span>
+						</else>
+					</td>
+					<td class="request-data ${ColumnVisibilityCss<UrlQueryRestriction>()}">
+						<if condition="route.HasRestrictions<UrlQueryRestriction>()">
+							<table class="flags-table">
+								<tbody>
+									<for each="var restriction in route.GetRestrictions<UrlQueryRestriction>()">
+										<tr>
+											<td class="no-wrap">${restriction.Query}</td>
+											<td class="flags">
+												<if condition="restriction.Comparer is CaseInsensitiveRegexRequestValueComparer || restriction.Comparer is CaseSensitiveRegexRequestValueComparer">
+													<span class="flag regular-expression-flag" title="Regular expression">RX</span>
+												</if>
+												<if condition="restriction.Comparer is CaseSensitivePlainRequestValueComparer || restriction.Comparer is CaseSensitiveRegexRequestValueComparer">
+													<span class="flag case-sensitive-flag" title="Case-sensitive">CS</span>
+												</if>
+											</td>
+										</tr>
+									</for>
+								</tbody>
+							</table>
+						</if>
+						<else>
+							<span class="unimportant">Any</span>
+						</else>
+					</td>
+					<if condition="route.HasRestrictions<UrlQueryStringRestriction>()">
+						<td class="request-data">
+							<for each="var restriction in route.GetRestrictions<UrlQueryStringRestriction>()">
+								<table class="flags-table">
+									<tbody>
+										<tr>
+											<td class="no-wrap">${restriction.Field}</td>
+											<td class="flags">
+												<if condition="restriction.FieldComparer is CaseInsensitiveRegexRequestValueComparer || restriction.FieldComparer is CaseSensitiveRegexRequestValueComparer">
+													<span class="flag regular-expression-flag" title="Regular expression">RX</span>
+												</if>
+												<if condition="restriction.FieldComparer is CaseSensitivePlainRequestValueComparer || restriction.FieldComparer is CaseSensitiveRegexRequestValueComparer">
+													<span class="flag case-sensitive-flag" title="Case-sensitive">CS</span>
+												</if>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</for>
+						</td>
+						<td class="request-data">
+							<for each="var restriction in route.GetRestrictions<UrlQueryStringRestriction>()">
+								<table class="flags-table">
+									<tbody>
+										<tr>
+											<td class="no-wrap">${restriction.Value}</td>
+											<td class="flags">
+												<if condition="restriction.ValueComparer is CaseInsensitiveRegexRequestValueComparer || restriction.ValueComparer is CaseSensitiveRegexRequestValueComparer">
+													<span class="flag regular-expression-flag" title="Regular expression">RX</span>
+												</if>
+												<if condition="restriction.ValueComparer is CaseSensitivePlainRequestValueComparer || restriction.ValueComparer is CaseSensitiveRegexRequestValueComparer">
+													<span class="flag case-sensitive-flag" title="Case-sensitive">CS</span>
+												</if>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</for>
+						</td>
+					</if>
+					<else>
+						<td class="request-data ${ColumnVisibilityCss<UrlQueryStringRestriction>()}" colspan="2">
+							<span class="unimportant">Any</span>
+						</td>
+					</else>
+					<td class="request-data ${ColumnVisibilityCss<UrlFragmentRestriction>()}">
+						<if condition="route.HasRestrictions<UrlFragmentRestriction>()">
+							${String.Join("<br />", route.GetRestrictions<UrlFragmentRestriction>().Select(arg => arg.Fragment))}
+						</if>
+						<else>
+							<span class="unimportant">Any</span>
+						</else>
+					</td>
+					<td class="request-data ${ColumnVisibilityCss<RefererUrlSchemeRestriction>()}">
+						<if condition="route.HasRestrictions<RefererUrlSchemeRestriction>()">
+							${String.Join(", ", route.GetRestrictions<RefererUrlSchemeRestriction>().Select(arg => arg.Scheme))}
+						</if>
+						<else>
+							<span class="unimportant">Any</span>
+						</else>
+					</td>
+					<td class="request-data ${ColumnVisibilityCss<RefererUrlHostRestriction>()}">
+						<if condition="route.HasRestrictions<RefererUrlHostRestriction>()">
+							${String.Join("<br />", route.GetRestrictions<RefererUrlHostRestriction>().Select(arg => arg.Host))}
+						</if>
+						<else>
+							<span class="unimportant">Any</span>
+						</else>
+					</td>
+					<td class="request-data ${ColumnVisibilityCss<RefererUrlHostTypeRestriction>()}">
+						<if condition="route.HasRestrictions<RefererUrlHostTypeRestriction>()">
+							${String.Join(", ", route.GetRestrictions<RefererUrlHostTypeRestriction>().Select(arg => MapUriHostNameType(arg.Type)))}
+						</if>
+						<else>
+							<span class="unimportant">Any</span>
+						</else>
+					</td>
+					<td class="request-data ${ColumnVisibilityCss<RefererUrlPortRestriction>()}">
+						<if condition="route.HasRestrictions<RefererUrlPortRestriction>()">
+							${String.Join(", ", route.GetRestrictions<RefererUrlPortRestriction>().Select(arg => arg.Port))}
+						</if>
+						<else>
+							<span class="unimportant">Any</span>
+						</else>
+					</td>
+					<td class="request-data ${ColumnVisibilityCss<RefererUrlAuthorityRestriction>()}">
+						<if condition="route.HasRestrictions<RefererUrlAuthorityRestriction>()">
+							${String.Join("<br />", route.GetRestrictions<RefererUrlAuthorityRestriction>().Select(arg => arg.Authority))}
+						</if>
+						<else>
+							<span class="unimportant">Any</span>
+						</else>
+					</td>
+					<td class="request-data ${ColumnVisibilityCss<RefererUrlAbsolutePathRestriction>()}">
+						<if condition="route.HasRestrictions<RefererUrlAbsolutePathRestriction>()">
+							<table class="flags-table">
+								<tbody>
+									<for each="var restriction in route.GetRestrictions<RefererUrlAbsolutePathRestriction>()">
+										<tr>
+											<td class="no-wrap">${restriction.AbsolutePath}</td>
+											<td class="flags">
+												<if condition="restriction.Comparer is CaseInsensitiveRegexRequestValueComparer || restriction.Comparer is CaseSensitiveRegexRequestValueComparer">
+													<span class="flag regular-expression-flag" title="Regular expression">RX</span>
+												</if>
+												<if condition="restriction.Comparer is CaseSensitivePlainRequestValueComparer || restriction.Comparer is CaseSensitiveRegexRequestValueComparer">
+													<span class="flag case-sensitive-flag" title="Case-sensitive">CS</span>
+												</if>
+											</td>
+										</tr>
+									</for>
+								</tbody>
+							</table>
+						</if>
+						<else>
+							<span class="unimportant">Any</span>
+						</else>
+					</td>
+					<td class="request-data ${ColumnVisibilityCss<RefererUrlPathAndQueryRestriction>()}">
+						<if condition="route.HasRestrictions<RefererUrlPathAndQueryRestriction>()">
+							<table class="flags-table">
+								<tbody>
+									<for each="var restriction in route.GetRestrictions<RefererUrlPathAndQueryRestriction>()">
+										<tr>
+											<td class="no-wrap">${restriction.PathAndQuery}</td>
+											<td class="flags">
+												<if condition="restriction.Comparer is CaseInsensitiveRegexRequestValueComparer || restriction.Comparer is CaseSensitiveRegexRequestValueComparer">
+													<span class="flag regular-expression-flag" title="Regular expression">RX</span>
+												</if>
+												<if condition="restriction.Comparer is CaseSensitivePlainRequestValueComparer || restriction.Comparer is CaseSensitiveRegexRequestValueComparer">
+													<span class="flag case-sensitive-flag" title="Case-sensitive">CS</span>
+												</if>
+											</td>
+										</tr>
+									</for>
+								</tbody>
+							</table>
+						</if>
+						<else>
+							<span class="unimportant">Any</span>
+						</else>
+					</td>
+					<td class="request-data ${ColumnVisibilityCss<RefererUrlQueryRestriction>()}">
+						<if condition="route.HasRestrictions<RefererUrlQueryRestriction>()">
+							<table class="flags-table">
+								<tbody>
+									<for each="var restriction in route.GetRestrictions<RefererUrlQueryRestriction>()">
+										<tr>
+											<td class="no-wrap">${restriction.Query}</td>
+											<td class="flags">
+												<if condition="restriction.Comparer is CaseInsensitiveRegexRequestValueComparer || restriction.Comparer is CaseSensitiveRegexRequestValueComparer">
+													<span class="flag regular-expression-flag" title="Regular expression">RX</span>
+												</if>
+												<if condition="restriction.Comparer is CaseSensitivePlainRequestValueComparer || restriction.Comparer is CaseSensitiveRegexRequestValueComparer">
+													<span class="flag case-sensitive-flag" title="Case-sensitive">CS</span>
+												</if>
+											</td>
+										</tr>
+									</for>
+								</tbody>
+							</table>
+						</if>
+						<else>
+							<span class="unimportant">Any</span>
+						</else>
+					</td>
+					<if condition="route.HasRestrictions<RefererUrlQueryStringRestriction>()">
+						<td class="request-data">
+							<for each="var restriction in route.GetRestrictions<RefererUrlQueryStringRestriction>()">
+								<table class="flags-table">
+									<tbody>
+										<tr>
+											<td class="no-wrap">${restriction.Field}</td>
+											<td class="flags">
+												<if condition="restriction.FieldComparer is CaseInsensitiveRegexRequestValueComparer || restriction.FieldComparer is CaseSensitiveRegexRequestValueComparer">
+													<span class="flag regular-expression-flag" title="Regular expression">RX</span>
+												</if>
+												<if condition="restriction.FieldComparer is CaseSensitivePlainRequestValueComparer || restriction.FieldComparer is CaseSensitiveRegexRequestValueComparer">
+													<span class="flag case-sensitive-flag" title="Case-sensitive">CS</span>
+												</if>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</for>
+						</td>
+						<td class="request-data">
+							<for each="var restriction in route.GetRestrictions<RefererUrlQueryStringRestriction>()">
+								<table class="flags-table">
+									<tbody>
+										<tr>
+											<td class="no-wrap">${restriction.Value}</td>
+											<td class="flags">
+												<if condition="restriction.ValueComparer is CaseInsensitiveRegexRequestValueComparer || restriction.ValueComparer is CaseSensitiveRegexRequestValueComparer">
+													<span class="flag regular-expression-flag" title="Regular expression">RX</span>
+												</if>
+												<if condition="restriction.ValueComparer is CaseSensitivePlainRequestValueComparer || restriction.ValueComparer is CaseSensitiveRegexRequestValueComparer">
+													<span class="flag case-sensitive-flag" title="Case-sensitive">CS</span>
+												</if>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</for>
+						</td>
+					</if>
+					<else>
+						<td class="request-data ${ColumnVisibilityCss<RefererUrlQueryStringRestriction>()}" colspan="2">
+							<span class="unimportant">Any</span>
+						</td>
+					</else>
+					<td class="request-data ${ColumnVisibilityCss<RefererUrlFragmentRestriction>()}">
+						<if condition="route.HasRestrictions<RefererUrlFragmentRestriction>()">
+							${String.Join("<br />", route.GetRestrictions<RefererUrlFragmentRestriction>().Select(arg => arg.Fragment))}
+						</if>
+						<else>
+							<span class="unimportant">Any</span>
+						</else>
+					</td>
+					<if condition="route.HasRestrictions<CookieRestriction>()">
+						<td class="request-data">
+							<for each="var restriction in route.GetRestrictions<CookieRestriction>()">
+								<table class="flags-table">
+									<tbody>
+										<tr>
+											<td class="no-wrap">${restriction.Name}</td>
+											<td class="flags">
+												<if condition="restriction.NameComparer is CaseInsensitiveRegexRequestValueComparer || restriction.NameComparer is CaseSensitiveRegexRequestValueComparer">
+													<span class="flag regular-expression-flag" title="Regular expression">RX</span>
+												</if>
+												<if condition="restriction.NameComparer is CaseSensitivePlainRequestValueComparer || restriction.NameComparer is CaseSensitiveRegexRequestValueComparer">
+													<span class="flag case-sensitive-flag" title="Case-sensitive">CS</span>
+												</if>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</for>
+						</td>
+						<td class="request-data">
+							<for each="var restriction in route.GetRestrictions<CookieRestriction>()">
+								<table class="flags-table">
+									<tbody>
+										<tr>
+											<td class="no-wrap">${restriction.Value}</td>
+											<td class="flags">
+												<if condition="restriction.ValueComparer is CaseInsensitiveRegexRequestValueComparer || restriction.ValueComparer is CaseSensitiveRegexRequestValueComparer">
+													<span class="flag regular-expression-flag" title="Regular expression">RX</span>
+												</if>
+												<if condition="restriction.ValueComparer is CaseSensitivePlainRequestValueComparer || restriction.ValueComparer is CaseSensitiveRegexRequestValueComparer">
+													<span class="flag case-sensitive-flag" title="Case-sensitive">CS</span>
+												</if>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</for>
+						</td>
+					</if>
+					<else>
+						<td class="request-data ${ColumnVisibilityCss<CookieRestriction>()}" colspan="2">
+							<span class="unimportant">Any</span>
+						</td>
+					</else>
+					<if condition="route.HasRestrictions<HeaderRestriction>()">
+						<td class="request-data">
+							${String.Join("<br />", route.GetRestrictions<HeaderRestriction>().Select(arg => arg.Field))}
+						</td>
+						<td class="request-data">
+							<for each="var restriction in route.GetRestrictions<HeaderRestriction>()">
+								<table class="flags-table">
+									<tbody>
+										<tr>
+											<td class="no-wrap">${restriction.Value}</td>
+											<td class="flags">
+												<if condition="restriction.ValueComparer is CaseInsensitiveRegexRequestValueComparer || restriction.ValueComparer is CaseSensitiveRegexRequestValueComparer">
+													<span class="flag regular-expression-flag" title="Regular expression">RX</span>
+												</if>
+												<if condition="restriction.ValueComparer is CaseSensitivePlainRequestValueComparer || restriction.ValueComparer is CaseSensitiveRegexRequestValueComparer">
+													<span class="flag case-sensitive-flag" title="Case-sensitive">CS</span>
+												</if>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</for>
+						</td>
+					</if>
+					<else>
+						<td class="request-data ${ColumnVisibilityCss<HeaderRestriction>()}" colspan="2">
+							<span class="unimportant">Any</span>
+						</td>
+					</else>
+					<if condition="route.HasGenericRestrictions(typeof(HeaderRestriction<>))">
+						<var restrictions="route.GetGenericRestrictions(typeof(HeaderRestriction<>)).Cast<IRouteRestriction>().Select(arg => arg.GetType()).OrderBy(arg => arg.GetType().FullName).Select(arg => arg.GenericTypeArguments.First())"/>
+						<td class="request-data ${ColumnVisibilityCss(typeof(HeaderRestriction<>))}">
+							${String.Join("<br />", restrictions.Select(arg => arg.Namespace))}
+						</td>
+						<td class="request-data ${ColumnVisibilityCss(typeof(HeaderRestriction<>))}">
+							${String.Join("<br />", restrictions.Select(arg => arg.Name))}
+						</td>
+					</if>
+					<else>
+						<td class="request-data ${ColumnVisibilityCss(typeof(HeaderRestriction<>))}" colspan="2">
+							<span class="unimportant">None</span>
+						</td>
+					</else>
+					<td class="request-data ${ColumnVisibilityCss<MissingHeaderRestriction>()}">
+						<if condition="route.HasRestrictions<MissingHeaderRestriction>()">
+							${String.Join("<br />", route.GetRestrictions<MissingHeaderRestriction>().Select(arg => arg.Field))}
+						</if>
+						<else>
+							<span class="unimportant">None</span>
+						</else>
+					</td>
+					<if condition="route.ResponseType != null">
+						<td class="response-data">${route.ResponseType.Namespace}</td>
+						<td class="response-data">${route.ResponseType.Name}</td>
+					</if>
+					<else>
+						<td class="response-data unimportant" colspan="2">No Content</td>
+					</else>
+				</tr>
+			</for>
+		</tbody>
+	</table>
+</div>

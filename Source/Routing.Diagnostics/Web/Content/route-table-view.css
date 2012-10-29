@@ -1,0 +1,94 @@
+﻿.route-table-view td
+{
+	border-collapse: collapse;
+	padding: 2px 5px;
+}
+.route-table-view thead td
+{
+	border: 1px solid #bbb;
+	font-weight: bold;
+	text-align: center;
+	vertical-align: middle;
+}
+.route-table-view tbody td
+{
+	border: 1px solid #ddd;
+}
+.route-table-view .name-header,
+.route-table-view .id-header
+{
+	background-color: #eee;
+	display: none;
+}
+.route-table-view .name-data,
+.route-table-view .id-data
+{
+	display: none;
+}
+.route-table-view .resolved-relative-url-header
+{
+	background-color: #e5efff;
+}
+.route-table-view .request-header
+{
+	background-color: #fff3da;
+}
+.route-table-view .response-header
+{
+	background-color: #e5ffe5;	
+}
+.route-table-view .flags-table
+{
+	width: 100%;
+}
+.route-table-view .flags-table td:first-child
+{
+	width: 100%;
+}
+.route-table-view .flags-table td
+{
+	border: 0;
+	padding: 0;
+}
+.route-table-view .flags
+{
+	padding-left: 5px !important;
+	text-align: right;
+	white-space: nowrap;
+}
+.route-table-view .flag
+{
+	cursor: default;
+	display: inline-block;
+	font-size: 0.6em;
+	padding: 2px;
+	vertical-align: middle;
+}
+.route-table-view .flag.regular-expression-flag
+{
+	background-color: #008000;
+	color: #fff;
+}
+.route-table-view .flag.case-sensitive-flag
+{
+	background-color: #0000ff;
+	color: #fff;
+}
+.route-table-view .header-table,
+.route-table-view .value-column
+{
+	width: 100%;
+}
+.route-table-view .unimportant
+{
+	color: #bbb;
+	font-style: italic;
+}
+.route-table-view .column-filters
+{
+	margin-bottom: 10px;
+}
+.route-table-view .column-filters div
+{
+	margin-bottom: 2px;
+}

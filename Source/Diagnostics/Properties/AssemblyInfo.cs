@@ -1,3 +1,3 @@
 ﻿using System.Reflection;
 
-[assembly:AssemblyTitle("NathanAlden.JuniorRouting.Diagnostics")]
+[assembly:AssemblyTitle("Junior.Route.Diagnostics")]

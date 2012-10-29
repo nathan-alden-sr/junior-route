@@ -127,13 +127,10 @@
   <data name="Diagnostics" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>diagnostics.spark;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="jquery_1_8_2_min" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>content\jquery-1.8.2.min.js;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
   <data name="reset" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>content\reset.css;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-  </data>
-  <data name="RouteTable" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>routetable.spark;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="route_table_view" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>content\route-table-view.css;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
 </root>

@@ -1,0 +1,106 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{2485C8DA-2BE9-4EBB-864F-E9A5F6E981E1}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Junior.Route.UnitTests</RootNamespace>
+    <AssemblyName>Junior.Route.UnitTests</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="Http\RequestHeaders\CacheControlHeaderTester.cs" />
+    <Compile Include="Http\RequestHeaders\ConnectionHeaderTester.cs" />
+    <Compile Include="Http\RequestHeaders\ContentEncodingHeaderTester.cs" />
+    <Compile Include="Http\RequestHeaders\ContentLanguageHeaderTester.cs" />
+    <Compile Include="Http\RequestHeaders\ContentLengthHeaderTester.cs" />
+    <Compile Include="Http\RequestHeaders\ContentMd5HeaderTester.cs" />
+    <Compile Include="Http\RequestHeaders\BasicProxyAuthorizationHeaderTester.cs" />
+    <Compile Include="Http\RequestHeaders\WarningHeaderTester.cs" />
+    <Compile Include="Http\RequestHeaders\ViaHeaderTester.cs" />
+    <Compile Include="Http\RequestHeaders\VaryHeaderTester.cs" />
+    <Compile Include="Http\RequestHeaders\UserAgentHeaderTester.cs" />
+    <Compile Include="Http\RequestHeaders\UpgradeHeaderTester.cs" />
+    <Compile Include="Http\RequestHeaders\TransferEncodingHeaderTester.cs" />
+    <Compile Include="Http\RequestHeaders\TrailerHeaderTester.cs" />
+    <Compile Include="Http\RequestHeaders\TeHeaderTester.cs" />
+    <Compile Include="Http\RequestHeaders\RefererHeaderTester.cs" />
+    <Compile Include="Http\RequestHeaders\RangeHeaderTester.cs" />
+    <Compile Include="Http\RequestHeaders\DigestProxyAuthorizationHeaderTester.cs" />
+    <Compile Include="Http\RequestHeaders\PragmaHeaderTester.cs" />
+    <Compile Include="Http\RequestHeaders\MaxForwardsHeaderTester.cs" />
+    <Compile Include="Http\RequestHeaders\IfRangeHeaderTester.cs" />
+    <Compile Include="Http\RequestHeaders\IfUnmodifiedSinceHeaderTester.cs" />
+    <Compile Include="Http\RequestHeaders\IfNoneMatchHeaderTester.cs" />
+    <Compile Include="Http\RequestHeaders\IfModifiedSinceHeaderTester.cs" />
+    <Compile Include="Http\RequestHeaders\IfMatchHeaderTester.cs" />
+    <Compile Include="Http\RequestHeaders\HostHeaderTester.cs" />
+    <Compile Include="Http\RequestHeaders\FromHeaderTester.cs" />
+    <Compile Include="Http\RequestHeaders\ExpectHeaderTester.cs" />
+    <Compile Include="Http\RequestHeaders\DateHeaderTester.cs" />
+    <Compile Include="Http\RequestHeaders\DigestAuthorizationHeaderTester.cs" />
+    <Compile Include="Http\RequestHeaders\StringExtensionsTester.cs" />
+    <Compile Include="Http\CommonRegexPatternsTester.cs" />
+    <Compile Include="Http\RequestHeaders\AcceptCharsetHeaderTester.cs" />
+    <Compile Include="Http\RequestHeaders\AcceptEncodingHeaderTester.cs" />
+    <Compile Include="Http\RequestHeaders\AcceptLanguageHeaderTester.cs" />
+    <Compile Include="Http\RequestHeaders\AllowHeaderTester.cs" />
+    <Compile Include="Http\RequestHeaders\BasicAuthorizationHeaderTester.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Http\RequestHeaders\AcceptHeaderTester.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Junior.Common, Version=1.0.7.0, Culture=neutral, PublicKeyToken=998713eb9a0cce30, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\JuniorCommon.1.0.7\lib\net40\Junior.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework">
+      <HintPath>..\packages\NUnit.2.6.1\lib\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Http\Http.csproj">
+      <Project>{3898f8d9-95fb-4f35-a096-c72b137e3a77}</Project>
+      <Name>Http</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

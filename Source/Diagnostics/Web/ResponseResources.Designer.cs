@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace NathanAlden.JuniorRouting.Diagnostics.Web {
+namespace Junior.Route.Diagnostics.Web {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace NathanAlden.JuniorRouting.Diagnostics.Web {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("NathanAlden.JuniorRouting.Diagnostics.Web.ResponseResources", typeof(ResponseResources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Junior.Route.Diagnostics.Web.ResponseResources", typeof(ResponseResources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -79,20 +79,29 @@ namespace NathanAlden.JuniorRouting.Diagnostics.Web {
         ///	font-family: Georgia, serif;
         ///	font-size: 2em;
         ///	font-weight: normal;
-        ///	padding-bottom: 10px;
+        ///	margin-bottom: 10px;
+        ///}
+        ///h1:not(:first-child)
+        ///{
+        ///	margin-top: 20px;
+        ///}
+        ///input[type=&apos;checkbox&apos;]
+        ///{
+        ///	vertical-align: middle;
+        ///	margin-right: 5px;
         ///}
         ///
         ///#header
         ///{
-        ///	background-color: #ddd;
+        ///	background-color: #eee;
         ///	font-size: 0.8em;
         ///	padding: 5px;
         ///}
-        ///#header-links
+        ///#header-left
         ///{
         ///	float: left;
         ///}
-        ///#header-info
+        ///#header-right
         ///{
         ///	text-align: right;
         ///}
@@ -101,18 +110,7 @@ namespace NathanAlden.JuniorRouting.Diagnostics.Web {
         ///	padding: 10px;
         ///}
         ///
-        ///.invisible
-        ///{
-        ///	display: none;
-        ///}
-        ///.centered
-        ///{
-        ///	text-align: center;
-        ///}
-        ///.no-wrap
-        ///{
-        ///	white-space: nowrap;
-        ///}.
+        ///.header-li [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string common {
             get {
@@ -124,6 +122,16 @@ namespace NathanAlden.JuniorRouting.Diagnostics.Web {
             get {
                 object obj = ResourceManager.GetObject("Diagnostics", resourceCulture);
                 return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /*! jQuery v1.8.2 jquery.com | jquery.org/license */
+        ///(function(a,b){function G(a){var b=F[a]={};return p.each(a.split(s),function(a,c){b[c]=!0}),b}function J(a,c,d){if(d===b&amp;&amp;a.nodeType===1){var e=&quot;data-&quot;+c.replace(I,&quot;-$1&quot;).toLowerCase();d=a.getAttribute(e);if(typeof d==&quot;string&quot;){try{d=d===&quot;true&quot;?!0:d===&quot;false&quot;?!1:d===&quot;null&quot;?null:+d+&quot;&quot;===d?+d:H.test(d)?p.parseJSON(d):d}catch(f){}p.data(a,c,d)}else d=b}return d}function K(a){var b;for(b in a){if(b===&quot;data&quot;&amp;&amp;p.isEmptyObject(a[b]))continue;if(b!==&quot;toJSON&quot;)ret [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string jquery_1_8_2_min {
+            get {
+                return ResourceManager.GetString("jquery_1_8_2_min", resourceCulture);
             }
         }
         
@@ -145,52 +153,6 @@ namespace NathanAlden.JuniorRouting.Diagnostics.Web {
         internal static string reset {
             get {
                 return ResourceManager.GetString("reset", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to .route-table-view td
-        ///{
-        ///	border-collapse: collapse;
-        ///	padding: 2px 5px;
-        ///}
-        ///.route-table-view thead td
-        ///{
-        ///	border: 1px solid #bbb;
-        ///	font-weight: bold;
-        ///	text-align: center;
-        ///	vertical-align: middle;
-        ///}
-        ///.route-table-view tbody td
-        ///{
-        ///	border: 1px solid #ddd;
-        ///}
-        ///.route-table-view .request-header
-        ///{
-        ///	background-color: #fff3da;
-        ///}
-        ///.route-table-view .response-header
-        ///{
-        ///	background-color: #e6f3ff;	
-        ///}
-        ///.route-table-view .flags-table
-        ///{
-        ///	width: 100%;
-        ///}
-        ///.route-table-view .flags-table td:first-child
-        ///{
-        ///	 [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string route_table_view {
-            get {
-                return ResourceManager.GetString("route_table_view", resourceCulture);
-            }
-        }
-        
-        internal static byte[] RouteTable {
-            get {
-                object obj = ResourceManager.GetObject("RouteTable", resourceCulture);
-                return ((byte[])(obj));
             }
         }
     }

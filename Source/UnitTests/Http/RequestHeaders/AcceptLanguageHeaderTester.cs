@@ -9,6 +9,38 @@ namespace Junior.Route.UnitTests.Http.RequestHeaders
 	public static class AcceptLanguageHeaderTester
 	{
 		[TestFixture]
+		public class When_matching_language_with_header_with_effective_qvalue_greater_than_0
+		{
+			[Test]
+			[TestCase("*; q=0.001", "en")]
+			[TestCase("en; q=0.001", "en")]
+			[TestCase("en-gb; q=0.001", "en")]
+			[TestCase("en-gb; q=0.001", "en-gb")]
+			public void Must_match(string headerValue, string languageRange)
+			{
+				AcceptLanguageHeader header = AcceptLanguageHeader.ParseMany(headerValue).Single();
+
+				Assert.That(header.LanguageRangeMatches(languageRange), Is.True);
+			}
+		}
+
+		[TestFixture]
+		public class When_matching_media_type_with_header_with_effective_qvalue_of_0
+		{
+			[Test]
+			[TestCase("*; q=0", "en")]
+			[TestCase("en; q=0", "en")]
+			[TestCase("en-gb; q=0", "en")]
+			[TestCase("en-gb; q=0", "en-gb")]
+			public void Must_not_match(string headerValue, string languageRange)
+			{
+				AcceptLanguageHeader header = AcceptLanguageHeader.ParseMany(headerValue).Single();
+
+				Assert.That(header.LanguageRangeMatches(languageRange), Is.False);
+			}
+		}
+
+		[TestFixture]
 		public class When_parsing_invalid_accept_language_header
 		{
 			[Test]
@@ -35,18 +67,26 @@ namespace Junior.Route.UnitTests.Http.RequestHeaders
 
 				Assert.That(headers, Has.Length.EqualTo(4));
 
+				Assert.That(headers[0].Language, Is.EqualTo("de"));
+				Assert.That(headers[0].LanguagePrefix, Is.Null);
 				Assert.That(headers[0].LanguageRange, Is.EqualTo("de"));
 				Assert.That(headers[0].Qvalue, Is.EqualTo(1m));
 				Assert.That(headers[0].EffectiveQvalue, Is.EqualTo(1m));
 
+				Assert.That(headers[1].Language, Is.EqualTo("en"));
+				Assert.That(headers[1].LanguagePrefix, Is.Null);
 				Assert.That(headers[1].LanguageRange, Is.EqualTo("en"));
 				Assert.That(headers[1].Qvalue, Is.EqualTo(0.567m));
 				Assert.That(headers[1].EffectiveQvalue, Is.EqualTo(0.567m));
 
+				Assert.That(headers[2].Language, Is.EqualTo("gb"));
+				Assert.That(headers[2].LanguagePrefix, Is.EqualTo("en"));
 				Assert.That(headers[2].LanguageRange, Is.EqualTo("en-gb"));
 				Assert.That(headers[2].Qvalue, Is.Null);
 				Assert.That(headers[2].EffectiveQvalue, Is.EqualTo(1m));
 
+				Assert.That(headers[3].Language, Is.EqualTo("fr"));
+				Assert.That(headers[3].LanguagePrefix, Is.Null);
 				Assert.That(headers[3].LanguageRange, Is.EqualTo("fr"));
 				Assert.That(headers[3].Qvalue, Is.EqualTo(0m));
 				Assert.That(headers[3].EffectiveQvalue, Is.EqualTo(0m));

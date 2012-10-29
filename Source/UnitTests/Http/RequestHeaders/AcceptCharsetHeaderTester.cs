@@ -9,6 +9,34 @@ namespace Junior.Route.UnitTests.Http.RequestHeaders
 	public static class AcceptCharsetHeaderTester
 	{
 		[TestFixture]
+		public class When_matching_charset_with_header_with_effective_qvalue_greater_than_0
+		{
+			[Test]
+			[TestCase("*; q=0.001", "iso-8859-5")]
+			[TestCase("iso-8859-5; q=0.001", "iso-8859-5")]
+			public void Must_match(string headerValue, string charset)
+			{
+				AcceptCharsetHeader header = AcceptCharsetHeader.ParseMany(headerValue).Single();
+
+				Assert.That(header.CharsetMatches(charset), Is.True);
+			}
+		}
+
+		[TestFixture]
+		public class When_matching_media_type_with_header_with_effective_qvalue_of_0
+		{
+			[Test]
+			[TestCase("*; q=0", "iso-8859-5")]
+			[TestCase("iso-8859-5; q=0", "iso-8859-5")]
+			public void Must_not_match(string headerValue, string charset)
+			{
+				AcceptCharsetHeader header = AcceptCharsetHeader.ParseMany(headerValue).Single();
+
+				Assert.That(header.CharsetMatches(charset), Is.False);
+			}
+		}
+
+		[TestFixture]
 		public class When_parsing_invalid_accept_charset_header
 		{
 			[Test]

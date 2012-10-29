@@ -12,24 +12,24 @@ namespace Junior.Route.Http.RequestHeaders
 		private const string CodingsRegexPattern = "(?:" + CommonRegexPatterns.ContentCoding + @"|\*)";
 		private const string RegexPattern = CodingsRegexPattern + @"(?:;" + CommonRegexPatterns.SP + "*(?:" + CommonRegexPatterns.Q + "=(?:" + CommonRegexPatterns.Qvalue + "))?)?";
 		private static readonly string _elementsRegexPattern = String.Format("^{0}$", CommonRegexPatterns.ListOfElements(RegexPattern, 1));
-		private readonly string _coding;
+		private readonly string _contentCoding;
 		private readonly decimal _effectiveQvalue;
 		private readonly decimal? _qvalue;
 
-		private AcceptEncodingHeader(string coding, decimal? qvalue)
+		private AcceptEncodingHeader(string contentCoding, decimal? qvalue)
 		{
-			coding.ThrowIfNull("coding");
+			contentCoding.ThrowIfNull("contentCoding");
 
-			_coding = coding;
+			_contentCoding = contentCoding;
 			_qvalue = qvalue;
 			_effectiveQvalue = qvalue ?? 1m;
 		}
 
-		public string Coding
+		public string ContentCoding
 		{
 			get
 			{
-				return _coding;
+				return _contentCoding;
 			}
 		}
 
@@ -47,6 +47,22 @@ namespace Junior.Route.Http.RequestHeaders
 			{
 				return _effectiveQvalue;
 			}
+		}
+
+		public bool ContentCodingMatches(string contentCoding)
+		{
+			contentCoding.ThrowIfNull("contentCoding");
+
+			if (!Regex.IsMatch(contentCoding, CodingsRegexPattern))
+			{
+				throw new ArgumentException("Invalid content-coding.", "contentCoding");
+			}
+			if (_effectiveQvalue == 0m)
+			{
+				return false;
+			}
+
+			return _contentCoding == "*" || String.Equals(_contentCoding, contentCoding, StringComparison.OrdinalIgnoreCase);
 		}
 
 		public static IEnumerable<AcceptEncodingHeader> ParseMany(string headerValue)

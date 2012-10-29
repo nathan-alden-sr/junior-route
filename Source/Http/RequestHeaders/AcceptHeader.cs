@@ -9,18 +9,19 @@ namespace Junior.Route.Http.RequestHeaders
 {
 	public class AcceptHeader
 	{
+		private const string MediaTypeRegexPattern = "(?:" + TypeRegexPattern + "/)(?:" + SubtypeRegexPattern + @"|\*)";
 		private const string ParametersRegexPattern = @";" + CommonRegexPatterns.SP + "*" + CommonRegexPatterns.Token + "(?:=(?:" + CommonRegexPatterns.Token + "|" + CommonRegexPatterns.QuotedString + "))?";
-		private const string RegexPattern = "(?:" + TypeRegexPattern + "/)(?:" + SubtypeRegexPattern + @"|\*)(?:" + ParametersRegexPattern + ")*";
+		private const string RegexPattern = MediaTypeRegexPattern + "(?:" + ParametersRegexPattern + ")*";
 		private const string SubtypeRegexPattern = CommonRegexPatterns.Token;
 		private const string TypeRegexPattern = CommonRegexPatterns.Token;
 		private static readonly string _elementsRegexPattern = String.Format("^{0}$", CommonRegexPatterns.ListOfElements(RegexPattern));
 		private readonly decimal _effectiveQvalue;
 		private readonly IEnumerable<Parameter> _extensions;
+		private readonly string _mediaTypes;
 		private readonly IEnumerable<Parameter> _parameters;
 		private readonly decimal? _qvalue;
 		private readonly string _subtype;
 		private readonly string _type;
-		private readonly string _typeAndSubtype;
 
 		public AcceptHeader(string type, string subtype, IEnumerable<Parameter> parameters, decimal? qvalue, IEnumerable<Parameter> extensions)
 		{
@@ -31,7 +32,7 @@ namespace Junior.Route.Http.RequestHeaders
 
 			_type = type;
 			_subtype = subtype;
-			_typeAndSubtype = String.Format("{0}/{1}", _type, _subtype);
+			_mediaTypes = String.Format("{0}/{1}", _type, _subtype);
 			_parameters = parameters;
 			_qvalue = qvalue;
 			_effectiveQvalue = qvalue ?? 1m;
@@ -54,11 +55,11 @@ namespace Junior.Route.Http.RequestHeaders
 			}
 		}
 
-		public string TypeAndSubtype
+		public string MediaTypes
 		{
 			get
 			{
-				return _typeAndSubtype;
+				return _mediaTypes;
 			}
 		}
 
@@ -92,6 +93,26 @@ namespace Junior.Route.Http.RequestHeaders
 			{
 				return _extensions;
 			}
+		}
+
+		public bool MediaTypeMatches(string mediaType)
+		{
+			mediaType.ThrowIfNull("mediaType");
+
+			if (!Regex.IsMatch(mediaType, MediaTypeRegexPattern))
+			{
+				throw new ArgumentException("Invalid media-type.", "mediaType");
+			}
+			if (_effectiveQvalue == 0m)
+			{
+				return false;
+			}
+
+			string[] typeParts = mediaType.Split('/');
+
+			return
+				((_type == "*" || String.Equals(_type, typeParts[0], StringComparison.OrdinalIgnoreCase)) &&
+				 (_subtype == "*" || String.Equals(_subtype, typeParts[1], StringComparison.OrdinalIgnoreCase)));
 		}
 
 		public static IEnumerable<AcceptHeader> ParseMany(string headerValue)

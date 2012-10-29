@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text.RegularExpressions;
 
 using Junior.Common;
@@ -15,21 +14,24 @@ namespace Junior.Route.Http.RequestHeaders
 		private readonly decimal _effectiveQvalue;
 		private readonly IEnumerable<Parameter> _parameters;
 		private readonly decimal? _qvalue;
+		private readonly string _tCoding;
 
-		private TeHeader(IEnumerable<Parameter> parameters, decimal? qvalue)
+		private TeHeader(string tCoding, decimal? qvalue, IEnumerable<Parameter> parameters)
 		{
+			tCoding.ThrowIfNull("tCoding");
 			parameters.ThrowIfNull("parameters");
 
+			_tCoding = tCoding;
 			_parameters = parameters;
 			_qvalue = qvalue;
 			_effectiveQvalue = qvalue ?? 1m;
 		}
 
-		public IEnumerable<Parameter> Parameters
+		public string TCoding
 		{
 			get
 			{
-				return _parameters;
+				return _tCoding;
 			}
 		}
 
@@ -41,12 +43,32 @@ namespace Junior.Route.Http.RequestHeaders
 			}
 		}
 
+		public IEnumerable<Parameter> Parameters
+		{
+			get
+			{
+				return _parameters;
+			}
+		}
+
 		public decimal EffectiveQvalue
 		{
 			get
 			{
 				return _effectiveQvalue;
 			}
+		}
+
+		public bool TCodingMatches(string tCoding)
+		{
+			tCoding.ThrowIfNull("tCoding");
+
+			if (!Regex.IsMatch(tCoding, CommonRegexPatterns.Token))
+			{
+				throw new ArgumentException("Invalid t-coding.", "tCoding");
+			}
+
+			return _effectiveQvalue > 0m && String.Equals(_tCoding, tCoding, StringComparison.OrdinalIgnoreCase);
 		}
 
 		public static IEnumerable<TeHeader> ParseMany(string headerValue)
@@ -63,10 +85,12 @@ namespace Junior.Route.Http.RequestHeaders
 				decimal? qvalue = null;
 				string[] semicolonSplitParts = element.SplitSemicolons();
 				bool cancel = false;
+				string tCoding = semicolonSplitParts[0];
 				var parameters = new HashSet<Parameter>();
 
-				foreach (string semicolonSplitPart in semicolonSplitParts)
+				for (int i = 1; i < semicolonSplitParts.Length; i++)
 				{
+					string semicolonSplitPart = semicolonSplitParts[i];
 					string[] equalSignSplitParts = semicolonSplitPart.SplitEqualSign();
 					QvalueValidity qvalueValidity = equalSignSplitParts.ValidateQvalue();
 					string name;
@@ -83,13 +107,15 @@ namespace Junior.Route.Http.RequestHeaders
 						cancel = true;
 						break;
 					}
-
-					parameters.Add(new Parameter(name, value ?? ""));
+					else
+					{
+						parameters.Add(new Parameter(name, value ?? ""));
+					}
 				}
 
 				if (!cancel)
 				{
-					yield return new TeHeader(parameters, qvalue);
+					yield return new TeHeader(tCoding, qvalue, parameters);
 				}
 			}
 		}

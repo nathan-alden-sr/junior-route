@@ -49,6 +49,22 @@ namespace Junior.Route.Http.RequestHeaders
 			}
 		}
 
+		public bool CharsetMatches(string charset)
+		{
+			charset.ThrowIfNull("charset");
+
+			if (!Regex.IsMatch(charset, CommonRegexPatterns.Charset))
+			{
+				throw new ArgumentException("Invalid charset.", "charset");
+			}
+			if (_effectiveQvalue == 0m)
+			{
+				return false;
+			}
+
+			return _charset == "*" || String.Equals(_charset, charset, StringComparison.OrdinalIgnoreCase);
+		}
+
 		public static IEnumerable<AcceptCharsetHeader> ParseMany(string headerValue)
 		{
 			if (headerValue == null || !Regex.IsMatch(headerValue, _elementsRegexPattern))

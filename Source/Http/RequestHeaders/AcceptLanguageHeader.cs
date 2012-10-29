@@ -9,21 +9,41 @@ namespace Junior.Route.Http.RequestHeaders
 {
 	public class AcceptLanguageHeader
 	{
-		private const string CharsetRegexPattern = "(?:(?:" + LanguageRangeRegexPattern + @")|\*)";
 		private const string LanguageRangeRegexPattern = "[" + CommonRegexPatterns.Alpha + "]{1,8}(-(?:[" + CommonRegexPatterns.Alpha + "]{1,8}))?";
-		private const string RegexPattern = CharsetRegexPattern + @"(?:;" + CommonRegexPatterns.SP + "*(?:" + CommonRegexPatterns.Q + "=(?:" + CommonRegexPatterns.Qvalue + "))?)?";
+		private const string LanguageRegexPattern = "(?:(?:" + LanguageRangeRegexPattern + @")|\*)";
+		private const string RegexPattern = LanguageRegexPattern + @"(?:;" + CommonRegexPatterns.SP + "*(?:" + CommonRegexPatterns.Q + "=(?:" + CommonRegexPatterns.Qvalue + "))?)?";
 		private static readonly string _elementsRegexPattern = String.Format("^{0}$", CommonRegexPatterns.ListOfElements(RegexPattern, 1));
 		private readonly decimal _effectiveQvalue;
+		private readonly string _language;
+		private readonly string _languagePrefix;
 		private readonly string _languageRange;
 		private readonly decimal? _qvalue;
 
-		private AcceptLanguageHeader(string languageRange, decimal? qvalue)
+		private AcceptLanguageHeader(string languagePrefix, string language, decimal? qvalue)
 		{
-			languageRange.ThrowIfNull("languageRange");
+			language.ThrowIfNull("language");
 
-			_languageRange = languageRange;
+			_languagePrefix = languagePrefix;
+			_language = language;
+			_languageRange = (languagePrefix.IfNotNull(arg => arg + "-") ?? "") + language;
 			_qvalue = qvalue;
 			_effectiveQvalue = qvalue ?? 1m;
+		}
+
+		public string LanguagePrefix
+		{
+			get
+			{
+				return _languagePrefix;
+			}
+		}
+
+		public string Language
+		{
+			get
+			{
+				return _language;
+			}
 		}
 
 		public string LanguageRange
@@ -48,6 +68,27 @@ namespace Junior.Route.Http.RequestHeaders
 			{
 				return _effectiveQvalue;
 			}
+		}
+
+		public bool LanguageRangeMatches(string languageRange)
+		{
+			languageRange.ThrowIfNull("languageRange");
+
+			if (!Regex.IsMatch(languageRange, LanguageRegexPattern))
+			{
+				throw new ArgumentException("Invalid language-range.", "languageRange");
+			}
+			if (_effectiveQvalue == 0m)
+			{
+				return false;
+			}
+
+			string languagePrefix;
+			string language;
+
+			GetLanguageParts(languageRange, out languagePrefix, out language);
+
+			return _languageRange == "*" || String.Equals(_languageRange, languageRange, StringComparison.OrdinalIgnoreCase) || String.Equals(_languagePrefix, languageRange, StringComparison.OrdinalIgnoreCase);
 		}
 
 		public static IEnumerable<AcceptLanguageHeader> ParseMany(string headerValue)
@@ -77,8 +118,21 @@ namespace Junior.Route.Http.RequestHeaders
 					qvalue = Decimal.Parse(equalSignSplitParts[1], NumberStyles.AllowDecimalPoint);
 				}
 
-				yield return new AcceptLanguageHeader(semicolonSplitParts[0], qvalue);
+				string languagePrefix;
+				string language;
+
+				GetLanguageParts(semicolonSplitParts[0], out languagePrefix, out language);
+
+				yield return new AcceptLanguageHeader(languagePrefix, language, qvalue);
 			}
+		}
+
+		private static void GetLanguageParts(string langugageRange, out string languagePrefix, out string language)
+		{
+			string[] languageParts = langugageRange.Split('-');
+
+			languagePrefix = languageParts.Length == 2 ? languageParts[0] : null;
+			language = languageParts[languageParts.Length == 1 ? 0 : 1];
 		}
 	}
 }

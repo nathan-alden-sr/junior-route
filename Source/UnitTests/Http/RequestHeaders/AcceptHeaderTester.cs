@@ -9,6 +9,36 @@ namespace Junior.Route.UnitTests.Http.RequestHeaders
 	public static class AcceptHeaderTester
 	{
 		[TestFixture]
+		public class When_matching_media_type_with_header_with_effective_qvalue_greater_than_0
+		{
+			[Test]
+			[TestCase("*/*; q=0.001", "text/plain")]
+			[TestCase("text/*; q=0.001", "text/plain")]
+			[TestCase("text/plain; q=0.001", "text/plain")]
+			public void Must_match(string headerValue, string mediaType)
+			{
+				AcceptHeader header = AcceptHeader.ParseMany(headerValue).Single();
+
+				Assert.That(header.MediaTypeMatches(mediaType), Is.True);
+			}
+		}
+
+		[TestFixture]
+		public class When_matching_media_type_with_header_with_effective_qvalue_of_0
+		{
+			[Test]
+			[TestCase("*/*; q=0", "text/plain")]
+			[TestCase("text/*; q=0", "text/plain")]
+			[TestCase("text/plain; q=0", "text/plain")]
+			public void Must_not_match(string headerValue, string mediaType)
+			{
+				AcceptHeader header = AcceptHeader.ParseMany(headerValue).Single();
+
+				Assert.That(header.MediaTypeMatches(mediaType), Is.False);
+			}
+		}
+
+		[TestFixture]
 		public class When_parsing_invalid_accept_header
 		{
 			[Test]

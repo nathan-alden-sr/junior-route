@@ -1,8 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApp", "WebApp\WebApp.csproj", "{665AAA8F-BDC2-463F-8BAD-DD5478C7C959}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetIntegration", "AspNetIntegration\AspNetIntegration.csproj", "{5E6FA072-C7AA-48AE-BFBD-F93248F9465C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoRouting", "AutoRouting\AutoRouting.csproj", "{FE827A72-7C6D-4AB5-830F-D14E18669F28}"
@@ -31,10 +29,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{665AAA8F-BDC2-463F-8BAD-DD5478C7C959}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{665AAA8F-BDC2-463F-8BAD-DD5478C7C959}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{665AAA8F-BDC2-463F-8BAD-DD5478C7C959}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{665AAA8F-BDC2-463F-8BAD-DD5478C7C959}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5E6FA072-C7AA-48AE-BFBD-F93248F9465C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5E6FA072-C7AA-48AE-BFBD-F93248F9465C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5E6FA072-C7AA-48AE-BFBD-F93248F9465C}.Release|Any CPU.ActiveCfg = Release|Any CPU

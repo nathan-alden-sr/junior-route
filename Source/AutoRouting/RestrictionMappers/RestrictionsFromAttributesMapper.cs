@@ -4,30 +4,31 @@ using System.Linq;
 using System.Reflection;
 
 using Junior.Common;
+using Junior.Route.AutoRouting.Containers;
 using Junior.Route.AutoRouting.RestrictionMappers.Attributes;
-using Junior.Route.Routing;
 
 namespace Junior.Route.AutoRouting.RestrictionMappers
 {
-	public class RestrictionsFromAttributesMapper<T> : IRouteRestrictionMapper
+	public class RestrictionsFromAttributesMapper<T> : IRestrictionMapper
 		where T : RestrictionAttribute
 	{
-		public void Map(Type type, MethodInfo method, Routing.Route route)
+		public void Map(Type type, MethodInfo method, Routing.Route route, IContainer container)
 		{
 			type.ThrowIfNull("type");
 			method.ThrowIfNull("method");
 			route.ThrowIfNull("route");
+			container.ThrowIfNull("container");
 
 			IEnumerable<T> attributes = method.GetCustomAttributes(typeof(T), false).Cast<T>();
 
 			foreach (T attribute in attributes)
 			{
-				attribute.Map(route);
+				attribute.Map(route, container);
 			}
 		}
 	}
 
-	public class RestrictionsFromAttributesMapper : IRouteRestrictionMapper
+	public class RestrictionsFromAttributesMapper : IRestrictionMapper
 	{
 		private readonly Type _attributeType;
 
@@ -43,7 +44,7 @@ namespace Junior.Route.AutoRouting.RestrictionMappers
 			_attributeType = attributeType;
 		}
 
-		public void Map(Type type, MethodInfo method, Routing.Route route)
+		public void Map(Type type, MethodInfo method, Routing.Route route, IContainer container)
 		{
 			type.ThrowIfNull("type");
 			method.ThrowIfNull("method");
@@ -53,7 +54,7 @@ namespace Junior.Route.AutoRouting.RestrictionMappers
 
 			foreach (RestrictionAttribute attribute in attributes)
 			{
-				attribute.Map(route);
+				attribute.Map(route, container);
 			}
 		}
 	}

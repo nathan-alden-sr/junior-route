@@ -8,7 +8,7 @@ using Junior.Route.Routing.RequestValueComparers;
 namespace Junior.Route.Routing.Restrictions
 {
 	[DebuggerDisplay("{DebuggerDisplay,nq}")]
-	public class RefererUrlQueryRestriction : IRouteRestriction, IEquatable<RefererUrlQueryRestriction>
+	public class RefererUrlQueryRestriction : IRestriction, IEquatable<RefererUrlQueryRestriction>
 	{
 		private readonly IRequestValueComparer _comparer;
 		private readonly string _query;

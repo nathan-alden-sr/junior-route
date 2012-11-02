@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text.RegularExpressions;
 using System.Web;
 
 using Junior.Common;
@@ -12,30 +11,35 @@ namespace Junior.Route.Assets.FileSystem
 	public abstract class BundleWatcherRoute<T> : Routing.Route
 		where T : class, IResponse
 	{
+		private readonly IHttpRuntime _httpRuntime;
 		private readonly object _lockObject = new object();
-		private readonly string _relativeUrl;
+		private readonly string _relativePath;
 		private readonly BundleWatcher _watcher;
 
-		protected BundleWatcherRoute(string name, IGuidFactory guidFactory, string relativeUrl, BundleWatcher watcher)
+		protected BundleWatcherRoute(string name, IGuidFactory guidFactory, string relativePath, BundleWatcher watcher, IHttpRuntime httpRuntime)
 			: base(name, guidFactory)
 		{
-			relativeUrl.ThrowIfNull("relativeUrl");
+			relativePath.ThrowIfNull("relativePath");
 			watcher.ThrowIfNull("watcher");
+			httpRuntime.ThrowIfNull("httpRuntime");
 
-			_relativeUrl = relativeUrl;
+			_relativePath = relativePath;
 			_watcher = watcher;
+			_httpRuntime = httpRuntime;
 			_watcher.BundleChanged += WatcherBundleChanged;
 			ConfigureRoute();
 		}
 
-		protected BundleWatcherRoute(string name, Guid id, string relativeUrl, BundleWatcher watcher)
+		protected BundleWatcherRoute(string name, Guid id, string relativePath, BundleWatcher watcher, IHttpRuntime httpRuntime)
 			: base(name, id)
 		{
-			relativeUrl.ThrowIfNull("relativeUrl");
+			relativePath.ThrowIfNull("relativePath");
 			watcher.ThrowIfNull("watcher");
+			httpRuntime.ThrowIfNull("httpRuntime");
 
-			_relativeUrl = relativeUrl;
+			_relativePath = relativePath;
 			_watcher = watcher;
+			_httpRuntime = httpRuntime;
 			_watcher.BundleChanged += WatcherBundleChanged;
 			ConfigureRoute();
 		}
@@ -46,10 +50,11 @@ namespace Junior.Route.Assets.FileSystem
 		{
 			lock (_lockObject)
 			{
-				ResolvedRelativeUrl = String.Format("{0}?v={1}", _relativeUrl, _watcher.Hash);
+				ResolvedRelativeUrl = String.Format("{0}?v={1}", _relativePath, _watcher.Hash);
 				ClearRestrictions();
 				RestrictByMethods(HttpMethod.Get);
-				RestrictByRelativeUrl(String.Format(@"^{0}(?:$|\?(?i:v=[a-f0-9]{{32}}))", Regex.Escape(_relativeUrl)), CaseInsensitiveRegexRequestValueComparer.Instance);
+				RestrictByRelativePath(_relativePath, CaseInsensitivePlainRequestValueComparer.Instance, _httpRuntime);
+				RestrictByUrlQuery(@"^(?:\?(?i:v=[a-f0-9]{32}))?$", CaseInsensitiveRegexRequestValueComparer.Instance);
 				RespondWith(request => GetResponse(request, _watcher.Contents));
 			}
 		}

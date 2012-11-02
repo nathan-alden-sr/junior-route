@@ -9,7 +9,7 @@ namespace Junior.Route.AutoRouting.ResolvedRelativeUrlMappers
 {
 	public class ResolvedRelativeUrlAttributeMapper : IResolvedRelativeUrlMapper
 	{
-		public ResolvedRelativeUrlResult ResolvedRelativeUrl(Type type, MethodInfo method)
+		public ResolvedRelativeUrlResult Map(Type type, MethodInfo method)
 		{
 			type.ThrowIfNull("type");
 			method.ThrowIfNull("method");

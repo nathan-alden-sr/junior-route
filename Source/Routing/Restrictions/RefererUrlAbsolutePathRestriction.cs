@@ -8,7 +8,7 @@ using Junior.Route.Routing.RequestValueComparers;
 namespace Junior.Route.Routing.Restrictions
 {
 	[DebuggerDisplay("{DebuggerDisplay,nq}")]
-	public class RefererUrlAbsolutePathRestriction : IRouteRestriction, IEquatable<RefererUrlAbsolutePathRestriction>
+	public class RefererUrlAbsolutePathRestriction : IRestriction, IEquatable<RefererUrlAbsolutePathRestriction>
 	{
 		private readonly string _absolutePath;
 		private readonly IRequestValueComparer _comparer;

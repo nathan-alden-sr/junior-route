@@ -48,22 +48,22 @@ namespace Junior.Route.Routing.Responses.Text
 		}
 
 		public XmlResponse(XmlNode content, Action<Response> configurationDelegate = null)
-			: base(Response.OK().TextXml().Content(content.GetString()))
+			: base(Response.OK().TextXml().Content(content.GetString()), configurationDelegate)
 		{
 		}
 
 		public XmlResponse(XmlNode content, Encoding encoding, Action<Response> configurationDelegate = null)
-			: base(Response.OK().TextXml().ContentEncoding(encoding).Content(content.GetBytes(encoding)))
+			: base(Response.OK().TextXml().ContentEncoding(encoding).Content(content.GetBytes(encoding)), configurationDelegate)
 		{
 		}
 
 		public XmlResponse(XNode content, Action<Response> configurationDelegate = null)
-			: base(Response.OK().TextXml().Content(content.GetString()))
+			: base(Response.OK().TextXml().Content(content.GetString()), configurationDelegate)
 		{
 		}
 
 		public XmlResponse(XNode content, Encoding encoding, Action<Response> configurationDelegate = null)
-			: base(Response.OK().TextXml().ContentEncoding(encoding).Content(content.GetBytes(encoding)))
+			: base(Response.OK().TextXml().ContentEncoding(encoding).Content(content.GetBytes(encoding)), configurationDelegate)
 		{
 		}
 	}

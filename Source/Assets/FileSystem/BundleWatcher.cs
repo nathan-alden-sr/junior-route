@@ -96,7 +96,7 @@ namespace Junior.Route.Assets.FileSystem
 
 		private void WatchForChanges()
 		{
-			IEnumerable<FileSystemWatcher> watchers = _bundle.Assets.Select(arg => arg.GetFileSystemWatcher(_fileSystem)).ToArray();
+			FileSystemWatcher[] watchers = _bundle.Assets.Select(arg => arg.GetFileSystemWatcher(_fileSystem)).ToArray();
 
 			_watchers.AddRange(watchers);
 

@@ -3,19 +3,23 @@ using System.Diagnostics;
 using System.Web;
 
 using Junior.Common;
+using Junior.Route.Routing.RequestValueComparers;
 
 namespace Junior.Route.Routing.Restrictions
 {
 	[DebuggerDisplay("{DebuggerDisplay,nq}")]
-	public class UrlHostRestriction : IRouteRestriction, IEquatable<UrlHostRestriction>
+	public class UrlHostRestriction : IRestriction, IEquatable<UrlHostRestriction>
 	{
+		private readonly IRequestValueComparer _comparer;
 		private readonly string _host;
 
-		public UrlHostRestriction(string host)
+		public UrlHostRestriction(string host, IRequestValueComparer comparer)
 		{
 			host.ThrowIfNull("host");
+			comparer.ThrowIfNull("comparer");
 
 			_host = host;
+			_comparer = comparer;
 		}
 
 		public string Host
@@ -23,6 +27,14 @@ namespace Junior.Route.Routing.Restrictions
 			get
 			{
 				return _host;
+			}
+		}
+
+		public IRequestValueComparer Comparer
+		{
+			get
+			{
+				return _comparer;
 			}
 		}
 
@@ -46,14 +58,14 @@ namespace Junior.Route.Routing.Restrictions
 			{
 				return true;
 			}
-			return String.Equals(_host, other._host);
+			return String.Equals(_host, other._host) && Equals(_comparer, other._comparer);
 		}
 
 		public bool MatchesRequest(HttpRequestBase request)
 		{
 			request.ThrowIfNull("request");
 
-			return String.Equals(_host, request.UrlReferrer.Host, StringComparison.OrdinalIgnoreCase);
+			return String.Equals(_host, request.Url.Host, StringComparison.OrdinalIgnoreCase);
 		}
 
 		public override bool Equals(object obj)
@@ -75,7 +87,10 @@ namespace Junior.Route.Routing.Restrictions
 
 		public override int GetHashCode()
 		{
-			return (_host != null ? _host.GetHashCode() : 0);
+			unchecked
+			{
+				return ((_host != null ? _host.GetHashCode() : 0) * 397) ^ (_comparer != null ? _comparer.GetHashCode() : 0);
+			}
 		}
 	}
 }

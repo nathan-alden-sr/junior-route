@@ -27,11 +27,18 @@ namespace Junior.Route.AspNetIntegration.ResponseGenerators
 
 				if (bestMatches.Length > 1)
 				{
-					return ResponseResult.NonCachedResponse(Response.MultipleChoices());
+					return ResponseResult.ResponseGenerated(Response.MultipleChoices());
 				}
 				if (bestMatches.Length == 1)
 				{
 					RouteMatchResult bestMatch = bestMatches[0];
+					AuthenticateResult authenticateResult = bestMatch.Route.Authenticate(request);
+
+					if (authenticateResult.ResultType == AuthenticateResultType.AuthenticationFailed)
+					{
+						return ResponseResult.ResponseGenerated(authenticateResult.FailedResponse ?? Response.Unauthorized());
+					}
+
 					IResponse response = bestMatch.Route.ProcessResponse(request);
 
 					if (response == null)
@@ -39,11 +46,11 @@ namespace Junior.Route.AspNetIntegration.ResponseGenerators
 						throw new ApplicationException("A matching route was found but it returned a null response.");
 					}
 
-					return ResponseResult.CachedResponse(response, bestMatch.MatchResult.CacheKey);
+					return ResponseResult.ResponseGenerated(response, bestMatch.MatchResult.CacheKey);
 				}
 			}
 
-			return ResponseResult.NoResponse();
+			return ResponseResult.ResponseNotGenerated();
 		}
 	}
 }

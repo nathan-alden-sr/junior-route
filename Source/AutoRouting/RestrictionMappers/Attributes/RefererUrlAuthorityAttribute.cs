@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 
 using Junior.Common;
+using Junior.Route.AutoRouting.Containers;
 
 namespace Junior.Route.AutoRouting.RestrictionMappers.Attributes
 {
@@ -9,6 +10,7 @@ namespace Junior.Route.AutoRouting.RestrictionMappers.Attributes
 	public class RefererUrlAuthorityAttribute : RestrictionAttribute
 	{
 		private readonly IEnumerable<string> _authorities;
+		private readonly RequestValueComparer? _comparer;
 
 		public RefererUrlAuthorityAttribute(params string[] authorities)
 		{
@@ -17,11 +19,27 @@ namespace Junior.Route.AutoRouting.RestrictionMappers.Attributes
 			_authorities = authorities;
 		}
 
-		public override void Map(Routing.Route route)
+		public RefererUrlAuthorityAttribute(string authority, RequestValueComparer comparer)
+		{
+			authority.ThrowIfNull("host");
+
+			_comparer = comparer;
+			_authorities = authority.ToEnumerable();
+		}
+
+		public override void Map(Routing.Route route, IContainer container)
 		{
 			route.ThrowIfNull("route");
+			container.ThrowIfNull("container");
 
-			route.RestrictByRefererUrlAuthorities(_authorities);
+			if (_comparer != null)
+			{
+				route.RestrictByRefererUrlAuthorities(_authorities, GetComparer(_comparer.Value));
+			}
+			else
+			{
+				route.RestrictByRefererUrlAuthorities(_authorities);
+			}
 		}
 	}
 }

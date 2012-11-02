@@ -20,12 +20,12 @@ namespace Junior.Route.Assets.FileSystem
 		{
 			relativeDirectory.ThrowIfNull("relativeDirectory");
 			encoding.ThrowIfNull("encoding");
-			filter.ThrowIfNull("filter");
 
 			_relativeDirectory = relativeDirectory;
 			_encoding = encoding;
 			_searchPattern = searchPattern;
 			_searchOption = option;
+			_filter = filter;
 		}
 
 		public DirectoryAsset(string relativeDirectory, string searchPattern = "*.*", SearchOption option = SearchOption.AllDirectories, IFileFilter filter = null)
@@ -33,29 +33,9 @@ namespace Junior.Route.Assets.FileSystem
 			relativeDirectory.ThrowIfNull("relativeDirectory");
 
 			_relativeDirectory = relativeDirectory;
+			_searchPattern = searchPattern;
+			_searchOption = option;
 			_filter = filter;
-			_searchPattern = searchPattern;
-			_searchOption = option;
-		}
-
-		public DirectoryAsset(string relativeDirectory, Encoding encoding, string searchPattern = "*.*", SearchOption option = SearchOption.AllDirectories)
-		{
-			relativeDirectory.ThrowIfNull("relativeDirectory");
-			encoding.ThrowIfNull("encoding");
-
-			_relativeDirectory = relativeDirectory;
-			_encoding = encoding;
-			_searchPattern = searchPattern;
-			_searchOption = option;
-		}
-
-		public DirectoryAsset(string relativeDirectory, string searchPattern = "*.*", SearchOption option = SearchOption.AllDirectories)
-		{
-			relativeDirectory.ThrowIfNull("relativeDirectory");
-
-			_relativeDirectory = relativeDirectory;
-			_searchPattern = searchPattern;
-			_searchOption = option;
 		}
 
 		public string RelativePath
@@ -79,7 +59,7 @@ namespace Junior.Route.Assets.FileSystem
 			fileSystem.ThrowIfNull("fileSystem");
 
 			string directory = fileSystem.AbsolutePath(_relativeDirectory);
-			IEnumerable<string> paths = Directory.GetFiles(directory, _searchPattern, _searchOption);
+			string[] paths = fileSystem.GetDirectoryFiles(directory, _searchPattern, _searchOption);
 
 			return paths
 				.Where(arg => _filter == null || _filter.Filter(arg) == FilterResult.Include)

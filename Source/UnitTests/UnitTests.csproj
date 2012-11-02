@@ -34,6 +34,91 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="AspNetIntegration\ResponseHandlers\CacheableResponseHandlerTester.cs" />
+    <Compile Include="AspNetIntegration\ResponseHandlers\DescriptiveTextStatusCodeHandlerTester.cs" />
+    <Compile Include="AspNetIntegration\ResponseHandlers\DescriptiveHtmlStatusCodeHandlerTester.cs" />
+    <Compile Include="AspNetIntegration\ResponseGenerators\MostMatchingRestrictionsGeneratorTester.cs" />
+    <Compile Include="AspNetIntegration\ResponseGenerators\NotFoundGeneratorTester.cs" />
+    <Compile Include="AspNetIntegration\ResponseGenerators\ResponseResultTester.cs" />
+    <Compile Include="AspNetIntegration\ResponseGenerators\RouteMatchResultTester.cs" />
+    <Compile Include="AspNetIntegration\ResponseGenerators\UnmatchedRestrictionsGeneratorTester.cs" />
+    <Compile Include="AspNetIntegration\ResponseHandlers\NonCacheableResponseHandlerTester.cs" />
+    <Compile Include="AspNetIntegration\ResponseHandlers\ResponseHandlerResultTester.cs" />
+    <Compile Include="AspNetIntegration\UrlResolverTester.cs" />
+    <Compile Include="Assets\FileSystem\AssetFileTester.cs" />
+    <Compile Include="Assets\FileSystem\BundleContentsTester.cs" />
+    <Compile Include="Assets\FileSystem\BundleTester.cs" />
+    <Compile Include="Assets\FileSystem\BundleWatcherTester.cs" />
+    <Compile Include="Assets\FileSystem\FileAssetTester.cs" />
+    <Compile Include="Assets\FileSystem\DirectoryAssetTester.cs" />
+    <Compile Include="Assets\FileSystem\JavaScriptBundleWatcherRouteTester.cs" />
+    <Compile Include="Assets\FileSystem\CssBundleWatcherRouteTester.cs" />
+    <Compile Include="AutoRouting\IdMappers\IdResultTester.cs" />
+    <Compile Include="AutoRouting\NameMappers\Attributes\NameAttributeTester.cs" />
+    <Compile Include="AutoRouting\AuthenticationStrategies\AuthenticateAttributeStrategyTester.cs" />
+    <Compile Include="AutoRouting\AutoRouteCollectionTester.cs" />
+    <Compile Include="AutoRouting\ClassFilters\NameStartsWithFilterTester.cs" />
+    <Compile Include="AutoRouting\ClassFilters\NameMatchesRegexPatternFilterTester.cs" />
+    <Compile Include="AutoRouting\ClassFilters\DelegateFilterTester.cs" />
+    <Compile Include="AutoRouting\ClassFilters\DerivesFilterTester.cs" />
+    <Compile Include="AutoRouting\ClassFilters\HasNamespaceAncestorFilterTester.cs" />
+    <Compile Include="AutoRouting\ClassFilters\ImplementsInterfaceFilterTester.cs" />
+    <Compile Include="AutoRouting\ClassFilters\InNamespaceFilterTester.cs" />
+    <Compile Include="AutoRouting\ClassFilters\NameEndsWithFilterTester.cs" />
+    <Compile Include="AutoRouting\Containers\SingleInstancePerRouteEndpointContainerTester.cs" />
+    <Compile Include="AutoRouting\Containers\NewInstancePerRouteEndpointContainerTester.cs" />
+    <Compile Include="AutoRouting\FormsAuthentication\FormsAuthenticationHelperTester.cs" />
+    <Compile Include="AutoRouting\FormsAuthentication\FormsAuthenticationRequestContextTester.cs" />
+    <Compile Include="AutoRouting\IdMappers\Attributes\IdAttributeTester.cs" />
+    <Compile Include="AutoRouting\IdMappers\RandomIdMapperTester.cs" />
+    <Compile Include="AutoRouting\IdMappers\IdAttributeMapperTester.cs" />
+    <Compile Include="AutoRouting\MethodFilters\DelegateFilterTester.cs" />
+    <Compile Include="AutoRouting\NameMappers\NameAfterRelativeClassNamespaceAndClassNameMapperTester.cs" />
+    <Compile Include="AutoRouting\NameMappers\NameAfterRelativeClassNamespaceAndClassNameAndMethodNameMapperTester.cs" />
+    <Compile Include="AutoRouting\NameMappers\NameAttributeMapperTester.cs" />
+    <Compile Include="AutoRouting\NameMappers\NameResultTester.cs" />
+    <Compile Include="AutoRouting\ParameterMappers\MapResultTester.cs" />
+    <Compile Include="AutoRouting\ParameterMappers\ModelMapperTester.cs" />
+    <Compile Include="AutoRouting\ParameterMappers\JsonModelMapperTester.cs" />
+    <Compile Include="AutoRouting\ParameterMappers\QueryStringToIConvertibleMapperTester.cs" />
+    <Compile Include="AutoRouting\ParameterMappers\DefaultValueMapperTester.cs" />
+    <Compile Include="AutoRouting\ParameterMappers\FormToIConvertibleMapperTester.cs" />
+    <Compile Include="AutoRouting\ParameterMappers\ModelPropertyMappers\QueryStringToIConvertibleMapperTester.cs" />
+    <Compile Include="AutoRouting\ParameterMappers\ModelPropertyMappers\DefaultValueMapperTester.cs" />
+    <Compile Include="AutoRouting\ParameterMappers\ModelPropertyMappers\FormToIConvertibleMapperTester.cs" />
+    <Compile Include="AutoRouting\ResolvedRelativeUrlMappers\Attributes\ResolvedRelativeUrlAttributeTester.cs" />
+    <Compile Include="AutoRouting\ResolvedRelativeUrlMappers\ResolvedRelativeUrlAttributeMapperTester.cs" />
+    <Compile Include="AutoRouting\ResolvedRelativeUrlMappers\ResolvedRelativeUrlFromRelativeClassNamespaceAndClassNameMapperTester.cs" />
+    <Compile Include="AutoRouting\ResolvedRelativeUrlMappers\ResolvedRelativeUrlResultTester.cs" />
+    <Compile Include="AutoRouting\ResponseMappers\NoContentMapperTester.cs" />
+    <Compile Include="AutoRouting\ResponseMappers\ParameterValueRetrieverTester.cs" />
+    <Compile Include="AutoRouting\ResponseMappers\ResponseMethodReturnTypeMapperTester.cs" />
+    <Compile Include="AutoRouting\RestrictionMappers\Attributes\CookieAttributeTester.cs" />
+    <Compile Include="AutoRouting\RestrictionMappers\Attributes\UrlAuthorityAttributeTester.cs" />
+    <Compile Include="AutoRouting\RestrictionMappers\Attributes\UrlFragmentAttributeTester.cs" />
+    <Compile Include="AutoRouting\RestrictionMappers\Attributes\UrlHostAttributeTester.cs" />
+    <Compile Include="AutoRouting\RestrictionMappers\Attributes\UrlHostTypeAttributeTester.cs" />
+    <Compile Include="AutoRouting\RestrictionMappers\Attributes\UrlPortAttributeTester.cs" />
+    <Compile Include="AutoRouting\RestrictionMappers\Attributes\UrlQueryAttributeTester.cs" />
+    <Compile Include="AutoRouting\RestrictionMappers\Attributes\UrlQueryStringAttributeTester.cs" />
+    <Compile Include="AutoRouting\RestrictionMappers\Attributes\UrlSchemeAttributeTester.cs" />
+    <Compile Include="AutoRouting\RestrictionMappers\Attributes\RefererUrlPathAndQueryAttributeTester.cs" />
+    <Compile Include="AutoRouting\RestrictionMappers\Attributes\UrlRelativePathAttributeTester.cs" />
+    <Compile Include="AutoRouting\RestrictionMappers\Attributes\RefererUrlSchemeAttributeTester.cs" />
+    <Compile Include="AutoRouting\RestrictionMappers\Attributes\RefererUrlQueryStringAttributeTester.cs" />
+    <Compile Include="AutoRouting\RestrictionMappers\Attributes\RefererUrlQueryAttributeTester.cs" />
+    <Compile Include="AutoRouting\RestrictionMappers\Attributes\RefererUrlPortAttributeTester.cs" />
+    <Compile Include="AutoRouting\RestrictionMappers\Attributes\RefererUrlHostTypeAttributeTester.cs" />
+    <Compile Include="AutoRouting\RestrictionMappers\Attributes\RefererUrlHostAttributeTester.cs" />
+    <Compile Include="AutoRouting\RestrictionMappers\Attributes\RefererUrlFragmentAttributeTester.cs" />
+    <Compile Include="AutoRouting\RestrictionMappers\Attributes\RefererUrlAuthorityAttributeTester.cs" />
+    <Compile Include="AutoRouting\RestrictionMappers\Attributes\RefererUrlAbsolutePathAttributeTester.cs" />
+    <Compile Include="AutoRouting\RestrictionMappers\Attributes\MethodAttributeTester.cs" />
+    <Compile Include="AutoRouting\RestrictionMappers\Attributes\HeaderAttributeTester.cs" />
+    <Compile Include="AutoRouting\RestrictionMappers\HttpMethodFromMethodsNamedAfterStandardHttpMethodsMapperTester.cs" />
+    <Compile Include="AutoRouting\RestrictionMappers\RelativeUrlFromRelativeClassNamespaceAndClassNameMapperTester.cs" />
+    <Compile Include="AutoRouting\TypeExtensionsTester.cs" />
+    <Compile Include="Common\HashSetExtensionsTester.cs" />
     <Compile Include="Http\RequestHeaders\CacheControlHeaderTester.cs" />
     <Compile Include="Http\RequestHeaders\ConnectionHeaderTester.cs" />
     <Compile Include="Http\RequestHeaders\ContentEncodingHeaderTester.cs" />
@@ -73,16 +158,70 @@
     <Compile Include="Http\RequestHeaders\BasicAuthorizationHeaderTester.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Http\RequestHeaders\AcceptHeaderTester.cs" />
+    <Compile Include="Routing\AuthenticateResultTester.cs" />
+    <Compile Include="Routing\AuthenticationProviders\FormsAuthenticationProviderTester.cs" />
+    <Compile Include="Routing\Caching\CacheItemTester.cs" />
+    <Compile Include="Routing\Caching\CachePolicyTester.cs" />
+    <Compile Include="Routing\Caching\CacheResponseTester.cs" />
+    <Compile Include="Routing\MatchResultTester.cs" />
+    <Compile Include="Routing\RequestValueComparers\CaseInsensitivePlainRequestValueComparerTester.cs" />
+    <Compile Include="Routing\RequestValueComparers\CaseSensitivePlainRequestValueComparerTester.cs" />
+    <Compile Include="Routing\RequestValueComparers\CaseInsensitiveRegexRequestValueComparerTester.cs" />
+    <Compile Include="Routing\RequestValueComparers\CaseSensitiveRegexRequestValueComparerTester.cs" />
+    <Compile Include="Routing\Responses\CookieTester.cs" />
+    <Compile Include="Routing\Responses\CookieValueTester.cs" />
+    <Compile Include="Routing\Responses\XmlNodeExtensionsTester.cs" />
+    <Compile Include="Routing\Responses\HeaderTester.cs" />
+    <Compile Include="Routing\Responses\ImmutableResponseTester.cs" />
+    <Compile Include="Routing\Responses\ResponseTester.cs" />
+    <Compile Include="Routing\Responses\StatusAndSubStatusCodeTester.cs" />
+    <Compile Include="Routing\Responses\XNodeExtensionsTester.cs" />
+    <Compile Include="Routing\Restrictions\CookieRestrictionTester.cs" />
+    <Compile Include="Routing\Restrictions\UrlSchemeRestrictionTester.cs" />
+    <Compile Include="Routing\Restrictions\RefererUrlSchemeRestrictionTester.cs" />
+    <Compile Include="Routing\Restrictions\MissingHeaderRestrictionTester.cs" />
+    <Compile Include="Routing\Restrictions\UrlAuthorityRestrictionTester.cs" />
+    <Compile Include="Routing\Restrictions\UrlFragmentRestrictionTester.cs" />
+    <Compile Include="Routing\Restrictions\UrlHostRestrictionTester.cs" />
+    <Compile Include="Routing\Restrictions\UrlHostTypeRestrictionTester.cs" />
+    <Compile Include="Routing\Restrictions\UrlPortRestrictionTester.cs" />
+    <Compile Include="Routing\Restrictions\UrlQueryStringTester.cs" />
+    <Compile Include="Routing\Restrictions\UrlQueryTester.cs" />
+    <Compile Include="Routing\Restrictions\UrlRestrictionTester.cs" />
+    <Compile Include="Routing\Restrictions\UrlRelativePathRestrictionTester.cs" />
+    <Compile Include="Routing\Restrictions\RefererUrlRestrictionTester.cs" />
+    <Compile Include="Routing\Restrictions\RefererUrlQueryStringTester.cs" />
+    <Compile Include="Routing\Restrictions\RefererUrlQueryTester.cs" />
+    <Compile Include="Routing\Restrictions\RefererUrlPortRestrictionTester.cs" />
+    <Compile Include="Routing\Restrictions\RefererUrlPathAndQueryTester.cs" />
+    <Compile Include="Routing\Restrictions\RefererUrlHostTypeRestrictionTester.cs" />
+    <Compile Include="Routing\Restrictions\RefererUrlHostRestrictionTester.cs" />
+    <Compile Include="Routing\Restrictions\RefererUrlFragmentRestrictionTester.cs" />
+    <Compile Include="Routing\Restrictions\RefererUrlAuthorityRestrictionTester.cs" />
+    <Compile Include="Routing\Restrictions\RefererUrlAbsolutePathRestrictionTester.cs" />
+    <Compile Include="Routing\Restrictions\MethodRestrictionTester.cs" />
+    <Compile Include="Routing\Restrictions\HeaderRestrictionTester.cs" />
+    <Compile Include="Routing\RouteCollectionTester.cs" />
+    <Compile Include="Routing\RouteTester.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Junior.Common, Version=1.0.7.0, Culture=neutral, PublicKeyToken=998713eb9a0cce30, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\JuniorCommon.1.0.7\lib\net40\Junior.Common.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.4.5.10\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\packages\NUnit.2.6.1\lib\nunit.framework.dll</HintPath>
     </Reference>
+    <Reference Include="Rhino.Mocks">
+      <HintPath>..\packages\RhinoMocks.3.6.1\lib\net\Rhino.Mocks.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
@@ -90,11 +229,32 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AspNetIntegration\AspNetIntegration.csproj">
+      <Project>{5e6fa072-c7aa-48ae-bfbd-f93248f9465c}</Project>
+      <Name>AspNetIntegration</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Assets\Assets.csproj">
+      <Project>{43e62eb8-d0fb-47ca-8c73-c4958729e783}</Project>
+      <Name>Assets</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AutoRouting\AutoRouting.csproj">
+      <Project>{FE827A72-7C6D-4AB5-830F-D14E18669F28}</Project>
+      <Name>AutoRouting</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{E4F62289-63E4-4627-BC71-DE5CBA00323F}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Http\Http.csproj">
       <Project>{3898f8d9-95fb-4f35-a096-c72b137e3a77}</Project>
       <Name>Http</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Routing\Routing.csproj">
+      <Project>{c584f305-4ee6-41b8-8248-e9bf5d96ca6b}</Project>
+      <Name>Routing</Name>
+    </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

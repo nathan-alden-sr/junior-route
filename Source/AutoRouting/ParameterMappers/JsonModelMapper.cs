@@ -29,7 +29,7 @@ namespace Junior.Route.AutoRouting.ParameterMappers
 		}
 
 		public JsonModelMapper(Func<Type, bool> parameterTypeMatchDelegate, DataConversionErrorHandling errorHandling = DataConversionErrorHandling.UseDefaultValue)
-			: this(parameterTypeMatchDelegate, new JsonSerializerSettings { DateFormatHandling = DateFormatHandling.IsoDateFormat })
+			: this(parameterTypeMatchDelegate, new JsonSerializerSettings { DateFormatHandling = DateFormatHandling.IsoDateFormat }, errorHandling)
 		{
 		}
 
@@ -39,7 +39,7 @@ namespace Junior.Route.AutoRouting.ParameterMappers
 		}
 
 		public JsonModelMapper(DataConversionErrorHandling errorHandling = DataConversionErrorHandling.UseDefaultValue)
-			: this(type => type.Name.EndsWith("Model"), new JsonSerializerSettings { DateFormatHandling = DateFormatHandling.IsoDateFormat })
+			: this(type => type.Name.EndsWith("Model"), new JsonSerializerSettings { DateFormatHandling = DateFormatHandling.IsoDateFormat }, errorHandling)
 		{
 		}
 
@@ -48,7 +48,7 @@ namespace Junior.Route.AutoRouting.ParameterMappers
 			request.ThrowIfNull("request");
 			parameterType.ThrowIfNull("parameterType");
 
-			return request.Headers["Content-Type"] == "application/json" && _parameterTypeMatchDelegate(parameterType);
+			return request.ContentType == "application/json" && _parameterTypeMatchDelegate(parameterType);
 		}
 
 		public MapResult Map(HttpRequestBase request, Type type, MethodInfo method, ParameterInfo parameter)

@@ -3,19 +3,23 @@ using System.Diagnostics;
 using System.Web;
 
 using Junior.Common;
+using Junior.Route.Routing.RequestValueComparers;
 
 namespace Junior.Route.Routing.Restrictions
 {
 	[DebuggerDisplay("{DebuggerDisplay,nq}")]
-	public class RefererUrlSchemeRestriction : IRouteRestriction, IEquatable<RefererUrlSchemeRestriction>
+	public class RefererUrlSchemeRestriction : IRestriction, IEquatable<RefererUrlSchemeRestriction>
 	{
+		private readonly IRequestValueComparer _comparer;
 		private readonly string _scheme;
 
-		public RefererUrlSchemeRestriction(string scheme)
+		public RefererUrlSchemeRestriction(string scheme, IRequestValueComparer comparer)
 		{
 			scheme.ThrowIfNull("scheme");
+			comparer.ThrowIfNull("comparer");
 
 			_scheme = scheme;
+			_comparer = comparer;
 		}
 
 		public string Scheme
@@ -23,6 +27,14 @@ namespace Junior.Route.Routing.Restrictions
 			get
 			{
 				return _scheme;
+			}
+		}
+
+		public IRequestValueComparer Comparer
+		{
+			get
+			{
+				return _comparer;
 			}
 		}
 
@@ -46,14 +58,14 @@ namespace Junior.Route.Routing.Restrictions
 			{
 				return true;
 			}
-			return String.Equals(_scheme, other._scheme);
+			return String.Equals(_scheme, other._scheme) && Equals(_comparer, other._comparer);
 		}
 
 		public bool MatchesRequest(HttpRequestBase request)
 		{
 			request.ThrowIfNull("request");
 
-			return String.Equals(_scheme, request.UrlReferrer.Scheme);
+			return _comparer.Matches(_scheme, request.UrlReferrer.Scheme);
 		}
 
 		public override bool Equals(object obj)
@@ -75,7 +87,10 @@ namespace Junior.Route.Routing.Restrictions
 
 		public override int GetHashCode()
 		{
-			return (_scheme != null ? _scheme.GetHashCode() : 0);
+			unchecked
+			{
+				return ((_scheme != null ? _scheme.GetHashCode() : 0) * 397) ^ (_comparer != null ? _comparer.GetHashCode() : 0);
+			}
 		}
 	}
 }

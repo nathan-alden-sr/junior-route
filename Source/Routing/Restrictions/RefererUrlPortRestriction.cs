@@ -8,7 +8,7 @@ using Junior.Common;
 namespace Junior.Route.Routing.Restrictions
 {
 	[DebuggerDisplay("{DebuggerDisplay,nq}")]
-	public class RefererUrlPortRestriction : IRouteRestriction, IEquatable<RefererUrlPortRestriction>
+	public class RefererUrlPortRestriction : IRestriction, IEquatable<RefererUrlPortRestriction>
 	{
 		private readonly ushort _port;
 

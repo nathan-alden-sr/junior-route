@@ -13,7 +13,7 @@ namespace Junior.Route.AspNetIntegration.ResponseGenerators
 			request.ThrowIfNull("request");
 			routeMatchResults.ThrowIfNull("routeMatchResults");
 
-			return ResponseResult.NonCachedResponse(Response.NotFound());
+			return ResponseResult.ResponseGenerated(Response.NotFound());
 		}
 	}
 }

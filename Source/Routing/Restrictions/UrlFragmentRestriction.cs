@@ -8,7 +8,7 @@ using Junior.Route.Routing.RequestValueComparers;
 namespace Junior.Route.Routing.Restrictions
 {
 	[DebuggerDisplay("{DebuggerDisplay,nq}")]
-	public class UrlFragmentRestriction : IRouteRestriction, IEquatable<UrlFragmentRestriction>
+	public class UrlFragmentRestriction : IRestriction, IEquatable<UrlFragmentRestriction>
 	{
 		private readonly IRequestValueComparer _comparer;
 		private readonly string _fragment;

@@ -48,22 +48,22 @@ namespace Junior.Route.Routing.Responses.Application
 		}
 
 		public AtomResponse(XmlNode content, Action<Response> configurationDelegate = null)
-			: base(Response.OK().ApplicationAtom().Content(content.GetString()))
+			: base(Response.OK().ApplicationAtom().Content(content.GetString()), configurationDelegate)
 		{
 		}
 
 		public AtomResponse(XmlNode content, Encoding encoding, Action<Response> configurationDelegate = null)
-			: base(Response.OK().ApplicationAtom().ContentEncoding(encoding).Content(content.GetBytes(encoding)))
+			: base(Response.OK().ApplicationAtom().ContentEncoding(encoding).Content(content.GetBytes(encoding)), configurationDelegate)
 		{
 		}
 
 		public AtomResponse(XNode content, Action<Response> configurationDelegate = null)
-			: base(Response.OK().ApplicationAtom().Content(content.GetString()))
+			: base(Response.OK().ApplicationAtom().Content(content.GetString()), configurationDelegate)
 		{
 		}
 
 		public AtomResponse(XNode content, Encoding encoding, Action<Response> configurationDelegate = null)
-			: base(Response.OK().ApplicationAtom().ContentEncoding(encoding).Content(content.GetBytes(encoding)))
+			: base(Response.OK().ApplicationAtom().ContentEncoding(encoding).Content(content.GetBytes(encoding)), configurationDelegate)
 		{
 		}
 	}

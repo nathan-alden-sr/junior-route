@@ -8,15 +8,15 @@ namespace Junior.Route.Routing
 	public class MatchResult
 	{
 		private readonly string _cacheKey;
-		private readonly IEnumerable<IRouteRestriction> _matchedRestrictions;
+		private readonly HashSet<IRestriction> _matchedRestrictions;
 		private readonly MatchResultType _resultType;
-		private readonly IEnumerable<IRouteRestriction> _unmatchedRestrictions;
+		private readonly HashSet<IRestriction> _unmatchedRestrictions;
 
-		private MatchResult(MatchResultType resultType, IEnumerable<IRouteRestriction> matchedRestrictions, IEnumerable<IRouteRestriction> unmatchedRestrictions, string cacheKey)
+		private MatchResult(MatchResultType resultType, IEnumerable<IRestriction> matchedRestrictions, IEnumerable<IRestriction> unmatchedRestrictions, string cacheKey)
 		{
 			_resultType = resultType;
-			_matchedRestrictions = matchedRestrictions;
-			_unmatchedRestrictions = unmatchedRestrictions;
+			_matchedRestrictions = matchedRestrictions.IfNotNull(arg => new HashSet<IRestriction>(arg));
+			_unmatchedRestrictions = unmatchedRestrictions.IfNotNull(arg => new HashSet<IRestriction>(arg));
 			_cacheKey = cacheKey;
 		}
 
@@ -28,7 +28,7 @@ namespace Junior.Route.Routing
 			}
 		}
 
-		public IEnumerable<IRouteRestriction> MatchedRestrictions
+		public IEnumerable<IRestriction> MatchedRestrictions
 		{
 			get
 			{
@@ -36,7 +36,7 @@ namespace Junior.Route.Routing
 			}
 		}
 
-		public IEnumerable<IRouteRestriction> UnmatchedRestrictions
+		public IEnumerable<IRestriction> UnmatchedRestrictions
 		{
 			get
 			{
@@ -52,7 +52,7 @@ namespace Junior.Route.Routing
 			}
 		}
 
-		public static MatchResult RouteMatched(IEnumerable<IRouteRestriction> matchedRestrictions, string cacheKey)
+		public static MatchResult RouteMatched(IEnumerable<IRestriction> matchedRestrictions, string cacheKey)
 		{
 			matchedRestrictions.ThrowIfNull("matchedRestrictions");
 			cacheKey.ThrowIfNull("cacheKey");
@@ -60,7 +60,7 @@ namespace Junior.Route.Routing
 			return new MatchResult(MatchResultType.RouteMatched, matchedRestrictions, null, cacheKey);
 		}
 
-		public static MatchResult RouteNotMatched(IEnumerable<IRouteRestriction> matchedRestrictions, IEnumerable<IRouteRestriction> unmatchedRestrictions)
+		public static MatchResult RouteNotMatched(IEnumerable<IRestriction> matchedRestrictions, IEnumerable<IRestriction> unmatchedRestrictions)
 		{
 			matchedRestrictions.ThrowIfNull("matchedRestrictions");
 			unmatchedRestrictions.ThrowIfNull("unmatchedRestrictions");

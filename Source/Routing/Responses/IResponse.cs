@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Net;
 using System.Text;
 
 using Junior.Route.Routing.Caching;
@@ -8,15 +7,7 @@ namespace Junior.Route.Routing.Responses
 {
 	public interface IResponse
 	{
-		int StatusCode
-		{
-			get;
-		}
-		HttpStatusCode? ParsedStatusCode
-		{
-			get;
-		}
-		int SubStatusCode
+		StatusAndSubStatusCode StatusCode
 		{
 			get;
 		}

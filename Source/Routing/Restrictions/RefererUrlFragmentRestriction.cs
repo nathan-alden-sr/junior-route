@@ -8,7 +8,7 @@ using Junior.Route.Routing.RequestValueComparers;
 namespace Junior.Route.Routing.Restrictions
 {
 	[DebuggerDisplay("{DebuggerDisplay,nq}")]
-	public class RefererUrlFragmentRestriction : IRouteRestriction, IEquatable<RefererUrlFragmentRestriction>
+	public class RefererUrlFragmentRestriction : IRestriction, IEquatable<RefererUrlFragmentRestriction>
 	{
 		private readonly IRequestValueComparer _comparer;
 		private readonly string _fragment;
@@ -65,7 +65,7 @@ namespace Junior.Route.Routing.Restrictions
 		{
 			request.ThrowIfNull("request");
 
-			return _comparer.Matches(_fragment, request.Url.Fragment);
+			return _comparer.Matches(_fragment, request.UrlReferrer.Fragment);
 		}
 
 		public override bool Equals(object obj)

@@ -36,9 +36,7 @@
     </Compile>
     <Compile Include="HashSetExtensions.cs" />
     <Compile Include="IFileSystem.cs" />
-    <Compile Include="RequestContext.cs" />
     <Compile Include="IUrlResolver.cs" />
-    <Compile Include="IRequestContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

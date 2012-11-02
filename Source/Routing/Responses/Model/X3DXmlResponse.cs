@@ -48,22 +48,22 @@ namespace Junior.Route.Routing.Responses.Model
 		}
 
 		public X3DXmlResponse(XmlNode content, Action<Response> configurationDelegate = null)
-			: base(Response.OK().ModelX3DXml().Content(content.GetString()))
+			: base(Response.OK().ModelX3DXml().Content(content.GetString()), configurationDelegate)
 		{
 		}
 
 		public X3DXmlResponse(XmlNode content, Encoding encoding, Action<Response> configurationDelegate = null)
-			: base(Response.OK().ModelX3DXml().ContentEncoding(encoding).Content(content.GetBytes(encoding)))
+			: base(Response.OK().ModelX3DXml().ContentEncoding(encoding).Content(content.GetBytes(encoding)), configurationDelegate)
 		{
 		}
 
 		public X3DXmlResponse(XNode content, Action<Response> configurationDelegate = null)
-			: base(Response.OK().ModelX3DXml().Content(content.GetString()))
+			: base(Response.OK().ModelX3DXml().Content(content.GetString()), configurationDelegate)
 		{
 		}
 
 		public X3DXmlResponse(XNode content, Encoding encoding, Action<Response> configurationDelegate = null)
-			: base(Response.OK().ModelX3DXml().ContentEncoding(encoding).Content(content.GetBytes(encoding)))
+			: base(Response.OK().ModelX3DXml().ContentEncoding(encoding).Content(content.GetBytes(encoding)), configurationDelegate)
 		{
 		}
 	}

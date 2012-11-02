@@ -1,6 +1,7 @@
 ﻿using System;
 
 using Junior.Common;
+using Junior.Route.AutoRouting.Containers;
 
 namespace Junior.Route.AutoRouting.RestrictionMappers.Attributes
 {
@@ -32,9 +33,10 @@ namespace Junior.Route.AutoRouting.RestrictionMappers.Attributes
 			_valueComparer = valueComparer;
 		}
 
-		public override void Map(Routing.Route route)
+		public override void Map(Routing.Route route, IContainer container)
 		{
 			route.ThrowIfNull("route");
+			container.ThrowIfNull("container");
 
 			if (_fieldComparer != null && _valueComparer != null)
 			{

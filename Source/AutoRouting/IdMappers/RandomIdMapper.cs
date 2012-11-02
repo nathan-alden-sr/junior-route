@@ -16,7 +16,7 @@ namespace Junior.Route.AutoRouting.IdMappers
 			_guidFactory = guidFactory;
 		}
 
-		public IdResult Id(Type type, MethodInfo method)
+		public IdResult Map(Type type, MethodInfo method)
 		{
 			type.ThrowIfNull("type");
 			method.ThrowIfNull("method");

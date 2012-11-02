@@ -17,6 +17,13 @@ namespace Junior.Route.AutoRouting.ResponseMappers
 		{
 			parameterMappers.ThrowIfNull("parameterMappers");
 
+			parameterMappers = parameterMappers.ToArray();
+
+			if (!parameterMappers.Any())
+			{
+				throw new ArgumentException("Must provide at least 1 parameter mapper.", "parameterMappers");
+			}
+
 			_parameterMappers = parameterMappers;
 		}
 
@@ -27,7 +34,7 @@ namespace Junior.Route.AutoRouting.ResponseMappers
 			method.ThrowIfNull("method");
 
 			ParameterInfo[] parameterInfos = method.GetParameters();
-			var parameterValues = new HashSet<object>();
+			var parameterValues = new List<object>();
 
 			foreach (ParameterInfo parameterInfo in parameterInfos)
 			{

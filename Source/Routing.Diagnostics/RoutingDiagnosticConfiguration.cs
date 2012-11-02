@@ -38,7 +38,7 @@ namespace Junior.Route.Routing.Diagnostics
 			}
 		}
 
-		public IEnumerable<Route> GetRoutes(IGuidFactory guidFactory, IUrlResolver urlResolver, string diagnosticsRelativeUrl)
+		public IEnumerable<Route> GetRoutes(IGuidFactory guidFactory, IUrlResolver urlResolver, IHttpRuntime httpRuntime, string diagnosticsRelativeUrl)
 		{
 			guidFactory.ThrowIfNull("guidFactory");
 			urlResolver.ThrowIfNull("urlResolver");
@@ -50,8 +50,9 @@ namespace Junior.Route.Routing.Diagnostics
 				diagnosticsRelativeUrl + "/route_table",
 				ResponseResources.RouteTable,
 				RouteTableViewNamespaces,
+				httpRuntime,
 				view => view.Populate(urlResolver, _routes, diagnosticsRelativeUrl));
-			yield return DiagnosticRouteHelper.Instance.GetStylesheetRoute("Diagnostics Route Table View CSS", guidFactory, diagnosticsRelativeUrl + "/route_table/css", ResponseResources.route_table_view);
+			yield return DiagnosticRouteHelper.Instance.GetStylesheetRoute("Diagnostics Route Table View CSS", guidFactory, diagnosticsRelativeUrl + "/route_table/css", ResponseResources.route_table_view, httpRuntime);
 		}
 
 		public IEnumerable<DiagnosticViewLink> GetLinks(string diagnosticsRelativeUrl, string heading)

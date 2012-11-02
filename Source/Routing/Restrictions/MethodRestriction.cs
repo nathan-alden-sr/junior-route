@@ -7,7 +7,7 @@ using Junior.Common;
 namespace Junior.Route.Routing.Restrictions
 {
 	[DebuggerDisplay("{DebuggerDisplay,nq}")]
-	public class MethodRestriction : IRouteRestriction, IEquatable<MethodRestriction>
+	public class MethodRestriction : IRestriction, IEquatable<MethodRestriction>
 	{
 		private readonly string _method;
 

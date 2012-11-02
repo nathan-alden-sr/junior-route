@@ -48,22 +48,22 @@ namespace Junior.Route.Routing.Responses.Message
 		}
 
 		public ImdnResponse(XmlNode content, Action<Response> configurationDelegate = null)
-			: base(Response.OK().MessageImdn().Content(content.GetString()))
+			: base(Response.OK().MessageImdn().Content(content.GetString()), configurationDelegate)
 		{
 		}
 
 		public ImdnResponse(XmlNode content, Encoding encoding, Action<Response> configurationDelegate = null)
-			: base(Response.OK().MessageImdn().ContentEncoding(encoding).Content(content.GetBytes(encoding)))
+			: base(Response.OK().MessageImdn().ContentEncoding(encoding).Content(content.GetBytes(encoding)), configurationDelegate)
 		{
 		}
 
 		public ImdnResponse(XNode content, Action<Response> configurationDelegate = null)
-			: base(Response.OK().MessageImdn().Content(content.GetString()))
+			: base(Response.OK().MessageImdn().Content(content.GetString()), configurationDelegate)
 		{
 		}
 
 		public ImdnResponse(XNode content, Encoding encoding, Action<Response> configurationDelegate = null)
-			: base(Response.OK().MessageImdn().ContentEncoding(encoding).Content(content.GetBytes(encoding)))
+			: base(Response.OK().MessageImdn().ContentEncoding(encoding).Content(content.GetBytes(encoding)), configurationDelegate)
 		{
 		}
 	}

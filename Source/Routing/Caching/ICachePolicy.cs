@@ -5,6 +5,10 @@ namespace Junior.Route.Routing.Caching
 {
 	public interface ICachePolicy
 	{
+		bool HasPolicy
+		{
+			get;
+		}
 		bool AllowsServerCaching
 		{
 			get;

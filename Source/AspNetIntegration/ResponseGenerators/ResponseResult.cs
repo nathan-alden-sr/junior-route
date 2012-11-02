@@ -1,5 +1,4 @@
-﻿using Junior.Common;
-using Junior.Route.Routing.Responses;
+﻿using Junior.Route.Routing.Responses;
 
 namespace Junior.Route.AspNetIntegration.ResponseGenerators
 {
@@ -40,21 +39,14 @@ namespace Junior.Route.AspNetIntegration.ResponseGenerators
 			}
 		}
 
-		public static ResponseResult CachedResponse(IResponse response, string cacheKey)
+		public static ResponseResult ResponseGenerated(IResponse response, string cacheKey = null)
 		{
-			cacheKey.ThrowIfNull("cacheKey");
-
-			return new ResponseResult(ResponseResultType.CachedResponse, response, cacheKey);
+			return new ResponseResult(ResponseResultType.ResponseGenerated, response, cacheKey);
 		}
 
-		public static ResponseResult NonCachedResponse(IResponse response)
+		public static ResponseResult ResponseNotGenerated()
 		{
-			return new ResponseResult(ResponseResultType.NonCachedResponse, response, null);
-		}
-
-		public static ResponseResult NoResponse()
-		{
-			return new ResponseResult(ResponseResultType.NoResponse, null, null);
+			return new ResponseResult(ResponseResultType.ResponseNotGenerated, null, null);
 		}
 	}
 }

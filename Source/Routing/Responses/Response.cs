@@ -16,29 +16,30 @@ namespace Junior.Route.Routing.Responses
 	{
 		private static readonly Encoding _defaultContentEncoding = Encoding.UTF8;
 		private static readonly Encoding _defaultHeaderEncoding = Encoding.UTF8;
+		private readonly CachePolicy _cachePolicy = new CachePolicy();
 		private readonly HashSet<Cookie> _cookies = new HashSet<Cookie>();
 		private readonly HashSet<Header> _headers = new HashSet<Header>();
-		private readonly int _statusCode;
-		private readonly int _subStatusCode;
+		private readonly StatusAndSubStatusCode _statusCode;
 		private Func<byte[]> _binaryContent;
-		private CachePolicy _cachePolicy;
 		private string _charset;
 		private Encoding _contentEncoding = _defaultContentEncoding;
 		private string _contentType;
 		private Encoding _headerEncoding = _defaultHeaderEncoding;
 		private Func<string> _stringContent;
 
-		public Response(HttpStatusCode statusCode, int subStatusCode = 0)
+		public Response(StatusAndSubStatusCode statusCode)
 		{
-			_statusCode = (int)statusCode;
-			_subStatusCode = subStatusCode;
-			_contentEncoding = _defaultContentEncoding;
+			_statusCode = statusCode;
 		}
 
 		public Response(int statusCode, int subStatusCode = 0)
+			: this(new StatusAndSubStatusCode(statusCode, subStatusCode))
 		{
-			_statusCode = statusCode;
-			_subStatusCode = subStatusCode;
+		}
+
+		public Response(HttpStatusCode statusCode, int subStatusCode = 0)
+			: this(new StatusAndSubStatusCode(statusCode, subStatusCode))
+		{
 		}
 
 		// ReSharper disable UnusedMember.Local
@@ -47,37 +48,38 @@ namespace Junior.Route.Routing.Responses
 		{
 			get
 			{
-				return String.Format(
-					"{0}{1} {2}{3}{4}",
-					_statusCode,
-					_subStatusCode > 0 ? "." + _subStatusCode : "",
-					HttpWorkerRequest.GetStatusDescription(_statusCode),
-					_contentType.IfNotNull(arg => ", " + arg) ?? "",
-					_contentEncoding.IfNotNull(arg => ", " + arg.EncodingName) ?? "");
+				var parameters = new List<string>();
+
+				if (_statusCode.StatusDescription.Length > 0)
+				{
+					parameters.Add(_statusCode.StatusDescription);
+				}
+				if (_contentType != null)
+				{
+					parameters.Add(_contentType);
+				}
+				if (_contentEncoding != null)
+				{
+					parameters.Add(_contentEncoding.EncodingName);
+				}
+
+				return String.Format("{0}{1} {2}", _statusCode.StatusCode, _statusCode.SubStatusCode == 0 ? "" : "." + _statusCode.SubStatusCode, String.Join(", ", parameters));
 			}
 		}
 
-		int IResponse.StatusCode
+		public CachePolicy CachePolicy
+		{
+			get
+			{
+				return _cachePolicy;
+			}
+		}
+
+		StatusAndSubStatusCode IResponse.StatusCode
 		{
 			get
 			{
 				return _statusCode;
-			}
-		}
-
-		HttpStatusCode? IResponse.ParsedStatusCode
-		{
-			get
-			{
-				return Enum<HttpStatusCode>.IsDefined(_statusCode) ? (HttpStatusCode?)_statusCode : null;
-			}
-		}
-
-		int IResponse.SubStatusCode
-		{
-			get
-			{
-				return _subStatusCode;
 			}
 		}
 
@@ -168,7 +170,7 @@ namespace Junior.Route.Routing.Responses
 			return this;
 		}
 
-		public Response Charset()
+		public Response NoCharset()
 		{
 			_charset = null;
 
@@ -291,114 +293,6 @@ namespace Junior.Route.Routing.Responses
 			return this;
 		}
 
-		#region Caching
-
-		public CachePolicy CacheInPublicClientCacheAndServerCache(DateTime expires)
-		{
-			_cachePolicy = new CachePolicy()
-				.PublicClientCaching(expires)
-				.ServerCaching();
-
-			return _cachePolicy;
-		}
-
-		public CachePolicy CacheInPublicClientCacheAndServerCache(TimeSpan maxAge)
-		{
-			_cachePolicy = new CachePolicy()
-				.PublicClientCaching(maxAge)
-				.ServerCaching();
-
-			return _cachePolicy;
-		}
-
-		public CachePolicy CacheInPublicClientCacheOnly(DateTime expires)
-		{
-			_cachePolicy = new CachePolicy()
-				.PublicClientCaching(expires);
-
-			return _cachePolicy;
-		}
-
-		public CachePolicy CacheInPublicClientCacheOnly(TimeSpan maxAge)
-		{
-			_cachePolicy = new CachePolicy()
-				.PublicClientCaching(maxAge);
-
-			return _cachePolicy;
-		}
-
-		public CachePolicy CacheInPrivateClientCacheAndServerCache(DateTime expires)
-		{
-			_cachePolicy = new CachePolicy()
-				.PrivateClientCaching(expires)
-				.ServerCaching();
-
-			return _cachePolicy;
-		}
-
-		public CachePolicy CacheInPrivateClientCacheAndServerCache(TimeSpan maxAge)
-		{
-			_cachePolicy = new CachePolicy()
-				.PrivateClientCaching(maxAge)
-				.ServerCaching();
-
-			return _cachePolicy;
-		}
-
-		public CachePolicy CacheInPrivateClientCacheOnly(DateTime expires)
-		{
-			_cachePolicy = new CachePolicy()
-				.PrivateClientCaching(expires);
-
-			return _cachePolicy;
-		}
-
-		public CachePolicy CacheInPrivateClientCacheOnly(TimeSpan maxAge)
-		{
-			_cachePolicy = new CachePolicy()
-				.PrivateClientCaching(maxAge);
-
-			return _cachePolicy;
-		}
-
-		public CachePolicy CacheInServerCacheOnly()
-		{
-			_cachePolicy = new CachePolicy()
-				.NoClientCaching()
-				.ServerCaching()
-				.AllowResponseInBrowserHistory(false);
-
-			return _cachePolicy;
-		}
-
-		public CachePolicy NoCaching()
-		{
-			_cachePolicy = new CachePolicy()
-				.NoClientCaching()
-				.NoServerCaching()
-				.AllowResponseInBrowserHistory(false);
-
-			return _cachePolicy;
-		}
-
-		public Response SetCachePolicy(CachePolicy policy)
-		{
-			policy.ThrowIfNull("policy");
-
-			_cachePolicy = policy;
-
-			return this;
-		}
-
-		public Response RemoveCachePolicy()
-		{
-			_cachePolicy = null;
-
-			return this;
-		}
-
-		#endregion
-
 		#region HTTP status codes
 
 		public static Response Continue()
@@ -461,9 +355,65 @@ namespace Junior.Route.Routing.Responses
 			return new Response(HttpStatusCode.Moved);
 		}
 
+		public static Response Moved(string location)
+		{
+			location.ThrowIfNull("location");
+
+			return new Response(HttpStatusCode.Moved).Header("Location", location);
+		}
+
+		public static Response MovedToRoute(IUrlResolver urlResolver, string routeName)
+		{
+			urlResolver.ThrowIfNull("urlResolver");
+
+			return Moved(urlResolver.Route(routeName));
+		}
+
+		public static Response MovedToRoute(IUrlResolver urlResolver, Guid routeId)
+		{
+			urlResolver.ThrowIfNull("urlResolver");
+
+			return Moved(urlResolver.Route(routeId));
+		}
+
+		public static Response MovedToRelativeUrl(IUrlResolver urlResolver, string relativeUrl)
+		{
+			urlResolver.ThrowIfNull("urlResolver");
+
+			return Moved(urlResolver.Absolute(relativeUrl));
+		}
+
 		public static Response MovedPermanently()
 		{
 			return new Response(HttpStatusCode.MovedPermanently);
+		}
+
+		public static Response MovedPermanently(string location)
+		{
+			location.ThrowIfNull("location");
+
+			return new Response(HttpStatusCode.MovedPermanently).Header("Location", location);
+		}
+
+		public static Response MovedPermanentlyToRoute(IUrlResolver urlResolver, string routeName)
+		{
+			urlResolver.ThrowIfNull("urlResolver");
+
+			return MovedPermanently(urlResolver.Route(routeName));
+		}
+
+		public static Response MovedPermanentlyToRoute(IUrlResolver urlResolver, Guid routeId)
+		{
+			urlResolver.ThrowIfNull("urlResolver");
+
+			return MovedPermanently(urlResolver.Route(routeId));
+		}
+
+		public static Response MovedPermanentlyToRelativeUrl(IUrlResolver urlResolver, string relativeUrl)
+		{
+			urlResolver.ThrowIfNull("urlResolver");
+
+			return MovedPermanently(urlResolver.Absolute(relativeUrl));
 		}
 
 		public static Response Found()
@@ -471,9 +421,65 @@ namespace Junior.Route.Routing.Responses
 			return new Response(HttpStatusCode.Found);
 		}
 
+		public static Response Found(string location)
+		{
+			location.ThrowIfNull("location");
+
+			return new Response(HttpStatusCode.Found).Header("Location", location);
+		}
+
+		public static Response FoundRoute(IUrlResolver urlResolver, string routeName)
+		{
+			urlResolver.ThrowIfNull("urlResolver");
+
+			return Found(urlResolver.Route(routeName));
+		}
+
+		public static Response FoundRoute(IUrlResolver urlResolver, Guid routeId)
+		{
+			urlResolver.ThrowIfNull("urlResolver");
+
+			return Found(urlResolver.Route(routeId));
+		}
+
+		public static Response FoundRelativeUrl(IUrlResolver urlResolver, string relativeUrl)
+		{
+			urlResolver.ThrowIfNull("urlResolver");
+
+			return Found(urlResolver.Absolute(relativeUrl));
+		}
+
 		public static Response Redirect()
 		{
 			return new Response(HttpStatusCode.Redirect);
+		}
+
+		public static Response Redirect(string location)
+		{
+			location.ThrowIfNull("location");
+
+			return new Response(HttpStatusCode.Redirect).Header("Location", location);
+		}
+
+		public static Response RedirectToRoute(IUrlResolver urlResolver, string routeName)
+		{
+			urlResolver.ThrowIfNull("urlResolver");
+
+			return Redirect(urlResolver.Route(routeName));
+		}
+
+		public static Response RedirectToRoute(IUrlResolver urlResolver, Guid routeId)
+		{
+			urlResolver.ThrowIfNull("urlResolver");
+
+			return Redirect(urlResolver.Route(routeId));
+		}
+
+		public static Response RedirectToRelativeUrl(IUrlResolver urlResolver, string relativeUrl)
+		{
+			urlResolver.ThrowIfNull("urlResolver");
+
+			return Redirect(urlResolver.Absolute(relativeUrl));
 		}
 
 		public static Response RedirectMethod()
@@ -481,9 +487,65 @@ namespace Junior.Route.Routing.Responses
 			return new Response(HttpStatusCode.RedirectMethod);
 		}
 
+		public static Response RedirectMethod(string location)
+		{
+			location.ThrowIfNull("location");
+
+			return new Response(HttpStatusCode.RedirectMethod).Header("Location", location);
+		}
+
+		public static Response RedirectMethodToRoute(IUrlResolver urlResolver, string routeName)
+		{
+			urlResolver.ThrowIfNull("urlResolver");
+
+			return RedirectMethod(urlResolver.Route(routeName));
+		}
+
+		public static Response RedirectMethodToRoute(IUrlResolver urlResolver, Guid routeId)
+		{
+			urlResolver.ThrowIfNull("urlResolver");
+
+			return RedirectMethod(urlResolver.Route(routeId));
+		}
+
+		public static Response RedirectMethodToRelativeUrl(IUrlResolver urlResolver, string relativeUrl)
+		{
+			urlResolver.ThrowIfNull("urlResolver");
+
+			return RedirectMethod(urlResolver.Absolute(relativeUrl));
+		}
+
 		public static Response SeeOther()
 		{
 			return new Response(HttpStatusCode.SeeOther);
+		}
+
+		public static Response SeeOther(string location)
+		{
+			location.ThrowIfNull("location");
+
+			return new Response(HttpStatusCode.SeeOther).Header("Location", location);
+		}
+
+		public static Response SeeOtherRoute(IUrlResolver urlResolver, string routeName)
+		{
+			urlResolver.ThrowIfNull("urlResolver");
+
+			return SeeOther(urlResolver.Route(routeName));
+		}
+
+		public static Response SeeOtherRoute(IUrlResolver urlResolver, Guid routeId)
+		{
+			urlResolver.ThrowIfNull("urlResolver");
+
+			return SeeOther(urlResolver.Route(routeId));
+		}
+
+		public static Response SeeOtherRelativeUrl(IUrlResolver urlResolver, string relativeUrl)
+		{
+			urlResolver.ThrowIfNull("urlResolver");
+
+			return SeeOther(urlResolver.Absolute(relativeUrl));
 		}
 
 		public static Response NotModified()
@@ -506,9 +568,65 @@ namespace Junior.Route.Routing.Responses
 			return new Response(HttpStatusCode.RedirectKeepVerb);
 		}
 
+		public static Response RedirectKeepVerb(string location)
+		{
+			location.ThrowIfNull("location");
+
+			return new Response(HttpStatusCode.RedirectKeepVerb).Header("Location", location);
+		}
+
+		public static Response RedirectToRouteKeepVerb(IUrlResolver urlResolver, string routeName)
+		{
+			urlResolver.ThrowIfNull("urlResolver");
+
+			return RedirectKeepVerb(urlResolver.Route(routeName));
+		}
+
+		public static Response RedirectToRouteKeepVerb(IUrlResolver urlResolver, Guid routeId)
+		{
+			urlResolver.ThrowIfNull("urlResolver");
+
+			return RedirectKeepVerb(urlResolver.Route(routeId));
+		}
+
+		public static Response RedirectToRelativeUrlKeepVerb(IUrlResolver urlResolver, string relativeUrl)
+		{
+			urlResolver.ThrowIfNull("urlResolver");
+
+			return RedirectKeepVerb(urlResolver.Absolute(relativeUrl));
+		}
+
 		public static Response TemporaryRedirect()
 		{
 			return new Response(HttpStatusCode.TemporaryRedirect);
+		}
+
+		public static Response TemporaryRedirect(string location)
+		{
+			location.ThrowIfNull("location");
+
+			return new Response(HttpStatusCode.TemporaryRedirect).Header("Location", location);
+		}
+
+		public static Response TemporaryRedirectToRoute(IUrlResolver urlResolver, string routeName)
+		{
+			urlResolver.ThrowIfNull("urlResolver");
+
+			return TemporaryRedirect(urlResolver.Route(routeName));
+		}
+
+		public static Response TemporaryRedirectToRoute(IUrlResolver urlResolver, Guid routeId)
+		{
+			urlResolver.ThrowIfNull("urlResolver");
+
+			return TemporaryRedirect(urlResolver.Route(routeId));
+		}
+
+		public static Response TemporaryRedirectToRelativeUrl(IUrlResolver urlResolver, string relativeUrl)
+		{
+			urlResolver.ThrowIfNull("urlResolver");
+
+			return TemporaryRedirect(urlResolver.Absolute(relativeUrl));
 		}
 
 		public static Response BadRequest()

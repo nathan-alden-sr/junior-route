@@ -1,13 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Text;
 using System.Web;
 
 using Junior.Common;
 using Junior.Route.Routing.Responses;
-
-using Cookie = Junior.Route.Routing.Responses.Cookie;
 
 namespace Junior.Route.Routing.Caching
 {
@@ -24,48 +21,28 @@ namespace Junior.Route.Routing.Caching
 		private readonly IEnumerable<Cookie> _cookies;
 		private readonly Encoding _headerEncoding;
 		private readonly IEnumerable<Header> _headers;
-		private readonly HttpStatusCode? _parsedStatusCode;
-		private readonly int _statusCode;
-		private readonly int _subStatusCode;
+		private readonly StatusAndSubStatusCode _statusCode;
 
-		public CacheResponse(IResponse routeResponse)
+		public CacheResponse(IResponse response)
 		{
-			routeResponse.ThrowIfNull("routeResponse");
+			response.ThrowIfNull("response");
 
-			_statusCode = routeResponse.StatusCode;
-			_parsedStatusCode = routeResponse.ParsedStatusCode;
-			_subStatusCode = routeResponse.SubStatusCode;
-			_contentType = routeResponse.ContentType;
-			_charset = routeResponse.Charset ?? DefaultCharset;
-			_contentEncoding = routeResponse.ContentEncoding ?? _defaultContentEncoding;
-			_headers = routeResponse.Headers.Select(arg => arg.Clone());
-			_headerEncoding = routeResponse.HeaderEncoding ?? _defaultHeaderEncoding;
-			_cookies = routeResponse.Cookies.Select(arg => arg.Clone());
-			_cachePolicy = routeResponse.CachePolicy.IfNotNull(arg => arg.Clone());
-			_content = routeResponse.GetContent();
+			_statusCode = response.StatusCode;
+			_contentType = response.ContentType;
+			_charset = response.Charset ?? DefaultCharset;
+			_contentEncoding = response.ContentEncoding ?? _defaultContentEncoding;
+			_headers = response.Headers.Select(arg => arg.Clone());
+			_headerEncoding = response.HeaderEncoding ?? _defaultHeaderEncoding;
+			_cookies = response.Cookies.Select(arg => arg.Clone());
+			_cachePolicy = response.CachePolicy.Clone();
+			_content = response.GetContent();
 		}
 
-		public int StatusCode
+		public StatusAndSubStatusCode StatusCode
 		{
 			get
 			{
 				return _statusCode;
-			}
-		}
-
-		public HttpStatusCode? ParsedStatusCode
-		{
-			get
-			{
-				return _parsedStatusCode;
-			}
-		}
-
-		public int SubStatusCode
-		{
-			get
-			{
-				return _subStatusCode;
 			}
 		}
 
@@ -133,12 +110,12 @@ namespace Junior.Route.Routing.Caching
 			}
 		}
 
-		public void WriteResponse(HttpResponseBase response, bool applyCachePolicy = true)
+		public void WriteResponse(HttpResponseBase response)
 		{
 			response.ThrowIfNull("response");
 
-			response.StatusCode = StatusCode;
-			response.SubStatusCode = SubStatusCode;
+			response.StatusCode = _statusCode.StatusCode;
+			response.SubStatusCode = _statusCode.SubStatusCode;
 			response.ContentType = ContentType;
 			response.Charset = Charset;
 			response.ContentEncoding = ContentEncoding;
@@ -151,10 +128,7 @@ namespace Junior.Route.Routing.Caching
 			{
 				response.Cookies.Add(cookie.GetHttpCookie());
 			}
-			if (applyCachePolicy && _cachePolicy != null)
-			{
-				_cachePolicy.Apply(response.Cache);
-			}
+			_cachePolicy.Apply(response.Cache);
 
 			response.OutputStream.Write(_content, 0, _content.Length);
 		}

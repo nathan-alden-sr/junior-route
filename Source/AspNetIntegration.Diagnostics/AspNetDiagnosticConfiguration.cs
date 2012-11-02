@@ -6,27 +6,25 @@ using Junior.Route.AspNetIntegration.Diagnostics.Web;
 using Junior.Route.Common;
 using Junior.Route.Diagnostics;
 using Junior.Route.Diagnostics.Web;
+using Junior.Route.Routing;
 
 namespace Junior.Route.AspNetIntegration.Diagnostics
 {
 	public class AspNetDiagnosticConfiguration : IDiagnosticConfiguration
 	{
 		private readonly Type _cacheType;
-		private readonly IEnumerable<Type> _matchedResponseHandlerTypes;
-		private readonly IEnumerable<Type> _routeMatchingStrategyTypes;
-		private readonly IEnumerable<Type> _unmatchedResponseHandlerTypes;
+		private readonly IEnumerable<Type> _responseGeneratorTypes;
+		private readonly IEnumerable<Type> _responseHandlerTypes;
 
-		public AspNetDiagnosticConfiguration(Type cacheType, IEnumerable<Type> routeMatchingStrategyTypes, IEnumerable<Type> matchedResponseHandlerTypes, IEnumerable<Type> unmatchedResponseHandlerTypes)
+		public AspNetDiagnosticConfiguration(Type cacheType, IEnumerable<Type> responseGeneratorTypes, IEnumerable<Type> responseHandlerTypes)
 		{
 			cacheType.ThrowIfNull("cacheType");
-			routeMatchingStrategyTypes.ThrowIfNull("responseGeneratorTypes");
-			matchedResponseHandlerTypes.ThrowIfNull("matchedResponseHandlerTypes");
-			unmatchedResponseHandlerTypes.ThrowIfNull("unmatchedResponseHandlerTypes");
+			responseGeneratorTypes.ThrowIfNull("responseGeneratorTypes");
+			responseHandlerTypes.ThrowIfNull("responseHandlerTypes");
 
 			_cacheType = cacheType;
-			_routeMatchingStrategyTypes = routeMatchingStrategyTypes;
-			_matchedResponseHandlerTypes = matchedResponseHandlerTypes;
-			_unmatchedResponseHandlerTypes = unmatchedResponseHandlerTypes;
+			_responseGeneratorTypes = responseGeneratorTypes;
+			_responseHandlerTypes = responseHandlerTypes;
 		}
 
 		private static IEnumerable<string> AspNetViewNamespaces
@@ -45,10 +43,11 @@ namespace Junior.Route.AspNetIntegration.Diagnostics
 			}
 		}
 
-		public IEnumerable<Routing.Route> GetRoutes(IGuidFactory guidFactory, IUrlResolver urlResolver, string diagnosticsRelativeUrl)
+		public IEnumerable<Routing.Route> GetRoutes(IGuidFactory guidFactory, IUrlResolver urlResolver, IHttpRuntime httpRuntime, string diagnosticsRelativeUrl)
 		{
 			guidFactory.ThrowIfNull("guidFactory");
 			urlResolver.ThrowIfNull("urlResolver");
+			httpRuntime.ThrowIfNull("httpRuntime");
 			diagnosticsRelativeUrl.ThrowIfNull("diagnosticsRelativeUrl");
 
 			yield return DiagnosticRouteHelper.Instance.GetViewRoute<AspNetView>(
@@ -57,12 +56,13 @@ namespace Junior.Route.AspNetIntegration.Diagnostics
 				diagnosticsRelativeUrl + "/asp_net",
 				ResponseResources.AspNet,
 				AspNetViewNamespaces,
+				httpRuntime,
 				view =>
 					{
 						view.UrlResolver = urlResolver;
-						view.Populate(_cacheType, _routeMatchingStrategyTypes, _matchedResponseHandlerTypes, _unmatchedResponseHandlerTypes);
+						view.Populate(_cacheType, _responseGeneratorTypes, _responseHandlerTypes);
 					});
-			yield return DiagnosticRouteHelper.Instance.GetStylesheetRoute("Diagnostics ASP.net View CSS", guidFactory, diagnosticsRelativeUrl + "/asp_net/css", ResponseResources.asp_net_view);
+			yield return DiagnosticRouteHelper.Instance.GetStylesheetRoute("Diagnostics ASP.net View CSS", guidFactory, diagnosticsRelativeUrl + "/asp_net/css", ResponseResources.asp_net_view, httpRuntime);
 		}
 
 		public IEnumerable<DiagnosticViewLink> GetLinks(string diagnosticsRelativeUrl, string heading)

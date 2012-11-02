@@ -24,17 +24,9 @@
 				</td>
 			</tr>
 			<tr>
-				<td>Cached response handlers</td>
+				<td>Response handlers</td>
 				<td>
-					<for each="var handler in CachedResponseHandlerTypes">
-						<div>${handler.FullName}</div>
-					</for>
-				</td>
-			</tr>
-			<tr>
-				<td>Non-cached response handlers</td>
-				<td>
-					<for each="var handler in NonCachedResponseHandlerTypes">
+					<for each="var handler in ResponseHandlerTypes">
 						<div>${handler.FullName}</div>
 					</for>
 				</td>

@@ -7,7 +7,7 @@ using Junior.Common;
 namespace Junior.Route.Routing.Restrictions
 {
 	[DebuggerDisplay("{DebuggerDisplay,nq}")]
-	public class RefererUrlHostTypeRestriction : IRouteRestriction, IEquatable<RefererUrlHostTypeRestriction>
+	public class RefererUrlHostTypeRestriction : IRestriction, IEquatable<RefererUrlHostTypeRestriction>
 	{
 		private readonly UriHostNameType _type;
 

@@ -58,11 +58,11 @@
 				<td class="request-header ${VisibleRefererUrlRestrictionTypeColumns == 0 ? "invisible" : ""}" colspan="${VisibleRefererUrlRestrictionTypeColumns}">Referer URLs</td>
 				<td class="request-header ${ColumnVisibilityCss<CookieRestriction>()}" rowspan="2" colspan="2">Cookies</td>
 				<td class="request-header ${ColumnVisibilityCss<HeaderRestriction>()}" rowspan="2" colspan="2">Headers</td>
-				<td class="request-header ${ColumnVisibilityCss(typeof(HeaderRestriction<>))}" rowspan="2" colspan="2">Header Delegates</td>
+				<td class="request-header ${ColumnVisibilityCss(typeof(HeaderRestriction<>))}" rowspan="3">Header Delegates</td>
 				<td class="request-header ${ColumnVisibilityCss<MissingHeaderRestriction>()}" rowspan="3">Missing Headers</td>
 			</tr>
 			<tr>
-				<td class="request-header ${ColumnVisibilityCss<RelativeUrlRestriction>()}" rowspan="2">Relative URLs</td>
+				<td class="request-header ${ColumnVisibilityCss<UrlRelativePathRestriction>()}" rowspan="2">Relative Paths</td>
 				<td class="request-header ${ColumnVisibilityCss<UrlSchemeRestriction>()}" rowspan="2">Schemes</td>
 				<td class="request-header ${ColumnVisibilityCss<UrlHostRestriction>()}" rowspan="2">Hosts</td>
 				<td class="request-header ${ColumnVisibilityCss<UrlHostTypeRestriction>()}" rowspan="2">Host Types</td>
@@ -90,10 +90,7 @@
 				<td class="request-header ${ColumnVisibilityCss<CookieRestriction>()}">Value</td>
 				<td class="request-header ${ColumnVisibilityCss<HeaderRestriction>()}">Field</td>
 				<td class="request-header ${ColumnVisibilityCss<HeaderRestriction>()}">Value</td>
-				<td class="request-header ${ColumnVisibilityCss(typeof(HeaderRestriction<>))}">Namespace</td>
-				<td class="request-header ${ColumnVisibilityCss(typeof(HeaderRestriction<>))}">Class</td>
-				<td class="response-header">Namespace</td>
-				<td class="response-header">Class Name</td>
+				<td class="response-header">Type</td>
 			</tr>
 		</thead>
 		<tbody>
@@ -117,13 +114,13 @@
 							<span class="unimportant">Any</span>
 						</else>
 					</td>
-					<td class="request-data no-wrap ${ColumnVisibilityCss<RelativeUrlRestriction>()}">
-						<if condition="route.HasRestrictions<RelativeUrlRestriction>()">
+					<td class="request-data no-wrap ${ColumnVisibilityCss<UrlRelativePathRestriction>()}">
+						<if condition="route.HasRestrictions<UrlRelativePathRestriction>()">
 							<table class="flags-table">
 								<tbody>
-									<for each="var restriction in route.GetRestrictions<RelativeUrlRestriction>().OrderBy(arg => arg.RelativeUrl)">
+									<for each="var restriction in route.GetRestrictions<UrlRelativePathRestriction>().OrderBy(arg => arg.RelativePath)">
 										<tr>
-											<td>${restriction.RelativeUrl}</td>
+											<td>${restriction.RelativePath}</td>
 											<td class="flags">
 												<if condition="restriction.Comparer is CaseInsensitiveRegexRequestValueComparer || restriction.Comparer is CaseSensitiveRegexRequestValueComparer">
 													<span class="flag regular-expression-flag" title="Regular expression">RX</span>
@@ -497,20 +494,15 @@
 							<span class="unimportant">Any</span>
 						</td>
 					</else>
-					<if condition="route.HasGenericRestrictions(typeof(HeaderRestriction<>))">
-						<var restrictions="route.GetGenericRestrictions(typeof(HeaderRestriction<>)).Cast<IRouteRestriction>().Select(arg => arg.GetType()).OrderBy(arg => arg.GetType().FullName).Select(arg => arg.GenericTypeArguments.First())"/>
-						<td class="request-data ${ColumnVisibilityCss(typeof(HeaderRestriction<>))}">
-							${String.Join("<br />", restrictions.Select(arg => arg.Namespace))}
-						</td>
-						<td class="request-data ${ColumnVisibilityCss(typeof(HeaderRestriction<>))}">
+					<td class="request-data ${ColumnVisibilityCss(typeof(HeaderRestriction<>))}">
+						<if condition="route.HasGenericRestrictions(typeof(HeaderRestriction<>))">
+							<var restrictions="route.GetGenericRestrictions(typeof(HeaderRestriction<>)).Cast<IRestriction>().Select(arg => arg.GetType()).OrderBy(arg => arg.GetType().FullName).Select(arg => arg.GenericTypeArguments.First())"/>
 							${String.Join("<br />", restrictions.Select(arg => arg.Name))}
-						</td>
-					</if>
-					<else>
-						<td class="request-data ${ColumnVisibilityCss(typeof(HeaderRestriction<>))}" colspan="2">
+						</if>
+						<else>
 							<span class="unimportant">None</span>
-						</td>
-					</else>
+						</else>
+					</td>
 					<td class="request-data ${ColumnVisibilityCss<MissingHeaderRestriction>()}">
 						<if condition="route.HasRestrictions<MissingHeaderRestriction>()">
 							${String.Join("<br />", route.GetRestrictions<MissingHeaderRestriction>().Select(arg => arg.Field))}
@@ -520,11 +512,10 @@
 						</else>
 					</td>
 					<if condition="route.ResponseType != null">
-						<td class="response-data">${route.ResponseType.Namespace}</td>
 						<td class="response-data">${route.ResponseType.Name}</td>
 					</if>
 					<else>
-						<td class="response-data unimportant" colspan="2">No Content</td>
+						<td class="response-data unimportant" colspan="1">No Content</td>
 					</else>
 				</tr>
 			</for>

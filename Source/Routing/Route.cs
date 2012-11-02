@@ -6,7 +6,9 @@ using System.Linq;
 using System.Web;
 
 using Junior.Common;
+using Junior.Route.Common;
 using Junior.Route.Http.RequestHeaders;
+using Junior.Route.Routing.AuthenticationProviders;
 using Junior.Route.Routing.RequestValueComparers;
 using Junior.Route.Routing.Responses;
 using Junior.Route.Routing.Restrictions;
@@ -19,7 +21,8 @@ namespace Junior.Route.Routing
 		private readonly Guid _id;
 		private readonly object _lockObject = new object();
 		private readonly string _name;
-		private readonly Dictionary<Type, HashSet<IRouteRestriction>> _restrictionsByRestrictionType = new Dictionary<Type, HashSet<IRouteRestriction>>();
+		private readonly Dictionary<Type, HashSet<IRestriction>> _restrictionsByRestrictionType = new Dictionary<Type, HashSet<IRestriction>>();
+		private IAuthenticationProvider _authenticationProvider;
 		private string _resolvedRelativeUrl;
 		private Func<HttpRequestBase, IResponse> _response = request => Response.NoContent();
 
@@ -129,39 +132,39 @@ namespace Junior.Route.Routing
 			return AddRestrictions(new HeaderRestriction(field, value, valueComparer));
 		}
 
-		public Route RestrictByHeader<T>(string field, Func<string, IEnumerable<T>> parseDelegate, Func<T, bool> matchDelegate)
+		public Route RestrictByHeader<T>(string field, Func<string, T> parseDelegate, Func<T, bool> matchDelegate)
 		{
 			return AddRestrictions(new HeaderRestriction<T>(field, parseDelegate, matchDelegate));
 		}
 
-		public Route RestrictByHeader<T>(string field, Func<string, T> parseDelegate, Func<T, bool> matchDelegate)
+		public Route RestrictByHeaders<T>(string field, Func<string, IEnumerable<T>> parseDelegate, Func<T, bool> matchDelegate)
 		{
 			return AddRestrictions(new HeaderRestriction<T>(field, parseDelegate, matchDelegate));
 		}
 
 		public Route RestrictByAcceptCharsetHeader(Func<AcceptCharsetHeader, bool> matchDelegate)
 		{
-			return RestrictByHeader("Accept-Charset", AcceptCharsetHeader.ParseMany, matchDelegate);
+			return RestrictByHeaders("Accept-Charset", AcceptCharsetHeader.ParseMany, matchDelegate);
 		}
 
 		public Route RestrictByAcceptEncodingHeader(Func<AcceptEncodingHeader, bool> matchDelegate)
 		{
-			return RestrictByHeader("Accept-Encoding", AcceptEncodingHeader.ParseMany, matchDelegate);
+			return RestrictByHeaders("Accept-Encoding", AcceptEncodingHeader.ParseMany, matchDelegate);
 		}
 
 		public Route RestrictByAcceptHeader(Func<AcceptHeader, bool> matchDelegate)
 		{
-			return RestrictByHeader("Accept", AcceptHeader.ParseMany, matchDelegate);
+			return RestrictByHeaders("Accept", AcceptHeader.ParseMany, matchDelegate);
 		}
 
 		public Route RestrictByAcceptLanguageHeader(Func<AcceptLanguageHeader, bool> matchDelegate)
 		{
-			return RestrictByHeader("Accept-Language", AcceptLanguageHeader.ParseMany, matchDelegate);
+			return RestrictByHeaders("Accept-Language", AcceptLanguageHeader.ParseMany, matchDelegate);
 		}
 
 		public Route RestrictByAllowHeader(Func<AllowHeader, bool> matchDelegate)
 		{
-			return RestrictByHeader("Allow", AllowHeader.ParseMany, matchDelegate);
+			return RestrictByHeaders("Allow", AllowHeader.ParseMany, matchDelegate);
 		}
 
 		public Route RestrictByBasicAuthorizationHeader(Func<BasicAuthorizationHeader, bool> matchDelegate)
@@ -187,17 +190,17 @@ namespace Junior.Route.Routing
 
 		public Route RestrictByConnectionHeader(Func<ConnectionHeader, bool> matchDelegate)
 		{
-			return RestrictByHeader("Connection", ConnectionHeader.ParseMany, matchDelegate);
+			return RestrictByHeaders("Connection", ConnectionHeader.ParseMany, matchDelegate);
 		}
 
 		public Route RestrictByContentEncodingHeader(Func<ContentEncodingHeader, bool> matchDelegate)
 		{
-			return RestrictByHeader("Content-Encoding", ContentEncodingHeader.ParseMany, matchDelegate);
+			return RestrictByHeaders("Content-Encoding", ContentEncodingHeader.ParseMany, matchDelegate);
 		}
 
 		public Route RestrictByContentLanguageHeader(Func<ContentLanguageHeader, bool> matchDelegate)
 		{
-			return RestrictByHeader("Content-Language", ContentLanguageHeader.ParseMany, matchDelegate);
+			return RestrictByHeaders("Content-Language", ContentLanguageHeader.ParseMany, matchDelegate);
 		}
 
 		public Route RestrictByContentLengthHeader(Func<ContentLengthHeader, bool> matchDelegate)
@@ -237,7 +240,7 @@ namespace Junior.Route.Routing
 
 		public Route RestrictByExpectHeader(Func<ExpectHeader, bool> matchDelegate)
 		{
-			return RestrictByHeader("Expect", ExpectHeader.ParseMany, matchDelegate);
+			return RestrictByHeaders("Expect", ExpectHeader.ParseMany, matchDelegate);
 		}
 
 		public Route RestrictByFromHeader(Func<FromHeader, bool> matchDelegate)
@@ -256,7 +259,7 @@ namespace Junior.Route.Routing
 
 		public Route RestrictByIfMatchHeader(Func<IfMatchHeader, bool> matchDelegate)
 		{
-			return RestrictByHeader("If-Match", IfMatchHeader.ParseMany, matchDelegate);
+			return RestrictByHeaders("If-Match", IfMatchHeader.ParseMany, matchDelegate);
 		}
 
 		public Route RestrictByIfModifiedSinceHeader(Func<IfModifiedSinceHeader, bool> matchDelegate)
@@ -268,7 +271,7 @@ namespace Junior.Route.Routing
 
 		public Route RestrictByIfNoneMatchHeader(Func<IfNoneMatchHeader, bool> matchDelegate)
 		{
-			return RestrictByHeader("If-None-Match", IfNoneMatchHeader.ParseMany, matchDelegate);
+			return RestrictByHeaders("If-None-Match", IfNoneMatchHeader.ParseMany, matchDelegate);
 		}
 
 		public Route RestrictByIfRangeHeader(Func<IfRangeHeader, bool> matchDelegate)
@@ -294,12 +297,12 @@ namespace Junior.Route.Routing
 
 		public Route RestrictByPragmaHeader(Func<PragmaHeader, bool> matchDelegate)
 		{
-			return RestrictByHeader("Pragma", PragmaHeader.ParseMany, matchDelegate);
+			return RestrictByHeaders("Pragma", PragmaHeader.ParseMany, matchDelegate);
 		}
 
 		public Route RestrictByRangeHeader(Func<RangeHeader, bool> matchDelegate)
 		{
-			return RestrictByHeader("Range", RangeHeader.ParseMany, matchDelegate);
+			return RestrictByHeaders("Range", RangeHeader.ParseMany, matchDelegate);
 		}
 
 		public Route RestrictByRefererHeader(Func<RefererHeader, bool> matchDelegate)
@@ -311,42 +314,42 @@ namespace Junior.Route.Routing
 
 		public Route RestrictByTeHeader(Func<TeHeader, bool> matchDelegate)
 		{
-			return RestrictByHeader("TE", TeHeader.ParseMany, matchDelegate);
+			return RestrictByHeaders("TE", TeHeader.ParseMany, matchDelegate);
 		}
 
 		public Route RestrictByTrailerHeader(Func<TrailerHeader, bool> matchDelegate)
 		{
-			return RestrictByHeader("Trailer", TrailerHeader.ParseMany, matchDelegate);
+			return RestrictByHeaders("Trailer", TrailerHeader.ParseMany, matchDelegate);
 		}
 
 		public Route RestrictByTransferEncodingHeader(Func<TransferEncodingHeader, bool> matchDelegate)
 		{
-			return RestrictByHeader("Transfer-Encoding", TransferEncodingHeader.ParseMany, matchDelegate);
+			return RestrictByHeaders("Transfer-Encoding", TransferEncodingHeader.ParseMany, matchDelegate);
 		}
 
 		public Route RestrictByUpgradeHeader(Func<UpgradeHeader, bool> matchDelegate)
 		{
-			return RestrictByHeader("Upgrade", UpgradeHeader.ParseMany, matchDelegate);
+			return RestrictByHeaders("Upgrade", UpgradeHeader.ParseMany, matchDelegate);
 		}
 
 		public Route RestrictByUserAgentHeader(Func<UserAgentHeader, bool> matchDelegate)
 		{
-			return RestrictByHeader("User-Agent", UserAgentHeader.ParseMany, matchDelegate);
+			return RestrictByHeaders("User-Agent", UserAgentHeader.ParseMany, matchDelegate);
 		}
 
 		public Route RestrictByVaryHeader(Func<VaryHeader, bool> matchDelegate)
 		{
-			return RestrictByHeader("Vary", VaryHeader.ParseMany, matchDelegate);
+			return RestrictByHeaders("Vary", VaryHeader.ParseMany, matchDelegate);
 		}
 
 		public Route RestrictByViaHeader(Func<ViaHeader, bool> matchDelegate)
 		{
-			return RestrictByHeader("Via", ViaHeader.ParseMany, matchDelegate);
+			return RestrictByHeaders("Via", ViaHeader.ParseMany, matchDelegate);
 		}
 
 		public Route RestrictByWarningHeader(Func<WarningHeader, bool> matchDelegate)
 		{
-			return RestrictByHeader("Warning", WarningHeader.ParseMany, matchDelegate);
+			return RestrictByHeaders("Warning", WarningHeader.ParseMany, matchDelegate);
 		}
 
 		public Route RestrictByMissingHeader(string field)
@@ -378,45 +381,57 @@ namespace Junior.Route.Routing
 			return RestrictByMethods((IEnumerable<string>)methods);
 		}
 
-		public Route RestrictByRefererUrl(RefererUrlRestriction.RefererUrlMatchDelegate matchDelegate)
+		public Route RestrictByRefererUrl(Func<Uri, bool> matchDelegate)
 		{
 			return AddRestrictions(new RefererUrlRestriction(matchDelegate));
 		}
 
-		public Route RestrictByRefererUrlAbsolutePath(string pathAndQuery, IRequestValueComparer comparer)
+		public Route RestrictByRefererUrlAbsolutePath(string absolutePath, IRequestValueComparer comparer)
 		{
-			return AddRestrictions(new RefererUrlAbsolutePathRestriction(pathAndQuery, comparer));
+			return AddRestrictions(new RefererUrlAbsolutePathRestriction(absolutePath, comparer));
 		}
 
-		public Route RestrictByRefererUrlAbsolutePath(IEnumerable<string> absolutePaths)
+		public Route RestrictByRefererUrlAbsolutePaths(IEnumerable<string> absolutePaths)
 		{
 			absolutePaths.ThrowIfNull("absolutePaths");
 
 			return AddRestrictions(absolutePaths.Select(arg => new RefererUrlAbsolutePathRestriction(arg, CaseInsensitivePlainRequestValueComparer.Instance)));
 		}
 
-		public Route RestrictByRefererUrlAbsolutePath(params string[] pathsAndQueries)
+		public Route RestrictByRefererUrlAbsolutePaths(params string[] pathsAndQueries)
 		{
-			return RestrictByRefererUrlAbsolutePath((IEnumerable<string>)pathsAndQueries);
+			return RestrictByRefererUrlAbsolutePaths((IEnumerable<string>)pathsAndQueries);
 		}
 
-		public Route RestrictByRefererUrlAbsolutePath(IEnumerable<string> absolutePaths, IRequestValueComparer comparer)
+		public Route RestrictByRefererUrlAbsolutePaths(IEnumerable<string> absolutePaths, IRequestValueComparer comparer)
 		{
 			absolutePaths.ThrowIfNull("absolutePaths");
 
 			return AddRestrictions(absolutePaths.Select(arg => new RefererUrlAbsolutePathRestriction(arg, comparer)));
 		}
 
+		public Route RestrictByRefererUrlAuthority(string authority, IRequestValueComparer comparer)
+		{
+			return AddRestrictions(new RefererUrlAuthorityRestriction(authority, comparer));
+		}
+
 		public Route RestrictByRefererUrlAuthorities(IEnumerable<string> authorities)
 		{
 			authorities.ThrowIfNull("authorities");
 
-			return AddRestrictions(authorities.Select(arg => new RefererUrlAuthorityRestriction(arg)));
+			return AddRestrictions(authorities.Select(arg => new RefererUrlAuthorityRestriction(arg, CaseInsensitivePlainRequestValueComparer.Instance)));
 		}
 
 		public Route RestrictByRefererUrlAuthorities(params string[] authorities)
 		{
 			return RestrictByRefererUrlAuthorities((IEnumerable<string>)authorities);
+		}
+
+		public Route RestrictByRefererUrlAuthorities(IEnumerable<string> authorities, IRequestValueComparer comparer)
+		{
+			authorities.ThrowIfNull("authorities");
+
+			return AddRestrictions(authorities.Select(arg => new RefererUrlAuthorityRestriction(arg, comparer)));
 		}
 
 		public Route RestrictByRefererUrlFragment(string fragment, IRequestValueComparer comparer)
@@ -443,16 +458,28 @@ namespace Junior.Route.Routing
 			return AddRestrictions(fragments.Select(arg => new RefererUrlFragmentRestriction(arg, comparer)));
 		}
 
+		public Route RestrictByRefererUrlHost(string host, IRequestValueComparer comparer)
+		{
+			return AddRestrictions(new RefererUrlHostRestriction(host, comparer));
+		}
+
 		public Route RestrictByRefererUrlHosts(IEnumerable<string> hosts)
 		{
 			hosts.ThrowIfNull("hosts");
 
-			return AddRestrictions(hosts.Select(arg => new RefererUrlHostRestriction(arg)));
+			return AddRestrictions(hosts.Select(arg => new RefererUrlHostRestriction(arg, CaseInsensitivePlainRequestValueComparer.Instance)));
 		}
 
 		public Route RestrictByRefererUrlHosts(params string[] hosts)
 		{
 			return RestrictByRefererUrlHosts((IEnumerable<string>)hosts);
+		}
+
+		public Route RestrictByRefererUrlHosts(IEnumerable<string> hosts, IRequestValueComparer comparer)
+		{
+			hosts.ThrowIfNull("hosts");
+
+			return AddRestrictions(hosts.Select(arg => new RefererUrlHostRestriction(arg, comparer)));
 		}
 
 		public Route RestrictByRefererUrlHostTypes(IEnumerable<UriHostNameType> types)
@@ -537,11 +564,23 @@ namespace Junior.Route.Routing
 			return AddRestrictions(new RefererUrlQueryStringRestriction(field, fieldComparer, value, valueComparer));
 		}
 
+		public Route RestrictByRefererUrlScheme(string scheme, IRequestValueComparer comparer)
+		{
+			return AddRestrictions(new RefererUrlSchemeRestriction(scheme, comparer));
+		}
+
 		public Route RestrictByRefererUrlSchemes(IEnumerable<string> schemes)
 		{
 			schemes.ThrowIfNull("schemes");
 
-			return AddRestrictions(schemes.Select(arg => new RefererUrlSchemeRestriction(arg)));
+			return AddRestrictions(schemes.Select(arg => new RefererUrlSchemeRestriction(arg, CaseInsensitivePlainRequestValueComparer.Instance)));
+		}
+
+		public Route RestrictByRefererUrlSchemes(IEnumerable<string> schemes, IRequestValueComparer comparer)
+		{
+			schemes.ThrowIfNull("schemes");
+
+			return AddRestrictions(schemes.Select(arg => new RefererUrlSchemeRestriction(arg, comparer)));
 		}
 
 		public Route RestrictByRefererUrlSchemes(params string[] schemes)
@@ -549,38 +588,52 @@ namespace Junior.Route.Routing
 			return RestrictByRefererUrlSchemes((IEnumerable<string>)schemes);
 		}
 
-		public Route RestrictByRelativeUrl(string relativeUrl, IRequestValueComparer comparer)
+		public Route RestrictByRelativePath(string relativePath, IRequestValueComparer comparer, IHttpRuntime httpRuntime)
 		{
-			return AddRestrictions(new RelativeUrlRestriction(relativeUrl, comparer));
+			return AddRestrictions(new UrlRelativePathRestriction(relativePath, comparer, httpRuntime));
 		}
 
-		public Route RestrictByRelativeUrls(IEnumerable<string> relativeUrls)
+		public Route RestrictByRelativePaths(IEnumerable<string> relativePaths, IHttpRuntime httpRuntime)
 		{
-			relativeUrls.ThrowIfNull("relativeUrls");
+			relativePaths.ThrowIfNull("relativePaths");
 
-			return AddRestrictions(relativeUrls.Select(arg => new RelativeUrlRestriction(arg, CaseInsensitivePlainRequestValueComparer.Instance)));
+			return AddRestrictions(relativePaths.Select(arg => new UrlRelativePathRestriction(arg, CaseInsensitivePlainRequestValueComparer.Instance, httpRuntime)));
 		}
 
-		public Route RestrictByRelativeUrls(params string[] relativeUrls)
+		public Route RestrictByRelativePaths(IEnumerable<string> relativePaths, IRequestValueComparer comparer, IHttpRuntime httpRuntime)
 		{
-			return RestrictByRelativeUrls((IEnumerable<string>)relativeUrls);
+			relativePaths.ThrowIfNull("relativePaths");
+
+			return AddRestrictions(relativePaths.Select(arg => new UrlRelativePathRestriction(arg, comparer, httpRuntime)));
 		}
 
-		public Route RestrictByUrl(UrlRestriction.UrlMatchDelegate matchDelegate)
+		public Route RestrictByUrl(Func<Uri, bool> matchDelegate)
 		{
 			return AddRestrictions(new UrlRestriction(matchDelegate));
+		}
+
+		public Route RestrictByUrlAuthority(string authority, IRequestValueComparer comparer)
+		{
+			return AddRestrictions(new UrlAuthorityRestriction(authority, comparer));
 		}
 
 		public Route RestrictByUrlAuthorities(IEnumerable<string> authorities)
 		{
 			authorities.ThrowIfNull("authorities");
 
-			return AddRestrictions(authorities.Select(arg => new UrlAuthorityRestriction(arg)));
+			return AddRestrictions(authorities.Select(arg => new UrlAuthorityRestriction(arg, CaseInsensitivePlainRequestValueComparer.Instance)));
 		}
 
 		public Route RestrictByUrlAuthorities(params string[] authorities)
 		{
 			return RestrictByUrlAuthorities((IEnumerable<string>)authorities);
+		}
+
+		public Route RestrictByUrlAuthorities(IEnumerable<string> authorities, IRequestValueComparer comparer)
+		{
+			authorities.ThrowIfNull("authorities");
+
+			return AddRestrictions(authorities.Select(arg => new UrlAuthorityRestriction(arg, comparer)));
 		}
 
 		public Route RestrictByUrlFragment(string fragment, IRequestValueComparer comparer)
@@ -607,16 +660,28 @@ namespace Junior.Route.Routing
 			return AddRestrictions(fragments.Select(arg => new UrlFragmentRestriction(arg, comparer)));
 		}
 
+		public Route RestrictByUrlHost(string host, IRequestValueComparer comparer)
+		{
+			return AddRestrictions(new UrlHostRestriction(host, comparer));
+		}
+
 		public Route RestrictByUrlHosts(IEnumerable<string> hosts)
 		{
 			hosts.ThrowIfNull("hosts");
 
-			return AddRestrictions(hosts.Select(arg => new UrlHostRestriction(arg)));
+			return AddRestrictions(hosts.Select(arg => new UrlHostRestriction(arg, CaseInsensitivePlainRequestValueComparer.Instance)));
 		}
 
 		public Route RestrictByUrlHosts(params string[] hosts)
 		{
 			return RestrictByUrlHosts((IEnumerable<string>)hosts);
+		}
+
+		public Route RestrictByUrlHosts(IEnumerable<string> hosts, IRequestValueComparer comparer)
+		{
+			hosts.ThrowIfNull("hosts");
+
+			return AddRestrictions(hosts.Select(arg => new UrlHostRestriction(arg, comparer)));
 		}
 
 		public Route RestrictByUrlHostTypes(IEnumerable<UriHostNameType> types)
@@ -677,11 +742,23 @@ namespace Junior.Route.Routing
 			return AddRestrictions(new UrlQueryStringRestriction(field, fieldComparer, value, valueComparer));
 		}
 
+		public Route RestrictByUrlScheme(string scheme, IRequestValueComparer comparer)
+		{
+			return AddRestrictions(new UrlSchemeRestriction(scheme, comparer));
+		}
+
 		public Route RestrictByUrlSchemes(IEnumerable<string> schemes)
 		{
 			schemes.ThrowIfNull("schemes");
 
-			return AddRestrictions(schemes.Select(arg => new UrlSchemeRestriction(arg)));
+			return AddRestrictions(schemes.Select(arg => new UrlSchemeRestriction(arg, CaseInsensitivePlainRequestValueComparer.Instance)));
+		}
+
+		public Route RestrictByUrlSchemes(IEnumerable<string> schemes, IRequestValueComparer comparer)
+		{
+			schemes.ThrowIfNull("schemes");
+
+			return AddRestrictions(schemes.Select(arg => new UrlSchemeRestriction(arg, comparer)));
 		}
 
 		public Route RestrictByUrlSchemes(params string[] schemes)
@@ -689,20 +766,20 @@ namespace Junior.Route.Routing
 			return RestrictByUrlSchemes((IEnumerable<string>)schemes);
 		}
 
-		public Route AddRestrictions(IEnumerable<IRouteRestriction> restrictions)
+		public Route AddRestrictions(IEnumerable<IRestriction> restrictions)
 		{
 			restrictions.ThrowIfNull("restrictions");
 
 			lock (_lockObject)
 			{
-				foreach (IRouteRestriction restriction in restrictions)
+				foreach (IRestriction restriction in restrictions)
 				{
 					Type restrictionType = restriction.GetType();
-					HashSet<IRouteRestriction> restrictionHashSet;
+					HashSet<IRestriction> restrictionHashSet;
 
 					if (!_restrictionsByRestrictionType.TryGetValue(restrictionType, out restrictionHashSet))
 					{
-						restrictionHashSet = new HashSet<IRouteRestriction>();
+						restrictionHashSet = new HashSet<IRestriction>();
 						_restrictionsByRestrictionType.Add(restrictionType, restrictionHashSet);
 					}
 
@@ -713,13 +790,13 @@ namespace Junior.Route.Routing
 			return this;
 		}
 
-		public Route AddRestrictions(params IRouteRestriction[] restrictions)
+		public Route AddRestrictions(params IRestriction[] restrictions)
 		{
-			return AddRestrictions((IEnumerable<IRouteRestriction>)restrictions);
+			return AddRestrictions((IEnumerable<IRestriction>)restrictions);
 		}
 
 		public bool HasRestrictions<T>()
-			where T : IRouteRestriction
+			where T : IRestriction
 		{
 			lock (_lockObject)
 			{
@@ -747,7 +824,7 @@ namespace Junior.Route.Routing
 			}
 		}
 
-		public IEnumerable<IRouteRestriction> GetRestrictions()
+		public IEnumerable<IRestriction> GetRestrictions()
 		{
 			lock (_lockObject)
 			{
@@ -756,11 +833,11 @@ namespace Junior.Route.Routing
 		}
 
 		public IEnumerable<T> GetRestrictions<T>()
-			where T : IRouteRestriction
+			where T : IRestriction
 		{
 			lock (_lockObject)
 			{
-				HashSet<IRouteRestriction> restrictions;
+				HashSet<IRestriction> restrictions;
 
 				return _restrictionsByRestrictionType.TryGetValue(typeof(T), out restrictions) ? restrictions.Cast<T>() : Enumerable.Empty<T>();
 			}
@@ -772,9 +849,9 @@ namespace Junior.Route.Routing
 
 			lock (_lockObject)
 			{
-				HashSet<IRouteRestriction> restrictions;
+				HashSet<IRestriction> restrictions;
 
-				return _restrictionsByRestrictionType.TryGetValue(restrictionType, out restrictions) ? restrictions : Enumerable.Empty<IRouteRestriction>();
+				return _restrictionsByRestrictionType.TryGetValue(restrictionType, out restrictions) ? restrictions : Enumerable.Empty<IRestriction>();
 			}
 		}
 
@@ -804,6 +881,54 @@ namespace Junior.Route.Routing
 			{
 				_restrictionsByRestrictionType.Clear();
 			}
+		}
+
+		#endregion
+
+		#region Authentication
+
+		public Route FormsAuthenticationProviderWithNoRedirectOnFailedAuthentication()
+		{
+			_authenticationProvider = FormsAuthenticationProvider.CreateWithNoRedirectOnFailedAuthentication();
+
+			return this;
+		}
+
+		public Route FormsAuthenticationProviderWithRouteRedirectOnFailedAuthentication(IUrlResolver urlResolver, string routeName, bool appendReturnUrl = false, string returnUrlQueryStringField = "ReturnURL")
+		{
+			_authenticationProvider = FormsAuthenticationProvider.CreateWithRouteRedirectOnFailedAuthentication(urlResolver, routeName, appendReturnUrl, returnUrlQueryStringField);
+
+			return this;
+		}
+
+		public Route FormsAuthenticationProviderWithRouteRedirectOnFailedAuthentication(IUrlResolver urlResolver, Guid routeId, bool appendReturnUrl = false, string returnUrlQueryStringField = "ReturnURL")
+		{
+			_authenticationProvider = FormsAuthenticationProvider.CreateWithRouteRedirectOnFailedAuthentication(urlResolver, routeId, appendReturnUrl, returnUrlQueryStringField);
+
+			return this;
+		}
+
+		public Route FormsAuthenticationProviderWithRelativeUrlRedirectOnFailedAuthentication(IUrlResolver urlResolver, string relativeUrl, bool appendReturnUrl = false, string returnUrlQueryStringField = "ReturnURL")
+		{
+			_authenticationProvider = FormsAuthenticationProvider.CreateWithRouteRedirectOnFailedAuthentication(urlResolver, relativeUrl, appendReturnUrl, returnUrlQueryStringField);
+
+			return this;
+		}
+
+		public Route AuthenticationProvider(IAuthenticationProvider provider)
+		{
+			provider.ThrowIfNull("provider");
+
+			_authenticationProvider = provider;
+
+			return this;
+		}
+
+		public Route NoAuthenticationProvider()
+		{
+			_authenticationProvider = null;
+
+			return this;
 		}
 
 		#endregion
@@ -871,22 +996,38 @@ namespace Junior.Route.Routing
 
 			lock (_lockObject)
 			{
-				IRouteRestriction[] restrictions = GetRestrictions().ToArray();
+				IRestriction[] restrictions = GetRestrictions().ToArray();
 				// ReSharper disable ImplicitlyCapturedClosure
-				IRouteRestriction[] matchingRestrictions = restrictions.Where(arg => arg.MatchesRequest(request)).ToArray();
+				IRestriction[] matchingRestrictions = restrictions.Where(arg => arg.MatchesRequest(request)).ToArray();
 				// ReSharper restore ImplicitlyCapturedClosure
 
 				return restrictions.Length == matchingRestrictions.Length ? MatchResult.RouteMatched(matchingRestrictions, _id.ToString()) : MatchResult.RouteNotMatched(matchingRestrictions, restrictions.Except(matchingRestrictions));
 			}
 		}
 
-		public IResponse ProcessResponse(HttpRequestBase response)
+		public AuthenticateResult Authenticate(HttpRequestBase request)
 		{
-			response.ThrowIfNull("response");
+			request.ThrowIfNull("request");
+
+			if (_authenticationProvider == null)
+			{
+				return AuthenticateResult.NoAuthenticationPerformed();
+			}
+
+			AuthenticationResult result = _authenticationProvider.Authenticate(request, this);
+
+			return result == AuthenticationResult.AuthenticationSucceeded
+				       ? AuthenticateResult.AuthenticationSucceeded()
+				       : AuthenticateResult.AuthenticationFailed(_authenticationProvider.GetFailedAuthenticationResponse(request));
+		}
+
+		public IResponse ProcessResponse(HttpRequestBase request)
+		{
+			request.ThrowIfNull("request");
 
 			lock (_lockObject)
 			{
-				return _response(response);
+				return _response(request);
 			}
 		}
 	}

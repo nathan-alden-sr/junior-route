@@ -48,22 +48,22 @@ namespace Junior.Route.Routing.Responses.Application
 		}
 
 		public RssResponse(XmlNode content, Action<Response> configurationDelegate = null)
-			: base(Response.OK().ApplicationRss().Content(content.GetString()))
+			: base(Response.OK().ApplicationRss().Content(content.GetString()), configurationDelegate)
 		{
 		}
 
 		public RssResponse(XmlNode content, Encoding encoding, Action<Response> configurationDelegate = null)
-			: base(Response.OK().ApplicationRss().ContentEncoding(encoding).Content(content.GetBytes(encoding)))
+			: base(Response.OK().ApplicationRss().ContentEncoding(encoding).Content(content.GetBytes(encoding)), configurationDelegate)
 		{
 		}
 
 		public RssResponse(XNode content, Action<Response> configurationDelegate = null)
-			: base(Response.OK().ApplicationRss().Content(content.GetString()))
+			: base(Response.OK().ApplicationRss().Content(content.GetString()), configurationDelegate)
 		{
 		}
 
 		public RssResponse(XNode content, Encoding encoding, Action<Response> configurationDelegate = null)
-			: base(Response.OK().ApplicationRss().ContentEncoding(encoding).Content(content.GetBytes(encoding)))
+			: base(Response.OK().ApplicationRss().ContentEncoding(encoding).Content(content.GetBytes(encoding)), configurationDelegate)
 		{
 		}
 	}

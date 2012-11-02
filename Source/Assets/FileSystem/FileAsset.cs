@@ -47,7 +47,7 @@ namespace Junior.Route.Assets.FileSystem
 		{
 			string path = fileSystem.AbsolutePath(_relativePath);
 
-			return new FileSystemWatcher(path);
+			return new FileSystemWatcher(Path.GetDirectoryName(path), Path.GetFileName(path));
 		}
 	}
 }

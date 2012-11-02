@@ -94,11 +94,12 @@ namespace Junior.Route.Assets.FileSystem
 			concatenator.ThrowIfNull("concatenator");
 			transformers.ThrowIfNull("transformers");
 
-			IOrderedEnumerable<AssetFile> orderedAssets = _assets
+			AssetFile[] orderedAssets = _assets
 				.SelectMany(arg => arg.ResolveAssetFiles(fileSystem))
-				.OrderBy(arg => arg, assetOrder);
+				.OrderBy(arg => arg, assetOrder)
+				.ToArray();
 
-			return GetContents(orderedAssets, concatenator, transformers);
+			return GetContents(fileSystem, orderedAssets, concatenator, transformers);
 		}
 
 		public BundleContents GetContents(IFileSystem fileSystem, IComparer<AssetFile> assetOrder, IAssetConcatenator concatenator, params IAssetTransformer[] transformers)
@@ -112,9 +113,9 @@ namespace Junior.Route.Assets.FileSystem
 			transformers.ThrowIfNull("transformers");
 			concatenator.ThrowIfNull("concatenator");
 
-			IEnumerable<AssetFile> unorderedAssets = _assets.SelectMany(arg => arg.ResolveAssetFiles(fileSystem));
+			AssetFile[] unorderedAssets = _assets.SelectMany(arg => arg.ResolveAssetFiles(fileSystem)).ToArray();
 
-			return GetContents(unorderedAssets, concatenator, transformers);
+			return GetContents(fileSystem, unorderedAssets, concatenator, transformers);
 		}
 
 		public BundleContents GetContents(IFileSystem fileSystem, IAssetConcatenator concatenator, params IAssetTransformer[] transformers)
@@ -122,11 +123,12 @@ namespace Junior.Route.Assets.FileSystem
 			return GetContents(fileSystem, concatenator, (IEnumerable<IAssetTransformer>)transformers);
 		}
 
-		private BundleContents GetContents(IEnumerable<AssetFile> assets, IAssetConcatenator concatenator, IEnumerable<IAssetTransformer> transformers)
+		private BundleContents GetContents(IFileSystem fileSystem, IEnumerable<AssetFile> assets, IAssetConcatenator concatenator, IEnumerable<IAssetTransformer> transformers)
 		{
-			IEnumerable<string> transformedAssets = assets
-				.Select(GetFileContents)
-				.SelectMany(assetContents => transformers, (assetContents, transformer) => transformer.Transform(assetContents));
+			string[] transformedAssets = assets
+				.Select(arg => GetFileContents(fileSystem, arg))
+				.SelectMany(assetContents => transformers, (assetContents, transformer) => transformer.Transform(assetContents))
+				.ToArray();
 
 			return new BundleContents(concatenator.Concatenate(transformedAssets));
 		}
@@ -155,16 +157,16 @@ namespace Junior.Route.Assets.FileSystem
 			return FromFiles((IEnumerable<string>)relativePaths);
 		}
 
-		private string GetFileContents(AssetFile asset)
+		private string GetFileContents(IFileSystem fileSystem, AssetFile asset)
 		{
 			Stopwatch stopwatch = Stopwatch.StartNew();
-			FileStream stream = null;
+			Stream stream = null;
 
 			do
 			{
 				try
 				{
-					stream = System.IO.File.Open(asset.AbsolutePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+					stream = fileSystem.OpenFile(asset.AbsolutePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 
 					StreamReader reader = asset.Encoding != null ? new StreamReader(stream, asset.Encoding) : new StreamReader(stream);
 

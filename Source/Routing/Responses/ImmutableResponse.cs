@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Text;
 
 using Junior.Common;
@@ -23,27 +22,11 @@ namespace Junior.Route.Routing.Responses
 			_response = response;
 		}
 
-		public int StatusCode
+		public StatusAndSubStatusCode StatusCode
 		{
 			get
 			{
 				return _response.StatusCode;
-			}
-		}
-
-		public HttpStatusCode? ParsedStatusCode
-		{
-			get
-			{
-				return _response.ParsedStatusCode;
-			}
-		}
-
-		public int SubStatusCode
-		{
-			get
-			{
-				return _response.SubStatusCode;
 			}
 		}
 

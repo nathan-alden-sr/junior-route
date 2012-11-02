@@ -8,14 +8,14 @@ using Junior.Route.Routing.RequestValueComparers;
 namespace Junior.Route.Routing.Restrictions
 {
 	[DebuggerDisplay("{DebuggerDisplay,nq}")]
-	public class RefererUrlPathAndQueryRestriction : IRouteRestriction, IEquatable<RefererUrlPathAndQueryRestriction>
+	public class RefererUrlPathAndQueryRestriction : IRestriction, IEquatable<RefererUrlPathAndQueryRestriction>
 	{
 		private readonly IRequestValueComparer _comparer;
 		private readonly string _pathAndQuery;
 
 		public RefererUrlPathAndQueryRestriction(string pathAndQuery, IRequestValueComparer comparer)
 		{
-			pathAndQuery.ThrowIfNull("pathAndQuery");
+			pathAndQuery.ThrowIfNull("absolutePath");
 			comparer.ThrowIfNull("comparer");
 
 			_pathAndQuery = pathAndQuery;

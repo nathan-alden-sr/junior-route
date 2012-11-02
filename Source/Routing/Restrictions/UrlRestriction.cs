@@ -5,13 +5,11 @@ using Junior.Common;
 
 namespace Junior.Route.Routing.Restrictions
 {
-	public class UrlRestriction : IRouteRestriction, IEquatable<UrlRestriction>
+	public class UrlRestriction : IRestriction, IEquatable<UrlRestriction>
 	{
-		public delegate bool UrlMatchDelegate(Uri requestUri);
+		private readonly Func<Uri, bool> _matchDelegate;
 
-		private readonly UrlMatchDelegate _matchDelegate;
-
-		public UrlRestriction(UrlMatchDelegate matchDelegate)
+		public UrlRestriction(Func<Uri, bool> matchDelegate)
 		{
 			matchDelegate.ThrowIfNull("matchDelegate");
 
@@ -35,7 +33,7 @@ namespace Junior.Route.Routing.Restrictions
 		{
 			request.ThrowIfNull("request");
 
-			return _matchDelegate(request.UrlReferrer);
+			return _matchDelegate(request.Url);
 		}
 
 		public override bool Equals(object obj)

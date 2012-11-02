@@ -10,7 +10,7 @@ using Junior.Route.Routing.RequestValueComparers;
 namespace Junior.Route.Routing.Restrictions
 {
 	[DebuggerDisplay("{DebuggerDisplay,nq}")]
-	public class CookieRestriction : IRouteRestriction, IEquatable<CookieRestriction>
+	public class CookieRestriction : IRestriction, IEquatable<CookieRestriction>
 	{
 		private readonly string _name;
 		private readonly IRequestValueComparer _nameComparer;

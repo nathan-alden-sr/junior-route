@@ -8,7 +8,7 @@ using Junior.Route.Routing.RequestValueComparers;
 namespace Junior.Route.Routing.Restrictions
 {
 	[DebuggerDisplay("{DebuggerDisplay,nq}")]
-	public class UrlQueryRestriction : IRouteRestriction, IEquatable<UrlQueryRestriction>
+	public class UrlQueryRestriction : IRestriction, IEquatable<UrlQueryRestriction>
 	{
 		private readonly IRequestValueComparer _comparer;
 		private readonly string _query;
@@ -65,7 +65,7 @@ namespace Junior.Route.Routing.Restrictions
 		{
 			request.ThrowIfNull("request");
 
-			return _comparer.Matches(_query, request.UrlReferrer.Query);
+			return _comparer.Matches(_query, request.Url.Query);
 		}
 
 		public override bool Equals(object obj)

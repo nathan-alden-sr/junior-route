@@ -2,20 +2,29 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Web;
 
 using Junior.Common;
 using Junior.Route.Common;
+using Junior.Route.Routing;
 
 namespace Junior.Route.AspNetIntegration
 {
 	public class FileSystem : IFileSystem
 	{
+		private readonly IHttpRuntime _httpRuntime;
+
+		public FileSystem(IHttpRuntime httpRuntime)
+		{
+			httpRuntime.ThrowIfNull("httpRuntime");
+
+			_httpRuntime = httpRuntime;
+		}
+
 		public string ApplicationDirectory
 		{
 			get
 			{
-				return HttpRuntime.AppDomainAppPath;
+				return _httpRuntime.AppDomainAppPath;
 			}
 		}
 
@@ -50,11 +59,41 @@ namespace Junior.Route.AspNetIntegration
 			return (int)size;
 		}
 
-		public Stream ReadFile(string path)
+		public Stream OpenFile(string path)
 		{
 			path.ThrowIfNull("path");
 
 			return File.OpenRead(path);
+		}
+
+		public Stream OpenFile(string path, FileMode mode)
+		{
+			return File.Open(path, mode);
+		}
+
+		public Stream OpenFile(string path, FileMode mode, FileAccess access)
+		{
+			return File.Open(path, mode, access);
+		}
+
+		public Stream OpenFile(string path, FileMode mode, FileAccess access, FileShare share)
+		{
+			return File.Open(path, mode, access, share);
+		}
+
+		public string[] GetDirectoryFiles(string path)
+		{
+			return Directory.GetFiles(path);
+		}
+
+		public string[] GetDirectoryFiles(string path, string searchPattern)
+		{
+			return Directory.GetFiles(path, searchPattern);
+		}
+
+		public string[] GetDirectoryFiles(string path, string searchPattern, SearchOption searchOption)
+		{
+			return Directory.GetFiles(path, searchPattern, searchOption);
 		}
 	}
 }

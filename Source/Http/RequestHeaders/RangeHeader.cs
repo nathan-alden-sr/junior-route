@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-using Junior.Common;
-
 namespace Junior.Route.Http.RequestHeaders
 {
 	public class RangeHeader

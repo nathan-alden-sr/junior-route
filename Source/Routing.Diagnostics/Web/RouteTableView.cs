@@ -28,7 +28,7 @@ namespace Junior.Route.Routing.Diagnostics.Web
 				typeof(RefererUrlQueryRestriction),
 				typeof(RefererUrlQueryStringRestriction),
 				typeof(RefererUrlSchemeRestriction),
-				typeof(RelativeUrlRestriction),
+				typeof(UrlRelativePathRestriction),
 				typeof(UrlAuthorityRestriction),
 				typeof(UrlFragmentRestriction),
 				typeof(UrlHostRestriction),
@@ -95,10 +95,9 @@ namespace Junior.Route.Routing.Diagnostics.Web
 				(RouteRestrictionTypes.Contains(typeof(RefererUrlQueryStringRestriction)) ? 1 : 0) +
 				(RouteRestrictionTypes.Contains(typeof(UrlQueryStringRestriction)) ? 1 : 0) +
 				(RouteRestrictionTypes.Contains(typeof(CookieRestriction)) ? 1 : 0) +
-				(RouteRestrictionTypes.Contains(typeof(HeaderRestriction)) ? 1 : 0) +
-				(RouteRestrictionTypes.Any(arg => arg.IsGenericType && arg.GetGenericTypeDefinition() == typeof(HeaderRestriction<>)) ? 1 : 0);
+				(RouteRestrictionTypes.Contains(typeof(HeaderRestriction)) ? 1 : 0);
 			VisibleUrlRestrictionTypeColumns =
-				RouteRestrictionTypes.Intersect(_availableRestrictionTypes.Where(arg => arg.Name.StartsWith("Url") || arg == typeof(RelativeUrlRestriction))).Distinct().Count() +
+				RouteRestrictionTypes.Intersect(_availableRestrictionTypes.Where(arg => arg.Name.StartsWith("Url") || arg == typeof(UrlRelativePathRestriction))).Distinct().Count() +
 				(RouteRestrictionTypes.Contains(typeof(UrlQueryStringRestriction)) ? 1 : 0);
 			VisibleRefererUrlRestrictionTypeColumns =
 				RouteRestrictionTypes.Intersect(_availableRestrictionTypes.Where(arg => arg.Name.StartsWith("RefererUrl"))).Distinct().Count() +
@@ -106,7 +105,7 @@ namespace Junior.Route.Routing.Diagnostics.Web
 		}
 
 		public string ColumnVisibilityCss<T>()
-			where T : IRouteRestriction
+			where T : IRestriction
 		{
 			return RouteRestrictionTypes.Contains(typeof(T)) ? "" : "invisible";
 		}

@@ -1,5 +1,7 @@
 ﻿using System;
 
+using Junior.Common;
+
 namespace Junior.Route.Routing.Caching
 {
 	public class CacheItem
@@ -10,6 +12,7 @@ namespace Junior.Route.Routing.Caching
 
 		public CacheItem(CacheResponse response, DateTime cachedUtcTimestamp, DateTime? expiresUtcTimestamp = null)
 		{
+			response.ThrowIfNull("response");
 			if (cachedUtcTimestamp.Kind != DateTimeKind.Utc)
 			{
 				throw new ArgumentException("Cached timestamp must be UTC.", "cachedUtcTimestamp");

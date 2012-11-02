@@ -2,17 +2,19 @@
 using System.Reflection;
 
 using Junior.Common;
+using Junior.Route.AutoRouting.Containers;
 using Junior.Route.Routing;
 
 namespace Junior.Route.AutoRouting.RestrictionMappers
 {
-	public class HttpMethodFromMethodsNamedAfterStandardHttpMethodsMapper : IRouteRestrictionMapper
+	public class HttpMethodFromMethodsNamedAfterStandardHttpMethodsMapper : IRestrictionMapper
 	{
-		public void Map(Type type, MethodInfo method, Routing.Route route)
+		public void Map(Type type, MethodInfo method, Routing.Route route, IContainer container)
 		{
 			type.ThrowIfNull("type");
 			method.ThrowIfNull("method");
 			route.ThrowIfNull("route");
+			container.ThrowIfNull("container");
 
 			HttpMethod httpMethod;
 

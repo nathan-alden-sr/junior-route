@@ -2,6 +2,7 @@ using System;
 using System.Web;
 
 using Junior.Common;
+using Junior.Route.Routing;
 using Junior.Route.Routing.Responses;
 using Junior.Route.Routing.Responses.Text;
 
@@ -11,16 +12,16 @@ namespace Junior.Route.Assets.FileSystem
 	{
 		private readonly ISystemClock _systemClock;
 
-		public CssBundleWatcherRoute(string name, IGuidFactory guidFactory, string relativeUrl, BundleWatcher watcher, ISystemClock systemClock)
-			: base(name, guidFactory, relativeUrl, watcher)
+		public CssBundleWatcherRoute(string name, IGuidFactory guidFactory, string relativePath, BundleWatcher watcher, IHttpRuntime httpRuntime, ISystemClock systemClock)
+			: base(name, guidFactory, relativePath, watcher, httpRuntime)
 		{
 			systemClock.ThrowIfNull("systemClock");
 
 			_systemClock = systemClock;
 		}
 
-		public CssBundleWatcherRoute(string name, Guid id, string relativeUrl, BundleWatcher watcher, ISystemClock systemClock)
-			: base(name, id, relativeUrl, watcher)
+		public CssBundleWatcherRoute(string name, Guid id, string relativePath, BundleWatcher watcher, IHttpRuntime httpRuntime, ISystemClock systemClock)
+			: base(name, id, relativePath, watcher, httpRuntime)
 		{
 			systemClock.ThrowIfNull("systemClock");
 
@@ -39,8 +40,9 @@ namespace Junior.Route.Assets.FileSystem
 		{
 			DateTime expires = _systemClock.UtcDateTime.AddYears(1);
 
-			response
-				.CacheInPublicClientCacheAndServerCache(expires)
+			response.CachePolicy
+				.ServerCaching()
+				.PublicClientCaching(expires)
 				.ETag(Id.ToString("N"));
 		}
 	}

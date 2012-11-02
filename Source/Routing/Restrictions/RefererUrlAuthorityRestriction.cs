@@ -3,19 +3,23 @@ using System.Diagnostics;
 using System.Web;
 
 using Junior.Common;
+using Junior.Route.Routing.RequestValueComparers;
 
 namespace Junior.Route.Routing.Restrictions
 {
 	[DebuggerDisplay("{DebuggerDisplay,nq}")]
-	public class RefererUrlAuthorityRestriction : IRouteRestriction, IEquatable<RefererUrlAuthorityRestriction>
+	public class RefererUrlAuthorityRestriction : IRestriction, IEquatable<RefererUrlAuthorityRestriction>
 	{
 		private readonly string _authority;
+		private readonly IRequestValueComparer _comparer;
 
-		public RefererUrlAuthorityRestriction(string authority)
+		public RefererUrlAuthorityRestriction(string authority, IRequestValueComparer comparer)
 		{
 			authority.ThrowIfNull("authority");
+			comparer.ThrowIfNull("comparer");
 
 			_authority = authority;
+			_comparer = comparer;
 		}
 
 		public string Authority
@@ -23,6 +27,14 @@ namespace Junior.Route.Routing.Restrictions
 			get
 			{
 				return _authority;
+			}
+		}
+
+		public IRequestValueComparer Comparer
+		{
+			get
+			{
+				return _comparer;
 			}
 		}
 
@@ -46,14 +58,14 @@ namespace Junior.Route.Routing.Restrictions
 			{
 				return true;
 			}
-			return String.Equals(_authority, other._authority);
+			return String.Equals(_authority, other._authority) && Equals(_comparer, other._comparer);
 		}
 
 		public bool MatchesRequest(HttpRequestBase request)
 		{
 			request.ThrowIfNull("request");
 
-			return String.Equals(_authority, request.UrlReferrer.Authority);
+			return _comparer.Matches(_authority, request.UrlReferrer.Authority);
 		}
 
 		public override bool Equals(object obj)
@@ -75,7 +87,10 @@ namespace Junior.Route.Routing.Restrictions
 
 		public override int GetHashCode()
 		{
-			return (_authority != null ? _authority.GetHashCode() : 0);
+			unchecked
+			{
+				return ((_authority != null ? _authority.GetHashCode() : 0) * 397) ^ (_comparer != null ? _comparer.GetHashCode() : 0);
+			}
 		}
 	}
 }

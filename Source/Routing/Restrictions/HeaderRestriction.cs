@@ -10,7 +10,7 @@ using Junior.Route.Routing.RequestValueComparers;
 namespace Junior.Route.Routing.Restrictions
 {
 	[DebuggerDisplay("{DebuggerDisplay,nq}")]
-	public class HeaderRestriction : IRouteRestriction, IEquatable<HeaderRestriction>
+	public class HeaderRestriction : IRestriction, IEquatable<HeaderRestriction>
 	{
 		private readonly string _field;
 		private readonly string _value;
@@ -113,7 +113,7 @@ namespace Junior.Route.Routing.Restrictions
 	}
 
 	[DebuggerDisplay("{DebuggerDisplay,nq}")]
-	public class HeaderRestriction<T> : IRouteRestriction
+	public class HeaderRestriction<T> : IRestriction
 	{
 		private readonly string _field;
 		private readonly Func<T, bool> _matchDelegate;

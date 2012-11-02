@@ -8,7 +8,7 @@ using Junior.Common;
 namespace Junior.Route.Routing.Restrictions
 {
 	[DebuggerDisplay("{DebuggerDisplay,nq}")]
-	public class UrlPortRestriction : IRouteRestriction, IEquatable<UrlPortRestriction>
+	public class UrlPortRestriction : IRestriction, IEquatable<UrlPortRestriction>
 	{
 		private readonly ushort _port;
 
@@ -52,7 +52,7 @@ namespace Junior.Route.Routing.Restrictions
 		{
 			request.ThrowIfNull("request");
 
-			return _port == request.UrlReferrer.Port;
+			return _port == request.Url.Port;
 		}
 
 		public override bool Equals(object obj)

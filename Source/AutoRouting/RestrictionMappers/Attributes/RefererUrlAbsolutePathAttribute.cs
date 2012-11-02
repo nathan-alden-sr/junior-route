@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 
 using Junior.Common;
+using Junior.Route.AutoRouting.Containers;
 
 namespace Junior.Route.AutoRouting.RestrictionMappers.Attributes
 {
@@ -24,17 +25,18 @@ namespace Junior.Route.AutoRouting.RestrictionMappers.Attributes
 			_absolutePaths = absolutePaths;
 		}
 
-		public override void Map(Routing.Route route)
+		public override void Map(Routing.Route route, IContainer container)
 		{
 			route.ThrowIfNull("route");
+			container.ThrowIfNull("container");
 
 			if (_comparer != null)
 			{
-				route.RestrictByRefererUrlPathsAndQueries(_absolutePaths, GetComparer(_comparer.Value));
+				route.RestrictByRefererUrlAbsolutePaths(_absolutePaths, GetComparer(_comparer.Value));
 			}
 			else
 			{
-				route.RestrictByRefererUrlPathsAndQueries(_absolutePaths);
+				route.RestrictByRefererUrlAbsolutePaths(_absolutePaths);
 			}
 		}
 	}

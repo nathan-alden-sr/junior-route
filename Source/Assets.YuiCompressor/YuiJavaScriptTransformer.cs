@@ -20,14 +20,14 @@ namespace Assets.YuiCompressor
 			bool preserveAllSemiColons = false)
 		{
 			_compressor = new JavaScriptCompressor
-				              {
-					              CompressionType = compressionType,
-					              DisableOptimizations = !enableOptimizations,
-					              IgnoreEval = ignoreEval,
-					              LineBreakPosition = lineBreakPosition,
-					              ObfuscateJavascript = obfuscateJavaScript,
-					              PreserveAllSemicolons = preserveAllSemiColons
-				              };
+				{
+					CompressionType = compressionType,
+					DisableOptimizations = !enableOptimizations,
+					IgnoreEval = ignoreEval,
+					LineBreakPosition = lineBreakPosition,
+					ObfuscateJavascript = obfuscateJavaScript,
+					PreserveAllSemicolons = preserveAllSemiColons
+				};
 		}
 
 		public YuiJavaScriptTransformer(
@@ -40,15 +40,15 @@ namespace Assets.YuiCompressor
 			bool preserveAllSemiColons = false)
 		{
 			_compressor = new JavaScriptCompressor
-				              {
-					              CompressionType = compressionType,
-					              DisableOptimizations = !enableOptimizations,
-					              Encoding = encoding,
-					              IgnoreEval = ignoreEval,
-					              LineBreakPosition = lineBreakPosition,
-					              ObfuscateJavascript = obfuscateJavaScript,
-					              PreserveAllSemicolons = preserveAllSemiColons
-				              };
+				{
+					CompressionType = compressionType,
+					DisableOptimizations = !enableOptimizations,
+					Encoding = encoding,
+					IgnoreEval = ignoreEval,
+					LineBreakPosition = lineBreakPosition,
+					ObfuscateJavascript = obfuscateJavaScript,
+					PreserveAllSemicolons = preserveAllSemiColons
+				};
 		}
 
 		public string Transform(string assetContents)

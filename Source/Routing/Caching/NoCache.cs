@@ -4,7 +4,7 @@ namespace Junior.Route.Routing.Caching
 {
 	public class NoCache : ICache
 	{
-		public void Add(string key, CacheResponse routeResponse, DateTime expirationUtcTimestamp)
+		public void Add(string key, CacheResponse response, DateTime expirationUtcTimestamp)
 		{
 		}
 

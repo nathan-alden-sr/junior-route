@@ -1,0 +1,70 @@
+﻿using System.IO;
+using System.Linq;
+using System.Net;
+using System.Web;
+
+using Junior.Route.AspNetIntegration.ResponseHandlers;
+using Junior.Route.Routing.Caching;
+using Junior.Route.Routing.Responses;
+
+using NUnit.Framework;
+
+using Rhino.Mocks;
+
+using Cookie = Junior.Route.Routing.Responses.Cookie;
+
+namespace Junior.Route.UnitTests.AspNetIntegration.ResponseHandlers
+{
+	public static class NonCacheableResponseHandlerTester
+	{
+		[TestFixture]
+		public class When_handling_response
+		{
+			[SetUp]
+			public void SetUp()
+			{
+				_handler = new NonCacheableResponseHandler();
+				_httpRequest = MockRepository.GenerateMock<HttpRequestBase>();
+				_stream = MockRepository.GenerateMock<Stream>();
+				_stream.Stub(arg => arg.Write(Arg<byte[]>.Is.Anything, Arg<int>.Is.Anything, Arg<int>.Is.Anything)).WhenCalled(arg => _responseWritten = true);
+				_httpCachePolicyBase = MockRepository.GenerateMock<HttpCachePolicyBase>();
+				_httpResponse = MockRepository.GenerateMock<HttpResponseBase>();
+				_httpResponse.Stub(arg => arg.OutputStream).Return(_stream);
+				_httpResponse.Stub(arg => arg.Cache).Return(_httpCachePolicyBase);
+				_cachePolicy = MockRepository.GenerateMock<ICachePolicy>();
+				_cachePolicy.Stub(arg => arg.Clone()).Return(_cachePolicy);
+				_response = MockRepository.GenerateMock<IResponse>();
+				_response.Stub(arg => arg.CachePolicy).Return(_cachePolicy);
+				_response.Stub(arg => arg.Cookies).Return(Enumerable.Empty<Cookie>());
+				_response.Stub(arg => arg.GetContent()).Return(new byte[0]);
+				_response.Stub(arg => arg.Headers).Return(Enumerable.Empty<Header>());
+				_response.Stub(arg => arg.StatusCode).Return(new StatusAndSubStatusCode(HttpStatusCode.OK));
+				_cache = MockRepository.GenerateMock<ICache>();
+				_result = _handler.HandleResponse(_httpRequest, _httpResponse, _response, _cache, "key");
+			}
+
+			private NonCacheableResponseHandler _handler;
+			private HttpRequestBase _httpRequest;
+			private HttpResponseBase _httpResponse;
+			private IResponse _response;
+			private ICache _cache;
+			private ResponseHandlerResult _result;
+			private Stream _stream;
+			private bool _responseWritten;
+			private ICachePolicy _cachePolicy;
+			private HttpCachePolicyBase _httpCachePolicyBase;
+
+			[Test]
+			public void Must_result_in_response_written()
+			{
+				Assert.That(_result.ResultType, Is.EqualTo(ResponseHandlerResultType.ResponseWritten));
+			}
+
+			[Test]
+			public void Must_write_response_to_httpresponse()
+			{
+				Assert.That(_responseWritten, Is.True);
+			}
+		}
+	}
+}

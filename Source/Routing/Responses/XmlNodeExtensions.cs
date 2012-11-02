@@ -8,26 +8,28 @@ namespace Junior.Route.Routing.Responses
 {
 	public static class XmlNodeExtensions
 	{
-		public static string GetString(this XmlNode rss)
+		public static string GetString(this XmlNode node)
 		{
-			rss.ThrowIfNull("rss");
+			node.ThrowIfNull("node");
 
 			var stringWriter = new StringWriter();
 			var xmlTextWriter = new XmlTextWriter(stringWriter);
 
-			rss.WriteTo(xmlTextWriter);
+			node.WriteTo(xmlTextWriter);
+			xmlTextWriter.Flush();
 
 			return stringWriter.ToString();
 		}
 
-		public static byte[] GetBytes(this XmlNode rss, Encoding encoding)
+		public static byte[] GetBytes(this XmlNode node, Encoding encoding)
 		{
-			rss.ThrowIfNull("rss");
+			node.ThrowIfNull("node");
 
 			var stream = new MemoryStream();
 			var writer = new XmlTextWriter(stream, encoding);
 
-			rss.WriteTo(writer);
+			node.WriteTo(writer);
+			writer.Flush();
 
 			return stream.ToArray();
 		}

@@ -14,6 +14,12 @@ namespace Junior.Route.Common
 		string CombineRelativePaths(IEnumerable<string> relativePaths);
 		string CombineRelativePaths(params string[] relativePaths);
 		int FileSize(string path);
-		Stream ReadFile(string path);
+		Stream OpenFile(string path);
+		Stream OpenFile(string path, FileMode mode);
+		Stream OpenFile(string path, FileMode mode, FileAccess access);
+		Stream OpenFile(string path, FileMode mode, FileAccess access, FileShare share);
+		string[] GetDirectoryFiles(string path);
+		string[] GetDirectoryFiles(string path, string searchPattern);
+		string[] GetDirectoryFiles(string path, string searchPattern, SearchOption searchOption);
 	}
 }

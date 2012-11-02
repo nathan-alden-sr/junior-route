@@ -1,20 +1,23 @@
 ﻿using System;
-using System.Web;
 using System.Web.Caching;
 
 using Junior.Common;
+using Junior.Route.Routing;
 using Junior.Route.Routing.Caching;
 
 namespace Junior.Route.AspNetIntegration.AspNet
 {
 	public class AspNetRuntimeCache : ICache
 	{
+		private readonly IHttpRuntime _httpRuntime;
 		private readonly ISystemClock _systemClock;
 
-		public AspNetRuntimeCache(ISystemClock systemClock)
+		public AspNetRuntimeCache(IHttpRuntime httpRuntime, ISystemClock systemClock)
 		{
 			systemClock.ThrowIfNull("systemClock");
+			systemClock.ThrowIfNull("systemClock");
 
+			_httpRuntime = httpRuntime;
 			_systemClock = systemClock;
 		}
 
@@ -30,21 +33,21 @@ namespace Junior.Route.AspNetIntegration.AspNet
 
 			var cacheItem = new CacheItem(response, _systemClock.UtcDateTime);
 
-			HttpRuntime.Cache.Insert(key, cacheItem, null, expirationUtcTimestamp, Cache.NoSlidingExpiration);
+			_httpRuntime.Cache.Insert(key, cacheItem, null, expirationUtcTimestamp, Cache.NoSlidingExpiration);
 		}
 
 		public void Remove(string key)
 		{
 			key.ThrowIfNull("key");
 
-			HttpRuntime.Cache.Remove(key);
+			_httpRuntime.Cache.Remove(key);
 		}
 
 		public CacheItem Get(string key)
 		{
 			key.ThrowIfNull("key");
 
-			return (CacheItem)HttpRuntime.Cache.Get(key);
+			return (CacheItem)_httpRuntime.Cache.Get(key);
 		}
 	}
 }

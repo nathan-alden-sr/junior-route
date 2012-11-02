@@ -4,41 +4,34 @@ using System.Linq;
 using System.Web;
 
 using Junior.Common;
-using Junior.Route.AspNetIntegration.CachedResponseHandlers;
-using Junior.Route.AspNetIntegration.NonCachedResponseHandlers;
 using Junior.Route.AspNetIntegration.ResponseGenerators;
+using Junior.Route.AspNetIntegration.ResponseHandlers;
 using Junior.Route.Routing;
 using Junior.Route.Routing.Caching;
 using Junior.Route.Routing.Responses;
+
+using ResponseResultType = Junior.Route.AspNetIntegration.ResponseGenerators.ResponseResultType;
 
 namespace Junior.Route.AspNetIntegration.AspNet
 {
 	public class AspNetHttpHandler : IHttpHandler
 	{
 		private readonly ICache _cache;
-		private readonly IEnumerable<ICachedResponseHandler> _cachedResponseHandlers;
-		private readonly IEnumerable<INonCachedResponseHandler> _nonCachedResponseHandlers;
 		private readonly IEnumerable<IResponseGenerator> _responseGenerators;
+		private readonly IEnumerable<IResponseHandler> _responseHandlers;
 		private readonly IRouteCollection _routes;
 
-		public AspNetHttpHandler(
-			IRouteCollection routes,
-			ICache cache,
-			IEnumerable<IResponseGenerator> responseGenerators,
-			IEnumerable<ICachedResponseHandler> cachedResponseHandlers,
-			IEnumerable<INonCachedResponseHandler> nonCachedResponseHandlers)
+		public AspNetHttpHandler(IRouteCollection routes, ICache cache, IEnumerable<IResponseGenerator> responseGenerators, IEnumerable<IResponseHandler> responseHandlers)
 		{
 			routes.ThrowIfNull("routes");
 			cache.ThrowIfNull("cache");
 			responseGenerators.ThrowIfNull("responseGenerators");
-			cachedResponseHandlers.ThrowIfNull("cachedResponseHandlers");
-			nonCachedResponseHandlers.ThrowIfNull("nonCachedResponseHandlers");
+			responseHandlers.ThrowIfNull("responseHandlers");
 
 			_routes = routes;
 			_responseGenerators = responseGenerators;
+			_responseHandlers = responseHandlers;
 			_cache = cache;
-			_cachedResponseHandlers = cachedResponseHandlers;
-			_nonCachedResponseHandlers = nonCachedResponseHandlers;
 		}
 
 		public bool IsReusable
@@ -60,45 +53,33 @@ namespace Junior.Route.AspNetIntegration.AspNet
 			// ReSharper restore ImplicitlyCapturedClosure
 			ResponseResult responseResult = _responseGenerators
 				.Select(arg => arg.GetResponse(request, routeMatchResults))
-				.FirstOrDefault(arg => arg.ResultType != ResponseResultType.NoResponse);
+				.FirstOrDefault(arg => arg.ResultType != ResponseResultType.ResponseNotGenerated);
 
 			if (responseResult == null)
 			{
 				throw new ApplicationException("No response was generated.");
 			}
 
-			if (responseResult.ResultType == ResponseResultType.CachedResponse)
-			{
-				ProcessCachedResponse(request, response, responseResult.Response, responseResult.CacheKey);
-			}
-			else
-			{
-				ProcessNonCachedResponse(request, response, responseResult.Response);
-			}
+			ProcessResponse(request, response, responseResult.Response, responseResult.CacheKey);
 		}
 
-		private void ProcessCachedResponse(HttpRequestBase httpRequest, HttpResponseBase httpResponse, IResponse response, string cacheKey)
+		private void ProcessResponse(HttpRequestBase httpRequest, HttpResponseBase httpResponse, IResponse response, string cacheKey)
 		{
-			IEnumerable<CachedResponseHandlerResult> results = _cachedResponseHandlers.Select(arg => arg.HandleResponse(httpRequest, httpResponse, response, _cache, cacheKey));
-
-			if (results.Any(arg => arg.ResultType != CachedResponseHandlerResultType.ResponseNotHandled))
+			foreach (IResponseHandler handler in _responseHandlers)
 			{
-				return;
+				ResponseHandlerResult handlerResult = handler.HandleResponse(httpRequest, httpResponse, response, _cache, cacheKey);
+
+				switch (handlerResult.ResultType)
+				{
+					case ResponseHandlers.ResponseHandlerResultType.ResponseWritten:
+						return;
+					case ResponseHandlers.ResponseHandlerResultType.ResponseSuggested:
+						response = handlerResult.SuggestedResponse;
+						break;
+				}
 			}
 
-			throw new ApplicationException("No cached response handler found.");
-		}
-
-		private void ProcessNonCachedResponse(HttpRequestBase httpRequest, HttpResponseBase httpResponse, IResponse response)
-		{
-			IEnumerable<NonCachedResponseHandlerResult> results = _nonCachedResponseHandlers.Select(arg => arg.HandleResponse(httpRequest, httpResponse, response));
-
-			if (results.Any(arg => arg != NonCachedResponseHandlerResult.ResponseNotHandled))
-			{
-				return;
-			}
-
-			throw new ApplicationException("No non-cached response handler found.");
+			throw new ApplicationException("No response handler handled the response.");
 		}
 	}
 }

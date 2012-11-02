@@ -48,22 +48,22 @@ namespace Junior.Route.Routing.Responses.Application
 		}
 
 		public RdfResponse(XmlNode content, Action<Response> configurationDelegate = null)
-			: base(Response.OK().ApplicationRdf().Content(content.GetString()))
+			: base(Response.OK().ApplicationRdf().Content(content.GetString()), configurationDelegate)
 		{
 		}
 
 		public RdfResponse(XmlNode content, Encoding encoding, Action<Response> configurationDelegate = null)
-			: base(Response.OK().ApplicationRdf().ContentEncoding(encoding).Content(content.GetBytes(encoding)))
+			: base(Response.OK().ApplicationRdf().ContentEncoding(encoding).Content(content.GetBytes(encoding)), configurationDelegate)
 		{
 		}
 
 		public RdfResponse(XNode content, Action<Response> configurationDelegate = null)
-			: base(Response.OK().ApplicationRdf().Content(content.GetString()))
+			: base(Response.OK().ApplicationRdf().Content(content.GetString()), configurationDelegate)
 		{
 		}
 
 		public RdfResponse(XNode content, Encoding encoding, Action<Response> configurationDelegate = null)
-			: base(Response.OK().ApplicationRdf().ContentEncoding(encoding).Content(content.GetBytes(encoding)))
+			: base(Response.OK().ApplicationRdf().ContentEncoding(encoding).Content(content.GetBytes(encoding)), configurationDelegate)
 		{
 		}
 	}

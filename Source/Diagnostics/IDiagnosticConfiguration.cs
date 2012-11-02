@@ -14,7 +14,7 @@ namespace Junior.Route.Diagnostics
 			get;
 		}
 
-		IEnumerable<Routing.Route> GetRoutes(IGuidFactory guidFactory, IUrlResolver urlResolver, string diagnosticsRelativeUrl);
+		IEnumerable<Routing.Route> GetRoutes(IGuidFactory guidFactory, IUrlResolver urlResolver, IHttpRuntime httpRuntime, string diagnosticsRelativeUrl);
 		IEnumerable<DiagnosticViewLink> GetLinks(string diagnosticsRelativeUrl, string heading);
 	}
 }

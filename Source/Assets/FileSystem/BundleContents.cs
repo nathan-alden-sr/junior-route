@@ -18,7 +18,7 @@ namespace Junior.Route.Assets.FileSystem
 			_contents = contents;
 			using (MD5 md5 = MD5.Create())
 			{
-				byte[] buffer = Encoding.UTF8.GetBytes(contents);
+				byte[] buffer = Encoding.ASCII.GetBytes(contents);
 				byte[] hash = md5.ComputeHash(buffer);
 
 				_hash = BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();

@@ -48,22 +48,22 @@ namespace Junior.Route.Routing.Responses.Application
 		}
 
 		public XHtmlResponse(XmlNode content, Action<Response> configurationDelegate = null)
-			: base(Response.OK().ApplicationXHtml().Content(content.GetString()))
+			: base(Response.OK().ApplicationXHtml().Content(content.GetString()), configurationDelegate)
 		{
 		}
 
 		public XHtmlResponse(XmlNode content, Encoding encoding, Action<Response> configurationDelegate = null)
-			: base(Response.OK().ApplicationXHtml().ContentEncoding(encoding).Content(content.GetBytes(encoding)))
+			: base(Response.OK().ApplicationXHtml().ContentEncoding(encoding).Content(content.GetBytes(encoding)), configurationDelegate)
 		{
 		}
 
 		public XHtmlResponse(XNode content, Action<Response> configurationDelegate = null)
-			: base(Response.OK().ApplicationXHtml().Content(content.GetString()))
+			: base(Response.OK().ApplicationXHtml().Content(content.GetString()), configurationDelegate)
 		{
 		}
 
 		public XHtmlResponse(XNode content, Encoding encoding, Action<Response> configurationDelegate = null)
-			: base(Response.OK().ApplicationXHtml().ContentEncoding(encoding).Content(content.GetBytes(encoding)))
+			: base(Response.OK().ApplicationXHtml().ContentEncoding(encoding).Content(content.GetBytes(encoding)), configurationDelegate)
 		{
 		}
 	}

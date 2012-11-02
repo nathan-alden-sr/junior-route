@@ -16,5 +16,10 @@ namespace Junior.Route.Common
 				hashSet.Add(value);
 			}
 		}
+
+		public static void AddRange<T>(this HashSet<T> hashSet, params T[] values)
+		{
+			AddRange(hashSet, (IEnumerable<T>)values);
+		}
 	}
 }

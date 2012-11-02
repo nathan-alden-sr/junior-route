@@ -114,7 +114,7 @@ namespace Junior.Route.Routing.Responses
 
 		public HttpCookie GetHttpCookie()
 		{
-			var cookie = new HttpCookie(Name, Value)
+			var cookie = new HttpCookie(_name, _value)
 				{
 					Domain = Domain,
 					Expires = Expires,
@@ -122,11 +122,6 @@ namespace Junior.Route.Routing.Responses
 					Path = Path,
 					Secure = Secure
 				};
-
-			foreach (CookieValue value in Values)
-			{
-				cookie.Values.Add(value.Name, value.Value);
-			}
 
 			return cookie;
 		}

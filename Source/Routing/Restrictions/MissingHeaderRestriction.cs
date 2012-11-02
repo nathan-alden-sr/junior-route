@@ -8,7 +8,7 @@ using Junior.Common;
 namespace Junior.Route.Routing.Restrictions
 {
 	[DebuggerDisplay("{DebuggerDisplay,nq}")]
-	public class MissingHeaderRestriction : IRouteRestriction, IEquatable<MissingHeaderRestriction>
+	public class MissingHeaderRestriction : IRestriction, IEquatable<MissingHeaderRestriction>
 	{
 		private readonly string _field;
 

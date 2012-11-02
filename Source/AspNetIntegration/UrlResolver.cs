@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Web;
 
 using Junior.Common;
 using Junior.Route.Common;
@@ -10,27 +9,32 @@ namespace Junior.Route.AspNetIntegration
 {
 	public class UrlResolver : IUrlResolver
 	{
+		private readonly IHttpRuntime _httpRuntime;
 		private readonly Lazy<IRouteCollection> _routes;
 
-		public UrlResolver(Func<IRouteCollection> routes)
+		public UrlResolver(Func<IRouteCollection> routes, IHttpRuntime httpRuntime)
 		{
 			routes.ThrowIfNull("routes");
+			httpRuntime.ThrowIfNull("httpRuntime");
 
 			_routes = new Lazy<IRouteCollection>(routes);
+			_httpRuntime = httpRuntime;
 		}
 
-		public UrlResolver(IRouteCollection routes)
+		public UrlResolver(IRouteCollection routes, IHttpRuntime httpRuntime)
 		{
 			routes.ThrowIfNull("routes");
+			httpRuntime.ThrowIfNull("httpRuntime");
 
 			_routes = new Lazy<IRouteCollection>(() => routes);
+			_httpRuntime = httpRuntime;
 		}
 
 		public string Absolute(string relativeUrl)
 		{
 			relativeUrl.ThrowIfNull("relativeUrl");
 
-			string rootUrl = HttpRuntime.AppDomainAppVirtualPath.TrimStart('/');
+			string rootUrl = _httpRuntime.AppDomainAppVirtualPath.TrimStart('/');
 
 			return String.Format("/{0}/{1}", rootUrl, relativeUrl.TrimStart('/'));
 		}

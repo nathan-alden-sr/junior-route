@@ -6,11 +6,12 @@ using System.Text.RegularExpressions;
 
 using Junior.Common;
 using Junior.Route.Assets.FileSystem;
+using Junior.Route.AutoRouting.AuthenticationStrategies;
 using Junior.Route.AutoRouting.ClassFilters;
 using Junior.Route.AutoRouting.Containers;
 using Junior.Route.AutoRouting.IdMappers;
 using Junior.Route.AutoRouting.MethodFilters;
-using Junior.Route.AutoRouting.NamingStrategies;
+using Junior.Route.AutoRouting.NameMappers;
 using Junior.Route.AutoRouting.ParameterMappers;
 using Junior.Route.AutoRouting.ResolvedRelativeUrlMappers;
 using Junior.Route.AutoRouting.ResponseMappers;
@@ -18,6 +19,7 @@ using Junior.Route.AutoRouting.RestrictionMappers;
 using Junior.Route.AutoRouting.RestrictionMappers.Attributes;
 using Junior.Route.Common;
 using Junior.Route.Routing;
+using Junior.Route.Routing.AuthenticationProviders;
 
 using DelegateFilter = Junior.Route.AutoRouting.ClassFilters.DelegateFilter;
 
@@ -27,29 +29,23 @@ namespace Junior.Route.AutoRouting
 	{
 		private readonly HashSet<Func<IRouteCollection, IEnumerable<Routing.Route>>> _additionalRoutes = new HashSet<Func<IRouteCollection, IEnumerable<Routing.Route>>>();
 		private readonly HashSet<Assembly> _assemblies = new HashSet<Assembly>();
+		private readonly HashSet<IAuthenticationStrategy> _authenticationStrategies = new HashSet<IAuthenticationStrategy>();
 		private readonly HashSet<IClassFilter> _classFilters = new HashSet<IClassFilter>();
 		private readonly HashSet<IIdMapper> _idMappers = new HashSet<IIdMapper>();
 		private readonly HashSet<IMethodFilter> _methodFilters = new HashSet<IMethodFilter>();
-		private readonly HashSet<INamingStrategy> _namingStrategies = new HashSet<INamingStrategy>();
+		private readonly HashSet<INameMapper> _nameMappers = new HashSet<INameMapper>();
 		private readonly HashSet<IResolvedRelativeUrlMapper> _resolvedRelativeUrlMappers = new HashSet<IResolvedRelativeUrlMapper>();
-		private readonly HashSet<IRouteRestrictionMapper> _routeRestrictionMappers = new HashSet<IRouteRestrictionMapper>();
+		private readonly HashSet<IRestrictionMapper> _routeRestrictionMappers = new HashSet<IRestrictionMapper>();
+		private IAuthenticationProvider _authenticationProvider;
 		private IContainer _bundleDependencyContainer;
 		private bool _duplicateRouteNamesAllowed;
-		private IContainer _endpointContainer = new NewInstancePerRouteContainer();
-		private IRouteResponseMapper _routeResponseMapper = new NoContentMapper();
-		private RouteCollection _routes;
+		private IContainer _endpointContainer = new NewInstancePerRouteEndpointContainer();
+		private IResponseMapper _responseMapper = new NoContentMapper();
+		private IContainer _restrictionContainer;
 
-		public IRouteCollection Routes
+		public AutoRouteCollection(bool duplicateRouteNamesAllowed = false)
 		{
-			get
-			{
-				if (_routes == null)
-				{
-					throw new InvalidOperationException("RegisterRoutes must be called before accessing this property.");
-				}
-
-				return _routes;
-			}
+			_duplicateRouteNamesAllowed = duplicateRouteNamesAllowed;
 		}
 
 		public AutoRouteCollection DuplicateRouteNamesAllowed()
@@ -68,8 +64,6 @@ namespace Junior.Route.AutoRouting
 
 		public AutoRouteCollection Assemblies(IEnumerable<Assembly> assemblies)
 		{
-			ThrowIfRoutesAreRegistered();
-
 			assemblies.ThrowIfNull("assemblies");
 
 			_assemblies.AddRange(assemblies);
@@ -84,26 +78,20 @@ namespace Junior.Route.AutoRouting
 
 		public AutoRouteCollection NewInstancePerRouteContainer()
 		{
-			ThrowIfRoutesAreRegistered();
-
-			_endpointContainer = new NewInstancePerRouteContainer();
+			_endpointContainer = new NewInstancePerRouteEndpointContainer();
 
 			return this;
 		}
 
 		public AutoRouteCollection SingleInstancePerRouteContainer()
 		{
-			ThrowIfRoutesAreRegistered();
-
-			_endpointContainer = new SingleInstancePerRouteContainer();
+			_endpointContainer = new SingleInstancePerRouteEndpointContainer();
 
 			return this;
 		}
 
 		public AutoRouteCollection EndpointContainer(IContainer container)
 		{
-			ThrowIfRoutesAreRegistered();
-
 			container.ThrowIfNull("container");
 
 			_endpointContainer = container;
@@ -113,8 +101,6 @@ namespace Junior.Route.AutoRouting
 
 		public AutoRouteCollection BundleDependencyContainer(IContainer container)
 		{
-			ThrowIfRoutesAreRegistered();
-
 			container.ThrowIfNull("container");
 
 			_bundleDependencyContainer = container;
@@ -122,32 +108,39 @@ namespace Junior.Route.AutoRouting
 			return this;
 		}
 
-		public AutoRouteCollection RegisterRoutes()
+		public AutoRouteCollection RestrictionContainer(IContainer container)
 		{
-			ThrowIfRoutesAreRegistered();
+			container.ThrowIfNull("container");
 
+			_restrictionContainer = container;
+
+			return this;
+		}
+
+		public IRouteCollection GetRouteCollection()
+		{
 			if (!_assemblies.Any())
 			{
 				throw new InvalidOperationException("At least one assembly must be provided.");
-			}
-			if (!_classFilters.Any())
-			{
-				throw new InvalidOperationException("At least one class filter must be provided.");
 			}
 			if (!_idMappers.Any())
 			{
 				throw new InvalidOperationException("At least one ID mapper must be provided.");
 			}
-			if (!_namingStrategies.Any())
+			if (!_nameMappers.Any())
 			{
-				throw new InvalidOperationException("At least one naming strategy must be provided.");
+				throw new InvalidOperationException("At least one name mapper must be provided.");
 			}
 			if (!_resolvedRelativeUrlMappers.Any())
 			{
 				throw new InvalidOperationException("At least one resolved relative URL mapper must be provided.");
 			}
+			if (_routeRestrictionMappers.Any() && _restrictionContainer == null)
+			{
+				throw new InvalidOperationException("Restrictions are configured but no restriction container was provided.");
+			}
 
-			_routes = new RouteCollection(_duplicateRouteNamesAllowed);
+			var routes = new RouteCollection(_duplicateRouteNamesAllowed);
 
 			IEnumerable<Type> matchingTypes = _assemblies
 				.SelectMany(arg => arg.GetTypes())
@@ -164,9 +157,9 @@ namespace Junior.Route.AutoRouting
 				{
 					Type closureMatchingType = matchingType;
 					MethodInfo closureMatchingMethod = matchingMethod;
-					string name = _namingStrategies
-						.Select(arg => new { Strategy = arg, Result = arg.Name(closureMatchingType, closureMatchingMethod) })
-						.FirstOrDefault(arg => arg.Result.ResultType == NamingResultType.RouteNamed)
+					string name = _nameMappers
+						.Select(arg => new { Mapper = arg, Result = arg.Map(closureMatchingType, closureMatchingMethod) })
+						.FirstOrDefault(arg => arg.Result.ResultType == NameResultType.NameMapped)
 						.IfNotNull(arg => arg.Result.Name);
 
 					if (name == null)
@@ -175,7 +168,7 @@ namespace Junior.Route.AutoRouting
 					}
 
 					Guid? id = _idMappers
-						.Select(arg => new { Mapper = arg, Result = arg.Id(closureMatchingType, closureMatchingMethod) })
+						.Select(arg => new { Mapper = arg, Result = arg.Map(closureMatchingType, closureMatchingMethod) })
 						.FirstOrDefault(arg => arg.Result.ResultType == IdResultType.IdMapped)
 						.IfNotNull(arg => arg.Result.Id);
 
@@ -185,7 +178,7 @@ namespace Junior.Route.AutoRouting
 					}
 
 					string resolvedRelativeUrl = _resolvedRelativeUrlMappers
-						.Select(arg => new { Mapper = arg, Result = arg.ResolvedRelativeUrl(closureMatchingType, closureMatchingMethod) })
+						.Select(arg => new { Mapper = arg, Result = arg.Map(closureMatchingType, closureMatchingMethod) })
 						.FirstOrDefault(arg => arg.Result.ResultType == ResolvedRelativeUrlResultType.ResolvedRelativeUrlMapped)
 						.IfNotNull(arg => arg.Result.ResolvedRelativeUrl);
 
@@ -196,46 +189,27 @@ namespace Junior.Route.AutoRouting
 
 					var route = new Routing.Route(name, id.Value, resolvedRelativeUrl);
 
-					foreach (IRouteRestrictionMapper restrictionMapper in _routeRestrictionMappers)
+					foreach (IRestrictionMapper restrictionMapper in _routeRestrictionMappers)
 					{
-						restrictionMapper.Map(matchingType, matchingMethod, route);
+						restrictionMapper.Map(matchingType, matchingMethod, route, _restrictionContainer);
 					}
 
-					_routeResponseMapper.Map(() => _endpointContainer, matchingType, matchingMethod, route);
+					_responseMapper.Map(() => _endpointContainer, matchingType, matchingMethod, route);
 
-					_routes.Add(route);
+					if (_authenticationProvider != null && _authenticationStrategies.Any(arg => arg.MustAuthenticate(closureMatchingType, closureMatchingMethod)))
+					{
+						route.AuthenticationProvider(_authenticationProvider);
+					}
+
+					routes.Add(route);
 				}
 			}
 			foreach (Func<IRouteCollection, IEnumerable<Routing.Route>> @delegate in _additionalRoutes)
 			{
-				_routes.Add(@delegate(_routes));
+				routes.Add(@delegate(routes));
 			}
 
-			return this;
-		}
-
-		public void Reset()
-		{
-			_additionalRoutes.Clear();
-			_assemblies.Clear();
-			_classFilters.Clear();
-			_idMappers.Clear();
-			_methodFilters.Clear();
-			_namingStrategies.Clear();
-			_resolvedRelativeUrlMappers.Clear();
-			_routeRestrictionMappers.Clear();
-			_endpointContainer = new NewInstancePerRouteContainer();
-			_routeResponseMapper = new NoContentMapper();
-			_routes = null;
-			_bundleDependencyContainer = null;
-		}
-
-		private void ThrowIfRoutesAreRegistered()
-		{
-			if (_routes != null)
-			{
-				throw new InvalidOperationException("Cannot modify the instance after RegisterRoutes has been called. To reset the instance, call Reset.");
-			}
+			return routes;
 		}
 
 		private void ThrowIfNoBundleDependencyContainer()
@@ -250,8 +224,6 @@ namespace Junior.Route.AutoRouting
 
 		public AutoRouteCollection ClassesInNamespace(string @namespace)
 		{
-			ThrowIfRoutesAreRegistered();
-
 			_classFilters.Add(new InNamespaceFilter(@namespace));
 
 			return this;
@@ -259,8 +231,6 @@ namespace Junior.Route.AutoRouting
 
 		public AutoRouteCollection ClassesWithNamespaceAncestor(string @namespace)
 		{
-			ThrowIfRoutesAreRegistered();
-
 			_classFilters.Add(new HasNamespaceAncestorFilter(@namespace));
 
 			return this;
@@ -269,8 +239,6 @@ namespace Junior.Route.AutoRouting
 		public AutoRouteCollection ClassesImplementingInterface<T>()
 			where T : class
 		{
-			ThrowIfRoutesAreRegistered();
-
 			_classFilters.Add(new ImplementsInterfaceFilter<T>());
 
 			return this;
@@ -278,8 +246,6 @@ namespace Junior.Route.AutoRouting
 
 		public AutoRouteCollection ClassesImplementingInterface(Type interfaceType)
 		{
-			ThrowIfRoutesAreRegistered();
-
 			_classFilters.Add(new ImplementsInterfaceFilter(interfaceType));
 
 			return this;
@@ -288,8 +254,6 @@ namespace Junior.Route.AutoRouting
 		public AutoRouteCollection ClassesDerivingAnotherClass<T>()
 			where T : class
 		{
-			ThrowIfRoutesAreRegistered();
-
 			_classFilters.Add(new DerivesFilter<T>());
 
 			return this;
@@ -297,8 +261,6 @@ namespace Junior.Route.AutoRouting
 
 		public AutoRouteCollection ClassesDerivingAnotherClass(Type baseType)
 		{
-			ThrowIfRoutesAreRegistered();
-
 			_classFilters.Add(new DerivesFilter(baseType));
 
 			return this;
@@ -306,8 +268,6 @@ namespace Junior.Route.AutoRouting
 
 		public AutoRouteCollection ClassesWithNamesStartingWith(string value, StringComparison comparison = StringComparison.Ordinal)
 		{
-			ThrowIfRoutesAreRegistered();
-
 			_classFilters.Add(new NameStartsWithFilter(value, comparison));
 
 			return this;
@@ -315,8 +275,6 @@ namespace Junior.Route.AutoRouting
 
 		public AutoRouteCollection ClassesWithNamesEndingWith(string value, StringComparison comparison = StringComparison.Ordinal)
 		{
-			ThrowIfRoutesAreRegistered();
-
 			_classFilters.Add(new NameEndsWithFilter(value, comparison));
 
 			return this;
@@ -324,8 +282,6 @@ namespace Junior.Route.AutoRouting
 
 		public AutoRouteCollection ClassesWithNamesMatchingRegexPattern(string pattern, RegexOptions options = RegexOptions.None)
 		{
-			ThrowIfRoutesAreRegistered();
-
 			_classFilters.Add(new NameMatchesRegexPatternFilter(pattern, options));
 
 			return this;
@@ -333,26 +289,13 @@ namespace Junior.Route.AutoRouting
 
 		public AutoRouteCollection ClassesMatching(Func<Type, bool> matchDelegate)
 		{
-			ThrowIfRoutesAreRegistered();
-
 			_classFilters.Add(new DelegateFilter(matchDelegate));
-
-			return this;
-		}
-
-		public AutoRouteCollection AllClasses()
-		{
-			ThrowIfRoutesAreRegistered();
-
-			_classFilters.Add(new AllFilter());
 
 			return this;
 		}
 
 		public AutoRouteCollection ClassFilters(IEnumerable<IClassFilter> filters)
 		{
-			ThrowIfRoutesAreRegistered();
-
 			filters.ThrowIfNull("filters");
 
 			_classFilters.AddRange(filters);
@@ -362,8 +305,6 @@ namespace Junior.Route.AutoRouting
 
 		public AutoRouteCollection ClassFilters(params IClassFilter[] filters)
 		{
-			ThrowIfRoutesAreRegistered();
-
 			return ClassFilters((IEnumerable<IClassFilter>)filters);
 		}
 
@@ -373,8 +314,6 @@ namespace Junior.Route.AutoRouting
 
 		public AutoRouteCollection MethodsMatching(Func<MethodInfo, bool> matchDelegate)
 		{
-			ThrowIfRoutesAreRegistered();
-
 			_methodFilters.Add(new MethodFilters.DelegateFilter(matchDelegate));
 
 			return this;
@@ -382,8 +321,6 @@ namespace Junior.Route.AutoRouting
 
 		public AutoRouteCollection MethodFilters(IEnumerable<IMethodFilter> filters)
 		{
-			ThrowIfRoutesAreRegistered();
-
 			filters.ThrowIfNull("filters");
 
 			_methodFilters.AddRange(filters);
@@ -393,9 +330,54 @@ namespace Junior.Route.AutoRouting
 
 		public AutoRouteCollection MethodFilters(params IMethodFilter[] filters)
 		{
-			ThrowIfRoutesAreRegistered();
-
 			return MethodFilters((IEnumerable<IMethodFilter>)filters);
+		}
+
+		#endregion
+
+		#region Name mappers
+
+		public AutoRouteCollection NameAfterRelativeClassNamespaceAndClassNameAndMethodName(
+			string rootNamespace,
+			bool makeLowercase = false,
+			string wordSeparator = " ",
+			string wordRegexPattern = NameAfterRelativeClassNamespaceAndClassNameAndMethodNameMapper.DefaultWordRegexPattern)
+		{
+			_nameMappers.Add(new NameAfterRelativeClassNamespaceAndClassNameAndMethodNameMapper(rootNamespace, makeLowercase, wordSeparator, wordRegexPattern));
+
+			return this;
+		}
+
+		public AutoRouteCollection NameAfterRelativeClassNamespaceAndClassName(
+			string rootNamespace,
+			bool makeLowercase = false,
+			string wordSeparator = " ",
+			string wordRegexPattern = NameAfterRelativeClassNamespaceAndClassNameMapper.DefaultWordRegexPattern)
+		{
+			_nameMappers.Add(new NameAfterRelativeClassNamespaceAndClassNameMapper(rootNamespace, makeLowercase, wordSeparator, wordRegexPattern));
+
+			return this;
+		}
+
+		public AutoRouteCollection NameUsingAttribute()
+		{
+			_nameMappers.Add(new NameAttributeMapper());
+
+			return this;
+		}
+
+		public AutoRouteCollection NameMappers(IEnumerable<INameMapper> strategies)
+		{
+			strategies.ThrowIfNull("strategies");
+
+			_nameMappers.AddRange(strategies);
+
+			return this;
+		}
+
+		public AutoRouteCollection NameMappers(params INameMapper[] strategies)
+		{
+			return NameMappers((IEnumerable<INameMapper>)strategies);
 		}
 
 		#endregion
@@ -404,8 +386,6 @@ namespace Junior.Route.AutoRouting
 
 		public AutoRouteCollection IdUsingAttribute()
 		{
-			ThrowIfRoutesAreRegistered();
-
 			_idMappers.Add(new IdAttributeMapper());
 
 			return this;
@@ -413,8 +393,6 @@ namespace Junior.Route.AutoRouting
 
 		public AutoRouteCollection IdMappers(IEnumerable<IIdMapper> mappers)
 		{
-			ThrowIfRoutesAreRegistered();
-
 			mappers.ThrowIfNull("mappers");
 
 			_idMappers.AddRange(mappers);
@@ -431,19 +409,19 @@ namespace Junior.Route.AutoRouting
 
 		#region Resolved relative URL mappers
 
-		public AutoRouteCollection ResolvedRelativeUrlFromRelativeClassNamespacesAndClassNames(string rootNamespace, bool makeLowercase = true)
+		public AutoRouteCollection ResolvedRelativeUrlFromRelativeClassNamespacesAndClassNames(
+			string rootNamespace,
+			bool makeLowercase = true,
+			string wordSeparator = "_",
+			string wordRegexPattern = ResolvedRelativeUrlFromRelativeClassNamespaceAndClassNameMapper.DefaultWordRegexPattern)
 		{
-			ThrowIfRoutesAreRegistered();
-
-			_resolvedRelativeUrlMappers.Add(new ResolvedRelativeUrlFromRelativeClassNamespaceAndClassNameMapper(rootNamespace, makeLowercase));
+			_resolvedRelativeUrlMappers.Add(new ResolvedRelativeUrlFromRelativeClassNamespaceAndClassNameMapper(rootNamespace, makeLowercase, wordSeparator));
 
 			return this;
 		}
 
 		public AutoRouteCollection ResolvedRelativeUrlUsingAttribute()
 		{
-			ThrowIfRoutesAreRegistered();
-
 			_resolvedRelativeUrlMappers.Add(new ResolvedRelativeUrlAttributeMapper());
 
 			return this;
@@ -451,8 +429,6 @@ namespace Junior.Route.AutoRouting
 
 		public AutoRouteCollection ResolvedRelativeUrlMappers(IEnumerable<IResolvedRelativeUrlMapper> mappers)
 		{
-			ThrowIfRoutesAreRegistered();
-
 			mappers.ThrowIfNull("mappers");
 
 			_resolvedRelativeUrlMappers.AddRange(mappers);
@@ -467,60 +443,23 @@ namespace Junior.Route.AutoRouting
 
 		#endregion
 
-		#region Naming strategies
-
-		public AutoRouteCollection NameAfterClassNamespaceAndClassNameAndMethodName()
-		{
-			ThrowIfRoutesAreRegistered();
-
-			_namingStrategies.Add(new ClassNamespaceAndClassNameAndMethodNameStrategy());
-
-			return this;
-		}
-
-		public AutoRouteCollection NameUsingAttribute()
-		{
-			ThrowIfRoutesAreRegistered();
-
-			_namingStrategies.Add(new NameAttributeStrategy());
-
-			return this;
-		}
-
-		public AutoRouteCollection NamingStrategies(IEnumerable<INamingStrategy> strategies)
-		{
-			ThrowIfRoutesAreRegistered();
-
-			strategies.ThrowIfNull("strategies");
-
-			_namingStrategies.AddRange(strategies);
-
-			return this;
-		}
-
-		public AutoRouteCollection NamingStrategies(params INamingStrategy[] strategies)
-		{
-			return NamingStrategies((IEnumerable<INamingStrategy>)strategies);
-		}
-
-		#endregion
-
 		#region Restriction mappers
 
 		public AutoRouteCollection RestrictHttpMethodsToMethodsNamedAfterStandardHttpMethods()
 		{
-			ThrowIfRoutesAreRegistered();
-
 			_routeRestrictionMappers.Add(new HttpMethodFromMethodsNamedAfterStandardHttpMethodsMapper());
 
 			return this;
 		}
 
-		public AutoRouteCollection RestrictRelativeUrlsToRelativeClassNamespacesAndClassNames(string rootNamespace, bool makeLowercase = true)
+		public AutoRouteCollection RestrictRelativeUrlsToRelativeClassNamespacesAndClassNames(
+			string rootNamespace,
+			bool caseSensitive = false,
+			bool makeLowercase = true,
+			string wordSeparator = "_",
+			string wordRegexPattern = UrlRelativePathFromRelativeClassNamespaceAndClassNameMapper.DefaultWordRegexPattern)
 		{
-			ThrowIfRoutesAreRegistered();
-
-			_routeRestrictionMappers.Add(new RelativeUrlFromRelativeClassNamespaceAndClassNameMapper(rootNamespace, makeLowercase));
+			_routeRestrictionMappers.Add(new UrlRelativePathFromRelativeClassNamespaceAndClassNameMapper(rootNamespace, caseSensitive, makeLowercase, wordSeparator, wordRegexPattern));
 
 			return this;
 		}
@@ -528,8 +467,6 @@ namespace Junior.Route.AutoRouting
 		public AutoRouteCollection RestrictUsingAttributes<T>()
 			where T : RestrictionAttribute
 		{
-			ThrowIfRoutesAreRegistered();
-
 			_routeRestrictionMappers.Add(new RestrictionsFromAttributesMapper<T>());
 
 			return this;
@@ -537,8 +474,6 @@ namespace Junior.Route.AutoRouting
 
 		public AutoRouteCollection RestrictUsingAttributes(IEnumerable<Type> attributeTypes)
 		{
-			ThrowIfRoutesAreRegistered();
-
 			attributeTypes.ThrowIfNull("attributeTypes");
 
 			foreach (Type attributeType in attributeTypes)
@@ -556,18 +491,14 @@ namespace Junior.Route.AutoRouting
 
 		public AutoRouteCollection RestrictUsingAllAttributeTypes()
 		{
-			ThrowIfRoutesAreRegistered();
-
 			Assembly assembly = Assembly.GetExecutingAssembly();
 			IEnumerable<Type> mappingAttributeTypes = assembly.GetTypes().Where(arg => arg.IsSubclassOf(typeof(RestrictionAttribute)));
 
 			return RestrictUsingAttributes(mappingAttributeTypes);
 		}
 
-		public AutoRouteCollection RestrictionMappers(IEnumerable<IRouteRestrictionMapper> mappers)
+		public AutoRouteCollection RestrictionMappers(IEnumerable<IRestrictionMapper> mappers)
 		{
-			ThrowIfRoutesAreRegistered();
-
 			mappers.ThrowIfNull("mappers");
 
 			_routeRestrictionMappers.AddRange(mappers);
@@ -575,38 +506,95 @@ namespace Junior.Route.AutoRouting
 			return this;
 		}
 
-		public AutoRouteCollection RestrictionMappers(params IRouteRestrictionMapper[] mappers)
+		public AutoRouteCollection RestrictionMappers(params IRestrictionMapper[] mappers)
 		{
-			return RestrictionMappers((IEnumerable<IRouteRestrictionMapper>)mappers);
+			return RestrictionMappers((IEnumerable<IRestrictionMapper>)mappers);
 		}
 
 		#endregion
 
 		#region Response mappers
 
-		public AutoRouteCollection RespondWithMethodReturnValuesThatImplementIRouteResponse(IEnumerable<IParameterMapper> mappers)
+		public AutoRouteCollection RespondWithMethodReturnValuesThatImplementIResponse(IEnumerable<IParameterMapper> mappers)
 		{
-			ThrowIfRoutesAreRegistered();
-
 			mappers.ThrowIfNull("mappers");
 
-			_routeResponseMapper = new RouteResponseMethodReturnTypeMapper(mappers);
+			_responseMapper = new ResponseMethodReturnTypeMapper(mappers);
 
 			return this;
 		}
 
-		public AutoRouteCollection RespondWithMethodReturnValuesThatImplementIRouteResponse(params IParameterMapper[] mappers)
+		public AutoRouteCollection RespondWithMethodReturnValuesThatImplementIResponse(params IParameterMapper[] mappers)
 		{
-			return RespondWithMethodReturnValuesThatImplementIRouteResponse((IEnumerable<IParameterMapper>)mappers);
+			return RespondWithMethodReturnValuesThatImplementIResponse((IEnumerable<IParameterMapper>)mappers);
 		}
 
-		public AutoRouteCollection ResponseMapper(IRouteResponseMapper mapper)
+		public AutoRouteCollection ResponseMapper(IResponseMapper mapper)
 		{
-			ThrowIfRoutesAreRegistered();
-
 			mapper.ThrowIfNull("mapper");
 
-			_routeResponseMapper = mapper;
+			_responseMapper = mapper;
+
+			return this;
+		}
+
+		#endregion
+
+		#region Authentication
+
+		public AutoRouteCollection AuthenticateWhenAttributePresent(IAuthenticationProvider provider)
+		{
+			return Authenticate(provider, new AuthenticateAttributeStrategy());
+		}
+
+		public AutoRouteCollection FormsAuthenticationWithNoRedirectWhenAttributePresent()
+		{
+			return Authenticate(FormsAuthenticationProvider.CreateWithNoRedirectOnFailedAuthentication(), new AuthenticateAttributeStrategy());
+		}
+
+		public AutoRouteCollection FormsAuthenticationWithRelativeUrlRedirectWhenAttributePresent(IUrlResolver urlResolver, string relativeUrl, bool appendReturnUrl = false, string returnUrlQueryStringField = "ReturnURL")
+		{
+			return Authenticate(FormsAuthenticationProvider.CreateWithRelativeUrlRedirectOnFailedAuthentication(urlResolver, relativeUrl, appendReturnUrl, returnUrlQueryStringField), new AuthenticateAttributeStrategy());
+		}
+
+		public AutoRouteCollection FormsAuthenticationWithRouteRedirectWhenAttributePresent(IUrlResolver urlResolver, string routeName, bool appendReturnUrl = false, string returnUrlQueryStringField = "ReturnURL")
+		{
+			return Authenticate(FormsAuthenticationProvider.CreateWithRouteRedirectOnFailedAuthentication(urlResolver, routeName, appendReturnUrl, returnUrlQueryStringField), new AuthenticateAttributeStrategy());
+		}
+
+		public AutoRouteCollection FormsAuthenticationWithRouteRedirectWhenAttributePresent(IUrlResolver urlResolver, Guid routeId, bool appendReturnUrl = false, string returnUrlQueryStringField = "ReturnURL")
+		{
+			return Authenticate(FormsAuthenticationProvider.CreateWithRouteRedirectOnFailedAuthentication(urlResolver, routeId, appendReturnUrl, returnUrlQueryStringField), new AuthenticateAttributeStrategy());
+		}
+
+		public AutoRouteCollection Authenticate(IAuthenticationProvider provider, IEnumerable<IAuthenticationStrategy> strategies)
+		{
+			provider.ThrowIfNull("provider");
+			strategies.ThrowIfNull("strategies");
+
+			strategies = strategies.ToArray();
+
+			if (!strategies.Any())
+			{
+				throw new ArgumentException("Must provide at least 1 strategy.", "strategies");
+			}
+
+			_authenticationProvider = provider;
+			_authenticationStrategies.Clear();
+			_authenticationStrategies.AddRange(strategies);
+
+			return this;
+		}
+
+		public AutoRouteCollection Authenticate(IAuthenticationProvider provider, params IAuthenticationStrategy[] strategies)
+		{
+			return Authenticate(provider, (IEnumerable<IAuthenticationStrategy>)strategies);
+		}
+
+		public AutoRouteCollection DoNotAuthenticate()
+		{
+			_authenticationProvider = null;
+			_authenticationStrategies.Clear();
 
 			return this;
 		}
@@ -615,94 +603,114 @@ namespace Junior.Route.AutoRouting
 
 		#region Bundles
 
-		public AutoRouteCollection CssBundle(Bundle bundle, string routeName, string relativeUrl, IComparer<AssetFile> assetOrder, IAssetConcatenator concatenator, IEnumerable<IAssetTransformer> transformers)
+		public AutoRouteCollection CssBundle(Bundle bundle, string routeName, string relativePath, IComparer<AssetFile> assetOrder, IAssetConcatenator concatenator, IEnumerable<IAssetTransformer> transformers)
 		{
-			ThrowIfRoutesAreRegistered();
 			ThrowIfNoBundleDependencyContainer();
 
 			bundle.ThrowIfNull("bundle");
 			routeName.ThrowIfNull("routeName");
-			relativeUrl.ThrowIfNull("relativeUrl");
+			relativePath.ThrowIfNull("relativePath");
 			assetOrder.ThrowIfNull("assetOrder");
 			concatenator.ThrowIfNull("concatenator");
 			transformers.ThrowIfNull("transformers");
 
 			var watcher = new BundleWatcher(bundle, _bundleDependencyContainer.GetInstance<IFileSystem>(), assetOrder, concatenator, transformers);
-			var route = new CssBundleWatcherRoute(routeName, _bundleDependencyContainer.GetInstance<IGuidFactory>(), relativeUrl, watcher, _bundleDependencyContainer.GetInstance<ISystemClock>());
+			var route = new CssBundleWatcherRoute(
+				routeName,
+				_bundleDependencyContainer.GetInstance<IGuidFactory>(),
+				relativePath,
+				watcher,
+				_bundleDependencyContainer.GetInstance<IHttpRuntime>(),
+				_bundleDependencyContainer.GetInstance<ISystemClock>());
 
 			return AdditionalRoutes(route);
 		}
 
-		public AutoRouteCollection CssBundle(Bundle bundle, string routeName, string relativeUrl, IComparer<AssetFile> assetOrder, IAssetConcatenator concatenator, params IAssetTransformer[] transformers)
+		public AutoRouteCollection CssBundle(Bundle bundle, string routeName, string relativePath, IComparer<AssetFile> assetOrder, IAssetConcatenator concatenator, params IAssetTransformer[] transformers)
 		{
-			return CssBundle(bundle, routeName, relativeUrl, assetOrder, concatenator, (IEnumerable<IAssetTransformer>)transformers);
+			return CssBundle(bundle, routeName, relativePath, assetOrder, concatenator, (IEnumerable<IAssetTransformer>)transformers);
 		}
 
-		public AutoRouteCollection CssBundle(Bundle bundle, string routeName, string relativeUrl, IAssetConcatenator concatenator, IEnumerable<IAssetTransformer> transformers)
+		public AutoRouteCollection CssBundle(Bundle bundle, string routeName, string relativePath, IAssetConcatenator concatenator, IEnumerable<IAssetTransformer> transformers)
 		{
-			ThrowIfRoutesAreRegistered();
 			ThrowIfNoBundleDependencyContainer();
 
 			bundle.ThrowIfNull("bundle");
 			routeName.ThrowIfNull("routeName");
-			relativeUrl.ThrowIfNull("relativeUrl");
+			relativePath.ThrowIfNull("relativePath");
 			concatenator.ThrowIfNull("concatenator");
 			transformers.ThrowIfNull("transformers");
 
 			var watcher = new BundleWatcher(bundle, _bundleDependencyContainer.GetInstance<IFileSystem>(), concatenator, transformers);
-			var route = new CssBundleWatcherRoute(routeName, _bundleDependencyContainer.GetInstance<IGuidFactory>(), relativeUrl, watcher, _bundleDependencyContainer.GetInstance<ISystemClock>());
+			var route = new CssBundleWatcherRoute(
+				routeName,
+				_bundleDependencyContainer.GetInstance<IGuidFactory>(),
+				relativePath,
+				watcher,
+				_bundleDependencyContainer.GetInstance<IHttpRuntime>(),
+				_bundleDependencyContainer.GetInstance<ISystemClock>());
 
 			return AdditionalRoutes(route);
 		}
 
-		public AutoRouteCollection CssBundle(Bundle bundle, string routeName, string relativeUrl, IAssetConcatenator concatenator, params IAssetTransformer[] transformers)
+		public AutoRouteCollection CssBundle(Bundle bundle, string routeName, string relativePath, IAssetConcatenator concatenator, params IAssetTransformer[] transformers)
 		{
-			return CssBundle(bundle, routeName, relativeUrl, concatenator, (IEnumerable<IAssetTransformer>)transformers);
+			return CssBundle(bundle, routeName, relativePath, concatenator, (IEnumerable<IAssetTransformer>)transformers);
 		}
 
-		public AutoRouteCollection JavaScriptBundle(Bundle bundle, string routeName, string relativeUrl, IComparer<AssetFile> assetOrder, IAssetConcatenator concatenator, IEnumerable<IAssetTransformer> transformers)
+		public AutoRouteCollection JavaScriptBundle(Bundle bundle, string routeName, string relativePath, IComparer<AssetFile> assetOrder, IAssetConcatenator concatenator, IEnumerable<IAssetTransformer> transformers)
 		{
-			ThrowIfRoutesAreRegistered();
 			ThrowIfNoBundleDependencyContainer();
 
 			bundle.ThrowIfNull("bundle");
 			routeName.ThrowIfNull("routeName");
-			relativeUrl.ThrowIfNull("relativeUrl");
+			relativePath.ThrowIfNull("relativePath");
 			assetOrder.ThrowIfNull("assetOrder");
 			concatenator.ThrowIfNull("concatenator");
 			transformers.ThrowIfNull("transformers");
 
 			var watcher = new BundleWatcher(bundle, _bundleDependencyContainer.GetInstance<IFileSystem>(), assetOrder, concatenator, transformers);
-			var route = new JavaScriptBundleWatcherRoute(routeName, _bundleDependencyContainer.GetInstance<IGuidFactory>(), relativeUrl, watcher, _bundleDependencyContainer.GetInstance<ISystemClock>());
+			var route = new JavaScriptBundleWatcherRoute(
+				routeName,
+				_bundleDependencyContainer.GetInstance<IGuidFactory>(),
+				relativePath,
+				watcher,
+				_bundleDependencyContainer.GetInstance<IHttpRuntime>(),
+				_bundleDependencyContainer.GetInstance<ISystemClock>());
 
 			return AdditionalRoutes(route);
 		}
 
-		public AutoRouteCollection JavaScriptBundle(Bundle bundle, string routeName, string relativeUrl, IComparer<AssetFile> assetOrder, IAssetConcatenator concatenator, params IAssetTransformer[] transformers)
+		public AutoRouteCollection JavaScriptBundle(Bundle bundle, string routeName, string relativePath, IComparer<AssetFile> assetOrder, IAssetConcatenator concatenator, params IAssetTransformer[] transformers)
 		{
-			return JavaScriptBundle(bundle, routeName, relativeUrl, assetOrder, concatenator, (IEnumerable<IAssetTransformer>)transformers);
+			return JavaScriptBundle(bundle, routeName, relativePath, assetOrder, concatenator, (IEnumerable<IAssetTransformer>)transformers);
 		}
 
-		public AutoRouteCollection JavaScriptBundle(Bundle bundle, string routeName, string relativeUrl, IAssetConcatenator concatenator, IEnumerable<IAssetTransformer> transformers)
+		public AutoRouteCollection JavaScriptBundle(Bundle bundle, string routeName, string relativePath, IAssetConcatenator concatenator, IEnumerable<IAssetTransformer> transformers)
 		{
-			ThrowIfRoutesAreRegistered();
 			ThrowIfNoBundleDependencyContainer();
 
 			bundle.ThrowIfNull("bundle");
 			routeName.ThrowIfNull("routeName");
-			relativeUrl.ThrowIfNull("relativeUrl");
+			relativePath.ThrowIfNull("relativePath");
 			concatenator.ThrowIfNull("concatenator");
 			transformers.ThrowIfNull("transformers");
 
 			var watcher = new BundleWatcher(bundle, _bundleDependencyContainer.GetInstance<IFileSystem>(), concatenator, transformers);
-			var route = new JavaScriptBundleWatcherRoute(routeName, _bundleDependencyContainer.GetInstance<IGuidFactory>(), relativeUrl, watcher, _bundleDependencyContainer.GetInstance<ISystemClock>());
+			var route = new JavaScriptBundleWatcherRoute(
+				routeName,
+				_bundleDependencyContainer.GetInstance<IGuidFactory>(),
+				relativePath,
+				watcher,
+				_bundleDependencyContainer.GetInstance<IHttpRuntime>(),
+				_bundleDependencyContainer.GetInstance<ISystemClock>());
 
 			return AdditionalRoutes(route);
 		}
 
-		public AutoRouteCollection JavaScriptBundle(Bundle bundle, string routeName, string relativeUrl, IAssetConcatenator concatenator, params IAssetTransformer[] transformers)
+		public AutoRouteCollection JavaScriptBundle(Bundle bundle, string routeName, string relativePath, IAssetConcatenator concatenator, params IAssetTransformer[] transformers)
 		{
-			return JavaScriptBundle(bundle, routeName, relativeUrl, concatenator, (IEnumerable<IAssetTransformer>)transformers);
+			return JavaScriptBundle(bundle, routeName, relativePath, concatenator, (IEnumerable<IAssetTransformer>)transformers);
 		}
 
 		#endregion
@@ -711,8 +719,6 @@ namespace Junior.Route.AutoRouting
 
 		public AutoRouteCollection AdditionalRoutes(IEnumerable<Func<IRouteCollection, IEnumerable<Routing.Route>>> additionalRoutesForRegistration)
 		{
-			ThrowIfRoutesAreRegistered();
-
 			additionalRoutesForRegistration.ThrowIfNull("additionalRoutesForRegistration");
 
 			_additionalRoutes.AddRange(additionalRoutesForRegistration);
@@ -727,8 +733,6 @@ namespace Junior.Route.AutoRouting
 
 		public AutoRouteCollection AdditionalRoutes(IEnumerable<Routing.Route> additionalRoutesForRegistration)
 		{
-			ThrowIfRoutesAreRegistered();
-
 			additionalRoutesForRegistration.ThrowIfNull("additionalRoutesForRegistration");
 
 			_additionalRoutes.Add(routes => additionalRoutesForRegistration);

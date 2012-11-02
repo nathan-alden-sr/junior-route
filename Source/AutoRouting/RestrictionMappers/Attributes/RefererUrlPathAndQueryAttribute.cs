@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 
 using Junior.Common;
+using Junior.Route.AutoRouting.Containers;
 
 namespace Junior.Route.AutoRouting.RestrictionMappers.Attributes
 {
@@ -24,9 +25,10 @@ namespace Junior.Route.AutoRouting.RestrictionMappers.Attributes
 			_pathsAndQueries = pathsAndQueries;
 		}
 
-		public override void Map(Routing.Route route)
+		public override void Map(Routing.Route route, IContainer container)
 		{
 			route.ThrowIfNull("route");
+			container.ThrowIfNull("container");
 
 			if (_comparer != null)
 			{

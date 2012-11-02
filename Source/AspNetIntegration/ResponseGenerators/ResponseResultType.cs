@@ -2,8 +2,7 @@
 {
 	public enum ResponseResultType
 	{
-		CachedResponse,
-		NonCachedResponse,
-		NoResponse
+		ResponseGenerated,
+		ResponseNotGenerated
 	}
 }

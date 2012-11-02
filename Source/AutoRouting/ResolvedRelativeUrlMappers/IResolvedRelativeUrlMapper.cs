@@ -5,6 +5,6 @@ namespace Junior.Route.AutoRouting.ResolvedRelativeUrlMappers
 {
 	public interface IResolvedRelativeUrlMapper
 	{
-		ResolvedRelativeUrlResult ResolvedRelativeUrl(Type type, MethodInfo method);
+		ResolvedRelativeUrlResult Map(Type type, MethodInfo method);
 	}
 }

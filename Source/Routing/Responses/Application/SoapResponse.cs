@@ -48,22 +48,22 @@ namespace Junior.Route.Routing.Responses.Application
 		}
 
 		public SoapResponse(XmlNode content, Action<Response> configurationDelegate = null)
-			: base(Response.OK().ApplicationSoap().Content(content.GetString()))
+			: base(Response.OK().ApplicationSoap().Content(content.GetString()), configurationDelegate)
 		{
 		}
 
 		public SoapResponse(XmlNode content, Encoding encoding, Action<Response> configurationDelegate = null)
-			: base(Response.OK().ApplicationSoap().ContentEncoding(encoding).Content(content.GetBytes(encoding)))
+			: base(Response.OK().ApplicationSoap().ContentEncoding(encoding).Content(content.GetBytes(encoding)), configurationDelegate)
 		{
 		}
 
 		public SoapResponse(XNode content, Action<Response> configurationDelegate = null)
-			: base(Response.OK().ApplicationSoap().Content(content.GetString()))
+			: base(Response.OK().ApplicationSoap().Content(content.GetString()), configurationDelegate)
 		{
 		}
 
 		public SoapResponse(XNode content, Encoding encoding, Action<Response> configurationDelegate = null)
-			: base(Response.OK().ApplicationSoap().ContentEncoding(encoding).Content(content.GetBytes(encoding)))
+			: base(Response.OK().ApplicationSoap().ContentEncoding(encoding).Content(content.GetBytes(encoding)), configurationDelegate)
 		{
 		}
 	}

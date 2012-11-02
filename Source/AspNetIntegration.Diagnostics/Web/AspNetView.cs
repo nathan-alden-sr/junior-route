@@ -28,29 +28,21 @@ namespace Junior.Route.AspNetIntegration.Diagnostics.Web
 			private set;
 		}
 
-		public IEnumerable<Type> CachedResponseHandlerTypes
+		public IEnumerable<Type> ResponseHandlerTypes
 		{
 			get;
 			private set;
 		}
 
-		public IEnumerable<Type> NonCachedResponseHandlerTypes
-		{
-			get;
-			private set;
-		}
-
-		public void Populate(Type cacheType, IEnumerable<Type> responseGeneratorTypes, IEnumerable<Type> cachedResponseHandlerTypes, IEnumerable<Type> nonCachedResponseHandlerTypes)
+		public void Populate(Type cacheType, IEnumerable<Type> responseGeneratorTypes, IEnumerable<Type> responseHandlerTypes)
 		{
 			cacheType.ThrowIfNull("cacheType");
 			responseGeneratorTypes.ThrowIfNull("responseGeneratorTypes");
-			cachedResponseHandlerTypes.ThrowIfNull("cachedResponseHandlerTypes");
-			nonCachedResponseHandlerTypes.ThrowIfNull("nonCachedResponseHandlerTypes");
+			responseHandlerTypes.ThrowIfNull("responseHandlerTypes");
 
 			CacheType = cacheType;
 			ResponseGeneratorTypes = responseGeneratorTypes;
-			CachedResponseHandlerTypes = cachedResponseHandlerTypes;
-			NonCachedResponseHandlerTypes = nonCachedResponseHandlerTypes;
+			ResponseHandlerTypes = responseHandlerTypes;
 		}
 	}
 }

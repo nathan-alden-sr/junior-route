@@ -37,24 +37,24 @@
     <Compile Include="AspNet\AspNetHttpHandler.cs" />
     <Compile Include="AspNet\AspNetRuntimeCache.cs" />
     <Compile Include="FileSystem.cs" />
+    <Compile Include="HttpRuntimeWrapper.cs" />
     <Compile Include="JuniorRouteApplication.cs" />
     <Compile Include="JuniorRouteApplicationConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="CachedResponseHandlers\CachedResponseHandler.cs" />
-    <Compile Include="CachedResponseHandlers\CachedResponseHandlerResultType.cs" />
-    <Compile Include="CachedResponseHandlers\CachedResponseHandlerResult.cs" />
-    <Compile Include="NonCachedResponseHandlers\DescriptiveHtmlStatusCodeHandler.cs" />
-    <Compile Include="NonCachedResponseHandlers\DescriptiveTextStatusCodeHandler.cs" />
-    <Compile Include="NonCachedResponseHandlers\NonCachedResponseHandlerResult.cs" />
     <Compile Include="ResponseGenerators\IResponseGenerator.cs" />
     <Compile Include="ResponseGenerators\NotFoundGenerator.cs" />
     <Compile Include="ResponseGenerators\ResponseResult.cs" />
     <Compile Include="ResponseGenerators\ResponseResultType.cs" />
     <Compile Include="ResponseGenerators\MostMatchingRestrictionsGenerator.cs" />
-    <Compile Include="CachedResponseHandlers\ICachedResponseHandler.cs" />
-    <Compile Include="NonCachedResponseHandlers\INonCachedResponseHandler.cs" />
     <Compile Include="ResponseGenerators\RouteMatchResult.cs" />
-    <Compile Include="ResponseGenerators\UnmetRestrictionsGenerator.cs" />
+    <Compile Include="ResponseGenerators\UnmatchedRestrictionsGenerator.cs" />
+    <Compile Include="ResponseHandlers\CacheableResponseHandler.cs" />
+    <Compile Include="ResponseHandlers\DescriptiveHtmlStatusCodeHandler.cs" />
+    <Compile Include="ResponseHandlers\DescriptiveTextStatusCodeHandler.cs" />
+    <Compile Include="ResponseHandlers\IResponseHandler.cs" />
+    <Compile Include="ResponseHandlers\ResponseHandlerResult.cs" />
+    <Compile Include="ResponseHandlers\ResponseHandlerResultType.cs" />
+    <Compile Include="ResponseHandlers\NonCacheableResponseHandler.cs" />
     <Compile Include="UrlResolver.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -36,12 +36,18 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="AuthenticateResult.cs" />
+    <Compile Include="AuthenticateResultType.cs" />
+    <Compile Include="AuthenticationProviders\AuthenticationResultType.cs" />
+    <Compile Include="AuthenticationProviders\FormsAuthenticationProvider.cs" />
+    <Compile Include="AuthenticationProviders\IAuthenticationProvider.cs" />
     <Compile Include="Caching\CachePolicy.cs" />
     <Compile Include="Caching\CacheItem.cs" />
     <Compile Include="Caching\CacheResponse.cs" />
     <Compile Include="Caching\ICache.cs" />
     <Compile Include="Caching\ICachePolicy.cs" />
     <Compile Include="Caching\NoCache.cs" />
+    <Compile Include="IHttpRuntime.cs" />
     <Compile Include="IRouteCollection.cs" />
     <Compile Include="MatchResult.cs" />
     <Compile Include="MatchResultType.cs" />
@@ -52,6 +58,7 @@
     <Compile Include="RequestValueComparers\CaseSensitiveRegexRequestValueComparer.cs" />
     <Compile Include="RequestValueComparers\IRequestValueComparer.cs" />
     <Compile Include="HttpMethod.cs" />
+    <Compile Include="Responses\StatusAndSubStatusCode.cs" />
     <Compile Include="Restrictions\RefererUrlAbsolutePathRestriction.cs" />
     <Compile Include="Restrictions\MissingHeaderRestriction.cs" />
     <Compile Include="Route.cs" />
@@ -150,9 +157,9 @@
     <Compile Include="Restrictions\RefererUrlQueryRestriction.cs" />
     <Compile Include="Restrictions\RefererUrlSchemeRestriction.cs" />
     <Compile Include="Restrictions\HeaderRestriction.cs" />
-    <Compile Include="Restrictions\IRouteRestriction.cs" />
+    <Compile Include="Restrictions\IRestriction.cs" />
     <Compile Include="Restrictions\MethodRestriction.cs" />
-    <Compile Include="Restrictions\RelativeUrlRestriction.cs" />
+    <Compile Include="Restrictions\UrlRelativePathRestriction.cs" />
     <Compile Include="Responses\XmlNodeExtensions.cs" />
   </ItemGroup>
   <ItemGroup>

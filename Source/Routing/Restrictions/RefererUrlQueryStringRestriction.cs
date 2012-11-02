@@ -11,7 +11,7 @@ using Junior.Route.Routing.RequestValueComparers;
 namespace Junior.Route.Routing.Restrictions
 {
 	[DebuggerDisplay("DebuggerDisplay,nq")]
-	public class RefererUrlQueryStringRestriction : IRouteRestriction, IEquatable<RefererUrlQueryStringRestriction>
+	public class RefererUrlQueryStringRestriction : IRestriction, IEquatable<RefererUrlQueryStringRestriction>
 	{
 		private readonly string _field;
 		private readonly IRequestValueComparer _fieldComparer;
@@ -93,7 +93,7 @@ namespace Junior.Route.Routing.Restrictions
 			NameValueCollection queryString = HttpUtility.ParseQueryString(request.UrlReferrer.Query);
 			IEnumerable<string> matchingKeys = queryString.AllKeys.Where(arg => _fieldComparer.Matches(_field, arg));
 
-			return matchingKeys.Any(arg => _valueComparer.Matches(_value, request.QueryString[arg]));
+			return matchingKeys.Any(arg => _valueComparer.Matches(_value, queryString[arg]));
 		}
 
 		public override bool Equals(object obj)

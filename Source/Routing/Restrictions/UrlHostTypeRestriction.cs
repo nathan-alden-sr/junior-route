@@ -7,7 +7,7 @@ using Junior.Common;
 namespace Junior.Route.Routing.Restrictions
 {
 	[DebuggerDisplay("{DebuggerDisplay,nq}")]
-	public class UrlHostTypeRestriction : IRouteRestriction, IEquatable<UrlHostTypeRestriction>
+	public class UrlHostTypeRestriction : IRestriction, IEquatable<UrlHostTypeRestriction>
 	{
 		private readonly UriHostNameType _type;
 
@@ -51,7 +51,7 @@ namespace Junior.Route.Routing.Restrictions
 		{
 			request.ThrowIfNull("request");
 
-			return _type == request.UrlReferrer.HostNameType;
+			return _type == request.Url.HostNameType;
 		}
 
 		public override bool Equals(object obj)

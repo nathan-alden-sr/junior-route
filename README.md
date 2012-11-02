@@ -19,9 +19,13 @@ Judged by these standards, JuniorRoute is an excellent routing implementation. H
 
 Is JuniorRoute a MVC implementation?
 -
-No. JuniorRoute is a [front controller pattern](http://en.wikipedia.org/wiki/Front_Controller_pattern) rather than a model-view-controller implementation. Acting as a front controller, JuniorRoute handles all incoming requests and routes to the appropriate code methods. JuniorRoute does not provide, nor is there any need to code, a controller in the MVC sense. With JuniorRoute, classes act as mere method containers and class constructors' only purpose is to deliver dependencies through dependency injection.
+No. JuniorRoute is a [front controller pattern](http://en.wikipedia.org/wiki/Front_Controller_pattern) rather than a model-view-controller implementation. Acting as a front controller, JuniorRoute handles all incoming requests and routes to the appropriate code methods. JuniorRoute does not provide, nor is there any need to code, a controller in the MVC sense. With JuniorRoute, classes act as mere method containers and class constructors are only used to deliver dependencies using dependency injection.
 
-Is JuniorRoute dependent upon ASP.NET MVC?
+Is JuniorRoute IoC-container-friendly?
+-
+Yes. Not only is it friendly, but JuniorRoute has no forced or default IoC container dependency; developers are only required to either implement the bare-bones IContainer interface or use one of JuniorRoute's default IContainer implementations.
+
+Is JuniorRoute dependent on ASP.NET MVC?
 -
 No. JuniorRoute is not dependent on any ASP.NET MVC assemblies. However, it does integrate with the ASP.NET pipeline; JuniorRoute was not created to replace the entire ASP.NET stack.
 

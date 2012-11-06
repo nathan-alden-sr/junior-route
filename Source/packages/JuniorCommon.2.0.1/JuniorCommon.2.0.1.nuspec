@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>JuniorCommon</id>
-    <version>1.0.7</version>
+    <version>2.0.1</version>
     <title>JuniorCommon</title>
     <authors>Nathan Alden Sr.</authors>
     <owners>Nathan Alden Sr.</owners>
@@ -12,10 +12,5 @@
     <description>JuniorCommon is a common library used by all other Junior projects.</description>
     <releaseNotes />
     <tags>Junior</tags>
-    <frameworkAssemblies>
-      <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.0" />
-      <frameworkAssembly assemblyName="System.Xml" targetFramework=".NETFramework4.0" />
-      <frameworkAssembly assemblyName="System.Xml.Linq" targetFramework=".NETFramework4.0" />
-    </frameworkAssemblies>
   </metadata>
 </package>

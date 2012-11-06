@@ -1,0 +1,48 @@
+PLEASE READ THIS DOCUMENT IN ITS ENTIRETY BEFORE CONTRIBUTING TO THE JUNIORCOMMON PROJECT!
+Note that "I" refers to the creator of Junior, Nathan Alden, Sr.
+
+
+Purpose of JuniorCommon
+-----------------------
+JuniorCommon is a common library used by all other Junior projects.
+
+
+How to Contribute
+-----------------
+Contributions may be made by anyone. However, for the time being I ask to review all changes before they are committed to the main line. This will help ensure consistency across all the Junior projects and will also help to keep the vision of Junior consistent as a whole. I ask that contributions be made in branches to keep changes segregated from each other and to make it easier for me to perform code reviews. Once contributors gain more experience with the Junior codebase I expect others will be able to perform code reviews.
+
+Please read the codebase before making contributions, if possible.
+
+
+Required and Recommended Tools
+------------------------------
+- Required
+	- Microsoft Windows
+	- Microsoft Visual Studio 2010
+	- Git
+- Recommended
+	- JetBrains ReSharper 6.1.1+
+
+
+Versioning
+----------
+All Junior projects use Semantic Versioning. Please see http://semver.org for more information.
+
+
+Code Styles
+-----------
+I think a clean, consistent codebase is of great importance as a project gets bigger. I ask that all contributors use the following Visual Studio 2010 options to ensure all code remains consistent (for ReSharper users, note that ReSharper overrides many of these settings):
+- Text Editor | All Languages | General
+	- 'Word wrap' unchecked
+- Text Editor | All Languages | Tabs
+	- Set 'Tab size' to 4
+	- Set 'Indent size' to 4
+	- Select 'Keep tabs'
+- Text Editor | C# | Formatting
+	- All options set to their Visual Studio defaults, except
+	- Wrapping
+		- All options unchecked
+
+Please read the codebase before making contributions to familiarize yourself with its patterns, practices and styles.
+
+ReSharper is not required, but I highly recommend it. Its refactoring tools have saved me hundreds of hours of mundane, boilerplate work over the years. It's worth every penny! For ReSharper users, a DotSettings file is included with the solution. It contains settings consistent across all Junior projects. Please use the 'Junior' code cleanup profile.

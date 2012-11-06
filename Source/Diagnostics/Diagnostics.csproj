@@ -54,8 +54,9 @@
     <Compile Include="Web\View.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Junior.Common">
-      <HintPath>..\packages\JuniorCommon.1.0.7\lib\net40\Junior.Common.dll</HintPath>
+    <Reference Include="Junior.Common, Version=2.0.0.0, Culture=neutral, PublicKeyToken=998713eb9a0cce30, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\JuniorCommon.2.0.0\lib\net40\Junior.Common.dll</HintPath>
     </Reference>
     <Reference Include="Spark">
       <HintPath>..\packages\Spark.1.7.4.0\lib\NET40\Spark.dll</HintPath>

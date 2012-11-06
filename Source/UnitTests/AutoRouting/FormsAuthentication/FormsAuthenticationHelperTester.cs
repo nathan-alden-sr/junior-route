@@ -13,7 +13,7 @@ namespace Junior.Route.UnitTests.AutoRouting.FormsAuthentication
 	public static class FormsAuthenticationHelperTester
 	{
 		[TestFixture]
-		public class When_generating_cookie
+		public class When_generating_ticket
 		{
 			[SetUp]
 			public void SetUp()
@@ -21,7 +21,7 @@ namespace Junior.Route.UnitTests.AutoRouting.FormsAuthentication
 				_systemClock = MockRepository.GenerateMock<ISystemClock>();
 				_systemClock.Stub(arg => arg.LocalDateTime).Return(new DateTime(2012, 1, 1, 0, 0, 0, DateTimeKind.Local));
 				_helper = new FormsAuthenticationHelper(_systemClock);
-				_cookie = _helper.GenerateCookie(@"{ ""P"": ""V"" }", _systemClock.LocalDateTime.AddYears(1), persistent:true);
+				_cookie = _helper.GenerateTicket(_systemClock.LocalDateTime.AddYears(1), @"{ ""P"": ""V"" }", persistent:true);
 			}
 
 			private ISystemClock _systemClock;

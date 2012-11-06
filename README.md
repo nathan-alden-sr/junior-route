@@ -1,6 +1,6 @@
 What is JuniorRoute?
 -
-JuniorRoute is a routing framework for .NET. JuniorRoute's simple approach to routing is a better fit for the stateless HTTP protocol than controller-driven architectures like ASP.NET MVC. JuniorRoute simplifies the routing of an HTTP request message to a code method while providing lots of different ways to control how that occurs. JuniorRoute's simplest configurations involve almost no bootstrapping code, but it also provides configurability and extensibility just where you need it.
+JuniorRoute is a routing framework for .NET. JuniorRoute's simple approach to routing is a better fit for the stateless HTTP protocol than controller-driven architectures like ASP.NET MVC. JuniorRoute simplifies the routing of an HTTP request message to a code method while providing lots of different ways to control how that occurs. JuniorRoute's simplest configurations involve very little bootstrapping code, but it also provides configurability and extensibility just where you need it.
 
 Why should I use it?
 -
@@ -13,7 +13,7 @@ There are several features a good routing framework should provide:
 * Easy to configure
 * Easy to extend
 * Doesn't force unnecessary dependencies on developers
-* Provides built-in goodies (bundling, minification, diagnostics, etc.) for developer productivity and best-practices
+* Provides built-in goodies (bundling, minification, diagnostics, etc.) for developer productivity and best-practice support
 
 Judged by these standards, JuniorRoute is an excellent routing implementation. However, other routing frameworks fail to deliver on one of more of these points.
 

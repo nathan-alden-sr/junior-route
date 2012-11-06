@@ -11,14 +11,16 @@ namespace Junior.Route.Routing.AuthenticationProviders
 	public class FormsAuthenticationProvider : IAuthenticationProvider
 	{
 		private readonly bool _appendReturnUrl;
+		private readonly string _cookieName;
 		private readonly Func<string> _failedAuthenticationRedirectAbsoluteUrlDelegate;
 		private readonly string _returnUrlQueryStringField;
 
-		private FormsAuthenticationProvider(Func<string> failedAuthenticationRedirectAbsoluteUrlDelegate, bool appendReturnUrl, string returnUrlQueryStringField)
+		private FormsAuthenticationProvider(Func<string> failedAuthenticationRedirectAbsoluteUrlDelegate, bool appendReturnUrl, string returnUrlQueryStringField, string cookieName = ".juniorauth")
 		{
 			_failedAuthenticationRedirectAbsoluteUrlDelegate = failedAuthenticationRedirectAbsoluteUrlDelegate;
 			_appendReturnUrl = appendReturnUrl;
 			_returnUrlQueryStringField = returnUrlQueryStringField;
+			_cookieName = cookieName;
 		}
 
 		public AuthenticationResult Authenticate(HttpRequestBase request, Route route)
@@ -26,7 +28,7 @@ namespace Junior.Route.Routing.AuthenticationProviders
 			request.ThrowIfNull("request");
 			route.ThrowIfNull("route");
 
-			HttpCookie cookie = request.Cookies[FormsAuthentication.FormsCookieName];
+			HttpCookie cookie = request.Cookies[_cookieName];
 
 			if (cookie == null)
 			{
@@ -68,7 +70,6 @@ namespace Junior.Route.Routing.AuthenticationProviders
 			}
 
 			return String.Equals(request.HttpMethod, "GET", StringComparison.OrdinalIgnoreCase) ? Response.Found(absoluteUrl) : Response.SeeOther(absoluteUrl);
-			;
 		}
 
 		public static FormsAuthenticationProvider CreateWithNoRedirectOnFailedAuthentication()
@@ -76,27 +77,30 @@ namespace Junior.Route.Routing.AuthenticationProviders
 			return new FormsAuthenticationProvider(null, false, null);
 		}
 
-		public static FormsAuthenticationProvider CreateWithRouteRedirectOnFailedAuthentication(IUrlResolver urlResolver, string routeName, bool appendReturnUrl = false, string returnUrlQueryStringField = "ReturnURL")
+		public static FormsAuthenticationProvider CreateWithRouteRedirectOnFailedAuthentication(IUrlResolver urlResolver, string routeName, bool appendReturnUrl = false, string returnUrlQueryStringField = "ReturnURL", string cookieName = ".juniorauth")
 		{
 			urlResolver.ThrowIfNull("urlResolver");
 			routeName.ThrowIfNull("routeName");
+			cookieName.ThrowIfNull("cookieName");
 
-			return new FormsAuthenticationProvider(() => urlResolver.Route(routeName), appendReturnUrl, returnUrlQueryStringField);
+			return new FormsAuthenticationProvider(() => urlResolver.Route(routeName), appendReturnUrl, returnUrlQueryStringField, cookieName);
 		}
 
-		public static FormsAuthenticationProvider CreateWithRouteRedirectOnFailedAuthentication(IUrlResolver urlResolver, Guid routeId, bool appendReturnUrl = false, string returnUrlQueryStringField = "ReturnURL")
+		public static FormsAuthenticationProvider CreateWithRouteRedirectOnFailedAuthentication(IUrlResolver urlResolver, Guid routeId, bool appendReturnUrl = false, string returnUrlQueryStringField = "ReturnURL", string cookieName = ".juniorauth")
 		{
 			urlResolver.ThrowIfNull("urlResolver");
+			cookieName.ThrowIfNull("cookieName");
 
-			return new FormsAuthenticationProvider(() => urlResolver.Route(routeId), appendReturnUrl, returnUrlQueryStringField);
+			return new FormsAuthenticationProvider(() => urlResolver.Route(routeId), appendReturnUrl, returnUrlQueryStringField, cookieName);
 		}
 
-		public static FormsAuthenticationProvider CreateWithRelativeUrlRedirectOnFailedAuthentication(IUrlResolver urlResolver, string relativeUrl, bool appendReturnUrl = false, string returnUrlQueryStringField = "ReturnURL")
+		public static FormsAuthenticationProvider CreateWithRelativeUrlRedirectOnFailedAuthentication(IUrlResolver urlResolver, string relativeUrl, bool appendReturnUrl = false, string returnUrlQueryStringField = "ReturnURL", string cookieName = ".juniorauth")
 		{
 			urlResolver.ThrowIfNull("urlResolver");
 			relativeUrl.ThrowIfNull("relativeUrl");
+			cookieName.ThrowIfNull("cookieName");
 
-			return new FormsAuthenticationProvider(() => urlResolver.Absolute(relativeUrl), appendReturnUrl, returnUrlQueryStringField);
+			return new FormsAuthenticationProvider(() => urlResolver.Absolute(relativeUrl), appendReturnUrl, returnUrlQueryStringField, cookieName);
 		}
 	}
 }

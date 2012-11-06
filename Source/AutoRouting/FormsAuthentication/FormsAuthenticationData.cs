@@ -28,7 +28,7 @@ namespace Junior.Route.AutoRouting.FormsAuthentication
 		{
 			FormsAuthenticationTicket ticket = GetTicket(cookieName);
 
-			return ticket != null && !ticket.Expired ? JsonConvert.DeserializeObject<TUserData>(ticket.UserData ?? "", _serializerSettings) : null;
+			return ticket != null && !ticket.Expired ? JsonConvert.DeserializeObject<TUserData>(ticket.UserData ?? "{}", _serializerSettings) : null;
 		}
 
 		private FormsAuthenticationTicket GetTicket(string cookieName)

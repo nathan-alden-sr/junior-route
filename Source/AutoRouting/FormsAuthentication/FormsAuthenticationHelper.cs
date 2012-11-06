@@ -25,16 +25,14 @@ namespace Junior.Route.AutoRouting.FormsAuthentication
 			_systemClock = systemClock;
 		}
 
-		public void RemoveCookie()
+		public void RemoveTicket()
 		{
 			System.Web.Security.FormsAuthentication.SignOut();
 		}
 
-		public Cookie GenerateCookie(string jsonUserData, DateTime expiration, bool persistent = false, string cookieName = ".juniorauth", string cookiePath = "/")
+		public Cookie GenerateTicket(DateTime expiration, string jsonUserData = null, bool persistent = false, string cookieName = ".juniorauth", string cookiePath = "/")
 		{
-			jsonUserData.ThrowIfNull("jsonUserData");
-
-			var ticket = new FormsAuthenticationTicket(1, cookieName, _systemClock.LocalDateTime, expiration, persistent, jsonUserData, cookiePath);
+			var ticket = new FormsAuthenticationTicket(1, cookieName, _systemClock.LocalDateTime, expiration, persistent, jsonUserData ?? "{}", cookiePath);
 			string encryptedTicket = System.Web.Security.FormsAuthentication.Encrypt(ticket);
 			var cookie = new HttpCookie(cookieName, encryptedTicket)
 				{
@@ -49,13 +47,11 @@ namespace Junior.Route.AutoRouting.FormsAuthentication
 			return new Cookie(cookie);
 		}
 
-		public Cookie GenerateCookie(object jsonUserData, DateTime expiration, bool persistent = false, string cookieName = ".juniorauth", string cookiePath = "/")
+		public Cookie GenerateTicket(DateTime expiration, object jsonUserData, bool persistent = false, string cookieName = ".juniorauth", string cookiePath = "/")
 		{
-			jsonUserData.ThrowIfNull("jsonUserData");
+			string serializedJsonUserData = jsonUserData.IfNotNull(arg => JsonConvert.SerializeObject(jsonUserData, _serializerSettings));
 
-			string serializedJsonUserData = JsonConvert.SerializeObject(jsonUserData, _serializerSettings);
-
-			return GenerateCookie(serializedJsonUserData, expiration, persistent, cookieName, cookiePath);
+			return GenerateTicket(expiration, serializedJsonUserData, persistent, cookieName, cookiePath);
 		}
 	}
 }

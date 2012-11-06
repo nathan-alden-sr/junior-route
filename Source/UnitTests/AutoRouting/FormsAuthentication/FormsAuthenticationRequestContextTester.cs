@@ -15,14 +15,14 @@ namespace Junior.Route.UnitTests.AutoRouting.FormsAuthentication
 	public static class FormsAuthenticationRequestContextTester
 	{
 		[TestFixture]
-		public class When_getting_user_data_from_expired_cookie
+		public class When_getting_user_data_from_expired_ticket
 		{
 			[SetUp]
 			public void SetUp()
 			{
 				var systemClock = MockRepository.GenerateMock<ISystemClock>();
 				var helper = new FormsAuthenticationHelper(systemClock);
-				Cookie cookie = helper.GenerateCookie(@"{ ""P"": ""V"" }", DateTime.Now.AddYears(-1));
+				Cookie cookie = helper.GenerateTicket(DateTime.Now.AddYears(-1), @"{ ""P"": ""V"" }");
 
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 				_request.Stub(arg => arg.Cookies).Return(new HttpCookieCollection { cookie.GetHttpCookie() });
@@ -45,7 +45,7 @@ namespace Junior.Route.UnitTests.AutoRouting.FormsAuthentication
 		}
 
 		[TestFixture]
-		public class When_getting_user_data_from_invalid_cookie
+		public class When_getting_user_data_from_invalid_ticket
 		{
 			[SetUp]
 			public void SetUp()
@@ -71,7 +71,7 @@ namespace Junior.Route.UnitTests.AutoRouting.FormsAuthentication
 		}
 
 		[TestFixture]
-		public class When_getting_user_data_from_missing_cookie
+		public class When_getting_user_data_from_missing_ticket
 		{
 			[SetUp]
 			public void SetUp()
@@ -97,14 +97,14 @@ namespace Junior.Route.UnitTests.AutoRouting.FormsAuthentication
 		}
 
 		[TestFixture]
-		public class When_getting_user_data_from_valid_cookie
+		public class When_getting_user_data_from_valid_ticket
 		{
 			[SetUp]
 			public void SetUp()
 			{
 				var systemClock = MockRepository.GenerateMock<ISystemClock>();
 				var helper = new FormsAuthenticationHelper(systemClock);
-				Cookie cookie = helper.GenerateCookie(@"{ ""P"": ""V"" }", DateTime.Now.AddYears(1));
+				Cookie cookie = helper.GenerateTicket(DateTime.Now.AddYears(1), @"{ ""P"": ""V"" }");
 
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 				_request.Stub(arg => arg.Cookies).Return(new HttpCookieCollection { cookie.GetHttpCookie() });

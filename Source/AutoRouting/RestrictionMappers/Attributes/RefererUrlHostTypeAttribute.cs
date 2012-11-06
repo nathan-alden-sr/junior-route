@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 using Junior.Common;
 using Junior.Route.AutoRouting.Containers;
@@ -9,7 +8,7 @@ namespace Junior.Route.AutoRouting.RestrictionMappers.Attributes
 	[AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
 	public class RefererUrlHostTypeAttribute : RestrictionAttribute
 	{
-		private readonly IEnumerable<UriHostNameType> _hostTypes;
+		private readonly UriHostNameType[] _hostTypes;
 
 		public RefererUrlHostTypeAttribute(params UriHostNameType[] hostTypes)
 		{

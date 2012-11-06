@@ -9,12 +9,7 @@ namespace Junior.Route.Diagnostics
 {
 	public interface IDiagnosticConfiguration
 	{
-		IEnumerable<string> LinkHeadings
-		{
-			get;
-		}
-
 		IEnumerable<Routing.Route> GetRoutes(IGuidFactory guidFactory, IUrlResolver urlResolver, IHttpRuntime httpRuntime, string diagnosticsRelativeUrl);
-		IEnumerable<DiagnosticViewLink> GetLinks(string diagnosticsRelativeUrl, string heading);
+		IEnumerable<DiagnosticViewLink> GetLinks(string diagnosticsUrl);
 	}
 }

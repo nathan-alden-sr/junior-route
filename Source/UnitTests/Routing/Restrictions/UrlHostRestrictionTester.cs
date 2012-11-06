@@ -18,8 +18,8 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			[SetUp]
 			public void SetUp()
 			{
-				_restriction1 = new UrlHostRestriction("host", CaseInsensitivePlainRequestValueComparer.Instance);
-				_restriction2 = new UrlHostRestriction("host", CaseInsensitivePlainRequestValueComparer.Instance);
+				_restriction1 = new UrlHostRestriction("host", CaseInsensitivePlainComparer.Instance);
+				_restriction2 = new UrlHostRestriction("host", CaseInsensitivePlainComparer.Instance);
 			}
 
 			private UrlHostRestriction _restriction1;
@@ -38,8 +38,8 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			[SetUp]
 			public void SetUp()
 			{
-				_restriction1 = new UrlHostRestriction("host1", CaseInsensitivePlainRequestValueComparer.Instance);
-				_restriction2 = new UrlHostRestriction("host2", CaseInsensitivePlainRequestValueComparer.Instance);
+				_restriction1 = new UrlHostRestriction("host1", CaseInsensitivePlainComparer.Instance);
+				_restriction2 = new UrlHostRestriction("host2", CaseInsensitivePlainComparer.Instance);
 			}
 
 			private UrlHostRestriction _restriction1;
@@ -58,7 +58,7 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			[SetUp]
 			public void SetUp()
 			{
-				_restriction = new UrlHostRestriction("host", CaseInsensitivePlainRequestValueComparer.Instance);
+				_restriction = new UrlHostRestriction("host", CaseInsensitivePlainComparer.Instance);
 			}
 
 			private UrlHostRestriction _restriction;
@@ -76,7 +76,7 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			[SetUp]
 			public void SetUp()
 			{
-				_restriction = new UrlHostRestriction("host", CaseInsensitivePlainRequestValueComparer.Instance);
+				_restriction = new UrlHostRestriction("host", CaseInsensitivePlainComparer.Instance);
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 				_request.Stub(arg => arg.Url).Return(new Uri("http://host"));
 			}
@@ -97,7 +97,7 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			[SetUp]
 			public void SetUp()
 			{
-				_restriction = new UrlHostRestriction("host", CaseInsensitivePlainRequestValueComparer.Instance);
+				_restriction = new UrlHostRestriction("host", CaseInsensitivePlainComparer.Instance);
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 				_request.Stub(arg => arg.Url).Return(new Uri("http://localhost"));
 			}

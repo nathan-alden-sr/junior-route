@@ -39,7 +39,7 @@ namespace Junior.Route.UnitTests.AutoRouting.RestrictionMappers.Attributes
 				Assert.That(restrictions, Has.Length.EqualTo(1));
 
 				Assert.That(restrictions[0].Query, Is.EqualTo("query"));
-				Assert.That(restrictions[0].Comparer, Is.SameAs(CaseSensitiveRegexRequestValueComparer.Instance));
+				Assert.That(restrictions[0].Comparer, Is.SameAs(CaseSensitiveRegexComparer.Instance));
 			}
 		}
 
@@ -68,10 +68,10 @@ namespace Junior.Route.UnitTests.AutoRouting.RestrictionMappers.Attributes
 				Assert.That(restrictions, Has.Length.EqualTo(2));
 
 				Assert.That(restrictions[0].Query, Is.EqualTo("query1"));
-				Assert.That(restrictions[0].Comparer, Is.SameAs(CaseInsensitivePlainRequestValueComparer.Instance));
+				Assert.That(restrictions[0].Comparer, Is.SameAs(CaseInsensitivePlainComparer.Instance));
 
 				Assert.That(restrictions[1].Query, Is.EqualTo("query2"));
-				Assert.That(restrictions[1].Comparer, Is.SameAs(CaseInsensitivePlainRequestValueComparer.Instance));
+				Assert.That(restrictions[1].Comparer, Is.SameAs(CaseInsensitivePlainComparer.Instance));
 			}
 		}
 	}

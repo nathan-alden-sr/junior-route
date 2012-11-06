@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 using Junior.Common;
@@ -16,9 +17,9 @@ namespace Junior.Route.Http.RequestHeaders
 		private const string TypeRegexPattern = CommonRegexPatterns.Token;
 		private static readonly string _elementsRegexPattern = String.Format("^{0}$", CommonRegexPatterns.ListOfElements(RegexPattern));
 		private readonly decimal _effectiveQvalue;
-		private readonly IEnumerable<Parameter> _extensions;
+		private readonly Parameter[] _extensions;
 		private readonly string _mediaTypes;
-		private readonly IEnumerable<Parameter> _parameters;
+		private readonly Parameter[] _parameters;
 		private readonly decimal? _qvalue;
 		private readonly string _subtype;
 		private readonly string _type;
@@ -33,10 +34,10 @@ namespace Junior.Route.Http.RequestHeaders
 			_type = type;
 			_subtype = subtype;
 			_mediaTypes = String.Format("{0}/{1}", _type, _subtype);
-			_parameters = parameters;
+			_parameters = parameters.ToArray();
 			_qvalue = qvalue;
 			_effectiveQvalue = qvalue ?? 1m;
-			_extensions = extensions;
+			_extensions = extensions.ToArray();
 		}
 
 		public string Type

@@ -18,8 +18,8 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			[SetUp]
 			public void SetUp()
 			{
-				_restriction1 = new HeaderRestriction("field1", "value1", CaseSensitiveRegexRequestValueComparer.Instance);
-				_restriction2 = new HeaderRestriction("field1", "value1", CaseSensitiveRegexRequestValueComparer.Instance);
+				_restriction1 = new HeaderRestriction("field1", "value1", CaseSensitiveRegexComparer.Instance);
+				_restriction2 = new HeaderRestriction("field1", "value1", CaseSensitiveRegexComparer.Instance);
 			}
 
 			private HeaderRestriction _restriction1;
@@ -38,8 +38,8 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			[SetUp]
 			public void SetUp()
 			{
-				_restriction1 = new HeaderRestriction("field1", "value1", CaseSensitiveRegexRequestValueComparer.Instance);
-				_restriction2 = new HeaderRestriction("field2", "value2", CaseSensitiveRegexRequestValueComparer.Instance);
+				_restriction1 = new HeaderRestriction("field1", "value1", CaseSensitiveRegexComparer.Instance);
+				_restriction2 = new HeaderRestriction("field2", "value2", CaseSensitiveRegexComparer.Instance);
 			}
 
 			private HeaderRestriction _restriction1;
@@ -58,7 +58,7 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			[SetUp]
 			public void SetUp()
 			{
-				_restriction = new HeaderRestriction("field", "value", CaseSensitiveRegexRequestValueComparer.Instance);
+				_restriction = new HeaderRestriction("field", "value", CaseSensitiveRegexComparer.Instance);
 			}
 
 			private HeaderRestriction _restriction;
@@ -68,7 +68,7 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			{
 				Assert.That(_restriction.Field, Is.EqualTo("field"));
 				Assert.That(_restriction.Value, Is.EqualTo("value"));
-				Assert.That(_restriction.ValueComparer, Is.SameAs(CaseSensitiveRegexRequestValueComparer.Instance));
+				Assert.That(_restriction.ValueComparer, Is.SameAs(CaseSensitiveRegexComparer.Instance));
 			}
 		}
 
@@ -78,7 +78,7 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			[SetUp]
 			public void SetUp()
 			{
-				_restriction = new HeaderRestriction("field", "value", CaseInsensitivePlainRequestValueComparer.Instance);
+				_restriction = new HeaderRestriction("field", "value", CaseInsensitivePlainComparer.Instance);
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 				_request.Stub(arg => arg.Headers).Return(new NameValueCollection { { "field", "value" } });
 			}
@@ -99,7 +99,7 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			[SetUp]
 			public void SetUp()
 			{
-				_restriction = new HeaderRestriction("field", "value", CaseInsensitivePlainRequestValueComparer.Instance);
+				_restriction = new HeaderRestriction("field", "value", CaseInsensitivePlainComparer.Instance);
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 				_request.Stub(arg => arg.Headers).Return(new NameValueCollection { { "field", "value1" } });
 			}

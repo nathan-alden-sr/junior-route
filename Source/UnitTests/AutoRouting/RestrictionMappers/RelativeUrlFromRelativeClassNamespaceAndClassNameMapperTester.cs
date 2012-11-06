@@ -54,7 +54,7 @@ namespace Junior.Route.UnitTests.AutoRouting.RestrictionMappers
 
 				Assert.That(restrictions, Has.Length.EqualTo(1));
 
-				Assert.That(restrictions[0].Comparer, Is.SameAs(CaseSensitivePlainRequestValueComparer.Instance));
+				Assert.That(restrictions[0].Comparer, Is.SameAs(CaseSensitivePlainComparer.Instance));
 				Assert.That(restrictions[0].RelativePath, Is.EqualTo(expectedUrlRelativePath));
 			}
 		}

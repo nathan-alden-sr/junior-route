@@ -53,7 +53,7 @@ namespace Junior.Route.AutoRouting.RestrictionMappers
 			string relativePath = String.Join("/", pathParts);
 			var httpRuntime = container.GetInstance<IHttpRuntime>();
 
-			route.RestrictByRelativePath(relativePath, _caseSensitive ? (IRequestValueComparer)CaseSensitivePlainRequestValueComparer.Instance : CaseInsensitivePlainRequestValueComparer.Instance, httpRuntime);
+			route.RestrictByUrlRelativePath(relativePath, _caseSensitive ? (IRequestValueComparer)CaseSensitivePlainComparer.Instance : CaseInsensitivePlainComparer.Instance, httpRuntime);
 		}
 
 		private IEnumerable<string> ParseWords(string value)

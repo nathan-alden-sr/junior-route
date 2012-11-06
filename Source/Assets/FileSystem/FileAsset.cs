@@ -12,8 +12,10 @@ namespace Junior.Route.Assets.FileSystem
 		private readonly Encoding _encoding;
 		private readonly string _relativePath;
 
-		public FileAsset(string relativePath, Encoding encoding)
+		public FileAsset(string relativePath, Encoding encoding = null)
 		{
+			relativePath.ThrowIfNull("relativePath");
+
 			_relativePath = relativePath;
 			_encoding = encoding;
 		}
@@ -45,6 +47,8 @@ namespace Junior.Route.Assets.FileSystem
 
 		public FileSystemWatcher GetFileSystemWatcher(IFileSystem fileSystem)
 		{
+			fileSystem.ThrowIfNull("fileSystem");
+
 			string path = fileSystem.AbsolutePath(_relativePath);
 
 			return new FileSystemWatcher(Path.GetDirectoryName(path), Path.GetFileName(path));

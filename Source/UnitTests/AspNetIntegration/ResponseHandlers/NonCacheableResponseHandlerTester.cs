@@ -1,5 +1,4 @@
-﻿using System.IO;
-using System.Linq;
+﻿using System.Linq;
 using System.Net;
 using System.Web;
 
@@ -25,11 +24,9 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseHandlers
 			{
 				_handler = new NonCacheableResponseHandler();
 				_httpRequest = MockRepository.GenerateMock<HttpRequestBase>();
-				_stream = MockRepository.GenerateMock<Stream>();
-				_stream.Stub(arg => arg.Write(Arg<byte[]>.Is.Anything, Arg<int>.Is.Anything, Arg<int>.Is.Anything)).WhenCalled(arg => _responseWritten = true);
 				_httpCachePolicyBase = MockRepository.GenerateMock<HttpCachePolicyBase>();
 				_httpResponse = MockRepository.GenerateMock<HttpResponseBase>();
-				_httpResponse.Stub(arg => arg.OutputStream).Return(_stream);
+				_httpResponse.Stub(arg => arg.BinaryWrite(Arg<byte[]>.Is.Anything)).WhenCalled(arg => _responseWritten = true);
 				_httpResponse.Stub(arg => arg.Cache).Return(_httpCachePolicyBase);
 				_cachePolicy = MockRepository.GenerateMock<ICachePolicy>();
 				_cachePolicy.Stub(arg => arg.Clone()).Return(_cachePolicy);
@@ -49,7 +46,6 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseHandlers
 			private IResponse _response;
 			private ICache _cache;
 			private ResponseHandlerResult _result;
-			private Stream _stream;
 			private bool _responseWritten;
 			private ICachePolicy _cachePolicy;
 			private HttpCachePolicyBase _httpCachePolicyBase;

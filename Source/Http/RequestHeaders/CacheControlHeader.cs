@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 using Junior.Common;
@@ -11,7 +12,7 @@ namespace Junior.Route.Http.RequestHeaders
 		private const string CacheExtensionRegexPattern = CommonRegexPatterns.Token + "(?:=(?:" + CommonRegexPatterns.Token + "|" + CommonRegexPatterns.QuotedString + "))?";
 		private const string RegexPattern = "(?:no-cache|no-store|max-age=" + CommonRegexPatterns.DeltaSeconds + "|max-stale(?:=" + CommonRegexPatterns.DeltaSeconds + ")?|min-fresh=" + CommonRegexPatterns.DeltaSeconds + "|no-transform|only-if-cached|(?:" + CacheExtensionRegexPattern + "))";
 		private static readonly string _elementsRegexPattern = String.Format("^{0}$", CommonRegexPatterns.ListOfElements(RegexPattern, 1));
-		private readonly IEnumerable<Parameter> _cacheExtensions;
+		private readonly Parameter[] _cacheExtensions;
 		private readonly TimeSpan? _maxAge;
 		private readonly int? _maxAgeSeconds;
 		private readonly TimeSpan? _maxStale;
@@ -37,7 +38,7 @@ namespace Junior.Route.Http.RequestHeaders
 			_minFresh = minFreshSeconds.IfNotNull(arg => (TimeSpan?)TimeSpan.FromSeconds(arg));
 			_noTransform = noTransform;
 			_onlyIfCached = onlyIfCached;
-			_cacheExtensions = cacheExtensions;
+			_cacheExtensions = cacheExtensions.ToArray();
 		}
 
 		public bool NoCache

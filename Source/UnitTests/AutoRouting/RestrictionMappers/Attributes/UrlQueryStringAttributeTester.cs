@@ -39,9 +39,9 @@ namespace Junior.Route.UnitTests.AutoRouting.RestrictionMappers.Attributes
 				Assert.That(restrictions, Has.Length.EqualTo(1));
 
 				Assert.That(restrictions[0].Field, Is.EqualTo("field"));
-				Assert.That(restrictions[0].FieldComparer, Is.SameAs(CaseSensitiveRegexRequestValueComparer.Instance));
+				Assert.That(restrictions[0].FieldComparer, Is.SameAs(CaseSensitiveRegexComparer.Instance));
 				Assert.That(restrictions[0].Value, Is.EqualTo("value"));
-				Assert.That(restrictions[0].ValueComparer, Is.SameAs(CaseInsensitiveRegexRequestValueComparer.Instance));
+				Assert.That(restrictions[0].ValueComparer, Is.SameAs(CaseInsensitiveRegexComparer.Instance));
 			}
 		}
 
@@ -70,9 +70,9 @@ namespace Junior.Route.UnitTests.AutoRouting.RestrictionMappers.Attributes
 				Assert.That(restrictions, Has.Length.EqualTo(1));
 
 				Assert.That(restrictions[0].Field, Is.EqualTo("field"));
-				Assert.That(restrictions[0].FieldComparer, Is.SameAs(CaseInsensitivePlainRequestValueComparer.Instance));
+				Assert.That(restrictions[0].FieldComparer, Is.SameAs(CaseInsensitivePlainComparer.Instance));
 				Assert.That(restrictions[0].Value, Is.EqualTo("value"));
-				Assert.That(restrictions[0].ValueComparer, Is.SameAs(CaseInsensitivePlainRequestValueComparer.Instance));
+				Assert.That(restrictions[0].ValueComparer, Is.SameAs(CaseInsensitivePlainComparer.Instance));
 			}
 		}
 	}

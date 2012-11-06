@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 
 using Junior.Common;
@@ -11,7 +10,7 @@ namespace Junior.Route.AutoRouting.RestrictionMappers.Attributes
 	[AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
 	public class MethodAttribute : RestrictionAttribute
 	{
-		private readonly IEnumerable<string> _methods;
+		private readonly string[] _methods;
 
 		public MethodAttribute(params string[] methods)
 		{
@@ -24,7 +23,7 @@ namespace Junior.Route.AutoRouting.RestrictionMappers.Attributes
 		{
 			methods.ThrowIfNull("methods");
 
-			_methods = methods.Select(arg => arg.ToString().ToUpperInvariant());
+			_methods = methods.Select(arg => arg.ToString().ToUpperInvariant()).ToArray();
 		}
 
 		public override void Map(Routing.Route route, IContainer container)

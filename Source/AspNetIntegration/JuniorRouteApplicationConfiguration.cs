@@ -12,13 +12,6 @@ namespace Junior.Route.AspNetIntegration
 			private set;
 		}
 
-		public void Initialize(HttpApplication application)
-		{
-			application.ThrowIfNull("application");
-
-			application.MapRequestHandler += (sender, args) => HttpContext.Current.RemapHandler(Handler);
-		}
-
 		protected JuniorRouteApplicationConfiguration SetHandler(IHttpHandler handler)
 		{
 			handler.ThrowIfNull("handler");

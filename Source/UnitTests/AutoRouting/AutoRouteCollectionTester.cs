@@ -72,7 +72,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 			[Test]
 			public void Must_not_throw_exception()
 			{
-				Assert.DoesNotThrow(() => _autoRouteCollection.GetRouteCollection());
+				Assert.DoesNotThrow(() => _autoRouteCollection.GenerateRouteCollection());
 			}
 		}
 
@@ -103,7 +103,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 					.IdMappers(_idMapper)
 					.ResolvedRelativeUrlMappers(_resolvedRelativeUrlMapper)
 					.Authenticate(_authenticationProvider, _authenticationStrategy);
-				_routes = _autoRouteCollection.GetRouteCollection().ToArray();
+				_routes = _autoRouteCollection.GenerateRouteCollection().ToArray();
 			}
 
 			private AutoRouteCollection _autoRouteCollection;
@@ -182,7 +182,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 			[Test]
 			public void Must_throw_exception()
 			{
-				Assert.Throws<ArgumentException>(() => _autoRouteCollection.GetRouteCollection());
+				Assert.Throws<ArgumentException>(() => _autoRouteCollection.GenerateRouteCollection());
 			}
 		}
 
@@ -234,7 +234,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 			[Test]
 			public void Must_throw_exception()
 			{
-				Assert.Throws<ArgumentException>(() => _autoRouteCollection.GetRouteCollection());
+				Assert.Throws<ArgumentException>(() => _autoRouteCollection.GenerateRouteCollection());
 			}
 		}
 
@@ -263,7 +263,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 					.IdMappers(_idMapper)
 					.ResolvedRelativeUrlMappers(_resolvedRelativeUrlMapper)
 					.ResponseMapper(_responseMapper);
-				_routes = _autoRouteCollection.GetRouteCollection().ToArray();
+				_routes = _autoRouteCollection.GenerateRouteCollection().ToArray();
 			}
 
 			public class IncludedEndpoint
@@ -338,7 +338,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 					.IdMappers(_idMapper)
 					.ResolvedRelativeUrlMappers(_resolvedRelativeUrlMapper)
 					.ResponseMapper(_responseMapper);
-				_routes = _autoRouteCollection.GetRouteCollection().ToArray();
+				_routes = _autoRouteCollection.GenerateRouteCollection().ToArray();
 			}
 
 			public class Endpoint
@@ -407,7 +407,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 					.IdMappers(_idMapper1)
 					.ResolvedRelativeUrlMappers(_resolvedRelativeUrlMapper)
 					.ResponseMapper(_responseMapper);
-				_routes = _autoRouteCollection.GetRouteCollection().ToArray();
+				_routes = _autoRouteCollection.GenerateRouteCollection().ToArray();
 			}
 
 			private AutoRouteCollection _autoRouteCollection;
@@ -467,7 +467,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 					.IdMappers(_idMapper)
 					.ResolvedRelativeUrlMappers(_resolvedRelativeUrlMapper)
 					.ResponseMapper(_responseMapper);
-				_routes = _autoRouteCollection.GetRouteCollection().ToArray();
+				_routes = _autoRouteCollection.GenerateRouteCollection().ToArray();
 			}
 
 			private AutoRouteCollection _autoRouteCollection;
@@ -527,7 +527,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 					.IdMappers(_idMapper)
 					.ResolvedRelativeUrlMappers(_resolvedRelativeUrlMapper1)
 					.ResponseMapper(_responseMapper);
-				_routes = _autoRouteCollection.GetRouteCollection().ToArray();
+				_routes = _autoRouteCollection.GenerateRouteCollection().ToArray();
 			}
 
 			private AutoRouteCollection _autoRouteCollection;
@@ -605,7 +605,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 			[Test]
 			public void Must_map_using_mapper()
 			{
-				_autoRouteCollection.GetRouteCollection();
+				_autoRouteCollection.GenerateRouteCollection();
 
 				_responseMapper.AssertWasCalled(arg => arg.Map(Arg<Func<IContainer>>.Is.Anything, Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything, Arg<Route.Routing.Route>.Is.Anything));
 			}
@@ -670,7 +670,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 				var container = MockRepository.GenerateMock<IContainer>();
 
 				_autoRouteCollection.RestrictionContainer(container);
-				_routes = _autoRouteCollection.GetRouteCollection().ToArray();
+				_routes = _autoRouteCollection.GenerateRouteCollection().ToArray();
 
 				MethodRestriction[] methodRestrictions = _routes[0].GetRestrictions<MethodRestriction>().ToArray();
 
@@ -683,7 +683,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 				var container = MockRepository.GenerateMock<IContainer>();
 
 				_autoRouteCollection.RestrictionContainer(container);
-				_autoRouteCollection.GetRouteCollection();
+				_autoRouteCollection.GenerateRouteCollection();
 
 				_restrictionMapper1.AssertWasCalled(arg => arg.Map(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything, Arg<Route.Routing.Route>.Is.Anything, Arg<IContainer>.Is.Anything));
 				_restrictionMapper1.AssertWasCalled(arg => arg.Map(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything, Arg<Route.Routing.Route>.Is.Anything, Arg<IContainer>.Is.Anything));
@@ -692,7 +692,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 			[Test]
 			public void Must_require_restriction_container()
 			{
-				Assert.Throws<InvalidOperationException>(() => _autoRouteCollection.GetRouteCollection());
+				Assert.Throws<InvalidOperationException>(() => _autoRouteCollection.GenerateRouteCollection());
 			}
 		}
 	}

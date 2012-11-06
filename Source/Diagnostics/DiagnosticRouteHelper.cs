@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 using Junior.Common;
 using Junior.Route.Diagnostics.Web;
@@ -23,94 +24,101 @@ namespace Junior.Route.Diagnostics
 		{
 		}
 
-		public Routing.Route GetViewRoute<T>(string name, IGuidFactory guidFactory, string relativePath, byte[] viewTemplate, IEnumerable<string> namespaces, IHttpRuntime httpRuntime, Action<T> populateView = null)
-			where T : AbstractSparkView
+		public Routing.Route GetViewRoute<T>(string name, IGuidFactory guidFactory, string resolvedRelativeUrl, byte[] viewTemplate, IEnumerable<string> namespaces, IHttpRuntime httpRuntime, Action<T> populateView = null)
+			where T : View
 		{
 			guidFactory.ThrowIfNull("guidFactory");
-			relativePath.ThrowIfNull("relativePath");
+			resolvedRelativeUrl.ThrowIfNull("resolvedRelativeUrl");
 			viewTemplate.ThrowIfNull("viewTemplate");
 			namespaces.ThrowIfNull("namespaces");
 
-			return new Routing.Route(name, guidFactory.Random(), relativePath)
+			return new Routing.Route(name, guidFactory.Random(), resolvedRelativeUrl)
 				.RestrictByMethods(HttpMethod.Get)
-				.RestrictByRelativePath(relativePath, CaseInsensitivePlainRequestValueComparer.Instance, httpRuntime)
+				.RestrictByUrlRelativePath(resolvedRelativeUrl, CaseInsensitivePlainComparer.Instance, httpRuntime)
 				.RespondWith(request => GetViewResponse(viewTemplate, namespaces, populateView));
 		}
 
-		public Routing.Route GetStylesheetRoute(string name, IGuidFactory guidFactory, string relativePath, string stylesheet, IHttpRuntime httpRuntime)
+		public Routing.Route GetViewRoute<T>(string name, IGuidFactory guidFactory, string resolvedRelativeUrl, string viewTemplate, IEnumerable<string> namespaces, IHttpRuntime httpRuntime, Action<T> populateView = null)
+			where T : View
+		{
+			return GetViewRoute(name, guidFactory, resolvedRelativeUrl, Encoding.Default.GetBytes(viewTemplate), namespaces, httpRuntime, populateView);
+		}
+
+		public Routing.Route GetStylesheetRoute(string name, IGuidFactory guidFactory, string resolvedRelativeUrl, string stylesheet, IHttpRuntime httpRuntime)
 		{
 			guidFactory.ThrowIfNull("guidFactory");
-			relativePath.ThrowIfNull("relativePath");
+			resolvedRelativeUrl.ThrowIfNull("resolvedRelativeUrl");
 			stylesheet.ThrowIfNull("stylesheet");
 
-			return new Routing.Route(name, guidFactory.Random(), relativePath)
+			return new Routing.Route(name, guidFactory.Random(), resolvedRelativeUrl)
 				.RestrictByMethods(HttpMethod.Get)
-				.RestrictByRelativePath(relativePath, CaseInsensitivePlainRequestValueComparer.Instance, httpRuntime)
+				.RestrictByUrlRelativePath(resolvedRelativeUrl, CaseInsensitivePlainComparer.Instance, httpRuntime)
 				.RespondWith(request => new CssResponse(stylesheet));
 		}
 
-		public Routing.Route GetJavaScriptRoute(string name, IGuidFactory guidFactory, string relativePath, string javaScript, IHttpRuntime httpRuntime)
+		public Routing.Route GetJavaScriptRoute(string name, IGuidFactory guidFactory, string resolvedRelativeUrl, string javaScript, IHttpRuntime httpRuntime)
 		{
 			guidFactory.ThrowIfNull("guidFactory");
-			relativePath.ThrowIfNull("relativePath");
+			resolvedRelativeUrl.ThrowIfNull("resolvedRelativeUrl");
 			javaScript.ThrowIfNull("javaScript");
 
-			return new Routing.Route(name, guidFactory.Random(), relativePath)
+			return new Routing.Route(name, guidFactory.Random(), resolvedRelativeUrl)
 				.RestrictByMethods(HttpMethod.Get)
-				.RestrictByRelativePath(relativePath, CaseInsensitivePlainRequestValueComparer.Instance, httpRuntime)
+				.RestrictByUrlRelativePath(resolvedRelativeUrl, CaseInsensitivePlainComparer.Instance, httpRuntime)
 				.RespondWith(request => new JavaScriptResponse(javaScript));
 		}
 
 		private static HtmlResponse GetViewResponse<T>(byte[] viewTemplate, IEnumerable<string> namespaces, Action<T> populateView = null)
 			where T : AbstractSparkView
 		{
-			return new HtmlResponse(() =>
-				                        {
-					                        Type viewType = typeof(T);
-					                        SparkSettings settings = new SparkSettings()
-						                        .SetPageBaseType(viewType)
-						                        .SetDebug(false);
+			return new HtmlResponse(
+				() =>
+					{
+						Type viewType = typeof(T);
+						SparkSettings settings = new SparkSettings()
+							.SetPageBaseType(viewType)
+							.SetDebug(false);
 
-					                        foreach (string @namespace in namespaces.Distinct())
-					                        {
-						                        settings.AddNamespace(@namespace);
-					                        }
+						foreach (string @namespace in namespaces.Distinct())
+						{
+							settings.AddNamespace(@namespace);
+						}
 
-					                        var container = new SparkServiceContainer(settings);
-					                        var viewFolder = new InMemoryViewFolder();
+						var container = new SparkServiceContainer(settings);
+						var viewFolder = new InMemoryViewFolder();
 
-					                        container.SetServiceBuilder<IViewFolder>(arg => viewFolder);
-					                        var viewEngine = container.GetService<ISparkViewEngine>();
-					                        string viewKey = viewType.Name.Replace("View", "") + ".spark";
-					                        const string applicationKey = @"Layouts\application.spark";
+						container.SetServiceBuilder<IViewFolder>(arg => viewFolder);
+						var viewEngine = container.GetService<ISparkViewEngine>();
+						string viewKey = viewType.Name.Replace("View", "") + ".spark";
+						const string applicationKey = @"Layouts\application.spark";
 
-					                        viewFolder.AddLayoutsPath("Layouts");
-					                        viewFolder.Add(viewKey, viewTemplate);
-					                        viewFolder.Add(applicationKey, ResponseResources.Application);
+						viewFolder.AddLayoutsPath("Layouts");
+						viewFolder.Add(viewKey, viewTemplate);
+						viewFolder.Add(applicationKey, ResponseResources.Application);
 
-					                        SparkViewDescriptor descriptor = new SparkViewDescriptor()
-						                        .AddTemplate(viewKey)
-						                        .AddTemplate(applicationKey);
-					                        var view = (T)viewEngine.CreateInstance(descriptor);
+						SparkViewDescriptor descriptor = new SparkViewDescriptor()
+							.AddTemplate(viewKey)
+							.AddTemplate(applicationKey);
+						var view = (T)viewEngine.CreateInstance(descriptor);
 
-					                        try
-					                        {
-						                        if (populateView != null)
-						                        {
-							                        populateView(view);
-						                        }
+						try
+						{
+							if (populateView != null)
+							{
+								populateView(view);
+							}
 
-						                        var writer = new StringWriter();
+							var writer = new StringWriter();
 
-						                        view.RenderView(writer);
+							view.RenderView(writer);
 
-						                        return writer.ToString();
-					                        }
-					                        finally
-					                        {
-						                        viewEngine.ReleaseInstance(view);
-					                        }
-				                        });
+							return writer.ToString();
+						}
+						finally
+						{
+							viewEngine.ReleaseInstance(view);
+						}
+					});
 		}
 	}
 }

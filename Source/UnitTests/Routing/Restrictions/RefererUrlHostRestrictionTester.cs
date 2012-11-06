@@ -18,8 +18,8 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			[SetUp]
 			public void SetUp()
 			{
-				_restriction1 = new RefererUrlHostRestriction("host", CaseInsensitivePlainRequestValueComparer.Instance);
-				_restriction2 = new RefererUrlHostRestriction("host", CaseInsensitivePlainRequestValueComparer.Instance);
+				_restriction1 = new RefererUrlHostRestriction("host", CaseInsensitivePlainComparer.Instance);
+				_restriction2 = new RefererUrlHostRestriction("host", CaseInsensitivePlainComparer.Instance);
 			}
 
 			private RefererUrlHostRestriction _restriction1;
@@ -38,8 +38,8 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			[SetUp]
 			public void SetUp()
 			{
-				_restriction1 = new RefererUrlHostRestriction("host1", CaseInsensitivePlainRequestValueComparer.Instance);
-				_restriction2 = new RefererUrlHostRestriction("host2", CaseInsensitivePlainRequestValueComparer.Instance);
+				_restriction1 = new RefererUrlHostRestriction("host1", CaseInsensitivePlainComparer.Instance);
+				_restriction2 = new RefererUrlHostRestriction("host2", CaseInsensitivePlainComparer.Instance);
 			}
 
 			private RefererUrlHostRestriction _restriction1;
@@ -58,7 +58,7 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			[SetUp]
 			public void SetUp()
 			{
-				_restriction = new RefererUrlHostRestriction("host", CaseInsensitivePlainRequestValueComparer.Instance);
+				_restriction = new RefererUrlHostRestriction("host", CaseInsensitivePlainComparer.Instance);
 			}
 
 			private RefererUrlHostRestriction _restriction;
@@ -76,7 +76,7 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			[SetUp]
 			public void SetUp()
 			{
-				_restriction = new RefererUrlHostRestriction("host", CaseInsensitivePlainRequestValueComparer.Instance);
+				_restriction = new RefererUrlHostRestriction("host", CaseInsensitivePlainComparer.Instance);
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 				_request.Stub(arg => arg.UrlReferrer).Return(new Uri("http://host"));
 			}
@@ -97,7 +97,7 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			[SetUp]
 			public void SetUp()
 			{
-				_restriction = new RefererUrlHostRestriction("host", CaseInsensitivePlainRequestValueComparer.Instance);
+				_restriction = new RefererUrlHostRestriction("host", CaseInsensitivePlainComparer.Instance);
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 				_request.Stub(arg => arg.UrlReferrer).Return(new Uri("http://localhost"));
 			}

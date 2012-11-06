@@ -167,7 +167,7 @@ namespace Junior.Route.UnitTests.Assets.FileSystem
 
 				Assert.That(restrictions, Has.Length.EqualTo(1));
 
-				Assert.That(restrictions[0].Comparer, Is.SameAs(CaseInsensitiveRegexRequestValueComparer.Instance));
+				Assert.That(restrictions[0].Comparer, Is.SameAs(CaseInsensitiveRegexComparer.Instance));
 				Assert.That(restrictions[0].Query, Is.EqualTo(@"^(?:\?(?i:v=[a-f0-9]{32}))?$"));
 			}
 
@@ -182,7 +182,7 @@ namespace Junior.Route.UnitTests.Assets.FileSystem
 
 				Assert.That(_response.CachePolicy.AllowsServerCaching, Is.True);
 				Assert.That(_response.CachePolicy.ETag, Is.EqualTo(_routeId.ToString("N").ToLowerInvariant()));
-				Assert.That(_response.CachePolicy.Expires, Is.EqualTo(new DateTime(2013, 1, 1, 0, 0, 0, DateTimeKind.Utc)));
+				Assert.That(_response.CachePolicy.ClientCacheExpirationUtcTimestamp, Is.EqualTo(new DateTime(2013, 1, 1, 0, 0, 0, DateTimeKind.Utc)));
 				Assert.That(_response.ContentEncoding, Is.SameAs(Encoding.UTF8));
 				Assert.That(_response.ContentType, Is.EqualTo("text/css"));
 				Assert.That(_response.StatusCode.ParsedStatusCode, Is.EqualTo(HttpStatusCode.OK));

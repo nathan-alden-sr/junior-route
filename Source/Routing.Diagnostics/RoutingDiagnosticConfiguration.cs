@@ -30,19 +30,11 @@ namespace Junior.Route.Routing.Diagnostics
 			}
 		}
 
-		public IEnumerable<string> LinkHeadings
-		{
-			get
-			{
-				yield return "Routes";
-			}
-		}
-
 		public IEnumerable<Route> GetRoutes(IGuidFactory guidFactory, IUrlResolver urlResolver, IHttpRuntime httpRuntime, string diagnosticsRelativeUrl)
 		{
 			guidFactory.ThrowIfNull("guidFactory");
 			urlResolver.ThrowIfNull("urlResolver");
-			diagnosticsRelativeUrl.ThrowIfNull("diagnosticsRelativeUrl");
+			diagnosticsRelativeUrl.ThrowIfNull("diagnosticsUrl");
 
 			yield return DiagnosticRouteHelper.Instance.GetViewRoute<RouteTableView>(
 				"Diagnostics Route Table View",
@@ -55,12 +47,11 @@ namespace Junior.Route.Routing.Diagnostics
 			yield return DiagnosticRouteHelper.Instance.GetStylesheetRoute("Diagnostics Route Table View CSS", guidFactory, diagnosticsRelativeUrl + "/route_table/css", ResponseResources.route_table_view, httpRuntime);
 		}
 
-		public IEnumerable<DiagnosticViewLink> GetLinks(string diagnosticsRelativeUrl, string heading)
+		public IEnumerable<DiagnosticViewLink> GetLinks(string diagnosticsUrl)
 		{
-			diagnosticsRelativeUrl.ThrowIfNull("diagnosticsRelativeUrl");
-			heading.ThrowIfNull("heading");
+			diagnosticsUrl.ThrowIfNull("diagnosticsUrl");
 
-			yield return new DiagnosticViewLink(diagnosticsRelativeUrl + "/route_table", "View route table");
+			yield return new DiagnosticViewLink("Routes", diagnosticsUrl + "/route_table", "View route table");
 		}
 	}
 }

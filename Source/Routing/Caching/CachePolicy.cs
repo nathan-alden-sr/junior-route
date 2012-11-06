@@ -9,17 +9,19 @@ namespace Junior.Route.Routing.Caching
 	{
 		private bool? _allowResponseInBrowserHistory;
 		private HttpCacheability? _cacheability;
+		private DateTime? _clientCacheExpirationUtcTimestamp;
+		private TimeSpan? _clientCacheMaxAge;
 		private string _eTag;
-		private DateTime? _expires;
 		private bool _hasPolicy;
 		private bool? _ignoreClientCacheControl;
-		private TimeSpan? _maxAge;
 		private bool? _noStore;
 		private bool? _noTransforms;
 		private bool? _omitVaryStar;
 		private TimeSpan? _proxyMaxAge;
 		private HttpCacheRevalidation? _revalidation;
-		private bool? _serverCaching;
+		private DateTime? _serverCacheExpirationUtcTimestamp;
+		private TimeSpan? _serverCacheMaxAge;
+		private bool? _allowsServerCaching;
 
 		bool ICachePolicy.HasPolicy
 		{
@@ -33,23 +35,39 @@ namespace Junior.Route.Routing.Caching
 		{
 			get
 			{
-				return _serverCaching == true;
+				return _allowsServerCaching == true;
 			}
 		}
 
-		DateTime? ICachePolicy.Expires
+		DateTime? ICachePolicy.ClientCacheExpirationUtcTimestamp
 		{
 			get
 			{
-				return _expires;
+				return _clientCacheExpirationUtcTimestamp;
 			}
 		}
 
-		TimeSpan? ICachePolicy.MaxAge
+		TimeSpan? ICachePolicy.ClientCacheMaxAge
 		{
 			get
 			{
-				return _maxAge;
+				return _clientCacheMaxAge;
+			}
+		}
+
+		DateTime? ICachePolicy.ServerCacheExpirationUtcTimestamp
+		{
+			get
+			{
+				return _serverCacheExpirationUtcTimestamp;
+			}
+		}
+
+		TimeSpan? ICachePolicy.ServerCacheMaxAge
+		{
+			get
+			{
+				return _serverCacheMaxAge;
 			}
 		}
 
@@ -73,10 +91,10 @@ namespace Junior.Route.Routing.Caching
 			switch (_cacheability)
 			{
 				case HttpCacheability.NoCache:
-					policy.SetCacheability(_serverCaching == true ? HttpCacheability.ServerAndNoCache : HttpCacheability.NoCache);
+					policy.SetCacheability(_allowsServerCaching == true ? HttpCacheability.ServerAndNoCache : HttpCacheability.NoCache);
 					break;
 				case HttpCacheability.Private:
-					policy.SetCacheability(_serverCaching == true ? HttpCacheability.ServerAndPrivate : HttpCacheability.Private);
+					policy.SetCacheability(_allowsServerCaching == true ? HttpCacheability.ServerAndPrivate : HttpCacheability.Private);
 					break;
 				case HttpCacheability.Public:
 					policy.SetCacheability(HttpCacheability.Public);
@@ -90,13 +108,13 @@ namespace Junior.Route.Routing.Caching
 			{
 				policy.SetNoTransforms();
 			}
-			if (_expires != null)
+			if (_clientCacheExpirationUtcTimestamp != null)
 			{
-				policy.SetExpires(_expires.Value);
+				policy.SetExpires(_clientCacheExpirationUtcTimestamp.Value);
 			}
-			if (_maxAge != null)
+			if (_clientCacheMaxAge != null)
 			{
-				policy.SetMaxAge(_maxAge.Value);
+				policy.SetMaxAge(_clientCacheMaxAge.Value);
 			}
 			if (_allowResponseInBrowserHistory != null)
 			{
@@ -131,46 +149,32 @@ namespace Junior.Route.Routing.Caching
 				{
 					_allowResponseInBrowserHistory = _allowResponseInBrowserHistory,
 					_cacheability = _cacheability,
+					_clientCacheExpirationUtcTimestamp = _clientCacheExpirationUtcTimestamp,
+					_clientCacheMaxAge = _clientCacheMaxAge,
 					_eTag = _eTag,
-					_expires = _expires,
 					_hasPolicy = _hasPolicy,
 					_ignoreClientCacheControl = _ignoreClientCacheControl,
-					_maxAge = _maxAge,
 					_noStore = _noStore,
 					_noTransforms = _noTransforms,
 					_omitVaryStar = _omitVaryStar,
 					_proxyMaxAge = _proxyMaxAge,
 					_revalidation = _revalidation,
-					_serverCaching = _serverCaching
+					_serverCacheExpirationUtcTimestamp = _serverCacheExpirationUtcTimestamp,
+					_serverCacheMaxAge = _serverCacheMaxAge,
+					_allowsServerCaching = _allowsServerCaching
 				};
 		}
 
-		public CachePolicy ServerCaching()
+		public CachePolicy PublicClientCaching(DateTime expirationUtcTimestamp)
 		{
-			_serverCaching = true;
-			_hasPolicy = true;
-
-			return this;
-		}
-
-		public CachePolicy NoServerCaching()
-		{
-			_serverCaching = false;
-			_hasPolicy = true;
-
-			return this;
-		}
-
-		public CachePolicy PublicClientCaching(DateTime expires)
-		{
-			if (expires.Kind != DateTimeKind.Utc)
+			if (expirationUtcTimestamp.Kind != DateTimeKind.Utc)
 			{
-				throw new ArgumentException("Expiration must be UTC.", "expires");
+				throw new ArgumentException("Expiration must be UTC.", "expirationUtcTimestamp");
 			}
 
 			_cacheability = HttpCacheability.Public;
-			_expires = expires;
-			_maxAge = null;
+			_clientCacheExpirationUtcTimestamp = expirationUtcTimestamp;
+			_clientCacheMaxAge = null;
 			_hasPolicy = true;
 
 			return this;
@@ -179,23 +183,23 @@ namespace Junior.Route.Routing.Caching
 		public CachePolicy PublicClientCaching(TimeSpan maxAge)
 		{
 			_cacheability = HttpCacheability.Public;
-			_expires = null;
-			_maxAge = maxAge;
+			_clientCacheExpirationUtcTimestamp = null;
+			_clientCacheMaxAge = maxAge;
 			_hasPolicy = true;
 
 			return this;
 		}
 
-		public CachePolicy PrivateClientCaching(DateTime expires)
+		public CachePolicy PrivateClientCaching(DateTime expirationUtcTimestamp)
 		{
-			if (expires.Kind != DateTimeKind.Utc)
+			if (expirationUtcTimestamp.Kind != DateTimeKind.Utc)
 			{
-				throw new ArgumentException("Expiration must be UTC.", "expires");
+				throw new ArgumentException("Expiration must be UTC.", "expirationUtcTimestamp");
 			}
 
 			_cacheability = HttpCacheability.Private;
-			_expires = expires;
-			_maxAge = null;
+			_clientCacheExpirationUtcTimestamp = expirationUtcTimestamp;
+			_clientCacheMaxAge = null;
 			_hasPolicy = true;
 
 			return this;
@@ -204,8 +208,8 @@ namespace Junior.Route.Routing.Caching
 		public CachePolicy PrivateClientCaching(TimeSpan maxAge)
 		{
 			_cacheability = HttpCacheability.Private;
-			_expires = null;
-			_maxAge = maxAge;
+			_clientCacheExpirationUtcTimestamp = null;
+			_clientCacheMaxAge = maxAge;
 			_hasPolicy = true;
 
 			return this;
@@ -214,8 +218,39 @@ namespace Junior.Route.Routing.Caching
 		public CachePolicy NoClientCaching()
 		{
 			_cacheability = HttpCacheability.NoCache;
-			_expires = null;
-			_maxAge = null;
+			_clientCacheExpirationUtcTimestamp = null;
+			_clientCacheMaxAge = null;
+			_hasPolicy = true;
+
+			return this;
+		}
+
+		public CachePolicy ServerCaching(DateTime expirationUtcTimestamp)
+		{
+			if (expirationUtcTimestamp.Kind != DateTimeKind.Utc)
+			{
+				throw new ArgumentException("Expiration must be UTC.", "expirationUtcTimestamp");
+			}
+
+			_allowsServerCaching = true;
+			_serverCacheExpirationUtcTimestamp = expirationUtcTimestamp;
+			_hasPolicy = true;
+
+			return this;
+		}
+
+		public CachePolicy ServerCaching(TimeSpan maxAge)
+		{
+			_allowsServerCaching = true;
+			_serverCacheMaxAge = maxAge;
+			_hasPolicy = true;
+
+			return this;
+		}
+
+		public CachePolicy NoServerCaching()
+		{
+			_allowsServerCaching = false;
 			_hasPolicy = true;
 
 			return this;
@@ -284,16 +319,16 @@ namespace Junior.Route.Routing.Caching
 			_allowResponseInBrowserHistory = null;
 			_cacheability = null;
 			_eTag = null;
-			_expires = null;
+			_clientCacheExpirationUtcTimestamp = null;
 			_hasPolicy = false;
 			_ignoreClientCacheControl = null;
-			_maxAge = null;
+			_clientCacheMaxAge = null;
 			_noStore = null;
 			_noTransforms = null;
 			_omitVaryStar = null;
 			_proxyMaxAge = null;
 			_revalidation = null;
-			_serverCaching = null;
+			_allowsServerCaching = null;
 
 			return this;
 		}

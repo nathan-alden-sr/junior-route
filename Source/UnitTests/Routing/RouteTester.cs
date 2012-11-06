@@ -26,8 +26,8 @@ namespace Junior.Route.UnitTests.Routing
 			public void SetUp()
 			{
 				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
-				_route.AddRestrictions(new UrlHostRestriction("host", CaseInsensitivePlainRequestValueComparer.Instance), new UrlPortRestriction(80));
-				_route.AddRestrictions(new UrlHostRestriction("host", CaseInsensitivePlainRequestValueComparer.Instance), new UrlPortRestriction(80));
+				_route.AddRestrictions(new UrlHostRestriction("host", CaseInsensitivePlainComparer.Instance), new UrlPortRestriction(80));
+				_route.AddRestrictions(new UrlHostRestriction("host", CaseInsensitivePlainComparer.Instance), new UrlPortRestriction(80));
 			}
 
 			private Route.Routing.Route _route;
@@ -716,7 +716,7 @@ namespace Junior.Route.UnitTests.Routing
 			{
 				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
 				_route.RestrictByCookie("name1", "value1");
-				_route.RestrictByCookie("name2", CaseSensitivePlainRequestValueComparer.Instance, "value2", CaseSensitiveRegexRequestValueComparer.Instance);
+				_route.RestrictByCookie("name2", CaseSensitivePlainComparer.Instance, "value2", CaseSensitiveRegexComparer.Instance);
 			}
 
 			private Route.Routing.Route _route;
@@ -842,7 +842,7 @@ namespace Junior.Route.UnitTests.Routing
 			public void SetUp()
 			{
 				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
-				_route.RestrictByHeader("field1", "value1", CaseSensitiveRegexRequestValueComparer.Instance);
+				_route.RestrictByHeader("field1", "value1", CaseSensitiveRegexComparer.Instance);
 				_route.RestrictByHeader("field2", "value2");
 			}
 
@@ -1164,8 +1164,8 @@ namespace Junior.Route.UnitTests.Routing
 				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
 				_route.RestrictByRefererUrlAbsolutePaths((IEnumerable<string>)new[] { "path1", "path2" });
 				_route.RestrictByRefererUrlAbsolutePaths("path3", "path4");
-				_route.RestrictByRefererUrlAbsolutePaths(new[] { "path5", "path6" }, CaseInsensitivePlainRequestValueComparer.Instance);
-				_route.RestrictByRefererUrlAbsolutePath("path7", CaseInsensitivePlainRequestValueComparer.Instance);
+				_route.RestrictByRefererUrlAbsolutePaths(new[] { "path5", "path6" }, CaseInsensitivePlainComparer.Instance);
+				_route.RestrictByRefererUrlAbsolutePath("path7", CaseInsensitivePlainComparer.Instance);
 			}
 
 			private Route.Routing.Route _route;
@@ -1208,9 +1208,9 @@ namespace Junior.Route.UnitTests.Routing
 			public void SetUp()
 			{
 				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
-				_route.RestrictByRefererUrlFragment("fragment1", CaseInsensitivePlainRequestValueComparer.Instance);
+				_route.RestrictByRefererUrlFragment("fragment1", CaseInsensitivePlainComparer.Instance);
 				_route.RestrictByRefererUrlFragments((IEnumerable<string>)new[] { "fragment2", "fragment3" });
-				_route.RestrictByRefererUrlFragments(new[] { "fragment4", "fragment5" }, CaseInsensitivePlainRequestValueComparer.Instance);
+				_route.RestrictByRefererUrlFragments(new[] { "fragment4", "fragment5" }, CaseInsensitivePlainComparer.Instance);
 				_route.RestrictByRefererUrlFragments("fragment6", "fragment7");
 			}
 
@@ -1276,9 +1276,9 @@ namespace Junior.Route.UnitTests.Routing
 			public void SetUp()
 			{
 				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
-				_route.RestrictByRefererUrlPathAndQuery("path1", CaseInsensitivePlainRequestValueComparer.Instance);
+				_route.RestrictByRefererUrlPathAndQuery("path1", CaseInsensitivePlainComparer.Instance);
 				_route.RestrictByRefererUrlPathsAndQueries((IEnumerable<string>)new[] { "path2", "path3" });
-				_route.RestrictByRefererUrlPathsAndQueries(new[] { "path4", "path5" }, CaseInsensitivePlainRequestValueComparer.Instance);
+				_route.RestrictByRefererUrlPathsAndQueries(new[] { "path4", "path5" }, CaseInsensitivePlainComparer.Instance);
 				_route.RestrictByRefererUrlPathsAndQueries("path6", "path7");
 			}
 
@@ -1322,9 +1322,9 @@ namespace Junior.Route.UnitTests.Routing
 			public void SetUp()
 			{
 				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
-				_route.RestrictByRefererUrlQuery("query1", CaseInsensitivePlainRequestValueComparer.Instance);
+				_route.RestrictByRefererUrlQuery("query1", CaseInsensitivePlainComparer.Instance);
 				_route.RestrictByRefererUrlQueries((IEnumerable<string>)new[] { "query2", "query3" });
-				_route.RestrictByRefererUrlQueries(new[] { "query4", "query5" }, CaseInsensitivePlainRequestValueComparer.Instance);
+				_route.RestrictByRefererUrlQueries(new[] { "query4", "query5" }, CaseInsensitivePlainComparer.Instance);
 				_route.RestrictByRefererUrlQueries("query6", "query7");
 			}
 
@@ -1346,7 +1346,7 @@ namespace Junior.Route.UnitTests.Routing
 			public void SetUp()
 			{
 				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
-				_route.RestrictByRefererUrlQueryString("field1", CaseInsensitivePlainRequestValueComparer.Instance, "value1", CaseInsensitivePlainRequestValueComparer.Instance);
+				_route.RestrictByRefererUrlQueryString("field1", CaseInsensitivePlainComparer.Instance, "value1", CaseInsensitivePlainComparer.Instance);
 				_route.RestrictByRefererUrlQueryString("field2", "value2");
 			}
 
@@ -1391,8 +1391,8 @@ namespace Junior.Route.UnitTests.Routing
 			{
 				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
 				_httpRuntime = MockRepository.GenerateMock<IHttpRuntime>();
-				_route.RestrictByRelativePath("path1", CaseInsensitivePlainRequestValueComparer.Instance, _httpRuntime);
-				_route.RestrictByRelativePaths(new[] { "path2", "path3" }, _httpRuntime);
+				_route.RestrictByUrlRelativePath("path1", CaseInsensitivePlainComparer.Instance, _httpRuntime);
+				_route.RestrictByUrlRelativePaths(new[] { "path2", "path3" }, _httpRuntime);
 			}
 
 			private Route.Routing.Route _route;
@@ -1541,9 +1541,9 @@ namespace Junior.Route.UnitTests.Routing
 			public void SetUp()
 			{
 				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
-				_route.RestrictByUrlFragment("fragment1", CaseInsensitivePlainRequestValueComparer.Instance);
+				_route.RestrictByUrlFragment("fragment1", CaseInsensitivePlainComparer.Instance);
 				_route.RestrictByUrlFragments((IEnumerable<string>)new[] { "fragment2", "fragment3" });
-				_route.RestrictByUrlFragments(new[] { "fragment4", "fragment5" }, CaseInsensitivePlainRequestValueComparer.Instance);
+				_route.RestrictByUrlFragments(new[] { "fragment4", "fragment5" }, CaseInsensitivePlainComparer.Instance);
 				_route.RestrictByUrlFragments("fragment6", "fragment7");
 			}
 
@@ -1631,9 +1631,9 @@ namespace Junior.Route.UnitTests.Routing
 			public void SetUp()
 			{
 				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
-				_route.RestrictByUrlQuery("query1", CaseInsensitivePlainRequestValueComparer.Instance);
+				_route.RestrictByUrlQuery("query1", CaseInsensitivePlainComparer.Instance);
 				_route.RestrictByUrlQueries((IEnumerable<string>)new[] { "query2", "query3" });
-				_route.RestrictByUrlQueries(new[] { "query4", "query5" }, CaseInsensitivePlainRequestValueComparer.Instance);
+				_route.RestrictByUrlQueries(new[] { "query4", "query5" }, CaseInsensitivePlainComparer.Instance);
 				_route.RestrictByUrlQueries("query6", "query7");
 			}
 
@@ -1655,7 +1655,7 @@ namespace Junior.Route.UnitTests.Routing
 			public void SetUp()
 			{
 				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
-				_route.RestrictByUrlQueryString("field1", CaseInsensitivePlainRequestValueComparer.Instance, "value1", CaseInsensitivePlainRequestValueComparer.Instance);
+				_route.RestrictByUrlQueryString("field1", CaseInsensitivePlainComparer.Instance, "value1", CaseInsensitivePlainComparer.Instance);
 				_route.RestrictByUrlQueryString("field2", "value2");
 			}
 
@@ -1828,7 +1828,7 @@ namespace Junior.Route.UnitTests.Routing
 			public void SetUp()
 			{
 				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
-				_route.AddRestrictions(new UrlHostRestriction("host", CaseInsensitivePlainRequestValueComparer.Instance), new UrlPortRestriction(80));
+				_route.AddRestrictions(new UrlHostRestriction("host", CaseInsensitivePlainComparer.Instance), new UrlPortRestriction(80));
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 				_request.Stub(arg => arg.Url).Return(new Uri("http://host:80"));
 				_matchResult = _route.MatchesRequest(_request);
@@ -1852,7 +1852,7 @@ namespace Junior.Route.UnitTests.Routing
 			public void SetUp()
 			{
 				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
-				_route.AddRestrictions(new UrlHostRestriction("host", CaseInsensitivePlainRequestValueComparer.Instance), new UrlPortRestriction(80));
+				_route.AddRestrictions(new UrlHostRestriction("host", CaseInsensitivePlainComparer.Instance), new UrlPortRestriction(80));
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 				_request.Stub(arg => arg.Url).Return(new Uri("http://host1:81"));
 				_matchResult = _route.MatchesRequest(_request);
@@ -1876,7 +1876,7 @@ namespace Junior.Route.UnitTests.Routing
 			public void SetUp()
 			{
 				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
-				_route.AddRestrictions(new UrlHostRestriction("host", CaseInsensitivePlainRequestValueComparer.Instance), new UrlPortRestriction(80));
+				_route.AddRestrictions(new UrlHostRestriction("host", CaseInsensitivePlainComparer.Instance), new UrlPortRestriction(80));
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 				_request.Stub(arg => arg.Url).Return(new Uri("http://host:81"));
 				_matchResult = _route.MatchesRequest(_request);

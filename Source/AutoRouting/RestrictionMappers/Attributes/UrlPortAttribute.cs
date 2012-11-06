@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 using Junior.Common;
 using Junior.Route.AutoRouting.Containers;
@@ -9,7 +8,7 @@ namespace Junior.Route.AutoRouting.RestrictionMappers.Attributes
 	[AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
 	public class UrlPortAttribute : RestrictionAttribute
 	{
-		private readonly IEnumerable<ushort> _ports;
+		private readonly ushort[] _ports;
 
 		public UrlPortAttribute(params ushort[] ports)
 		{

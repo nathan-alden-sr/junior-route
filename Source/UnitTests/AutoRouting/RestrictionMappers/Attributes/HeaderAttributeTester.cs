@@ -40,7 +40,7 @@ namespace Junior.Route.UnitTests.AutoRouting.RestrictionMappers.Attributes
 
 				Assert.That(restrictions[0].Field, Is.EqualTo("field"));
 				Assert.That(restrictions[0].Value, Is.EqualTo("value"));
-				Assert.That(restrictions[0].ValueComparer, Is.SameAs(CaseInsensitiveRegexRequestValueComparer.Instance));
+				Assert.That(restrictions[0].ValueComparer, Is.SameAs(CaseInsensitiveRegexComparer.Instance));
 			}
 		}
 
@@ -70,7 +70,7 @@ namespace Junior.Route.UnitTests.AutoRouting.RestrictionMappers.Attributes
 
 				Assert.That(restrictions[0].Field, Is.EqualTo("field"));
 				Assert.That(restrictions[0].Value, Is.EqualTo("value"));
-				Assert.That(restrictions[0].ValueComparer, Is.SameAs(CaseInsensitivePlainRequestValueComparer.Instance));
+				Assert.That(restrictions[0].ValueComparer, Is.SameAs(CaseInsensitivePlainComparer.Instance));
 			}
 		}
 	}

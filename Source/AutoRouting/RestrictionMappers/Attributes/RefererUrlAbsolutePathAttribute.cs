@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 using Junior.Common;
 using Junior.Route.AutoRouting.Containers;
@@ -9,12 +8,14 @@ namespace Junior.Route.AutoRouting.RestrictionMappers.Attributes
 	[AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
 	public class RefererUrlAbsolutePathAttribute : RestrictionAttribute
 	{
-		private readonly IEnumerable<string> _absolutePaths;
+		private readonly string[] _absolutePaths;
 		private readonly RequestValueComparer? _comparer;
 
 		public RefererUrlAbsolutePathAttribute(string absolutePath, RequestValueComparer comparer)
 		{
-			_absolutePaths = absolutePath.ToEnumerable();
+			absolutePath.ThrowIfNull("absolutePath");
+
+			_absolutePaths = new[] { absolutePath };
 			_comparer = comparer;
 		}
 

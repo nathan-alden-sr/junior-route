@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 using Junior.Common;
@@ -12,7 +13,7 @@ namespace Junior.Route.Http.RequestHeaders
 		private const string RegexPattern = "(?:trailers|(?:" + CommonRegexPatterns.TransferExtension + ")(?:" + ParametersRegexPattern + ")?)";
 		private static readonly string _elementsRegexPattern = String.Format("^(?:{0})$", CommonRegexPatterns.ListOfElements(RegexPattern));
 		private readonly decimal _effectiveQvalue;
-		private readonly IEnumerable<Parameter> _parameters;
+		private readonly Parameter[] _parameters;
 		private readonly decimal? _qvalue;
 		private readonly string _tCoding;
 
@@ -22,7 +23,7 @@ namespace Junior.Route.Http.RequestHeaders
 			parameters.ThrowIfNull("parameters");
 
 			_tCoding = tCoding;
-			_parameters = parameters;
+			_parameters = parameters.ToArray();
 			_qvalue = qvalue;
 			_effectiveQvalue = qvalue ?? 1m;
 		}

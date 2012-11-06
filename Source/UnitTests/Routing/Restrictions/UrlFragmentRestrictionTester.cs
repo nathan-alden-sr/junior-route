@@ -18,8 +18,8 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			[SetUp]
 			public void SetUp()
 			{
-				_restriction1 = new UrlFragmentRestriction("#fragment", CaseInsensitivePlainRequestValueComparer.Instance);
-				_restriction2 = new UrlFragmentRestriction("#fragment", CaseInsensitivePlainRequestValueComparer.Instance);
+				_restriction1 = new UrlFragmentRestriction("#fragment", CaseInsensitivePlainComparer.Instance);
+				_restriction2 = new UrlFragmentRestriction("#fragment", CaseInsensitivePlainComparer.Instance);
 			}
 
 			private UrlFragmentRestriction _restriction1;
@@ -38,8 +38,8 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			[SetUp]
 			public void SetUp()
 			{
-				_restriction1 = new UrlFragmentRestriction("#fragment1", CaseInsensitivePlainRequestValueComparer.Instance);
-				_restriction2 = new UrlFragmentRestriction("#fragment2", CaseInsensitivePlainRequestValueComparer.Instance);
+				_restriction1 = new UrlFragmentRestriction("#fragment1", CaseInsensitivePlainComparer.Instance);
+				_restriction2 = new UrlFragmentRestriction("#fragment2", CaseInsensitivePlainComparer.Instance);
 			}
 
 			private UrlFragmentRestriction _restriction1;
@@ -58,7 +58,7 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			[SetUp]
 			public void SetUp()
 			{
-				_restriction = new UrlFragmentRestriction("#fragment", CaseInsensitivePlainRequestValueComparer.Instance);
+				_restriction = new UrlFragmentRestriction("#fragment", CaseInsensitivePlainComparer.Instance);
 			}
 
 			private UrlFragmentRestriction _restriction;
@@ -76,7 +76,7 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			[SetUp]
 			public void SetUp()
 			{
-				_restriction = new UrlFragmentRestriction("#fragment", CaseInsensitivePlainRequestValueComparer.Instance);
+				_restriction = new UrlFragmentRestriction("#fragment", CaseInsensitivePlainComparer.Instance);
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 				_request.Stub(arg => arg.Url).Return(new Uri("http://localhost/path#fragment"));
 			}
@@ -97,7 +97,7 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			[SetUp]
 			public void SetUp()
 			{
-				_restriction = new UrlFragmentRestriction("#fragment", CaseInsensitivePlainRequestValueComparer.Instance);
+				_restriction = new UrlFragmentRestriction("#fragment", CaseInsensitivePlainComparer.Instance);
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 				_request.Stub(arg => arg.Url).Return(new Uri("http://localhost/path#f"));
 			}

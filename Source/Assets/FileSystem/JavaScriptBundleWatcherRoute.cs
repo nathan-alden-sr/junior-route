@@ -38,11 +38,11 @@ namespace Junior.Route.Assets.FileSystem
 
 		private void ConfigureResponse(Response response)
 		{
-			DateTime expires = _systemClock.UtcDateTime.AddYears(1);
+			DateTime expirationUtcTimestamp = _systemClock.UtcDateTime.AddYears(1);
 
 			response.CachePolicy
-				.ServerCaching()
-				.PublicClientCaching(expires)
+				.ServerCaching(expirationUtcTimestamp)
+				.PublicClientCaching(expirationUtcTimestamp)
 				.ETag(Id.ToString("N"));
 		}
 	}

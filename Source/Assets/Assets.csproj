@@ -45,6 +45,7 @@
     <Compile Include="FileSystem\BundleContents.cs" />
     <Compile Include="FileSystem\BundleWatcher.cs" />
     <Compile Include="FileSystem\CssBundleWatcherRoute.cs" />
+    <Compile Include="FileSystem\DelimiterConcatenator.cs" />
     <Compile Include="FileSystem\DirectoryAsset.cs" />
     <Compile Include="FileSystem\FileAsset.cs" />
     <Compile Include="FileSystem\FilterResult.cs" />

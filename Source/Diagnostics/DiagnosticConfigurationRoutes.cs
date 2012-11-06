@@ -27,7 +27,7 @@ namespace Junior.Route.Diagnostics
 		{
 			guidFactory.ThrowIfNull("guidFactory");
 			urlResolver.ThrowIfNull("urlResolver");
-			diagnosticsRelativeUrl.ThrowIfNull("diagnosticsRelativeUrl");
+			diagnosticsRelativeUrl.ThrowIfNull("diagnosticsUrl");
 			configurations.ThrowIfNull("configurations");
 
 			string diagnosticsUrl = urlResolver.Absolute(diagnosticsRelativeUrl);
@@ -60,20 +60,17 @@ namespace Junior.Route.Diagnostics
 		public IEnumerable<Routing.Route> GetRoutes(IGuidFactory guidFactory, IUrlResolver urlResolver, IHttpRuntime httpRuntime, string diagnosticsRelativeUrl, params IDiagnosticConfiguration[] configurations)
 		{
 			guidFactory.ThrowIfNull("guidFactory");
-			diagnosticsRelativeUrl.ThrowIfNull("diagnosticsRelativeUrl");
+			diagnosticsRelativeUrl.ThrowIfNull("diagnosticsUrl");
 			configurations.ThrowIfNull("configurations");
 
 			return GetRoutes(guidFactory, urlResolver, httpRuntime, diagnosticsRelativeUrl, (IEnumerable<IDiagnosticConfiguration>)configurations);
 		}
 
-		private static void AddLinks(DiagnosticsView view, string diagnosticsRelativeUrl, IEnumerable<IDiagnosticConfiguration> configurations)
+		private static void AddLinks(DiagnosticsView view, string diagnosticsUrl, IEnumerable<IDiagnosticConfiguration> configurations)
 		{
 			foreach (IDiagnosticConfiguration configuration in configurations)
 			{
-				foreach (string heading in configuration.LinkHeadings)
-				{
-					view.AddDiagnosticViewLinks(heading, configuration.GetLinks(diagnosticsRelativeUrl, heading));
-				}
+				view.AddDiagnosticViewLinks(configuration.GetLinks(diagnosticsUrl));
 			}
 		}
 	}

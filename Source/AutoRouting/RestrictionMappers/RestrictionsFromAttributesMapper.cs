@@ -38,7 +38,7 @@ namespace Junior.Route.AutoRouting.RestrictionMappers
 
 			if (!attributeType.IsSubclassOf(typeof(RestrictionAttribute)))
 			{
-				throw new ArgumentException("Type must be a subclass of MappingAttribute.", "attributeType");
+				throw new ArgumentException(String.Format("Type must be a subclass of {0}.", typeof(RestrictionAttribute).FullName), "attributeType");
 			}
 
 			_attributeType = attributeType;

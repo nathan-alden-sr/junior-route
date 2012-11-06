@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 
 using Junior.Common;
-using Junior.Route.Common;
 
 namespace Junior.Route.Diagnostics.Web
 {
@@ -27,28 +26,29 @@ namespace Junior.Route.Diagnostics.Web
 			}
 		}
 
-		public void AddDiagnosticViewLinks(string heading, IEnumerable<DiagnosticViewLink> links)
+		public void AddDiagnosticViewLinks(IEnumerable<DiagnosticViewLink> links)
 		{
-			heading.ThrowIfNull("heading");
 			links.ThrowIfNull("links");
 
-			HashSet<DiagnosticViewLink> linkList;
+			links = links.ToArray();
 
-			if (!_diagnosticViewLinksByHeading.TryGetValue(heading, out linkList))
+			foreach (DiagnosticViewLink link in links)
 			{
-				linkList = new HashSet<DiagnosticViewLink>();
-				_diagnosticViewLinksByHeading.Add(heading, linkList);
-			}
+				HashSet<DiagnosticViewLink> linkList;
 
-			linkList.AddRange(links);
+				if (!_diagnosticViewLinksByHeading.TryGetValue(link.Heading, out linkList))
+				{
+					linkList = new HashSet<DiagnosticViewLink>();
+					_diagnosticViewLinksByHeading.Add(link.Heading, linkList);
+				}
+
+				linkList.Add(link);
+			}
 		}
 
-		public void AddDiagnosticViewLinks(string heading, params DiagnosticViewLink[] links)
+		public void AddDiagnosticViewLinks(params DiagnosticViewLink[] links)
 		{
-			heading.ThrowIfNull("heading");
-			links.ThrowIfNull("links");
-
-			AddDiagnosticViewLinks(heading, (IEnumerable<DiagnosticViewLink>)links);
+			AddDiagnosticViewLinks((IEnumerable<DiagnosticViewLink>)links);
 		}
 
 		public IEnumerable<DiagnosticViewLink> GetDiagnosticViewLinks(string heading)

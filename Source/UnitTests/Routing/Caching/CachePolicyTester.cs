@@ -36,7 +36,7 @@ namespace Junior.Route.UnitTests.Routing.Caching
 			public void Must_apply_no_client_and_server_cacheability()
 			{
 				_cachePolicy.NoClientCaching();
-				_cachePolicy.ServerCaching();
+				_cachePolicy.ServerCaching(DateTime.UtcNow);
 
 				_cachePolicy.Apply(_httpCachePolicyBase);
 
@@ -57,7 +57,7 @@ namespace Junior.Route.UnitTests.Routing.Caching
 			public void Must_apply_private_client_and_server_cacheability()
 			{
 				_cachePolicy.PrivateClientCaching(TimeSpan.FromDays(1));
-				_cachePolicy.ServerCaching();
+				_cachePolicy.ServerCaching(DateTime.UtcNow);
 
 				_cachePolicy.Apply(_httpCachePolicyBase);
 
@@ -92,7 +92,7 @@ namespace Junior.Route.UnitTests.Routing.Caching
 			public void Must_apply_public_client_and_server_cacheability()
 			{
 				_cachePolicy.PublicClientCaching(TimeSpan.FromDays(1));
-				_cachePolicy.ServerCaching();
+				_cachePolicy.ServerCaching(DateTime.UtcNow);
 
 				_cachePolicy.Apply(_httpCachePolicyBase);
 
@@ -135,7 +135,7 @@ namespace Junior.Route.UnitTests.Routing.Caching
 			public void SetUp()
 			{
 				_cachePolicy = new CachePolicy();
-				_cachePolicy.ServerCaching();
+				_cachePolicy.ServerCaching(DateTime.UtcNow);
 				_cachePolicy.Reset();
 			}
 
@@ -308,7 +308,7 @@ namespace Junior.Route.UnitTests.Routing.Caching
 
 				var cachePolicy = (ICachePolicy)_cachePolicy;
 
-				Assert.That(cachePolicy.Expires, Is.EqualTo(expires));
+				Assert.That(cachePolicy.ClientCacheExpirationUtcTimestamp, Is.EqualTo(expires));
 			}
 		}
 
@@ -340,7 +340,7 @@ namespace Junior.Route.UnitTests.Routing.Caching
 
 				var cachePolicy = (ICachePolicy)_cachePolicy;
 
-				Assert.That(cachePolicy.MaxAge, Is.EqualTo(maxAge));
+				Assert.That(cachePolicy.ClientCacheMaxAge, Is.EqualTo(maxAge));
 			}
 		}
 
@@ -397,7 +397,7 @@ namespace Junior.Route.UnitTests.Routing.Caching
 
 				var cachePolicy = (ICachePolicy)_cachePolicy;
 
-				Assert.That(cachePolicy.Expires, Is.EqualTo(expires));
+				Assert.That(cachePolicy.ClientCacheExpirationUtcTimestamp, Is.EqualTo(expires));
 			}
 		}
 
@@ -429,7 +429,7 @@ namespace Junior.Route.UnitTests.Routing.Caching
 
 				var cachePolicy = (ICachePolicy)_cachePolicy;
 
-				Assert.That(cachePolicy.MaxAge, Is.EqualTo(maxAge));
+				Assert.That(cachePolicy.ClientCacheMaxAge, Is.EqualTo(maxAge));
 			}
 		}
 
@@ -459,7 +459,7 @@ namespace Junior.Route.UnitTests.Routing.Caching
 			public void SetUp()
 			{
 				_cachePolicy = new CachePolicy();
-				_cachePolicy.ServerCaching();
+				_cachePolicy.ServerCaching(DateTime.UtcNow);
 			}
 
 			private CachePolicy _cachePolicy;

@@ -50,8 +50,8 @@ namespace Junior.Route.UnitTests.Routing
 					};
 				_unmatchedRestrictions = new[]
 					{
-						new UrlHostRestriction("host1", CaseInsensitivePlainRequestValueComparer.Instance),
-						new UrlHostRestriction("host2", CaseInsensitivePlainRequestValueComparer.Instance)
+						new UrlHostRestriction("host1", CaseInsensitivePlainComparer.Instance),
+						new UrlHostRestriction("host2", CaseInsensitivePlainComparer.Instance)
 					};
 				_matchResult = MatchResult.RouteNotMatched(_matchedRestrictions, _unmatchedRestrictions);
 			}

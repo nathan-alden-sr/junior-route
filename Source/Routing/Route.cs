@@ -114,7 +114,7 @@ namespace Junior.Route.Routing
 
 		public Route RestrictByCookie(string name, string value)
 		{
-			return AddRestrictions(new CookieRestriction(name, CaseInsensitivePlainRequestValueComparer.Instance, value, CaseInsensitivePlainRequestValueComparer.Instance));
+			return AddRestrictions(new CookieRestriction(name, CaseInsensitivePlainComparer.Instance, value, CaseInsensitivePlainComparer.Instance));
 		}
 
 		public Route RestrictByCookie(string name, IRequestValueComparer nameComparer, string value, IRequestValueComparer valueComparer)
@@ -124,7 +124,7 @@ namespace Junior.Route.Routing
 
 		public Route RestrictByHeader(string field, string value)
 		{
-			return AddRestrictions(new HeaderRestriction(field, value, CaseInsensitivePlainRequestValueComparer.Instance));
+			return AddRestrictions(new HeaderRestriction(field, value, CaseInsensitivePlainComparer.Instance));
 		}
 
 		public Route RestrictByHeader(string field, string value, IRequestValueComparer valueComparer)
@@ -395,7 +395,7 @@ namespace Junior.Route.Routing
 		{
 			absolutePaths.ThrowIfNull("absolutePaths");
 
-			return AddRestrictions(absolutePaths.Select(arg => new RefererUrlAbsolutePathRestriction(arg, CaseInsensitivePlainRequestValueComparer.Instance)));
+			return AddRestrictions(absolutePaths.Select(arg => new RefererUrlAbsolutePathRestriction(arg, CaseInsensitivePlainComparer.Instance)));
 		}
 
 		public Route RestrictByRefererUrlAbsolutePaths(params string[] pathsAndQueries)
@@ -419,7 +419,7 @@ namespace Junior.Route.Routing
 		{
 			authorities.ThrowIfNull("authorities");
 
-			return AddRestrictions(authorities.Select(arg => new RefererUrlAuthorityRestriction(arg, CaseInsensitivePlainRequestValueComparer.Instance)));
+			return AddRestrictions(authorities.Select(arg => new RefererUrlAuthorityRestriction(arg, CaseInsensitivePlainComparer.Instance)));
 		}
 
 		public Route RestrictByRefererUrlAuthorities(params string[] authorities)
@@ -443,7 +443,7 @@ namespace Junior.Route.Routing
 		{
 			fragments.ThrowIfNull("fragments");
 
-			return AddRestrictions(fragments.Select(arg => new RefererUrlFragmentRestriction(arg, CaseInsensitivePlainRequestValueComparer.Instance)));
+			return AddRestrictions(fragments.Select(arg => new RefererUrlFragmentRestriction(arg, CaseInsensitivePlainComparer.Instance)));
 		}
 
 		public Route RestrictByRefererUrlFragments(params string[] fragments)
@@ -467,7 +467,7 @@ namespace Junior.Route.Routing
 		{
 			hosts.ThrowIfNull("hosts");
 
-			return AddRestrictions(hosts.Select(arg => new RefererUrlHostRestriction(arg, CaseInsensitivePlainRequestValueComparer.Instance)));
+			return AddRestrictions(hosts.Select(arg => new RefererUrlHostRestriction(arg, CaseInsensitivePlainComparer.Instance)));
 		}
 
 		public Route RestrictByRefererUrlHosts(params string[] hosts)
@@ -503,7 +503,7 @@ namespace Junior.Route.Routing
 		{
 			pathsAndQueries.ThrowIfNull("pathsAndQueries");
 
-			return AddRestrictions(pathsAndQueries.Select(arg => new RefererUrlPathAndQueryRestriction(arg, CaseInsensitivePlainRequestValueComparer.Instance)));
+			return AddRestrictions(pathsAndQueries.Select(arg => new RefererUrlPathAndQueryRestriction(arg, CaseInsensitivePlainComparer.Instance)));
 		}
 
 		public Route RestrictByRefererUrlPathsAndQueries(params string[] pathsAndQueries)
@@ -539,7 +539,7 @@ namespace Junior.Route.Routing
 		{
 			queries.ThrowIfNull("queries");
 
-			return AddRestrictions(queries.Select(arg => new RefererUrlQueryRestriction(arg, CaseInsensitivePlainRequestValueComparer.Instance)));
+			return AddRestrictions(queries.Select(arg => new RefererUrlQueryRestriction(arg, CaseInsensitivePlainComparer.Instance)));
 		}
 
 		public Route RestrictByRefererUrlQueries(params string[] queries)
@@ -556,7 +556,7 @@ namespace Junior.Route.Routing
 
 		public Route RestrictByRefererUrlQueryString(string field, string value)
 		{
-			return AddRestrictions(new RefererUrlQueryStringRestriction(field, CaseInsensitivePlainRequestValueComparer.Instance, value, CaseInsensitivePlainRequestValueComparer.Instance));
+			return AddRestrictions(new RefererUrlQueryStringRestriction(field, CaseInsensitivePlainComparer.Instance, value, CaseInsensitivePlainComparer.Instance));
 		}
 
 		public Route RestrictByRefererUrlQueryString(string field, IRequestValueComparer fieldComparer, string value, IRequestValueComparer valueComparer)
@@ -573,7 +573,7 @@ namespace Junior.Route.Routing
 		{
 			schemes.ThrowIfNull("schemes");
 
-			return AddRestrictions(schemes.Select(arg => new RefererUrlSchemeRestriction(arg, CaseInsensitivePlainRequestValueComparer.Instance)));
+			return AddRestrictions(schemes.Select(arg => new RefererUrlSchemeRestriction(arg, CaseInsensitivePlainComparer.Instance)));
 		}
 
 		public Route RestrictByRefererUrlSchemes(IEnumerable<string> schemes, IRequestValueComparer comparer)
@@ -586,25 +586,6 @@ namespace Junior.Route.Routing
 		public Route RestrictByRefererUrlSchemes(params string[] schemes)
 		{
 			return RestrictByRefererUrlSchemes((IEnumerable<string>)schemes);
-		}
-
-		public Route RestrictByRelativePath(string relativePath, IRequestValueComparer comparer, IHttpRuntime httpRuntime)
-		{
-			return AddRestrictions(new UrlRelativePathRestriction(relativePath, comparer, httpRuntime));
-		}
-
-		public Route RestrictByRelativePaths(IEnumerable<string> relativePaths, IHttpRuntime httpRuntime)
-		{
-			relativePaths.ThrowIfNull("relativePaths");
-
-			return AddRestrictions(relativePaths.Select(arg => new UrlRelativePathRestriction(arg, CaseInsensitivePlainRequestValueComparer.Instance, httpRuntime)));
-		}
-
-		public Route RestrictByRelativePaths(IEnumerable<string> relativePaths, IRequestValueComparer comparer, IHttpRuntime httpRuntime)
-		{
-			relativePaths.ThrowIfNull("relativePaths");
-
-			return AddRestrictions(relativePaths.Select(arg => new UrlRelativePathRestriction(arg, comparer, httpRuntime)));
 		}
 
 		public Route RestrictByUrl(Func<Uri, bool> matchDelegate)
@@ -621,7 +602,7 @@ namespace Junior.Route.Routing
 		{
 			authorities.ThrowIfNull("authorities");
 
-			return AddRestrictions(authorities.Select(arg => new UrlAuthorityRestriction(arg, CaseInsensitivePlainRequestValueComparer.Instance)));
+			return AddRestrictions(authorities.Select(arg => new UrlAuthorityRestriction(arg, CaseInsensitivePlainComparer.Instance)));
 		}
 
 		public Route RestrictByUrlAuthorities(params string[] authorities)
@@ -645,7 +626,7 @@ namespace Junior.Route.Routing
 		{
 			fragments.ThrowIfNull("fragments");
 
-			return AddRestrictions(fragments.Select(arg => new UrlFragmentRestriction(arg, CaseInsensitivePlainRequestValueComparer.Instance)));
+			return AddRestrictions(fragments.Select(arg => new UrlFragmentRestriction(arg, CaseInsensitivePlainComparer.Instance)));
 		}
 
 		public Route RestrictByUrlFragments(params string[] fragments)
@@ -669,7 +650,7 @@ namespace Junior.Route.Routing
 		{
 			hosts.ThrowIfNull("hosts");
 
-			return AddRestrictions(hosts.Select(arg => new UrlHostRestriction(arg, CaseInsensitivePlainRequestValueComparer.Instance)));
+			return AddRestrictions(hosts.Select(arg => new UrlHostRestriction(arg, CaseInsensitivePlainComparer.Instance)));
 		}
 
 		public Route RestrictByUrlHosts(params string[] hosts)
@@ -717,7 +698,7 @@ namespace Junior.Route.Routing
 		{
 			queries.ThrowIfNull("queries");
 
-			return AddRestrictions(queries.Select(arg => new UrlQueryRestriction(arg, CaseInsensitivePlainRequestValueComparer.Instance)));
+			return AddRestrictions(queries.Select(arg => new UrlQueryRestriction(arg, CaseInsensitivePlainComparer.Instance)));
 		}
 
 		public Route RestrictByUrlQueries(params string[] queries)
@@ -734,12 +715,31 @@ namespace Junior.Route.Routing
 
 		public Route RestrictByUrlQueryString(string field, string value)
 		{
-			return AddRestrictions(new UrlQueryStringRestriction(field, CaseInsensitivePlainRequestValueComparer.Instance, value, CaseInsensitivePlainRequestValueComparer.Instance));
+			return AddRestrictions(new UrlQueryStringRestriction(field, CaseInsensitivePlainComparer.Instance, value, CaseInsensitivePlainComparer.Instance));
 		}
 
 		public Route RestrictByUrlQueryString(string field, IRequestValueComparer fieldComparer, string value, IRequestValueComparer valueComparer)
 		{
 			return AddRestrictions(new UrlQueryStringRestriction(field, fieldComparer, value, valueComparer));
+		}
+
+		public Route RestrictByUrlRelativePath(string relativePath, IRequestValueComparer comparer, IHttpRuntime httpRuntime)
+		{
+			return AddRestrictions(new UrlRelativePathRestriction(relativePath, comparer, httpRuntime));
+		}
+
+		public Route RestrictByUrlRelativePaths(IEnumerable<string> relativePaths, IHttpRuntime httpRuntime)
+		{
+			relativePaths.ThrowIfNull("relativePaths");
+
+			return AddRestrictions(relativePaths.Select(arg => new UrlRelativePathRestriction(arg, CaseInsensitivePlainComparer.Instance, httpRuntime)));
+		}
+
+		public Route RestrictByUrlRelativePaths(IEnumerable<string> relativePaths, IRequestValueComparer comparer, IHttpRuntime httpRuntime)
+		{
+			relativePaths.ThrowIfNull("relativePaths");
+
+			return AddRestrictions(relativePaths.Select(arg => new UrlRelativePathRestriction(arg, comparer, httpRuntime)));
 		}
 
 		public Route RestrictByUrlScheme(string scheme, IRequestValueComparer comparer)
@@ -751,7 +751,7 @@ namespace Junior.Route.Routing
 		{
 			schemes.ThrowIfNull("schemes");
 
-			return AddRestrictions(schemes.Select(arg => new UrlSchemeRestriction(arg, CaseInsensitivePlainRequestValueComparer.Instance)));
+			return AddRestrictions(schemes.Select(arg => new UrlSchemeRestriction(arg, CaseInsensitivePlainComparer.Instance)));
 		}
 
 		public Route RestrictByUrlSchemes(IEnumerable<string> schemes, IRequestValueComparer comparer)

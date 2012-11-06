@@ -170,10 +170,10 @@
     <Compile Include="Routing\Caching\CachePolicyTester.cs" />
     <Compile Include="Routing\Caching\CacheResponseTester.cs" />
     <Compile Include="Routing\MatchResultTester.cs" />
-    <Compile Include="Routing\RequestValueComparers\CaseInsensitivePlainRequestValueComparerTester.cs" />
-    <Compile Include="Routing\RequestValueComparers\CaseSensitivePlainRequestValueComparerTester.cs" />
-    <Compile Include="Routing\RequestValueComparers\CaseInsensitiveRegexRequestValueComparerTester.cs" />
-    <Compile Include="Routing\RequestValueComparers\CaseSensitiveRegexRequestValueComparerTester.cs" />
+    <Compile Include="Routing\RequestValueComparers\CaseInsensitivePlainRequestTester.cs" />
+    <Compile Include="Routing\RequestValueComparers\CaseSensitivePlainRequestTester.cs" />
+    <Compile Include="Routing\RequestValueComparers\CaseInsensitiveRegexRequestTester.cs" />
+    <Compile Include="Routing\RequestValueComparers\CaseSensitiveRegexRequestTester.cs" />
     <Compile Include="Routing\Responses\CookieTester.cs" />
     <Compile Include="Routing\Responses\CookieValueTester.cs" />
     <Compile Include="Routing\Responses\XmlNodeExtensionsTester.cs" />

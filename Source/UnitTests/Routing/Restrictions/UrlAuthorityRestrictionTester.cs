@@ -18,8 +18,8 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			[SetUp]
 			public void SetUp()
 			{
-				_restriction1 = new UrlAuthorityRestriction("authority", CaseInsensitivePlainRequestValueComparer.Instance);
-				_restriction2 = new UrlAuthorityRestriction("authority", CaseInsensitivePlainRequestValueComparer.Instance);
+				_restriction1 = new UrlAuthorityRestriction("authority", CaseInsensitivePlainComparer.Instance);
+				_restriction2 = new UrlAuthorityRestriction("authority", CaseInsensitivePlainComparer.Instance);
 			}
 
 			private UrlAuthorityRestriction _restriction1;
@@ -38,8 +38,8 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			[SetUp]
 			public void SetUp()
 			{
-				_restriction1 = new UrlAuthorityRestriction("authority1", CaseInsensitivePlainRequestValueComparer.Instance);
-				_restriction2 = new UrlAuthorityRestriction("authority2", CaseInsensitivePlainRequestValueComparer.Instance);
+				_restriction1 = new UrlAuthorityRestriction("authority1", CaseInsensitivePlainComparer.Instance);
+				_restriction2 = new UrlAuthorityRestriction("authority2", CaseInsensitivePlainComparer.Instance);
 			}
 
 			private UrlAuthorityRestriction _restriction1;
@@ -58,7 +58,7 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			[SetUp]
 			public void SetUp()
 			{
-				_restriction = new UrlAuthorityRestriction("authority", CaseInsensitivePlainRequestValueComparer.Instance);
+				_restriction = new UrlAuthorityRestriction("authority", CaseInsensitivePlainComparer.Instance);
 			}
 
 			private UrlAuthorityRestriction _restriction;
@@ -76,7 +76,7 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			[SetUp]
 			public void SetUp()
 			{
-				_restriction = new UrlAuthorityRestriction("authority", CaseInsensitivePlainRequestValueComparer.Instance);
+				_restriction = new UrlAuthorityRestriction("authority", CaseInsensitivePlainComparer.Instance);
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 				_request.Stub(arg => arg.Url).Return(new Uri("http://authority/path"));
 			}
@@ -97,7 +97,7 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			[SetUp]
 			public void SetUp()
 			{
-				_restriction = new UrlAuthorityRestriction("authority", CaseInsensitivePlainRequestValueComparer.Instance);
+				_restriction = new UrlAuthorityRestriction("authority", CaseInsensitivePlainComparer.Instance);
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 				_request.Stub(arg => arg.Url).Return(new Uri("http://localhost/path2"));
 			}

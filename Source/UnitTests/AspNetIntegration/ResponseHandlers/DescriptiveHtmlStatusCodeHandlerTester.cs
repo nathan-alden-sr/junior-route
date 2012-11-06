@@ -24,10 +24,8 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseHandlers
 				_handler = new DescriptiveHtmlStatusCodeHandler(200);
 				_httpRequest = MockRepository.GenerateMock<HttpRequestBase>();
 				_httpRequest.Stub(arg => arg.Headers).Return(new NameValueCollection());
-				_stream = MockRepository.GenerateMock<Stream>();
 				_httpCachePolicyBase = MockRepository.GenerateMock<HttpCachePolicyBase>();
 				_httpResponse = MockRepository.GenerateMock<HttpResponseBase>();
-				_httpResponse.Stub(arg => arg.OutputStream).Return(_stream);
 				_httpResponse.Stub(arg => arg.Cache).Return(_httpCachePolicyBase);
 				_httpResponse.Stub(arg => arg.TrySkipIisCustomErrors).PropertyBehavior();
 				_cachePolicy = MockRepository.GenerateMock<ICachePolicy>();
@@ -43,7 +41,6 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseHandlers
 			private HttpRequestBase _httpRequest;
 			private HttpResponseBase _httpResponse;
 			private IResponse _response;
-			private Stream _stream;
 			private ICachePolicy _cachePolicy;
 			private HttpCachePolicyBase _httpCachePolicyBase;
 

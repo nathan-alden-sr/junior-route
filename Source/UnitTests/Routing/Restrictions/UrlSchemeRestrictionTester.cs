@@ -18,8 +18,8 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			[SetUp]
 			public void SetUp()
 			{
-				_restriction1 = new UrlSchemeRestriction("scheme", CaseInsensitivePlainRequestValueComparer.Instance);
-				_restriction2 = new UrlSchemeRestriction("scheme", CaseInsensitivePlainRequestValueComparer.Instance);
+				_restriction1 = new UrlSchemeRestriction("scheme", CaseInsensitivePlainComparer.Instance);
+				_restriction2 = new UrlSchemeRestriction("scheme", CaseInsensitivePlainComparer.Instance);
 			}
 
 			private UrlSchemeRestriction _restriction1;
@@ -38,8 +38,8 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			[SetUp]
 			public void SetUp()
 			{
-				_restriction1 = new UrlSchemeRestriction("scheme1", CaseInsensitivePlainRequestValueComparer.Instance);
-				_restriction2 = new UrlSchemeRestriction("scheme2", CaseInsensitivePlainRequestValueComparer.Instance);
+				_restriction1 = new UrlSchemeRestriction("scheme1", CaseInsensitivePlainComparer.Instance);
+				_restriction2 = new UrlSchemeRestriction("scheme2", CaseInsensitivePlainComparer.Instance);
 			}
 
 			private UrlSchemeRestriction _restriction1;
@@ -58,7 +58,7 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			[SetUp]
 			public void SetUp()
 			{
-				_restriction = new UrlSchemeRestriction("scheme", CaseInsensitivePlainRequestValueComparer.Instance);
+				_restriction = new UrlSchemeRestriction("scheme", CaseInsensitivePlainComparer.Instance);
 			}
 
 			private UrlSchemeRestriction _restriction;
@@ -76,7 +76,7 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			[SetUp]
 			public void SetUp()
 			{
-				_restriction = new UrlSchemeRestriction("http", CaseInsensitivePlainRequestValueComparer.Instance);
+				_restriction = new UrlSchemeRestriction("http", CaseInsensitivePlainComparer.Instance);
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 				_request.Stub(arg => arg.Url).Return(new Uri("http://scheme/path"));
 			}
@@ -97,7 +97,7 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			[SetUp]
 			public void SetUp()
 			{
-				_restriction = new UrlSchemeRestriction("https", CaseInsensitivePlainRequestValueComparer.Instance);
+				_restriction = new UrlSchemeRestriction("https", CaseInsensitivePlainComparer.Instance);
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 				_request.Stub(arg => arg.Url).Return(new Uri("http://localhost/path2"));
 			}

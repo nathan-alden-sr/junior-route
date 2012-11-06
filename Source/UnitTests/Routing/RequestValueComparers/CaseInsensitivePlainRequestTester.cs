@@ -4,7 +4,7 @@ using NUnit.Framework;
 
 namespace Junior.Route.UnitTests.Routing.RequestValueComparers
 {
-	public static class CaseInsensitiveRegexRequestValueComparerTester
+	public static class CaseInsensitivePlainRequestTester
 	{
 		[TestFixture]
 		public class When_testing_if_matching_strings_match
@@ -12,11 +12,9 @@ namespace Junior.Route.UnitTests.Routing.RequestValueComparers
 			[Test]
 			[TestCase("test", "TEST")]
 			[TestCase("test", "test")]
-			[TestCase("test", "TEST123")]
-			[TestCase("test", "test123")]
 			public void Must_match(string value, string requestValue)
 			{
-				Assert.That(CaseInsensitiveRegexRequestValueComparer.Instance.Matches(value, requestValue), Is.True);
+				Assert.That(CaseInsensitivePlainComparer.Instance.Matches(value, requestValue), Is.True);
 			}
 		}
 
@@ -24,11 +22,11 @@ namespace Junior.Route.UnitTests.Routing.RequestValueComparers
 		public class When_testing_if_non_matching_strings_match
 		{
 			[Test]
-			[TestCase("^test$", "TEST1")]
-			[TestCase("^test$", "test1")]
+			[TestCase("test", "TEST1")]
+			[TestCase("test", "test1")]
 			public void Must_match(string value, string requestValue)
 			{
-				Assert.That(CaseInsensitiveRegexRequestValueComparer.Instance.Matches(value, requestValue), Is.False);
+				Assert.That(CaseInsensitivePlainComparer.Instance.Matches(value, requestValue), Is.False);
 			}
 		}
 	}

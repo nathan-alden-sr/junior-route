@@ -35,23 +35,12 @@ namespace Junior.Route.Assets.FileSystem
 			}
 		}
 
-		public Bundle Directory(string relativeDirectory, Encoding encoding, string searchPattern = "*.*", SearchOption option = SearchOption.AllDirectories, IFileFilter filter = null)
+		public Bundle Directory(string relativeDirectory, Encoding encoding = null, string searchPattern = "*.*", SearchOption option = SearchOption.AllDirectories, IFileFilter filter = null)
 		{
 			relativeDirectory.ThrowIfNull("relativeDirectory");
-			encoding.ThrowIfNull("encoding");
 			searchPattern.ThrowIfNull("searchPattern");
 
 			_assets.Add(new DirectoryAsset(relativeDirectory, encoding, searchPattern, option, filter));
-
-			return this;
-		}
-
-		public Bundle Directory(string relativeDirectory, string searchPattern = "*.*", SearchOption option = SearchOption.AllDirectories, IFileFilter filter = null)
-		{
-			relativeDirectory.ThrowIfNull("relativeDirectory");
-			searchPattern.ThrowIfNull("searchPattern");
-
-			_assets.Add(new DirectoryAsset(relativeDirectory, searchPattern, option, filter));
 
 			return this;
 		}
@@ -68,23 +57,32 @@ namespace Junior.Route.Assets.FileSystem
 			return this;
 		}
 
-		public Bundle File(string relativePath, Encoding encoding)
+		public Bundle Files(params string[] relativePaths)
+		{
+			return Files((IEnumerable<string>)relativePaths);
+		}
+
+		public Bundle File(string relativePath, Encoding encoding = null)
 		{
 			relativePath.ThrowIfNull("relativePath");
-			encoding.ThrowIfNull("encoding");
 
 			_assets.Add(new FileAsset(relativePath, encoding));
 
 			return this;
 		}
 
-		public Bundle File(string relativePath)
+		public Bundle AddAssets(IEnumerable<IAsset> assets)
 		{
-			relativePath.ThrowIfNull("relativePath");
+			assets.ThrowIfNull("assets");
 
-			_assets.Add(new FileAsset(relativePath, null));
+			_assets.AddRange(assets);
 
 			return this;
+		}
+
+		public Bundle AddAssets(params IAsset[] assets)
+		{
+			return AddAssets((IEnumerable<IAsset>)assets);
 		}
 
 		public BundleContents GetContents(IFileSystem fileSystem, IComparer<AssetFile> assetOrder, IAssetConcatenator concatenator, IEnumerable<IAssetTransformer> transformers)
@@ -123,6 +121,40 @@ namespace Junior.Route.Assets.FileSystem
 			return GetContents(fileSystem, concatenator, (IEnumerable<IAssetTransformer>)transformers);
 		}
 
+		public BundleContents GetContents(IFileSystem fileSystem, IComparer<AssetFile> assetOrder, IEnumerable<IAssetTransformer> transformers)
+		{
+			fileSystem.ThrowIfNull("fileSystem");
+			assetOrder.ThrowIfNull("assetOrder");
+			transformers.ThrowIfNull("transformers");
+
+			AssetFile[] orderedAssets = _assets
+				.SelectMany(arg => arg.ResolveAssetFiles(fileSystem))
+				.OrderBy(arg => arg, assetOrder)
+				.ToArray();
+
+			return GetContents(fileSystem, orderedAssets, new DelimiterConcatenator(), transformers);
+		}
+
+		public BundleContents GetContents(IFileSystem fileSystem, IComparer<AssetFile> assetOrder, params IAssetTransformer[] transformers)
+		{
+			return GetContents(fileSystem, assetOrder, new DelimiterConcatenator(), (IEnumerable<IAssetTransformer>)transformers);
+		}
+
+		public BundleContents GetContents(IFileSystem fileSystem, IEnumerable<IAssetTransformer> transformers)
+		{
+			fileSystem.ThrowIfNull("fileSystem");
+			transformers.ThrowIfNull("transformers");
+
+			AssetFile[] unorderedAssets = _assets.SelectMany(arg => arg.ResolveAssetFiles(fileSystem)).ToArray();
+
+			return GetContents(fileSystem, unorderedAssets, new DelimiterConcatenator(), transformers);
+		}
+
+		public BundleContents GetContents(IFileSystem fileSystem, params IAssetTransformer[] transformers)
+		{
+			return GetContents(fileSystem, new DelimiterConcatenator(), (IEnumerable<IAssetTransformer>)transformers);
+		}
+
 		private BundleContents GetContents(IFileSystem fileSystem, IEnumerable<AssetFile> assets, IAssetConcatenator concatenator, IEnumerable<IAssetTransformer> transformers)
 		{
 			string[] transformedAssets = assets
@@ -133,14 +165,9 @@ namespace Junior.Route.Assets.FileSystem
 			return new BundleContents(concatenator.Concatenate(transformedAssets));
 		}
 
-		public static Bundle FromDirectory(string relativeDirectory, Encoding encoding, string searchPattern = "*.*", SearchOption option = SearchOption.AllDirectories, IFileFilter filter = null)
+		public static Bundle FromDirectory(string relativeDirectory, Encoding encoding = null, string searchPattern = "*.*", SearchOption option = SearchOption.AllDirectories, IFileFilter filter = null)
 		{
 			return new Bundle().Directory(relativeDirectory, encoding, searchPattern, option, filter);
-		}
-
-		public static Bundle FromDirectory(string relativeDirectory, string searchPattern = "*.*", SearchOption option = SearchOption.AllDirectories, IFileFilter filter = null)
-		{
-			return new Bundle().Directory(relativeDirectory, searchPattern, option, filter);
 		}
 
 		public static Bundle FromFiles(IEnumerable<string> relativePaths)

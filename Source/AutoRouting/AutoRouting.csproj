@@ -77,7 +77,6 @@
     <Compile Include="ResolvedRelativeUrlMappers\ResolvedRelativeUrlResult.cs" />
     <Compile Include="ResolvedRelativeUrlMappers\ResolvedRelativeUrlResultType.cs" />
     <Compile Include="RestrictionMappers\Attributes\CookieAttribute.cs" />
-    <Compile Include="RestrictionMappers\Attributes\RefererUrlAbsolutePathAttribute.cs" />
     <Compile Include="RestrictionMappers\Attributes\UrlAuthorityAttribute.cs" />
     <Compile Include="RestrictionMappers\Attributes\UrlFragmentAttribute.cs" />
     <Compile Include="RestrictionMappers\Attributes\UrlHostAttribute.cs" />
@@ -85,7 +84,9 @@
     <Compile Include="RestrictionMappers\Attributes\UrlPortAttribute.cs" />
     <Compile Include="RestrictionMappers\Attributes\UrlQueryAttribute.cs" />
     <Compile Include="RestrictionMappers\Attributes\UrlQueryStringAttribute.cs" />
+    <Compile Include="RestrictionMappers\Attributes\UrlRelativePathAttribute.cs" />
     <Compile Include="RestrictionMappers\Attributes\UrlSchemeAttribute.cs" />
+    <Compile Include="RestrictionMappers\Attributes\RefererUrlAbsolutePathAttribute.cs" />
     <Compile Include="RestrictionMappers\Attributes\RefererUrlSchemeAttribute.cs" />
     <Compile Include="RestrictionMappers\Attributes\RefererUrlQueryAttribute.cs" />
     <Compile Include="RestrictionMappers\Attributes\RefererUrlPortAttribute.cs" />
@@ -98,7 +99,6 @@
     <Compile Include="RestrictionMappers\Attributes\RestrictionAttribute.cs" />
     <Compile Include="RestrictionMappers\Attributes\RefererUrlAuthorityAttribute.cs" />
     <Compile Include="RestrictionMappers\Attributes\RefererUrlQueryStringAttribute.cs" />
-    <Compile Include="RestrictionMappers\Attributes\UrlRelativePathAttribute.cs" />
     <Compile Include="RestrictionMappers\Attributes\RequestValueComparer.cs" />
     <Compile Include="AutoRouteCollection.cs" />
     <Compile Include="ClassFilters\DerivesFilter.cs" />

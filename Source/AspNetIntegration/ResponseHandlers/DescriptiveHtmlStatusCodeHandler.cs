@@ -13,13 +13,13 @@ namespace Junior.Route.AspNetIntegration.ResponseHandlers
 {
 	public class DescriptiveHtmlStatusCodeHandler : IResponseHandler
 	{
-		private readonly IEnumerable<StatusAndSubStatusCode> _statusCodes;
+		private readonly StatusAndSubStatusCode[] _statusCodes;
 
 		public DescriptiveHtmlStatusCodeHandler(IEnumerable<StatusAndSubStatusCode> handlesStatusCodes)
 		{
 			handlesStatusCodes.ThrowIfNull("handlesStatusCodes");
 
-			_statusCodes = handlesStatusCodes;
+			_statusCodes = handlesStatusCodes.ToArray();
 		}
 
 		public DescriptiveHtmlStatusCodeHandler(params StatusAndSubStatusCode[] handlesStatusCodes)

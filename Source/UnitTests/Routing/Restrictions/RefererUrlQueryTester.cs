@@ -18,8 +18,8 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			[SetUp]
 			public void SetUp()
 			{
-				_restriction1 = new RefererUrlQueryRestriction("?query", CaseInsensitivePlainRequestValueComparer.Instance);
-				_restriction2 = new RefererUrlQueryRestriction("?query", CaseInsensitivePlainRequestValueComparer.Instance);
+				_restriction1 = new RefererUrlQueryRestriction("?query", CaseInsensitivePlainComparer.Instance);
+				_restriction2 = new RefererUrlQueryRestriction("?query", CaseInsensitivePlainComparer.Instance);
 			}
 
 			private RefererUrlQueryRestriction _restriction1;
@@ -38,8 +38,8 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			[SetUp]
 			public void SetUp()
 			{
-				_restriction1 = new RefererUrlQueryRestriction("?query", CaseInsensitivePlainRequestValueComparer.Instance);
-				_restriction2 = new RefererUrlQueryRestriction("?query", CaseSensitivePlainRequestValueComparer.Instance);
+				_restriction1 = new RefererUrlQueryRestriction("?query", CaseInsensitivePlainComparer.Instance);
+				_restriction2 = new RefererUrlQueryRestriction("?query", CaseSensitivePlainComparer.Instance);
 			}
 
 			private RefererUrlQueryRestriction _restriction1;
@@ -58,7 +58,7 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			[SetUp]
 			public void SetUp()
 			{
-				_restriction = new RefererUrlQueryRestriction("?query", CaseInsensitivePlainRequestValueComparer.Instance);
+				_restriction = new RefererUrlQueryRestriction("?query", CaseInsensitivePlainComparer.Instance);
 			}
 
 			private RefererUrlQueryRestriction _restriction;
@@ -67,7 +67,7 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			public void Must_set_properties()
 			{
 				Assert.That(_restriction.Query, Is.EqualTo("?query"));
-				Assert.That(_restriction.Comparer, Is.SameAs(CaseInsensitivePlainRequestValueComparer.Instance));
+				Assert.That(_restriction.Comparer, Is.SameAs(CaseInsensitivePlainComparer.Instance));
 			}
 		}
 
@@ -77,7 +77,7 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			[SetUp]
 			public void SetUp()
 			{
-				_restriction = new RefererUrlQueryRestriction("?query", CaseInsensitivePlainRequestValueComparer.Instance);
+				_restriction = new RefererUrlQueryRestriction("?query", CaseInsensitivePlainComparer.Instance);
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 				_request.Stub(arg => arg.UrlReferrer).Return(new Uri("http://localhost/path?query"));
 			}
@@ -98,7 +98,7 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			[SetUp]
 			public void SetUp()
 			{
-				_restriction = new RefererUrlQueryRestriction("?query", CaseInsensitivePlainRequestValueComparer.Instance);
+				_restriction = new RefererUrlQueryRestriction("?query", CaseInsensitivePlainComparer.Instance);
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 				_request.Stub(arg => arg.UrlReferrer).Return(new Uri("http://localhost/path?q"));
 			}

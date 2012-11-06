@@ -2,11 +2,11 @@
 
 namespace Junior.Route.Routing.RequestValueComparers
 {
-	public class CaseInsensitiveRegexRequestValueComparer : IRequestValueComparer
+	public class CaseInsensitiveRegexComparer : IRequestValueComparer
 	{
-		public static readonly CaseInsensitiveRegexRequestValueComparer Instance = new CaseInsensitiveRegexRequestValueComparer();
+		public static readonly CaseInsensitiveRegexComparer Instance = new CaseInsensitiveRegexComparer();
 
-		private CaseInsensitiveRegexRequestValueComparer()
+		private CaseInsensitiveRegexComparer()
 		{
 		}
 

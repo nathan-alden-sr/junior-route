@@ -18,8 +18,8 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			[SetUp]
 			public void SetUp()
 			{
-				_restriction1 = new RefererUrlQueryStringRestriction("field", CaseInsensitivePlainRequestValueComparer.Instance, "value", CaseSensitiveRegexRequestValueComparer.Instance);
-				_restriction2 = new RefererUrlQueryStringRestriction("field", CaseInsensitivePlainRequestValueComparer.Instance, "value", CaseSensitiveRegexRequestValueComparer.Instance);
+				_restriction1 = new RefererUrlQueryStringRestriction("field", CaseInsensitivePlainComparer.Instance, "value", CaseSensitiveRegexComparer.Instance);
+				_restriction2 = new RefererUrlQueryStringRestriction("field", CaseInsensitivePlainComparer.Instance, "value", CaseSensitiveRegexComparer.Instance);
 			}
 
 			private RefererUrlQueryStringRestriction _restriction1;
@@ -38,8 +38,8 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			[SetUp]
 			public void SetUp()
 			{
-				_restriction1 = new RefererUrlQueryStringRestriction("field", CaseInsensitivePlainRequestValueComparer.Instance, "value1", CaseSensitiveRegexRequestValueComparer.Instance);
-				_restriction2 = new RefererUrlQueryStringRestriction("field", CaseInsensitivePlainRequestValueComparer.Instance, "value2", CaseSensitiveRegexRequestValueComparer.Instance);
+				_restriction1 = new RefererUrlQueryStringRestriction("field", CaseInsensitivePlainComparer.Instance, "value1", CaseSensitiveRegexComparer.Instance);
+				_restriction2 = new RefererUrlQueryStringRestriction("field", CaseInsensitivePlainComparer.Instance, "value2", CaseSensitiveRegexComparer.Instance);
 			}
 
 			private RefererUrlQueryStringRestriction _restriction1;
@@ -58,7 +58,7 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			[SetUp]
 			public void SetUp()
 			{
-				_restriction = new RefererUrlQueryStringRestriction("field", CaseInsensitivePlainRequestValueComparer.Instance, "value", CaseSensitiveRegexRequestValueComparer.Instance);
+				_restriction = new RefererUrlQueryStringRestriction("field", CaseInsensitivePlainComparer.Instance, "value", CaseSensitiveRegexComparer.Instance);
 			}
 
 			private RefererUrlQueryStringRestriction _restriction;
@@ -67,9 +67,9 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			public void Must_set_properties()
 			{
 				Assert.That(_restriction.Field, Is.EqualTo("field"));
-				Assert.That(_restriction.FieldComparer, Is.SameAs(CaseInsensitivePlainRequestValueComparer.Instance));
+				Assert.That(_restriction.FieldComparer, Is.SameAs(CaseInsensitivePlainComparer.Instance));
 				Assert.That(_restriction.Value, Is.EqualTo("value"));
-				Assert.That(_restriction.ValueComparer, Is.SameAs(CaseSensitiveRegexRequestValueComparer.Instance));
+				Assert.That(_restriction.ValueComparer, Is.SameAs(CaseSensitiveRegexComparer.Instance));
 			}
 		}
 
@@ -79,7 +79,7 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			[SetUp]
 			public void SetUp()
 			{
-				_restriction = new RefererUrlQueryStringRestriction("field", CaseInsensitivePlainRequestValueComparer.Instance, "value", CaseSensitiveRegexRequestValueComparer.Instance);
+				_restriction = new RefererUrlQueryStringRestriction("field", CaseInsensitivePlainComparer.Instance, "value", CaseSensitiveRegexComparer.Instance);
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 				_request.Stub(arg => arg.UrlReferrer).Return(new Uri("http://localhost/path?field=value"));
 			}
@@ -100,7 +100,7 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			[SetUp]
 			public void SetUp()
 			{
-				_restriction = new RefererUrlQueryStringRestriction("field", CaseInsensitivePlainRequestValueComparer.Instance, "value", CaseSensitiveRegexRequestValueComparer.Instance);
+				_restriction = new RefererUrlQueryStringRestriction("field", CaseInsensitivePlainComparer.Instance, "value", CaseSensitiveRegexComparer.Instance);
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 				_request.Stub(arg => arg.UrlReferrer).Return(new Uri("http://localhost/path?field=v"));
 			}

@@ -18,8 +18,8 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			[SetUp]
 			public void SetUp()
 			{
-				_restriction1 = new RefererUrlAbsolutePathRestriction("path", CaseInsensitivePlainRequestValueComparer.Instance);
-				_restriction2 = new RefererUrlAbsolutePathRestriction("path", CaseInsensitivePlainRequestValueComparer.Instance);
+				_restriction1 = new RefererUrlAbsolutePathRestriction("path", CaseInsensitivePlainComparer.Instance);
+				_restriction2 = new RefererUrlAbsolutePathRestriction("path", CaseInsensitivePlainComparer.Instance);
 			}
 
 			private RefererUrlAbsolutePathRestriction _restriction1;
@@ -38,8 +38,8 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			[SetUp]
 			public void SetUp()
 			{
-				_restriction1 = new RefererUrlAbsolutePathRestriction("path", CaseInsensitivePlainRequestValueComparer.Instance);
-				_restriction2 = new RefererUrlAbsolutePathRestriction("path", CaseSensitivePlainRequestValueComparer.Instance);
+				_restriction1 = new RefererUrlAbsolutePathRestriction("path", CaseInsensitivePlainComparer.Instance);
+				_restriction2 = new RefererUrlAbsolutePathRestriction("path", CaseSensitivePlainComparer.Instance);
 			}
 
 			private RefererUrlAbsolutePathRestriction _restriction1;
@@ -58,7 +58,7 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			[SetUp]
 			public void SetUp()
 			{
-				_restriction = new RefererUrlAbsolutePathRestriction("path", CaseInsensitivePlainRequestValueComparer.Instance);
+				_restriction = new RefererUrlAbsolutePathRestriction("path", CaseInsensitivePlainComparer.Instance);
 			}
 
 			private RefererUrlAbsolutePathRestriction _restriction;
@@ -67,7 +67,7 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			public void Must_set_properties()
 			{
 				Assert.That(_restriction.AbsolutePath, Is.EqualTo("path"));
-				Assert.That(_restriction.Comparer, Is.SameAs(CaseInsensitivePlainRequestValueComparer.Instance));
+				Assert.That(_restriction.Comparer, Is.SameAs(CaseInsensitivePlainComparer.Instance));
 			}
 		}
 
@@ -77,7 +77,7 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			[SetUp]
 			public void SetUp()
 			{
-				_restriction = new RefererUrlAbsolutePathRestriction("/path", CaseInsensitivePlainRequestValueComparer.Instance);
+				_restriction = new RefererUrlAbsolutePathRestriction("/path", CaseInsensitivePlainComparer.Instance);
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 				_request.Stub(arg => arg.UrlReferrer).Return(new Uri("http://localhost/path"));
 			}
@@ -98,7 +98,7 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			[SetUp]
 			public void SetUp()
 			{
-				_restriction = new RefererUrlAbsolutePathRestriction("path1", CaseInsensitivePlainRequestValueComparer.Instance);
+				_restriction = new RefererUrlAbsolutePathRestriction("path1", CaseInsensitivePlainComparer.Instance);
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 				_request.Stub(arg => arg.UrlReferrer).Return(new Uri("http://localhost/path2"));
 			}

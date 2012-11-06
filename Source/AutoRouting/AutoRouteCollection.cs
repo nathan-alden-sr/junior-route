@@ -35,7 +35,7 @@ namespace Junior.Route.AutoRouting
 		private readonly HashSet<IMethodFilter> _methodFilters = new HashSet<IMethodFilter>();
 		private readonly HashSet<INameMapper> _nameMappers = new HashSet<INameMapper>();
 		private readonly HashSet<IResolvedRelativeUrlMapper> _resolvedRelativeUrlMappers = new HashSet<IResolvedRelativeUrlMapper>();
-		private readonly HashSet<IRestrictionMapper> _routeRestrictionMappers = new HashSet<IRestrictionMapper>();
+		private readonly HashSet<IRestrictionMapper> _restrictionMappers = new HashSet<IRestrictionMapper>();
 		private IAuthenticationProvider _authenticationProvider;
 		private IContainer _bundleDependencyContainer;
 		private bool _duplicateRouteNamesAllowed;
@@ -117,27 +117,27 @@ namespace Junior.Route.AutoRouting
 			return this;
 		}
 
-		public IRouteCollection GetRouteCollection()
+		public IRouteCollection GenerateRouteCollection()
 		{
 			if (!_assemblies.Any())
 			{
 				throw new InvalidOperationException("At least one assembly must be provided.");
 			}
-			if (!_idMappers.Any())
-			{
-				throw new InvalidOperationException("At least one ID mapper must be provided.");
-			}
 			if (!_nameMappers.Any())
 			{
 				throw new InvalidOperationException("At least one name mapper must be provided.");
+			}
+			if (!_idMappers.Any())
+			{
+				throw new InvalidOperationException("At least one ID mapper must be provided.");
 			}
 			if (!_resolvedRelativeUrlMappers.Any())
 			{
 				throw new InvalidOperationException("At least one resolved relative URL mapper must be provided.");
 			}
-			if (_routeRestrictionMappers.Any() && _restrictionContainer == null)
+			if (_restrictionMappers.Any() && _restrictionContainer == null)
 			{
-				throw new InvalidOperationException("Restrictions are configured but no restriction container was provided.");
+				throw new InvalidOperationException("Restriction mappers are configured but no restriction container was provided.");
 			}
 
 			var routes = new RouteCollection(_duplicateRouteNamesAllowed);
@@ -189,7 +189,7 @@ namespace Junior.Route.AutoRouting
 
 					var route = new Routing.Route(name, id.Value, resolvedRelativeUrl);
 
-					foreach (IRestrictionMapper restrictionMapper in _routeRestrictionMappers)
+					foreach (IRestrictionMapper restrictionMapper in _restrictionMappers)
 					{
 						restrictionMapper.Map(matchingType, matchingMethod, route, _restrictionContainer);
 					}
@@ -384,6 +384,13 @@ namespace Junior.Route.AutoRouting
 
 		#region ID mappers
 
+		public AutoRouteCollection IdRandomly(IGuidFactory guidFactory)
+		{
+			_idMappers.Add(new RandomIdMapper(guidFactory));
+
+			return this;
+		}
+
 		public AutoRouteCollection IdUsingAttribute()
 		{
 			_idMappers.Add(new IdAttributeMapper());
@@ -447,7 +454,7 @@ namespace Junior.Route.AutoRouting
 
 		public AutoRouteCollection RestrictHttpMethodsToMethodsNamedAfterStandardHttpMethods()
 		{
-			_routeRestrictionMappers.Add(new HttpMethodFromMethodsNamedAfterStandardHttpMethodsMapper());
+			_restrictionMappers.Add(new HttpMethodFromMethodsNamedAfterStandardHttpMethodsMapper());
 
 			return this;
 		}
@@ -459,7 +466,7 @@ namespace Junior.Route.AutoRouting
 			string wordSeparator = "_",
 			string wordRegexPattern = UrlRelativePathFromRelativeClassNamespaceAndClassNameMapper.DefaultWordRegexPattern)
 		{
-			_routeRestrictionMappers.Add(new UrlRelativePathFromRelativeClassNamespaceAndClassNameMapper(rootNamespace, caseSensitive, makeLowercase, wordSeparator, wordRegexPattern));
+			_restrictionMappers.Add(new UrlRelativePathFromRelativeClassNamespaceAndClassNameMapper(rootNamespace, caseSensitive, makeLowercase, wordSeparator, wordRegexPattern));
 
 			return this;
 		}
@@ -467,7 +474,7 @@ namespace Junior.Route.AutoRouting
 		public AutoRouteCollection RestrictUsingAttributes<T>()
 			where T : RestrictionAttribute
 		{
-			_routeRestrictionMappers.Add(new RestrictionsFromAttributesMapper<T>());
+			_restrictionMappers.Add(new RestrictionsFromAttributesMapper<T>());
 
 			return this;
 		}
@@ -478,7 +485,7 @@ namespace Junior.Route.AutoRouting
 
 			foreach (Type attributeType in attributeTypes)
 			{
-				_routeRestrictionMappers.Add(new RestrictionsFromAttributesMapper(attributeType));
+				_restrictionMappers.Add(new RestrictionsFromAttributesMapper(attributeType));
 			}
 
 			return this;
@@ -501,7 +508,7 @@ namespace Junior.Route.AutoRouting
 		{
 			mappers.ThrowIfNull("mappers");
 
-			_routeRestrictionMappers.AddRange(mappers);
+			_restrictionMappers.AddRange(mappers);
 
 			return this;
 		}
@@ -576,7 +583,7 @@ namespace Junior.Route.AutoRouting
 
 			if (!strategies.Any())
 			{
-				throw new ArgumentException("Must provide at least 1 strategy.", "strategies");
+				throw new ArgumentException("Must provide at least one strategy.", "strategies");
 			}
 
 			_authenticationProvider = provider;

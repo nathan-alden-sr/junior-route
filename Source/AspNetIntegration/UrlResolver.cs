@@ -43,14 +43,18 @@ namespace Junior.Route.AspNetIntegration
 		{
 			routeName.ThrowIfNull("routeName");
 
-			Routing.Route route = _routes.Value.SingleOrDefault(arg => arg.Name == routeName);
+			Routing.Route[] routes = _routes.Value.Where(arg => arg.Name == routeName).ToArray();
 
-			if (route == null)
+			if (routes.Length > 1)
+			{
+				throw new ArgumentException(String.Format("More than one route exists with name '{0}'.", routeName));
+			}
+			if (!routes.Any())
 			{
 				throw new ArgumentException(String.Format("Route with name '{0}' was not found.", routeName));
 			}
 
-			return Absolute(route.ResolvedRelativeUrl);
+			return Absolute(routes[0].ResolvedRelativeUrl);
 		}
 
 		public string Route(Guid routeId)

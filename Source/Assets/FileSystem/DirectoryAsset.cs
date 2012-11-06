@@ -16,23 +16,12 @@ namespace Junior.Route.Assets.FileSystem
 		private readonly SearchOption _searchOption;
 		private readonly string _searchPattern;
 
-		public DirectoryAsset(string relativeDirectory, Encoding encoding, string searchPattern = "*.*", SearchOption option = SearchOption.AllDirectories, IFileFilter filter = null)
+		public DirectoryAsset(string relativeDirectory, Encoding encoding = null, string searchPattern = "*.*", SearchOption option = SearchOption.AllDirectories, IFileFilter filter = null)
 		{
 			relativeDirectory.ThrowIfNull("relativeDirectory");
-			encoding.ThrowIfNull("encoding");
 
 			_relativeDirectory = relativeDirectory;
 			_encoding = encoding;
-			_searchPattern = searchPattern;
-			_searchOption = option;
-			_filter = filter;
-		}
-
-		public DirectoryAsset(string relativeDirectory, string searchPattern = "*.*", SearchOption option = SearchOption.AllDirectories, IFileFilter filter = null)
-		{
-			relativeDirectory.ThrowIfNull("relativeDirectory");
-
-			_relativeDirectory = relativeDirectory;
 			_searchPattern = searchPattern;
 			_searchOption = option;
 			_filter = filter;

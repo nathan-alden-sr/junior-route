@@ -13,11 +13,19 @@ namespace Junior.Route.Routing.Caching
 		{
 			get;
 		}
-		DateTime? Expires
+		DateTime? ClientCacheExpirationUtcTimestamp
 		{
 			get;
 		}
-		TimeSpan? MaxAge
+		TimeSpan? ClientCacheMaxAge
+		{
+			get;
+		}
+		DateTime? ServerCacheExpirationUtcTimestamp
+		{
+			get;
+		}
+		TimeSpan? ServerCacheMaxAge
 		{
 			get;
 		}

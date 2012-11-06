@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 using Junior.Common;
 using Junior.Route.AutoRouting.Containers;
@@ -10,21 +9,21 @@ namespace Junior.Route.AutoRouting.RestrictionMappers.Attributes
 	public class RefererUrlHostAttribute : RestrictionAttribute
 	{
 		private readonly RequestValueComparer? _comparer;
-		private readonly IEnumerable<string> _hosts;
-
-		public RefererUrlHostAttribute(params string[] hosts)
-		{
-			hosts.ThrowIfNull("hosts");
-
-			_hosts = hosts;
-		}
+		private readonly string[] _hosts;
 
 		public RefererUrlHostAttribute(string host, RequestValueComparer comparer)
 		{
 			host.ThrowIfNull("host");
 
 			_comparer = comparer;
-			_hosts = host.ToEnumerable();
+			_hosts = new[] { host };
+		}
+
+		public RefererUrlHostAttribute(params string[] hosts)
+		{
+			hosts.ThrowIfNull("hosts");
+
+			_hosts = hosts;
 		}
 
 		public override void Map(Routing.Route route, IContainer container)

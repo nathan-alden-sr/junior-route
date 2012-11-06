@@ -21,7 +21,7 @@ namespace Junior.Route.Routing.Responses
 		private readonly HashSet<Header> _headers = new HashSet<Header>();
 		private readonly StatusAndSubStatusCode _statusCode;
 		private Func<byte[]> _binaryContent;
-		private string _charset;
+		private string _charset = "utf-8";
 		private Encoding _contentEncoding = _defaultContentEncoding;
 		private string _contentType;
 		private Encoding _headerEncoding = _defaultHeaderEncoding;
@@ -249,6 +249,16 @@ namespace Junior.Route.Routing.Responses
 			cookie.ThrowIfNull("cookie");
 
 			_cookies.Add(new Cookie(cookie, shareable));
+
+			return this;
+		}
+
+		public Response Cookie(string name, string value, bool shareable = false)
+		{
+			name.ThrowIfNull("name");
+			value.ThrowIfNull("value");
+
+			_cookies.Add(new Cookie(new HttpCookie(name, value), shareable));
 
 			return this;
 		}

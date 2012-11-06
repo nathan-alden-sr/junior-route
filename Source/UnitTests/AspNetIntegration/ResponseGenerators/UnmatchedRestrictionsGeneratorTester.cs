@@ -30,7 +30,7 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseGenerators
 				_httpRuntime = MockRepository.GenerateMock<IHttpRuntime>();
 				_matchedRestrictions = new[]
 					{
-						new UrlRelativePathRestriction("", CaseInsensitivePlainRequestValueComparer.Instance, _httpRuntime)
+						new UrlRelativePathRestriction("", CaseInsensitivePlainComparer.Instance, _httpRuntime)
 					};
 				_unmatchedRestrictions = new IRestriction[]
 					{
@@ -72,7 +72,7 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseGenerators
 				_httpRuntime = MockRepository.GenerateMock<IHttpRuntime>();
 				_matchedRestrictions = new[]
 					{
-						new UrlRelativePathRestriction("", CaseInsensitivePlainRequestValueComparer.Instance, _httpRuntime)
+						new UrlRelativePathRestriction("", CaseInsensitivePlainComparer.Instance, _httpRuntime)
 					};
 				_unmatchedRestrictions = new IRestriction[]
 					{
@@ -114,7 +114,7 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseGenerators
 				_httpRuntime = MockRepository.GenerateMock<IHttpRuntime>();
 				_matchedRestrictions = new[]
 					{
-						new UrlRelativePathRestriction("", CaseInsensitivePlainRequestValueComparer.Instance, _httpRuntime)
+						new UrlRelativePathRestriction("", CaseInsensitivePlainComparer.Instance, _httpRuntime)
 					};
 				_unmatchedRestrictions = new IRestriction[]
 					{
@@ -156,7 +156,7 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseGenerators
 				_httpRuntime = MockRepository.GenerateMock<IHttpRuntime>();
 				_matchedRestrictions = new[]
 					{
-						new UrlRelativePathRestriction("", CaseInsensitivePlainRequestValueComparer.Instance, _httpRuntime)
+						new UrlRelativePathRestriction("", CaseInsensitivePlainComparer.Instance, _httpRuntime)
 					};
 				_unmatchedRestrictions = new[]
 					{

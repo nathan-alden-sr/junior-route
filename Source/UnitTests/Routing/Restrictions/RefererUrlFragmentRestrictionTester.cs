@@ -18,8 +18,8 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			[SetUp]
 			public void SetUp()
 			{
-				_restriction1 = new RefererUrlFragmentRestriction("#fragment", CaseInsensitivePlainRequestValueComparer.Instance);
-				_restriction2 = new RefererUrlFragmentRestriction("#fragment", CaseInsensitivePlainRequestValueComparer.Instance);
+				_restriction1 = new RefererUrlFragmentRestriction("#fragment", CaseInsensitivePlainComparer.Instance);
+				_restriction2 = new RefererUrlFragmentRestriction("#fragment", CaseInsensitivePlainComparer.Instance);
 			}
 
 			private RefererUrlFragmentRestriction _restriction1;
@@ -38,8 +38,8 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			[SetUp]
 			public void SetUp()
 			{
-				_restriction1 = new RefererUrlFragmentRestriction("#fragment1", CaseInsensitivePlainRequestValueComparer.Instance);
-				_restriction2 = new RefererUrlFragmentRestriction("#fragment2", CaseInsensitivePlainRequestValueComparer.Instance);
+				_restriction1 = new RefererUrlFragmentRestriction("#fragment1", CaseInsensitivePlainComparer.Instance);
+				_restriction2 = new RefererUrlFragmentRestriction("#fragment2", CaseInsensitivePlainComparer.Instance);
 			}
 
 			private RefererUrlFragmentRestriction _restriction1;
@@ -58,7 +58,7 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			[SetUp]
 			public void SetUp()
 			{
-				_restriction = new RefererUrlFragmentRestriction("#fragment", CaseInsensitivePlainRequestValueComparer.Instance);
+				_restriction = new RefererUrlFragmentRestriction("#fragment", CaseInsensitivePlainComparer.Instance);
 			}
 
 			private RefererUrlFragmentRestriction _restriction;
@@ -76,7 +76,7 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			[SetUp]
 			public void SetUp()
 			{
-				_restriction = new RefererUrlFragmentRestriction("#fragment", CaseInsensitivePlainRequestValueComparer.Instance);
+				_restriction = new RefererUrlFragmentRestriction("#fragment", CaseInsensitivePlainComparer.Instance);
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 				_request.Stub(arg => arg.UrlReferrer).Return(new Uri("http://localhost/path#fragment"));
 			}
@@ -97,7 +97,7 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			[SetUp]
 			public void SetUp()
 			{
-				_restriction = new RefererUrlFragmentRestriction("#fragment", CaseInsensitivePlainRequestValueComparer.Instance);
+				_restriction = new RefererUrlFragmentRestriction("#fragment", CaseInsensitivePlainComparer.Instance);
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 				_request.Stub(arg => arg.UrlReferrer).Return(new Uri("http://localhost/path#f"));
 			}

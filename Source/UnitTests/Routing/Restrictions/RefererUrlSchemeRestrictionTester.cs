@@ -18,8 +18,8 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			[SetUp]
 			public void SetUp()
 			{
-				_restriction1 = new RefererUrlSchemeRestriction("scheme", CaseInsensitivePlainRequestValueComparer.Instance);
-				_restriction2 = new RefererUrlSchemeRestriction("scheme", CaseInsensitivePlainRequestValueComparer.Instance);
+				_restriction1 = new RefererUrlSchemeRestriction("scheme", CaseInsensitivePlainComparer.Instance);
+				_restriction2 = new RefererUrlSchemeRestriction("scheme", CaseInsensitivePlainComparer.Instance);
 			}
 
 			private RefererUrlSchemeRestriction _restriction1;
@@ -38,8 +38,8 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			[SetUp]
 			public void SetUp()
 			{
-				_restriction1 = new RefererUrlSchemeRestriction("scheme1", CaseInsensitivePlainRequestValueComparer.Instance);
-				_restriction2 = new RefererUrlSchemeRestriction("scheme2", CaseInsensitivePlainRequestValueComparer.Instance);
+				_restriction1 = new RefererUrlSchemeRestriction("scheme1", CaseInsensitivePlainComparer.Instance);
+				_restriction2 = new RefererUrlSchemeRestriction("scheme2", CaseInsensitivePlainComparer.Instance);
 			}
 
 			private RefererUrlSchemeRestriction _restriction1;
@@ -58,7 +58,7 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			[SetUp]
 			public void SetUp()
 			{
-				_restriction = new RefererUrlSchemeRestriction("scheme", CaseInsensitivePlainRequestValueComparer.Instance);
+				_restriction = new RefererUrlSchemeRestriction("scheme", CaseInsensitivePlainComparer.Instance);
 			}
 
 			private RefererUrlSchemeRestriction _restriction;
@@ -76,7 +76,7 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			[SetUp]
 			public void SetUp()
 			{
-				_restriction = new RefererUrlSchemeRestriction("http", CaseInsensitivePlainRequestValueComparer.Instance);
+				_restriction = new RefererUrlSchemeRestriction("http", CaseInsensitivePlainComparer.Instance);
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 				_request.Stub(arg => arg.UrlReferrer).Return(new Uri("http://scheme/path"));
 			}
@@ -97,7 +97,7 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			[SetUp]
 			public void SetUp()
 			{
-				_restriction = new RefererUrlSchemeRestriction("https", CaseInsensitivePlainRequestValueComparer.Instance);
+				_restriction = new RefererUrlSchemeRestriction("https", CaseInsensitivePlainComparer.Instance);
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 				_request.Stub(arg => arg.UrlReferrer).Return(new Uri("http://localhost/path2"));
 			}

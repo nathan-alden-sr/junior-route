@@ -11,20 +11,18 @@ namespace Junior.Route.AutoRouting.ResponseMappers
 {
 	public class ParameterValueRetriever
 	{
-		private readonly IEnumerable<IParameterMapper> _parameterMappers;
+		private readonly IParameterMapper[] _parameterMappers;
 
 		public ParameterValueRetriever(IEnumerable<IParameterMapper> parameterMappers)
 		{
 			parameterMappers.ThrowIfNull("parameterMappers");
 
-			parameterMappers = parameterMappers.ToArray();
+			_parameterMappers = parameterMappers.ToArray();
 
-			if (!parameterMappers.Any())
+			if (!_parameterMappers.Any())
 			{
-				throw new ArgumentException("Must provide at least 1 parameter mapper.", "parameterMappers");
+				throw new ArgumentException("Must provide at least one parameter mapper.", "parameterMappers");
 			}
-
-			_parameterMappers = parameterMappers;
 		}
 
 		public IEnumerable<object> GetParameterValues(HttpRequestBase request, Type type, MethodInfo method)

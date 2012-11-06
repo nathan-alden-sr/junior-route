@@ -14,7 +14,7 @@ namespace Junior.Route.AspNetIntegration.ResponseHandlers
 {
 	public class CacheableResponseHandler : IResponseHandler
 	{
-		private static readonly IEnumerable<StatusAndSubStatusCode> _cacheableStatusCodes = new[]
+		private static readonly StatusAndSubStatusCode[] _cacheableStatusCodes = new[]
 			{
 				new StatusAndSubStatusCode(HttpStatusCode.OK),
 				new StatusAndSubStatusCode(HttpStatusCode.NonAuthoritativeInformation),
@@ -183,7 +183,9 @@ namespace Junior.Route.AspNetIntegration.ResponseHandlers
 
 			if (cacheOnServer)
 			{
-				DateTime expirationUtcTimestamp = suggestedResponse.CachePolicy.Expires != null ? suggestedResponse.CachePolicy.Expires.Value : _systemClock.UtcDateTime + suggestedResponse.CachePolicy.MaxAge.Value;
+				DateTime expirationUtcTimestamp = suggestedResponse.CachePolicy.ServerCacheExpirationUtcTimestamp != null
+					                                  ? suggestedResponse.CachePolicy.ServerCacheExpirationUtcTimestamp.Value
+					                                  : _systemClock.UtcDateTime + suggestedResponse.CachePolicy.ServerCacheMaxAge.Value;
 
 				cache.Add(cacheKey, cacheResponse, expirationUtcTimestamp);
 			}

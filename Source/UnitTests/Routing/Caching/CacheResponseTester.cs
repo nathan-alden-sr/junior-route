@@ -1,5 +1,4 @@
 ﻿using System.Collections.Specialized;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Web;
@@ -62,13 +61,11 @@ namespace Junior.Route.UnitTests.Routing.Caching
 			public void SetUp()
 			{
 				_httpCachePolicyBase = MockRepository.GenerateMock<HttpCachePolicyBase>();
-				_memoryStream = new MemoryStream();
 
 				_httpResponseBase = MockRepository.GenerateMock<HttpResponseBase>();
 				_httpResponseBase.Stub(arg => arg.Cache).Return(_httpCachePolicyBase);
 				_httpResponseBase.Stub(arg => arg.Cookies).Return(new HttpCookieCollection());
 				_httpResponseBase.Stub(arg => arg.Headers).Return(new NameValueCollection());
-				_httpResponseBase.Stub(arg => arg.OutputStream).Return(_memoryStream);
 
 				Response response = Response
 					.OK()
@@ -89,7 +86,6 @@ namespace Junior.Route.UnitTests.Routing.Caching
 			private HttpResponseBase _httpResponseBase;
 			private CacheResponse _cacheResponse;
 			private HttpCachePolicyBase _httpCachePolicyBase;
-			private MemoryStream _memoryStream;
 
 			[Test]
 			public void Must_set_response_properties_and_apply_cache_policy()
@@ -102,7 +98,7 @@ namespace Junior.Route.UnitTests.Routing.Caching
 				_httpResponseBase.AssertWasCalled(arg => arg.HeaderEncoding = Encoding.UTF8);
 				Assert.That(_httpResponseBase.Cookies, Has.Count.EqualTo(1));
 				Assert.That(_httpResponseBase.Headers, Has.Count.EqualTo(1));
-				Assert.That(_memoryStream.ToArray(), Is.EquivalentTo(Encoding.ASCII.GetBytes("content")));
+				_httpResponseBase.AssertWasCalled(arg => arg.BinaryWrite(Encoding.ASCII.GetBytes("content")));
 				_httpCachePolicyBase.AssertWasCalled(arg => arg.SetCacheability(HttpCacheability.NoCache));
 			}
 		}

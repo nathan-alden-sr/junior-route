@@ -16,7 +16,7 @@ namespace Junior.Route.Assets.FileSystem
 		private readonly IAssetConcatenator _concatenator;
 		private readonly IFileSystem _fileSystem;
 		private readonly object _refreshLockObject = new object();
-		private readonly IEnumerable<IAssetTransformer> _transformers;
+		private readonly IAssetTransformer[] _transformers;
 		private readonly Timer _watchTimer = new Timer(500)
 			{
 				AutoReset = false
@@ -39,7 +39,7 @@ namespace Junior.Route.Assets.FileSystem
 			_bundle = bundle;
 			_assetOrder = assetOrder;
 			_concatenator = concatenator;
-			_transformers = transformers;
+			_transformers = transformers.ToArray();
 			_fileSystem = fileSystem;
 			_watchTimer.Elapsed += WatchTimerElapsed;
 			RefreshContents();
@@ -60,7 +60,7 @@ namespace Junior.Route.Assets.FileSystem
 
 			_bundle = bundle;
 			_concatenator = concatenator;
-			_transformers = transformers;
+			_transformers = transformers.ToArray();
 			_fileSystem = fileSystem;
 			_watchTimer.Elapsed += WatchTimerElapsed;
 			RefreshContents();
@@ -69,6 +69,46 @@ namespace Junior.Route.Assets.FileSystem
 
 		public BundleWatcher(Bundle bundle, IFileSystem fileSystem, IAssetConcatenator concatenator, params IAssetTransformer[] transformers)
 			: this(bundle, fileSystem, concatenator, (IEnumerable<IAssetTransformer>)transformers)
+		{
+		}
+
+		public BundleWatcher(Bundle bundle, IFileSystem fileSystem, IComparer<AssetFile> assetOrder, IEnumerable<IAssetTransformer> transformers)
+		{
+			bundle.ThrowIfNull("bundle");
+			fileSystem.ThrowIfNull("fileSystem");
+			assetOrder.ThrowIfNull("assetOrder");
+			transformers.ThrowIfNull("transformers");
+
+			_bundle = bundle;
+			_assetOrder = assetOrder;
+			_transformers = transformers.ToArray();
+			_fileSystem = fileSystem;
+			_watchTimer.Elapsed += WatchTimerElapsed;
+			RefreshContents();
+			WatchForChanges();
+		}
+
+		public BundleWatcher(Bundle bundle, IFileSystem fileSystem, IComparer<AssetFile> assetOrder, params IAssetTransformer[] transformers)
+			: this(bundle, fileSystem, assetOrder, (IEnumerable<IAssetTransformer>)transformers)
+		{
+		}
+
+		public BundleWatcher(Bundle bundle, IFileSystem fileSystem, IEnumerable<IAssetTransformer> transformers)
+		{
+			bundle.ThrowIfNull("bundle");
+			fileSystem.ThrowIfNull("fileSystem");
+			transformers.ThrowIfNull("transformers");
+
+			_bundle = bundle;
+			_transformers = transformers.ToArray();
+			_fileSystem = fileSystem;
+			_watchTimer.Elapsed += WatchTimerElapsed;
+			RefreshContents();
+			WatchForChanges();
+		}
+
+		public BundleWatcher(Bundle bundle, IFileSystem fileSystem, params IAssetTransformer[] transformers)
+			: this(bundle, fileSystem, (IEnumerable<IAssetTransformer>)transformers)
 		{
 		}
 
@@ -114,9 +154,20 @@ namespace Junior.Route.Assets.FileSystem
 		{
 			lock (_refreshLockObject)
 			{
-				BundleContents bundleContents = _assetOrder != null
-					                                ? _bundle.GetContents(_fileSystem, _assetOrder, _concatenator, _transformers)
-					                                : _bundle.GetContents(_fileSystem, _concatenator, _transformers);
+				BundleContents bundleContents;
+
+				if (_concatenator != null)
+				{
+					bundleContents = _assetOrder != null
+						                 ? _bundle.GetContents(_fileSystem, _assetOrder, _concatenator, _transformers)
+						                 : _bundle.GetContents(_fileSystem, _concatenator, _transformers);
+				}
+				else
+				{
+					bundleContents = _assetOrder != null
+						                 ? _bundle.GetContents(_fileSystem, _assetOrder, _transformers)
+						                 : _bundle.GetContents(_fileSystem, _transformers);
+				}
 
 				_contents = bundleContents.Contents;
 				_hash = bundleContents.Hash;

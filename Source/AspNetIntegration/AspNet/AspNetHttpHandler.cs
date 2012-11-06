@@ -10,15 +10,13 @@ using Junior.Route.Routing;
 using Junior.Route.Routing.Caching;
 using Junior.Route.Routing.Responses;
 
-using ResponseResultType = Junior.Route.AspNetIntegration.ResponseGenerators.ResponseResultType;
-
 namespace Junior.Route.AspNetIntegration.AspNet
 {
 	public class AspNetHttpHandler : IHttpHandler
 	{
 		private readonly ICache _cache;
-		private readonly IEnumerable<IResponseGenerator> _responseGenerators;
-		private readonly IEnumerable<IResponseHandler> _responseHandlers;
+		private readonly IResponseGenerator[] _responseGenerators;
+		private readonly IResponseHandler[] _responseHandlers;
 		private readonly IRouteCollection _routes;
 
 		public AspNetHttpHandler(IRouteCollection routes, ICache cache, IEnumerable<IResponseGenerator> responseGenerators, IEnumerable<IResponseHandler> responseHandlers)
@@ -29,8 +27,8 @@ namespace Junior.Route.AspNetIntegration.AspNet
 			responseHandlers.ThrowIfNull("responseHandlers");
 
 			_routes = routes;
-			_responseGenerators = responseGenerators;
-			_responseHandlers = responseHandlers;
+			_responseGenerators = responseGenerators.ToArray();
+			_responseHandlers = responseHandlers.ToArray();
 			_cache = cache;
 		}
 
@@ -49,7 +47,7 @@ namespace Junior.Route.AspNetIntegration.AspNet
 			var request = new HttpRequestWrapper(context.Request);
 			var response = new HttpResponseWrapper(context.Response);
 			// ReSharper disable ImplicitlyCapturedClosure
-			IEnumerable<RouteMatchResult> routeMatchResults = _routes.Select(arg => new RouteMatchResult(arg, arg.MatchesRequest(request)));
+			RouteMatchResult[] routeMatchResults = _routes.Select(arg => new RouteMatchResult(arg, arg.MatchesRequest(request))).ToArray();
 			// ReSharper restore ImplicitlyCapturedClosure
 			ResponseResult responseResult = _responseGenerators
 				.Select(arg => arg.GetResponse(request, routeMatchResults))
@@ -71,9 +69,9 @@ namespace Junior.Route.AspNetIntegration.AspNet
 
 				switch (handlerResult.ResultType)
 				{
-					case ResponseHandlers.ResponseHandlerResultType.ResponseWritten:
+					case ResponseHandlerResultType.ResponseWritten:
 						return;
-					case ResponseHandlers.ResponseHandlerResultType.ResponseSuggested:
+					case ResponseHandlerResultType.ResponseSuggested:
 						response = handlerResult.SuggestedResponse;
 						break;
 				}

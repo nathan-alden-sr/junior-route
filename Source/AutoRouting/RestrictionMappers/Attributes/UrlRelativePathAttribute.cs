@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 using Junior.Common;
 using Junior.Route.AutoRouting.Containers;
@@ -11,26 +10,21 @@ namespace Junior.Route.AutoRouting.RestrictionMappers.Attributes
 	public class UrlRelativePathAttribute : RestrictionAttribute
 	{
 		private readonly RequestValueComparer? _comparer;
-		private readonly IEnumerable<string> _relativePaths;
+		private readonly string[] _relativePaths;
 
 		public UrlRelativePathAttribute(string relativePath, RequestValueComparer comparer = RequestValueComparer.CaseInsensitivePlain)
 		{
 			relativePath.ThrowIfNull("relativePath");
 
-			_relativePaths = relativePath.ToEnumerable();
+			_relativePaths = new[] { relativePath };
 			_comparer = comparer;
 		}
 
-		public UrlRelativePathAttribute(IEnumerable<string> relativePaths)
+		public UrlRelativePathAttribute(params string[] relativePaths)
 		{
 			relativePaths.ThrowIfNull("relativePaths");
 
 			_relativePaths = relativePaths;
-		}
-
-		public UrlRelativePathAttribute(params string[] relativePaths)
-			: this((IEnumerable<string>)relativePaths)
-		{
 		}
 
 		public override void Map(Routing.Route route, IContainer container)
@@ -42,11 +36,11 @@ namespace Junior.Route.AutoRouting.RestrictionMappers.Attributes
 
 			if (_comparer != null)
 			{
-				route.RestrictByRelativePaths(_relativePaths, GetComparer(_comparer.Value), httpRuntime);
+				route.RestrictByUrlRelativePaths(_relativePaths, GetComparer(_comparer.Value), httpRuntime);
 			}
 			else
 			{
-				route.RestrictByRelativePaths(_relativePaths, httpRuntime);
+				route.RestrictByUrlRelativePaths(_relativePaths, httpRuntime);
 			}
 		}
 	}

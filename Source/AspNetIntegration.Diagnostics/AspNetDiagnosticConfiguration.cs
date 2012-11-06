@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using Junior.Common;
 using Junior.Route.AspNetIntegration.Diagnostics.Web;
@@ -13,8 +14,8 @@ namespace Junior.Route.AspNetIntegration.Diagnostics
 	public class AspNetDiagnosticConfiguration : IDiagnosticConfiguration
 	{
 		private readonly Type _cacheType;
-		private readonly IEnumerable<Type> _responseGeneratorTypes;
-		private readonly IEnumerable<Type> _responseHandlerTypes;
+		private readonly Type[] _responseGeneratorTypes;
+		private readonly Type[] _responseHandlerTypes;
 
 		public AspNetDiagnosticConfiguration(Type cacheType, IEnumerable<Type> responseGeneratorTypes, IEnumerable<Type> responseHandlerTypes)
 		{
@@ -23,8 +24,8 @@ namespace Junior.Route.AspNetIntegration.Diagnostics
 			responseHandlerTypes.ThrowIfNull("responseHandlerTypes");
 
 			_cacheType = cacheType;
-			_responseGeneratorTypes = responseGeneratorTypes;
-			_responseHandlerTypes = responseHandlerTypes;
+			_responseGeneratorTypes = responseGeneratorTypes.ToArray();
+			_responseHandlerTypes = responseHandlerTypes.ToArray();
 		}
 
 		private static IEnumerable<string> AspNetViewNamespaces
@@ -35,20 +36,12 @@ namespace Junior.Route.AspNetIntegration.Diagnostics
 			}
 		}
 
-		public IEnumerable<string> LinkHeadings
-		{
-			get
-			{
-				yield return "ASP.net Integration";
-			}
-		}
-
 		public IEnumerable<Routing.Route> GetRoutes(IGuidFactory guidFactory, IUrlResolver urlResolver, IHttpRuntime httpRuntime, string diagnosticsRelativeUrl)
 		{
 			guidFactory.ThrowIfNull("guidFactory");
 			urlResolver.ThrowIfNull("urlResolver");
 			httpRuntime.ThrowIfNull("httpRuntime");
-			diagnosticsRelativeUrl.ThrowIfNull("diagnosticsRelativeUrl");
+			diagnosticsRelativeUrl.ThrowIfNull("diagnosticsUrl");
 
 			yield return DiagnosticRouteHelper.Instance.GetViewRoute<AspNetView>(
 				"Diagnostics ASP.net View",
@@ -65,12 +58,11 @@ namespace Junior.Route.AspNetIntegration.Diagnostics
 			yield return DiagnosticRouteHelper.Instance.GetStylesheetRoute("Diagnostics ASP.net View CSS", guidFactory, diagnosticsRelativeUrl + "/asp_net/css", ResponseResources.asp_net_view, httpRuntime);
 		}
 
-		public IEnumerable<DiagnosticViewLink> GetLinks(string diagnosticsRelativeUrl, string heading)
+		public IEnumerable<DiagnosticViewLink> GetLinks(string diagnosticsUrl)
 		{
-			diagnosticsRelativeUrl.ThrowIfNull("diagnosticsRelativeUrl");
-			heading.ThrowIfNull("heading");
+			diagnosticsUrl.ThrowIfNull("diagnosticsUrl");
 
-			yield return new DiagnosticViewLink(diagnosticsRelativeUrl + "/asp_net", "View ASP.net integration information");
+			yield return new DiagnosticViewLink("ASP.net Integration", diagnosticsUrl + "/asp_net", "View ASP.net integration information");
 		}
 	}
 }

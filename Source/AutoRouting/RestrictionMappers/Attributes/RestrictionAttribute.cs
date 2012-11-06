@@ -14,13 +14,13 @@ namespace Junior.Route.AutoRouting.RestrictionMappers.Attributes
 			switch (comparer)
 			{
 				case RequestValueComparer.CaseInsensitivePlain:
-					return CaseInsensitivePlainRequestValueComparer.Instance;
+					return CaseInsensitivePlainComparer.Instance;
 				case RequestValueComparer.CaseInsensitiveRegex:
-					return CaseInsensitiveRegexRequestValueComparer.Instance;
+					return CaseInsensitiveRegexComparer.Instance;
 				case RequestValueComparer.CaseSensitivePlain:
-					return CaseSensitivePlainRequestValueComparer.Instance;
+					return CaseSensitivePlainComparer.Instance;
 				case RequestValueComparer.CaseSensitiveRegex:
-					return CaseSensitiveRegexRequestValueComparer.Instance;
+					return CaseSensitiveRegexComparer.Instance;
 				default:
 					throw new ArgumentOutOfRangeException("comparer");
 			}

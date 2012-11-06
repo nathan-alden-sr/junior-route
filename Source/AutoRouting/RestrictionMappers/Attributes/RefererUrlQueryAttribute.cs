@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 using Junior.Common;
 using Junior.Route.AutoRouting.Containers;
@@ -10,13 +9,13 @@ namespace Junior.Route.AutoRouting.RestrictionMappers.Attributes
 	public class RefererUrlQueryAttribute : RestrictionAttribute
 	{
 		private readonly RequestValueComparer? _comparer;
-		private readonly IEnumerable<string> _queries;
+		private readonly string[] _queries;
 
 		public RefererUrlQueryAttribute(string query, RequestValueComparer comparer)
 		{
 			query.ThrowIfNull("query");
 
-			_queries = query.ToEnumerable();
+			_queries = new[] { query };
 			_comparer = comparer;
 		}
 

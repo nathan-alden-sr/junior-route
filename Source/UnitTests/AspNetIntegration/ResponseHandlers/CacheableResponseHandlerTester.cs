@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Specialized;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -32,10 +31,9 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseHandlers
 				_httpRequest.Stub(arg => arg.Headers).Return(new NameValueCollection());
 				_httpResponse = MockRepository.GenerateMock<HttpResponseBase>();
 				_httpResponse.Stub(arg => arg.Headers).Return(new NameValueCollection());
-				_httpResponse.Stub(arg => arg.OutputStream).Return(new MemoryStream());
 				_cachePolicy = MockRepository.GenerateMock<ICachePolicy>();
 				_cachePolicy.Stub(arg => arg.Clone()).Return(_cachePolicy);
-				_cachePolicy.Stub(arg => arg.Expires).Return(DateTime.UtcNow);
+				_cachePolicy.Stub(arg => arg.ClientCacheExpirationUtcTimestamp).Return(DateTime.UtcNow);
 				_response = MockRepository.GenerateMock<IResponse>();
 				_response.Stub(arg => arg.CachePolicy).Return(_cachePolicy);
 				_response.Stub(arg => arg.Cookies).Return(Enumerable.Empty<Cookie>());
@@ -57,6 +55,7 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseHandlers
 			public void Must_cache_if_cache_policy_allows_server_caching()
 			{
 				_cachePolicy.Stub(arg => arg.AllowsServerCaching).Return(true);
+				_cachePolicy.Stub(arg => arg.ServerCacheExpirationUtcTimestamp).Return(DateTime.UtcNow);
 				_response.CachePolicy.Stub(arg => arg.HasPolicy).Return(true);
 
 				_handler.HandleResponse(_httpRequest, _httpResponse, _response, _cache, "key");

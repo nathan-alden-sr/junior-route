@@ -53,8 +53,8 @@ namespace Junior.Route.Assets.FileSystem
 				ResolvedRelativeUrl = String.Format("{0}?v={1}", _relativePath, _watcher.Hash);
 				ClearRestrictions();
 				RestrictByMethods(HttpMethod.Get);
-				RestrictByRelativePath(_relativePath, CaseInsensitivePlainRequestValueComparer.Instance, _httpRuntime);
-				RestrictByUrlQuery(@"^(?:\?(?i:v=[a-f0-9]{32}))?$", CaseInsensitiveRegexRequestValueComparer.Instance);
+				RestrictByUrlRelativePath(_relativePath, CaseInsensitivePlainComparer.Instance, _httpRuntime);
+				RestrictByUrlQuery(@"^(?:\?(?i:v=[a-f0-9]{32}))?$", CaseInsensitiveRegexComparer.Instance);
 				RespondWith(request => GetResponse(request, _watcher.Contents));
 			}
 		}

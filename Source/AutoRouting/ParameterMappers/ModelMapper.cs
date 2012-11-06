@@ -13,7 +13,7 @@ namespace Junior.Route.AutoRouting.ParameterMappers
 	public class ModelMapper : IParameterMapper
 	{
 		private readonly IContainer _container;
-		private readonly IEnumerable<IModelPropertyMapper> _modelPropertyMappers = Enumerable.Empty<IModelPropertyMapper>();
+		private readonly IModelPropertyMapper[] _modelPropertyMappers;
 		private readonly Func<Type, bool> _parameterTypeMatchDelegate;
 
 		public ModelMapper(IContainer container, Func<Type, bool> parameterTypeMatchDelegate, IEnumerable<IModelPropertyMapper> propertyMappers)
@@ -24,7 +24,7 @@ namespace Junior.Route.AutoRouting.ParameterMappers
 
 			_container = container;
 			_parameterTypeMatchDelegate = parameterTypeMatchDelegate;
-			_modelPropertyMappers = propertyMappers;
+			_modelPropertyMappers = propertyMappers.ToArray();
 		}
 
 		public ModelMapper(IContainer container, Func<Type, bool> parameterTypeMatchDelegate, params IModelPropertyMapper[] propertyMappers)
@@ -38,7 +38,7 @@ namespace Junior.Route.AutoRouting.ParameterMappers
 			propertyMappers.ThrowIfNull("propertyMappers");
 
 			_parameterTypeMatchDelegate = parameterTypeMatchDelegate;
-			_modelPropertyMappers = propertyMappers;
+			_modelPropertyMappers = propertyMappers.ToArray();
 		}
 
 		public ModelMapper(Func<Type, bool> parameterTypeMatchDelegate, params IModelPropertyMapper[] propertyMappers)

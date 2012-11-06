@@ -18,9 +18,9 @@ namespace Junior.Route.Routing.Caching
 		private readonly byte[] _content;
 		private readonly Encoding _contentEncoding;
 		private readonly string _contentType;
-		private readonly IEnumerable<Cookie> _cookies;
+		private readonly Cookie[] _cookies;
 		private readonly Encoding _headerEncoding;
-		private readonly IEnumerable<Header> _headers;
+		private readonly Header[] _headers;
 		private readonly StatusAndSubStatusCode _statusCode;
 
 		public CacheResponse(IResponse response)
@@ -31,9 +31,9 @@ namespace Junior.Route.Routing.Caching
 			_contentType = response.ContentType;
 			_charset = response.Charset ?? DefaultCharset;
 			_contentEncoding = response.ContentEncoding ?? _defaultContentEncoding;
-			_headers = response.Headers.Select(arg => arg.Clone());
+			_headers = response.Headers.Select(arg => arg.Clone()).ToArray();
 			_headerEncoding = response.HeaderEncoding ?? _defaultHeaderEncoding;
-			_cookies = response.Cookies.Select(arg => arg.Clone());
+			_cookies = response.Cookies.Select(arg => arg.Clone()).ToArray();
 			_cachePolicy = response.CachePolicy.Clone();
 			_content = response.GetContent();
 		}
@@ -130,7 +130,7 @@ namespace Junior.Route.Routing.Caching
 			}
 			_cachePolicy.Apply(response.Cache);
 
-			response.OutputStream.Write(_content, 0, _content.Length);
+			response.BinaryWrite(_content);
 		}
 	}
 }

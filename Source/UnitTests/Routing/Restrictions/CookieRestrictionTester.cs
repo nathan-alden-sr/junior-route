@@ -17,8 +17,8 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			[SetUp]
 			public void SetUp()
 			{
-				_restriction1 = new CookieRestriction("name1", CaseSensitivePlainRequestValueComparer.Instance, "value1", CaseSensitiveRegexRequestValueComparer.Instance);
-				_restriction2 = new CookieRestriction("name1", CaseSensitivePlainRequestValueComparer.Instance, "value1", CaseSensitiveRegexRequestValueComparer.Instance);
+				_restriction1 = new CookieRestriction("name1", CaseSensitivePlainComparer.Instance, "value1", CaseSensitiveRegexComparer.Instance);
+				_restriction2 = new CookieRestriction("name1", CaseSensitivePlainComparer.Instance, "value1", CaseSensitiveRegexComparer.Instance);
 			}
 
 			private CookieRestriction _restriction1;
@@ -37,8 +37,8 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			[SetUp]
 			public void SetUp()
 			{
-				_restriction1 = new CookieRestriction("name1", CaseSensitivePlainRequestValueComparer.Instance, "value1", CaseSensitiveRegexRequestValueComparer.Instance);
-				_restriction2 = new CookieRestriction("name2", CaseSensitivePlainRequestValueComparer.Instance, "value2", CaseSensitiveRegexRequestValueComparer.Instance);
+				_restriction1 = new CookieRestriction("name1", CaseSensitivePlainComparer.Instance, "value1", CaseSensitiveRegexComparer.Instance);
+				_restriction2 = new CookieRestriction("name2", CaseSensitivePlainComparer.Instance, "value2", CaseSensitiveRegexComparer.Instance);
 			}
 
 			private CookieRestriction _restriction1;
@@ -57,7 +57,7 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			[SetUp]
 			public void SetUp()
 			{
-				_restriction = new CookieRestriction("name", CaseSensitivePlainRequestValueComparer.Instance, "value", CaseSensitiveRegexRequestValueComparer.Instance);
+				_restriction = new CookieRestriction("name", CaseSensitivePlainComparer.Instance, "value", CaseSensitiveRegexComparer.Instance);
 			}
 
 			private CookieRestriction _restriction;
@@ -66,9 +66,9 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			public void Must_set_properties()
 			{
 				Assert.That(_restriction.Name, Is.EqualTo("name"));
-				Assert.That(_restriction.NameComparer, Is.SameAs(CaseSensitivePlainRequestValueComparer.Instance));
+				Assert.That(_restriction.NameComparer, Is.SameAs(CaseSensitivePlainComparer.Instance));
 				Assert.That(_restriction.Value, Is.EqualTo("value"));
-				Assert.That(_restriction.ValueComparer, Is.SameAs(CaseSensitiveRegexRequestValueComparer.Instance));
+				Assert.That(_restriction.ValueComparer, Is.SameAs(CaseSensitiveRegexComparer.Instance));
 			}
 		}
 
@@ -78,7 +78,7 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			[SetUp]
 			public void SetUp()
 			{
-				_restriction = new CookieRestriction("name", CaseSensitivePlainRequestValueComparer.Instance, "value", CaseInsensitivePlainRequestValueComparer.Instance);
+				_restriction = new CookieRestriction("name", CaseSensitivePlainComparer.Instance, "value", CaseInsensitivePlainComparer.Instance);
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 				_request.Stub(arg => arg.Cookies).Return(new HttpCookieCollection { new HttpCookie("name", "value") });
 			}
@@ -99,7 +99,7 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			[SetUp]
 			public void SetUp()
 			{
-				_restriction = new CookieRestriction("name", CaseSensitivePlainRequestValueComparer.Instance, "value", CaseInsensitivePlainRequestValueComparer.Instance);
+				_restriction = new CookieRestriction("name", CaseSensitivePlainComparer.Instance, "value", CaseInsensitivePlainComparer.Instance);
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 				_request.Stub(arg => arg.Cookies).Return(new HttpCookieCollection { new HttpCookie("name", "value1") });
 			}

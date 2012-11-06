@@ -4,7 +4,7 @@ JuniorRoute is a routing framework for .NET. JuniorRoute's simple approach to ro
 
 Why should I use it?
 -
-If you're interested in a routing framework that's easy to learn and easy to configure then you'll love JuniorRoute.
+If you're interested in a routing framework that's easy to learn and easy to use then you'll love JuniorRoute.
 
 **JuniorRoute is designed to "just work."**
 

@@ -35,14 +35,13 @@ namespace Junior.Route.UnitTests.AspNetIntegration
 		}
 
 		[TestFixture]
-		public class When_resolving_relative_url_and_app_virtual_path_is_empty
+		public class When_resolving_relative_url_and_appdomainappvirtualpath_is_empty_or_slash
 		{
 			[SetUp]
 			public void SetUp()
 			{
 				_routeCollection = MockRepository.GenerateMock<IRouteCollection>();
 				_httpRuntime = MockRepository.GenerateMock<IHttpRuntime>();
-				_httpRuntime.Stub(arg => arg.AppDomainAppVirtualPath).Return("");
 				_urlResolver = new UrlResolver(_routeCollection, _httpRuntime);
 			}
 
@@ -51,8 +50,12 @@ namespace Junior.Route.UnitTests.AspNetIntegration
 			private UrlResolver _urlResolver;
 
 			[Test]
-			public void Must_prefix_url_with_only_one_slash()
+			[TestCase("")]
+			[TestCase("/")]
+			public void Must_prefix_url_with_only_one_slash(string appDomainAppVirtualPath)
 			{
+				_httpRuntime.Stub(arg => arg.AppDomainAppVirtualPath).Return(appDomainAppVirtualPath);
+
 				Assert.That(_urlResolver.Absolute("relative"), Is.EqualTo("/relative"));
 			}
 		}

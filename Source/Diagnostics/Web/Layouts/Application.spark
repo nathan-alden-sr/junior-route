@@ -12,7 +12,11 @@
 				<a href='${UrlResolver.Route("Diagnostics Home View")}'>Diagnostics Home</a>
 			</div>
 			<div id="header-right">
-				<a href="https://github.com/NathanAlden/JuniorRoute" target="_blank">GitHub Project Page</a>
+				<a href="https://github.com/NathanAlden/JuniorRoute" target="_blank">Repository</a>
+				<span class="header-link-separator">|</span>
+				<a href="https://github.com/NathanAlden/JuniorRoute/wiki" target="_blank">Wiki</a>
+				<span class="header-link-separator">|</span>
+				<a href="https://nathanalden.github.com/JuniorRoute" target="_blank">Documentation</a>
 				<span class="header-link-separator">|</span>
 				JuniorRoute Core version ${AssemblyVersion}
 			</div>

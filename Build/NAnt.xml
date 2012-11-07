@@ -6,7 +6,7 @@
 	<!-- Version information (read http://semver.org before modifying) -->
 	<property name="MajorVersionNumber" value="1"/>
 	<property name="MinorVersionNumber" value="0"/>
-	<property name="BuildVersionNumber" value="3"/>
+	<property name="BuildVersionNumber" value="4"/>
 	<property name="RevisionVersionNumber" value="0"/>
 	<property name="ProjectVersion" value="${MajorVersionNumber}.${MinorVersionNumber}.${BuildVersionNumber}"/>
 	<property name="AssemblyVersion" value="${MajorVersionNumber}.${MinorVersionNumber}.0.0"/>

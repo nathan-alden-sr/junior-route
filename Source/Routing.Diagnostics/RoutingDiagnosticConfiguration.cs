@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 using Junior.Common;
 using Junior.Route.Common;
@@ -10,13 +11,20 @@ namespace Junior.Route.Routing.Diagnostics
 {
 	public class RoutingDiagnosticConfiguration : IDiagnosticConfiguration
 	{
-		private readonly IRouteCollection _routes;
+		private readonly Lazy<IRouteCollection> _routes;
+
+		public RoutingDiagnosticConfiguration(Func<IRouteCollection> routes)
+		{
+			routes.ThrowIfNull("routes");
+
+			_routes = new Lazy<IRouteCollection>(routes);
+		}
 
 		public RoutingDiagnosticConfiguration(IRouteCollection routes)
 		{
 			routes.ThrowIfNull("routes");
 
-			_routes = routes;
+			_routes = new Lazy<IRouteCollection>(() => routes);
 		}
 
 		private static IEnumerable<string> RouteTableViewNamespaces
@@ -43,7 +51,7 @@ namespace Junior.Route.Routing.Diagnostics
 				ResponseResources.RouteTable,
 				RouteTableViewNamespaces,
 				httpRuntime,
-				view => view.Populate(urlResolver, _routes, diagnosticsRelativeUrl));
+				view => view.Populate(urlResolver, _routes.Value, diagnosticsRelativeUrl));
 			yield return DiagnosticRouteHelper.Instance.GetStylesheetRoute("Diagnostics Route Table View CSS", guidFactory, diagnosticsRelativeUrl + "/route_table/css", ResponseResources.route_table_view, httpRuntime);
 		}
 

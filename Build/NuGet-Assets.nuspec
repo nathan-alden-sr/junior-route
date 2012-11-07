@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+	<metadata>
+		<id>JuniorRoute.Assets</id>
+		<version>$version$</version>
+		<title>JuniorRoute - Assets</title>
+		<authors>Nathan Alden Sr.</authors>
+		<description>JuniorRoute is the easy-to-learn, easy-to-use routing framework for .NET. This package provides a framework for bundling and minification of CSS and JavaScript assets.</description>
+		<releaseNotes></releaseNotes>
+		<projectUrl>https://nathanalden.github.com/JuniorRoute</projectUrl>
+		<iconUrl>https://docs.google.com/uc?export=download&amp;id=0B8a4O6RATfaXQ2YxekpxbXRfUjQ</iconUrl>
+		<dependencies>
+			<group>
+				<dependency id="JuniorRoute.Core" version="1.0.0"/>
+			</group>
+		</dependencies>
+		<references>
+			<reference file="Junior.Route.Assets.dll"/>
+		</references>
+		<tags>Junior</tags>
+	</metadata>
+	<files>
+		<file src="NuGet Staging\LICENSE"/>
+		<file src="NuGet Staging\README.md"/>
+		<file src="NuGet Staging\bin\*.*" target="lib\net40"/>
+	</files>
+</package>

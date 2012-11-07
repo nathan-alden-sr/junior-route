@@ -36,7 +36,7 @@ namespace Junior.Route.AspNetIntegration
 
 			string rootUrl = _httpRuntime.AppDomainAppVirtualPath.TrimStart('/');
 
-			return String.Format("/{0}/{1}", rootUrl, relativeUrl.TrimStart('/'));
+			return String.Format("{0}/{1}", rootUrl.Length > 0 ? "/" + rootUrl : "", relativeUrl.TrimStart('/'));
 		}
 
 		public string Route(string routeName)

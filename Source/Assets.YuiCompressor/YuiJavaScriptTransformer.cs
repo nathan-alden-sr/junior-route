@@ -5,7 +5,7 @@ using Junior.Route.Assets.FileSystem;
 
 using Yahoo.Yui.Compressor;
 
-namespace Assets.YuiCompressor
+namespace Junior.Route.Assets.YuiCompressor
 {
 	public class YuiJavaScriptTransformer : IAssetTransformer
 	{

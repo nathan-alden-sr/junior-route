@@ -1,0 +1,1 @@
+nant-0.92\bin\NAnt.exe -buildfile:NAnt.xml Build -D:BuildConfiguration=Release -D:"Platform=Any CPU"

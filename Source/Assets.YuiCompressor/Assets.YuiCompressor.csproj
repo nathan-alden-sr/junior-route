@@ -8,8 +8,8 @@
     <ProjectGuid>{238B0F80-F2D1-44B2-AB61-617E64DFEC8B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Assets.YuiCompressor</RootNamespace>
-    <AssemblyName>Assets.YuiCompressor</AssemblyName>
+    <RootNamespace>Junior.Route.Assets.YuiCompressor</RootNamespace>
+    <AssemblyName>Junior.Route.Assets.YuiCompressor</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

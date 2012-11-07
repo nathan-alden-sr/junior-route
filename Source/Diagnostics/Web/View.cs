@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Diagnostics;
+using System.Reflection;
 
 using Junior.Route.Common;
 
@@ -12,7 +13,17 @@ namespace Junior.Route.Diagnostics.Web
 
 		protected View()
 		{
-			_version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+			try
+			{
+				Assembly coreAssembly = typeof(Routing.Route).Assembly;
+				FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(coreAssembly.Location);
+
+				_version = fileVersionInfo.FileVersion;
+			}
+			catch
+			{
+				_version = "(unknown)";
+			}
 		}
 
 		public abstract string Title

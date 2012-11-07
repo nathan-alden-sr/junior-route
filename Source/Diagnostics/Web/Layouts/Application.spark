@@ -14,7 +14,7 @@
 			<div id="header-right">
 				<a href="https://github.com/NathanAlden/JuniorRoute" target="_blank">GitHub Project Page</a>
 				<span class="header-link-separator">|</span>
-				JuniorRoute ${AssemblyVersion}
+				JuniorRoute Core version ${AssemblyVersion}
 			</div>
 		</div>
 		<div id="body">

@@ -87,11 +87,11 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="ProjectTemplates\CSharp\Web\JuniorRoute Web Application.zip">
+    <Content Include="PT1\CSharp\Web\T.zip">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="ProjectTemplates\VisualBasic\Web\JuniorRoute Web Application.zip">
+    <Content Include="PT2\VisualBasic\Web\T.zip">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <None Include="source.extension.vsixmanifest">

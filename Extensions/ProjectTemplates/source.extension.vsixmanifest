@@ -27,6 +27,7 @@
 	</Identifier>
 	<References />
 	<Content>
-		<ProjectTemplate>ProjectTemplates</ProjectTemplate>
+		<ProjectTemplate>PT1</ProjectTemplate>
+		<ProjectTemplate>PT2</ProjectTemplate>
 	</Content>
 </Vsix>

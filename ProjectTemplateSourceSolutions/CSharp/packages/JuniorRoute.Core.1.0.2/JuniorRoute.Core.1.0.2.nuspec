@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>JuniorRoute.Core</id>
+    <version>1.0.2</version>
+    <title>JuniorRoute - Core</title>
+    <authors>Nathan Alden Sr.</authors>
+    <owners>Nathan Alden Sr.</owners>
+    <projectUrl>https://nathanalden.github.com/JuniorRoute</projectUrl>
+    <iconUrl>https://docs.google.com/uc?export=download&amp;id=0B8a4O6RATfaXQ2YxekpxbXRfUjQ</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>JuniorRoute is the easy-to-learn, easy-to-use routing framework for .NET. This package provides the core routing framework.</description>
+    <releaseNotes />
+    <tags>Junior</tags>
+    <dependencies>
+      <dependency id="JuniorCommon" version="2.0.1" />
+      <dependency id="Newtonsoft.Json" version="4.5.10" />
+    </dependencies>
+  </metadata>
+</package>

@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>JuniorCommon</id>
+    <version>2.0.1</version>
+    <title>JuniorCommon</title>
+    <authors>Nathan Alden Sr.</authors>
+    <owners>Nathan Alden Sr.</owners>
+    <projectUrl>https://github.com/NathanAlden/JuniorCommon</projectUrl>
+    <iconUrl>https://docs.google.com/uc?export=download&amp;id=0B8a4O6RATfaXQ2YxekpxbXRfUjQ</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>JuniorCommon is a common library used by all other Junior projects.</description>
+    <releaseNotes />
+    <tags>Junior</tags>
+  </metadata>
+</package>

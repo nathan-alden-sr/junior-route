@@ -469,7 +469,7 @@ namespace Junior.Route.AutoRouting
 			return this;
 		}
 
-		public AutoRouteCollection RestrictRelativeUrlsToRelativeClassNamespaceAndClassName(
+		public AutoRouteCollection RestrictRelativePathsToRelativeClassNamespaceAndClassName(
 			string rootNamespace,
 			bool caseSensitive = false,
 			bool makeLowercase = true,
@@ -481,7 +481,7 @@ namespace Junior.Route.AutoRouting
 			return this;
 		}
 
-		[Obsolete("This inconsistent method name will be removed in a future release; please use RestrictRelativeUrlsToRelativeClassNamespaceAndClassName")]
+		[Obsolete("This incorrect method name will be removed in a future release; please use RestrictRelativePathsToRelativeClassNamespaceAndClassName")]
 		public AutoRouteCollection RestrictRelativeUrlsToRelativeClassNamespacesAndClassNames(
 			string rootNamespace,
 			bool caseSensitive = false,
@@ -489,7 +489,7 @@ namespace Junior.Route.AutoRouting
 			string wordSeparator = "_",
 			string wordRegexPattern = UrlRelativePathFromRelativeClassNamespaceAndClassNameMapper.DefaultWordRegexPattern)
 		{
-			return RestrictRelativeUrlsToRelativeClassNamespaceAndClassName(rootNamespace, caseSensitive, makeLowercase, wordSeparator, wordRegexPattern);
+			return RestrictRelativePathsToRelativeClassNamespaceAndClassName(rootNamespace, caseSensitive, makeLowercase, wordSeparator, wordRegexPattern);
 		}
 
 		public AutoRouteCollection RestrictUsingAttributes<T>()

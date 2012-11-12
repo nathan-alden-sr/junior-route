@@ -37,6 +37,9 @@
     <AssemblyOriginatorKeyFile>..\JuniorRoute.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\Core AssemblyInfo.cs">
+      <Link>Properties\Core AssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="DateTimeExtensions.cs" />
     <Compile Include="RequestHeaders\AcceptCharsetHeader.cs" />
     <Compile Include="RequestHeaders\AcceptHeader.cs" />

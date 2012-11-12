@@ -37,9 +37,6 @@
     <AssemblyOriginatorKeyFile>..\JuniorRoute.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\CommonAssemblyInfo.cs">
-      <Link>Properties\CommonAssemblyInfo.cs</Link>
-    </Compile>
     <Compile Include="AuthenticationStrategies\Attributes\AuthenticateAttribute.cs" />
     <Compile Include="AuthenticationStrategies\AuthenticateAttributeStrategy.cs" />
     <Compile Include="AuthenticationStrategies\IAuthenticationStrategy.cs" />

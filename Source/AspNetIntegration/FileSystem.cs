@@ -95,5 +95,19 @@ namespace Junior.Route.AspNetIntegration
 		{
 			return Directory.GetFiles(path, searchPattern, searchOption);
 		}
+
+		public bool FileExists(string path)
+		{
+			path.ThrowIfNull("path");
+
+			return File.Exists(path);
+		}
+
+		public bool DirectoryExists(string directory)
+		{
+			directory.ThrowIfNull("directory");
+
+			return Directory.Exists(directory);
+		}
 	}
 }

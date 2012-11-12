@@ -21,5 +21,7 @@ namespace Junior.Route.Common
 		string[] GetDirectoryFiles(string path);
 		string[] GetDirectoryFiles(string path, string searchPattern);
 		string[] GetDirectoryFiles(string path, string searchPattern, SearchOption searchOption);
+		bool FileExists(string path);
+		bool DirectoryExists(string directory);
 	}
 }

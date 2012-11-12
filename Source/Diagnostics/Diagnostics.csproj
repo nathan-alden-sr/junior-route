@@ -37,9 +37,6 @@
     <AssemblyOriginatorKeyFile>..\JuniorRoute.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\CommonAssemblyInfo.cs">
-      <Link>Properties\CommonAssemblyInfo.cs</Link>
-    </Compile>
     <Compile Include="DiagnosticConfigurationRoutes.cs" />
     <Compile Include="DiagnosticRouteHelper.cs" />
     <Compile Include="IDiagnosticConfiguration.cs" />

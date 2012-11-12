@@ -39,8 +39,8 @@
     <AssemblyOriginatorKeyFile>..\JuniorRoute.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\CommonAssemblyInfo.cs">
-      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    <Compile Include="..\Core AssemblyInfo.cs">
+      <Link>Properties\Core AssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="AuthenticateResult.cs" />
     <Compile Include="AuthenticateResultType.cs" />

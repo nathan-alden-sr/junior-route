@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
 	<metadata>
-		<id>JuniorRoute.RazorEngine</id>
+		<id>JuniorRoute.ViewEngines.RazorEngine</id>
 		<version>$version$</version>
 		<title>JuniorRoute - RazorEngine View Engine</title>
 		<authors>Nathan Alden Sr.</authors>
@@ -11,7 +11,7 @@
 		<iconUrl>https://docs.google.com/uc?export=download&amp;id=0B8a4O6RATfaXQ2YxekpxbXRfUjQ</iconUrl>
 		<dependencies>
 			<group>
-				<dependency id="JuniorRoute.Core" version="1.0.2"/>
+				<dependency id="JuniorRoute.Core" version="1.0.3"/>
 			</group>
 		</dependencies>
 		<references>

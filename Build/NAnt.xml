@@ -32,7 +32,7 @@
 		<!--<call target="RunUnitTests"/>-->
 		<if test="${BuildConfiguration == 'Release'}">
 			<call target="RecreateNuGetResultsDirectory"/>
-			<foreach item="String" in="Core,Assets,Assets-YuiCompressor,AspNetIntegration,Diagnostics,AspNetIntegration-Diagnostics,Core-Diagnostics,AutoRouting,RazorEngine" delim="," property="SubProject">
+			<foreach item="String" in="Core,Assets,Assets-YuiCompressor,AspNetIntegration,Diagnostics,AspNetIntegration-Diagnostics,Core-Diagnostics,AutoRouting,ViewEngines-RazorEngine" delim="," property="SubProject">
 				<call target="StageNuGetFiles"/>
 				<call target="CreateNuGetPackage"/>
 				<call target="DeleteStagedNuGetFiles"/>

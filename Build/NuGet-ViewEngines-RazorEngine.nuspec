@@ -11,7 +11,7 @@
 		<iconUrl>https://docs.google.com/uc?export=download&amp;id=0B8a4O6RATfaXQ2YxekpxbXRfUjQ</iconUrl>
 		<dependencies>
 			<group>
-				<dependency id="JuniorRoute.Core" version="1.0.3"/>
+				<dependency id="JuniorRoute.Core" version="1.1.0"/>
 			</group>
 		</dependencies>
 		<references>

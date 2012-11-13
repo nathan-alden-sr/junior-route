@@ -29,7 +29,7 @@
 	<target name="Build">
 		<call target="Compile"/>
 		<call target="DeleteNUnitResults"/>
-		<!--<call target="RunUnitTests"/>-->
+		<call target="RunUnitTests"/>
 		<if test="${BuildConfiguration == 'Release'}">
 			<call target="RecreateNuGetResultsDirectory"/>
 			<foreach item="String" in="Core,Assets,Assets-YuiCompressor,AspNetIntegration,Diagnostics,AspNetIntegration-Diagnostics,Core-Diagnostics,AutoRouting,ViewEngines-RazorEngine" delim="," property="SubProject">
@@ -152,7 +152,7 @@
 				</fileset>
 			</copy>
 		</if>
-		<if test="${SubProject == 'RazorEngine'}">
+		<if test="${SubProject == 'ViewEngines-RazorEngine'}">
 			<property name="AssemblyInfoPath" value="${path::combine(SourceDirectory, 'ViewEngines.RazorEngine\Properties\AssemblyInfo.cs')}"/>
 			<copy todir="${NuGetStagingBinDirectory}">
 				<fileset basedir="${path::combine(SourceDirectory, path::combine('ViewEngines.RazorEngine\bin', BuildConfiguration))}">

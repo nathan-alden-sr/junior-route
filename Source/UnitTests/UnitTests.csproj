@@ -37,9 +37,6 @@
     <AssemblyOriginatorKeyFile>..\JuniorRoute.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\CommonAssemblyInfo.cs">
-      <Link>Properties\CommonAssemblyInfo.cs</Link>
-    </Compile>
     <Compile Include="AspNetIntegration\ResponseHandlers\CacheableResponseHandlerTester.cs" />
     <Compile Include="AspNetIntegration\ResponseHandlers\DescriptiveTextStatusCodeHandlerTester.cs" />
     <Compile Include="AspNetIntegration\ResponseHandlers\DescriptiveHtmlStatusCodeHandlerTester.cs" />
@@ -209,6 +206,13 @@
     <Compile Include="Routing\Restrictions\HeaderRestrictionTester.cs" />
     <Compile Include="Routing\RouteCollectionTester.cs" />
     <Compile Include="Routing\RouteTester.cs" />
+    <Compile Include="ViewEngines.RazorEngine\RazorTemplateNameMappers\RelativeDirectoryAndFilenameMapperTester.cs" />
+    <Compile Include="ViewEngines.RazorEngine\RazorTemplateNameMappers\FilenameWithoutExtensionMapperTester.cs" />
+    <Compile Include="ViewEngines.RazorEngine\RazorTemplateNameMappers\RelativeDirectoryAndFilenameWithoutExtensionMapperTester.cs" />
+    <Compile Include="ViewEngines.RazorEngine\RazorTemplateRespositories\CSharpFileSystemRepositoryTester.cs" />
+    <Compile Include="ViewEngines.RazorEngine\RazorTemplateRespositories\FileSystemRepositoryTester.cs" />
+    <Compile Include="ViewEngines.RazorEngine\RazorTemplateRespositories\VisualBasicFileSystemRepositoryTester.cs" />
+    <Compile Include="ViewEngines.RazorEngine\RazorTemplateTester.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Junior.Common, Version=2.0.0.0, Culture=neutral, PublicKeyToken=998713eb9a0cce30, processorArchitecture=MSIL">
@@ -223,11 +227,19 @@
     <Reference Include="nunit.framework">
       <HintPath>..\packages\NUnit.2.6.1\lib\nunit.framework.dll</HintPath>
     </Reference>
+    <Reference Include="RazorEngine, Version=3.0.8.0, Culture=neutral, PublicKeyToken=9ee697374c7e744a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\RazorEngine.3.0.8\lib\net40\RazorEngine.dll</HintPath>
+    </Reference>
     <Reference Include="Rhino.Mocks">
       <HintPath>..\packages\RhinoMocks.3.6.1\lib\net\Rhino.Mocks.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Web" />
+    <Reference Include="System.Web.Razor, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\RazorEngine.3.0.8\lib\net40\System.Web.Razor.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
@@ -261,6 +273,10 @@
     <ProjectReference Include="..\Routing\Routing.csproj">
       <Project>{c584f305-4ee6-41b8-8248-e9bf5d96ca6b}</Project>
       <Name>Routing</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ViewEngines.RazorEngine\ViewEngines.RazorEngine.csproj">
+      <Project>{3681be9d-322f-47b2-9d8b-f9dfdfadf4e8}</Project>
+      <Name>ViewEngines.RazorEngine</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

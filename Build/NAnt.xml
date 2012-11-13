@@ -3,18 +3,9 @@
 	<!-- NAnt -->
 	<property name="nant.settings.currentframework" value="net-4.0"/>
 
-	<!-- Version information (read http://semver.org before modifying) -->
-	<property name="MajorVersionNumber" value="1"/>
-	<property name="MinorVersionNumber" value="0"/>
-	<property name="BuildVersionNumber" value="5"/>
-	<property name="RevisionVersionNumber" value="0"/>
-	<property name="ProjectVersion" value="${MajorVersionNumber}.${MinorVersionNumber}.${BuildVersionNumber}"/>
-	<property name="AssemblyVersion" value="${MajorVersionNumber}.${MinorVersionNumber}.0.0"/>
-	<property name="AssemblyFileVersion" value="${MajorVersionNumber}.${MinorVersionNumber}.${BuildVersionNumber}.0"/>
-	<property name="NuGetVersion" value="${ProjectVersion}"/>
 	<property name="SubProject" value=""/>
-	<property name="ShortProjectNameAndVersion" value="${string::to-lower(string::replace(project::get-name() + '-' + SubProject + '-' + ProjectVersion, ' ', ''))}" dynamic="true"/>
-	<property name="LongProjectNameAndVersion" value="${string::to-lower(string::replace(ShortProjectNameAndVersion + '-' + Platform + '-' + BuildConfiguration, ' ', ''))}" dynamic="true"/>
+	<property name="AssemblyInfoPath" value=""/>
+	<property name="NuGetVersion" value=""/>
 
 	<!-- Build configuration -->
 	<property name="Platform" value="Any CPU" overwrite="false"/>
@@ -23,58 +14,33 @@
 	<!-- Directories -->
 	<property name="TrunkDirectory" value="${directory::get-parent-directory(path::get-directory-name(project::get-buildfile-path()))}"/>
 	<property name="BuildDirectory" value="${path::combine(TrunkDirectory, 'Build')}"/>
-	<property name="ReleaseDirectory" value="${path::combine(TrunkDirectory, 'Release')}"/>
-	<property name="ReleaseStagingDirectory" value="${path::combine(BuildDirectory, 'Release Staging')}"/>
-	<property name="ReleaseStagingVersionDirectory" value="${path::combine(ReleaseStagingDirectory, ShortProjectNameAndVersion)}" dynamic="true"/>
-	<property name="ReleaseStagingBinDirectory" value="${path::combine(ReleaseStagingVersionDirectory, 'bin')}" dynamic="true"/>
 	<property name="SourceDirectory" value="${path::combine(TrunkDirectory, 'Source')}"/>
 	<property name="NuGetResultsDirectory" value="${path::combine(BuildDirectory, 'NuGet Results')}"/>
 	<property name="NuGetStagingDirectory" value="${path::combine(BuildDirectory, 'NuGet Staging')}"/>
+	<property name="NuGetStagingBinDirectory" value="${path::combine(NuGetStagingDirectory, 'bin')}"/>
 	<property name="NUnitResultsDirectory" value="${path::combine(BuildDirectory, 'NUnit Results')}"/>
 
 	<!-- Paths -->
-	<property name="NUnitConsolePath" value="${path::combine(path::combine(path::combine(BuildDirectory, 'NUnit-2.6.1'), 'bin'), 'nunit-console.exe')}"/>
-	<property name="NuGetPath" value="${path::combine(path::combine(BuildDirectory, 'NuGet-2.0'), 'NuGet.exe')}"/>
-	<property name="ReleaseArchivePath" value="${path::combine(ReleaseDirectory, LongProjectNameAndVersion + '.zip')}" dynamic="true"/>
+	<property name="NUnitConsolePath" value="${path::combine(BuildDirectory, 'NUnit-2.6.1\bin\nunit-console.exe')}"/>
+	<property name="NuGetPath" value="${path::combine(BuildDirectory, 'NuGet-2.0\NuGet.exe')}"/>
 	<property name="SolutionPath" value="${path::combine(SourceDirectory, project::get-name() + '.sln')}"/>
 
 	<!-- Build -->
 	<target name="Build">
-		<call target="CommonAssemblyInfo"/>
 		<call target="Compile"/>
 		<call target="DeleteNUnitResults"/>
-		<call target="RunUnitTests"/>
+		<!--<call target="RunUnitTests"/>-->
 		<if test="${BuildConfiguration == 'Release'}">
-			<call target="RecreateReleaseStagingDirectory"/>
-			<call target="RecreateReleaseDirectory"/>
 			<call target="RecreateNuGetResultsDirectory"/>
-			<foreach item="String" in="Core,Assets,Assets-YuiCompressor,AspNetIntegration,Diagnostics,AspNetIntegration-Diagnostics,Core-Diagnostics,AutoRouting" delim="," property="SubProject">
-				<call target="StageArchiveFiles"/>
-				<call target="CreateReleaseArchives"/>
+			<foreach item="String" in="Core,Assets,Assets-YuiCompressor,AspNetIntegration,Diagnostics,AspNetIntegration-Diagnostics,Core-Diagnostics,AutoRouting,RazorEngine" delim="," property="SubProject">
 				<call target="StageNuGetFiles"/>
 				<call target="CreateNuGetPackage"/>
-				<call target="DeleteStagedFiles"/>
+				<call target="DeleteStagedNuGetFiles"/>
 			</foreach>
 		</if>
 	</target>
 
 	<!-- Compile -->
-	<target name="CommonAssemblyInfo">
-		<asminfo output="${SourceDirectory}\CommonAssemblyInfo.cs" language="CSharp">
-			<imports>
-				<import namespace="System.Reflection"/>
-				<import namespace="System.Runtime.InteropServices"/>
-			</imports>
-			<attributes>
-				<attribute type="ComVisibleAttribute" value="false"/>
-				<attribute type="AssemblyVersionAttribute" value="${AssemblyVersion}"/>
-				<attribute type="AssemblyFileVersionAttribute" value="${AssemblyFileVersion}"/>
-			</attributes>
-			<references>
-				<include name="System.dll"/>
-			</references>
-		</asminfo>
-	</target>
 	<target name="Compile">
 		<exec
 			program="${framework::get-framework-directory(framework::get-target-framework())}\msbuild.exe"
@@ -93,7 +59,7 @@
 		<mkdir dir="${NUnitResultsDirectory}"/>
 	</target>
 	<target name="RunUnitTests">
-		<property name="UnitTestAssemblyPath" value="${path::combine(path::combine(SourceDirectory, path::combine('UnitTests', path::combine('bin', BuildConfiguration))), 'Junior.Route.UnitTests.dll')}"/>
+		<property name="UnitTestAssemblyPath" value="${path::combine(SourceDirectory, path::combine('UnitTests\bin', path::combine(BuildConfiguration, 'Junior.Route.UnitTests.dll')))}"/>
 		<call target="ExecuteNUnit"/>
 	</target>
 	<target name="ExecuteNUnit">
@@ -109,94 +75,118 @@
 	</target>
 
 	<!-- Package -->
-	<target name="RecreateReleaseStagingDirectory">
-		<delete dir="${ReleaseStagingDirectory}"/>
-		<mkdir dir="${ReleaseStagingDirectory}"/>
-	</target>
-	<target name="RecreateReleaseDirectory">
-		<delete dir="${ReleaseDirectory}"/>
-		<mkdir dir="${ReleaseDirectory}"/>
-	</target>
 	<target name="RecreateNuGetResultsDirectory">
 		<delete dir="${NuGetResultsDirectory}"/>
 		<mkdir dir="${NuGetResultsDirectory}"/>
 	</target>
-	<target name="StageArchiveFiles">
-		<copy todir="${ReleaseStagingVersionDirectory}">
+	<target name="StageNuGetFiles">
+		<delete dir="${NuGetStagingDirectory}"/>
+		<mkdir dir="${NuGetStagingDirectory}"/>
+		<copy todir="${NuGetStagingDirectory}">
 			<fileset basedir="${TrunkDirectory}">
 				<include name="LICENSE"/>
 				<include name="README.md"/>
 			</fileset>
 		</copy>
 		<if test="${SubProject == 'Core'}">
-			<copy todir="${ReleaseStagingBinDirectory}">
-				<fileset basedir="${path::combine(SourceDirectory, path::combine('Routing', path::combine('bin', BuildConfiguration)))}">
+			<property name="AssemblyInfoPath" value="${path::combine(SourceDirectory, 'Core AssemblyInfo.cs')}"/>
+			<copy todir="${NuGetStagingBinDirectory}">
+				<fileset basedir="${path::combine(SourceDirectory, path::combine('Routing\bin', BuildConfiguration))}">
 					<include name="Junior.Route.*"/>
 				</fileset>
 			</copy>
 		</if>
 		<if test="${SubProject == 'Assets'}">
-			<copy todir="${ReleaseStagingBinDirectory}">
-				<fileset basedir="${path::combine(SourceDirectory, path::combine('Assets', path::combine('bin', BuildConfiguration)))}">
+			<property name="AssemblyInfoPath" value="${path::combine(SourceDirectory, 'Assets\Properties\AssemblyInfo.cs')}"/>
+			<copy todir="${NuGetStagingBinDirectory}">
+				<fileset basedir="${path::combine(SourceDirectory, path::combine('Assets\bin', BuildConfiguration))}">
 					<include name="Junior.Route.Assets.*"/>
 				</fileset>
 			</copy>
 		</if>
 		<if test="${SubProject == 'Assets-YuiCompressor'}">
-			<copy todir="${ReleaseStagingBinDirectory}">
-				<fileset basedir="${path::combine(SourceDirectory, path::combine('Assets.YuiCompressor', path::combine('bin', BuildConfiguration)))}">
+			<property name="AssemblyInfoPath" value="${path::combine(SourceDirectory, 'Assets.YuiCompressor\Properties\AssemblyInfo.cs')}"/>
+			<copy todir="${NuGetStagingBinDirectory}">
+				<fileset basedir="${path::combine(SourceDirectory, path::combine('Assets.YuiCompressor\bin', BuildConfiguration))}">
 					<include name="Junior.Route.Assets.YuiCompressor.*"/>
 				</fileset>
 			</copy>
 		</if>
 		<if test="${SubProject == 'AspNetIntegration'}">
-			<copy todir="${ReleaseStagingBinDirectory}">
-				<fileset basedir="${path::combine(SourceDirectory, path::combine('AspNetIntegration', path::combine('bin', BuildConfiguration)))}">
+			<property name="AssemblyInfoPath" value="${path::combine(SourceDirectory, 'AspNetIntegration\Properties\AssemblyInfo.cs')}"/>
+			<copy todir="${NuGetStagingBinDirectory}">
+				<fileset basedir="${path::combine(SourceDirectory, path::combine('AspNetIntegration\bin', BuildConfiguration))}">
 					<include name="Junior.Route.AspNetIntegration.*"/>
 				</fileset>
 			</copy>
 		</if>
 		<if test="${SubProject == 'Diagnostics'}">
-			<copy todir="${ReleaseStagingBinDirectory}">
-				<fileset basedir="${path::combine(SourceDirectory, path::combine('Diagnostics', path::combine('bin', BuildConfiguration)))}">
+			<property name="AssemblyInfoPath" value="${path::combine(SourceDirectory, 'Diagnostics\Properties\AssemblyInfo.cs')}"/>
+			<copy todir="${NuGetStagingBinDirectory}">
+				<fileset basedir="${path::combine(SourceDirectory, path::combine('Diagnostics\bin', BuildConfiguration))}">
 					<include name="Junior.Route.Diagnostics.*"/>
 				</fileset>
 			</copy>
 		</if>
 		<if test="${SubProject == 'AspNetIntegration-Diagnostics'}">
-			<copy todir="${ReleaseStagingBinDirectory}">
-				<fileset basedir="${path::combine(SourceDirectory, path::combine('AspNetIntegration.Diagnostics', path::combine('bin', BuildConfiguration)))}">
+			<property name="AssemblyInfoPath" value="${path::combine(SourceDirectory, 'AspNetIntegration.Diagnostics\Properties\AssemblyInfo.cs')}"/>
+			<copy todir="${NuGetStagingBinDirectory}">
+				<fileset basedir="${path::combine(SourceDirectory, path::combine('AspNetIntegration.Diagnostics\bin', BuildConfiguration))}">
 					<include name="Junior.Route.AspNetIntegration.Diagnostics.*"/>
 				</fileset>
 			</copy>
 		</if>
 		<if test="${SubProject == 'Core-Diagnostics'}">
-			<copy todir="${ReleaseStagingBinDirectory}">
-				<fileset basedir="${path::combine(SourceDirectory, path::combine('Routing.Diagnostics', path::combine('bin', BuildConfiguration)))}">
+			<property name="AssemblyInfoPath" value="${path::combine(SourceDirectory, 'Routing.Diagnostics\Properties\AssemblyInfo.cs')}"/>
+			<copy todir="${NuGetStagingBinDirectory}">
+				<fileset basedir="${path::combine(SourceDirectory, path::combine('Routing.Diagnostics\bin', BuildConfiguration))}">
 					<include name="Junior.Route.Routing.Diagnostics.*"/>
 				</fileset>
 			</copy>
 		</if>
 		<if test="${SubProject == 'AutoRouting'}">
-			<copy todir="${ReleaseStagingBinDirectory}">
-				<fileset basedir="${path::combine(SourceDirectory, path::combine('AutoRouting', path::combine('bin', BuildConfiguration)))}">
+			<property name="AssemblyInfoPath" value="${path::combine(SourceDirectory, 'AutoRouting\Properties\AssemblyInfo.cs')}"/>
+			<copy todir="${NuGetStagingBinDirectory}">
+				<fileset basedir="${path::combine(SourceDirectory, path::combine('AutoRouting\bin', BuildConfiguration))}">
 					<include name="Junior.Route.AutoRouting.*"/>
 				</fileset>
 			</copy>
 		</if>
+		<if test="${SubProject == 'RazorEngine'}">
+			<property name="AssemblyInfoPath" value="${path::combine(SourceDirectory, 'ViewEngines.RazorEngine\Properties\AssemblyInfo.cs')}"/>
+			<copy todir="${NuGetStagingBinDirectory}">
+				<fileset basedir="${path::combine(SourceDirectory, path::combine('ViewEngines.RazorEngine\bin', BuildConfiguration))}">
+					<include name="Junior.Route.ViewEngines.RazorEngine.*"/>
+				</fileset>
+			</copy>
+		</if>
+		<script language="C#">
+			<imports>
+				<import namespace="System.Linq"/>
+				<import namespace="System.Text.RegularExpressions"/>
+			</imports>
+			<references>
+				<include name="System.dll"/>
+				<include name="System.Core.dll"/>
+			</references>
+			<code>
+				<![CDATA[
+				public static void ScriptMain(Project project)
+				{
+					string assemblyInfoPath = project.Properties["AssemblyInfoPath"];
+					string assemblyInfo = File.ReadAllText(assemblyInfoPath);
+					string version = Regex.Match(assemblyInfo, @"(?<=AssemblyFileVersion\(\"").*?(?=\""\))").Value;
+					
+					version = String.Join(".", version.Split('.').Take(3));
+					
+					project.Properties["NuGetVersion"] = version;
+				}
+				]]>
+			</code>
+		</script>
 	</target>
-	<target name="CreateReleaseArchives">
-		<zip zipfile="${ReleaseArchivePath}">
-			<fileset basedir="${ReleaseStagingDirectory}">
-				<include name="**\*"/>
-			</fileset>
-		</zip>
-	</target>
-	<target name="StageNuGetFiles">
+	<target name="DeleteStagedNuGetFiles">
 		<delete dir="${NuGetStagingDirectory}"/>
-		<move todir="${NuGetStagingDirectory}">
-			<fileset basedir="${ReleaseStagingVersionDirectory}"/>
-		</move>
 	</target>
 	<target name="CreateNuGetPackage">
 		<exec
@@ -210,9 +200,5 @@
 			<arg value="-OutputDirectory"/>
 			<arg value="${NuGetResultsDirectory}"/>
 		</exec>
-	</target>
-	<target name="DeleteStagedFiles">
-		<delete dir="${ReleaseStagingDirectory}"/>
-		<delete dir="${NuGetStagingDirectory}"/>
 	</target>
 </project>

@@ -45,6 +45,7 @@ namespace JuniorRouteWebApplication
 			AutoRouteCollection autoRouteCollection = new AutoRouteCollection()
 				.RestrictionContainer(restrictionContainer)
 				.Assemblies(Assembly.GetExecutingAssembly())
+				.ClassesInNamespace(endpointNamespace)
 				.NameAfterRelativeClassNamespaceAndClassName(endpointNamespace)
 				.IdRandomly(guidFactory)
 				.ResolvedRelativeUrlFromRelativeClassNamespacesAndClassNames(endpointNamespace)

@@ -206,13 +206,22 @@
     <Compile Include="Routing\Restrictions\HeaderRestrictionTester.cs" />
     <Compile Include="Routing\RouteCollectionTester.cs" />
     <Compile Include="Routing\RouteTester.cs" />
-    <Compile Include="ViewEngines.RazorEngine\RazorTemplateNameMappers\RelativeDirectoryAndFilenameMapperTester.cs" />
-    <Compile Include="ViewEngines.RazorEngine\RazorTemplateNameMappers\FilenameWithoutExtensionMapperTester.cs" />
-    <Compile Include="ViewEngines.RazorEngine\RazorTemplateNameMappers\RelativeDirectoryAndFilenameWithoutExtensionMapperTester.cs" />
-    <Compile Include="ViewEngines.RazorEngine\RazorTemplateRespositories\CSharpFileSystemRepositoryTester.cs" />
-    <Compile Include="ViewEngines.RazorEngine\RazorTemplateRespositories\FileSystemRepositoryTester.cs" />
-    <Compile Include="ViewEngines.RazorEngine\RazorTemplateRespositories\VisualBasicFileSystemRepositoryTester.cs" />
-    <Compile Include="ViewEngines.RazorEngine\RazorTemplateTester.cs" />
+    <Compile Include="ViewEngines.Razor.Routing\TemplatePathResolvers\CSharpPathResolverTester.cs" />
+    <Compile Include="ViewEngines.Razor.Routing\TemplatePathResolvers\VisualBasicPathResolverTester.cs" />
+    <Compile Include="ViewEngines.Razor.Routing\TemplateRepositories\FileSystemRepositoryTester.cs" />
+    <Compile Include="ViewEngines.Razor\CodeDomProviderFactories\FileExtensionFactoryTester.cs" />
+    <Compile Include="ViewEngines.Razor\CompiledTemplateFactories\ActivatorFactoryTester.cs" />
+    <Compile Include="ViewEngines.Razor\TemplateAssemblyReferenceResolvers\AppDomainResolverTester.cs" />
+    <Compile Include="ViewEngines.Razor\TemplateClassNameBuilders\RandomGuidBuilderTester.cs" />
+    <Compile Include="ViewEngines.Razor\TemplateCodeBuilders\BuildCodeResultTester.cs" />
+    <Compile Include="ViewEngines.Razor\TemplateCodeBuilders\CSharpBuilderTester.cs" />
+    <Compile Include="ViewEngines.Razor\TemplateCodeBuilders\TemplateCodeBuilderFactoryTester.cs" />
+    <Compile Include="ViewEngines.Razor\TemplateCodeBuilders\VisualBasicBuilderTester.cs" />
+    <Compile Include="ViewEngines.Razor\TemplateCodeBuilders\VisualBasicCodeGeneratorTester.cs" />
+    <Compile Include="ViewEngines.Razor\TemplateCodeBuilders\CSharpCodeGeneratorTester.cs" />
+    <Compile Include="ViewEngines.Razor\TemplateCodeBuilders\CSharpCodeLanguageTester.cs" />
+    <Compile Include="ViewEngines.Razor\TemplateCodeBuilders\TemplateWriterTester.cs" />
+    <Compile Include="ViewEngines.Razor\TemplateCodeBuilders\VisualBasicCodeLanguageTester.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Junior.Common, Version=2.0.0.0, Culture=neutral, PublicKeyToken=998713eb9a0cce30, processorArchitecture=MSIL">
@@ -222,24 +231,18 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Newtonsoft.Json.4.5.10\lib\net40\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.4.5.11\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="nunit.framework">
-      <HintPath>..\packages\NUnit.2.6.1\lib\nunit.framework.dll</HintPath>
-    </Reference>
-    <Reference Include="RazorEngine, Version=3.0.8.0, Culture=neutral, PublicKeyToken=9ee697374c7e744a, processorArchitecture=MSIL">
+    <Reference Include="nunit.framework, Version=2.6.2.12296, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\RazorEngine.3.0.8\lib\net40\RazorEngine.dll</HintPath>
+      <HintPath>..\packages\NUnit.2.6.2\lib\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="Rhino.Mocks">
       <HintPath>..\packages\RhinoMocks.3.6.1\lib\net\Rhino.Mocks.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Web" />
-    <Reference Include="System.Web.Razor, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <Private>True</Private>
-      <HintPath>..\packages\RazorEngine.3.0.8\lib\net40\System.Web.Razor.dll</HintPath>
-    </Reference>
+    <Reference Include="System.Web.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
@@ -274,12 +277,18 @@
       <Project>{c584f305-4ee6-41b8-8248-e9bf5d96ca6b}</Project>
       <Name>Routing</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ViewEngines.RazorEngine\ViewEngines.RazorEngine.csproj">
-      <Project>{3681be9d-322f-47b2-9d8b-f9dfdfadf4e8}</Project>
-      <Name>ViewEngines.RazorEngine</Name>
+    <ProjectReference Include="..\ViewEngines.Razor.Routing\ViewEngines.Razor.Routing.csproj">
+      <Project>{0996264d-5be9-4003-ad8c-728093cb08a0}</Project>
+      <Name>ViewEngines.Razor.Routing</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ViewEngines.Razor\ViewEngines.Razor.csproj">
+      <Project>{0dc7d2ef-6f9d-4ea6-b899-f8eb8a5984b2}</Project>
+      <Name>ViewEngines.Razor</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="ViewEngines.Razor\TemplateCompilers\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

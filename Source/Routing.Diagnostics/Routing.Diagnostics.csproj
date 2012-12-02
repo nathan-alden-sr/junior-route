@@ -51,8 +51,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\JuniorCommon.2.0.1\lib\net40\Junior.Common.dll</HintPath>
     </Reference>
-    <Reference Include="Spark">
-      <HintPath>..\packages\Spark.1.7.4.0\lib\NET40\Spark.dll</HintPath>
+    <Reference Include="Spark, Version=1.7.0.0, Culture=neutral, PublicKeyToken=7f8549eed921a12c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Spark.1.7.5.0\lib\NET40\Spark.dll</HintPath>
     </Reference>
     <Reference Include="System" />
   </ItemGroup>

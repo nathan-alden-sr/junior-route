@@ -22,11 +22,20 @@ namespace Junior.Route.AutoRouting.Containers
 
 			if (!_instances.TryGetValue(type, out instance))
 			{
-				instance = Activator.CreateInstance(type);
+				Type resolvedType = ResolveType(type);
+
+				instance = Activator.CreateInstance(resolvedType);
 				_instances.Add(type, instance);
 			}
 
 			return instance;
+		}
+
+		protected virtual Type ResolveType(Type type)
+		{
+			type.ThrowIfNull("type");
+
+			return type;
 		}
 	}
 }

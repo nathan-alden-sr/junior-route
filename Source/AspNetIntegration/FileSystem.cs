@@ -53,7 +53,7 @@ namespace Junior.Route.AspNetIntegration
 
 			if (size > Int32.MaxValue)
 			{
-				throw new ArgumentException(String.Format("File size of '{0}' is larger than {1}.", path, Int32.MaxValue));
+				throw new ArgumentException(String.Format("File size of '{0}' is larger than {1}.", path, Int32.MaxValue), "path");
 			}
 
 			return (int)size;

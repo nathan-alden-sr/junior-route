@@ -8,6 +8,7 @@ namespace Junior.Route.Routing.Caching
 	public sealed class CachePolicy : ICachePolicy
 	{
 		private bool? _allowResponseInBrowserHistory;
+		private bool? _allowsServerCaching;
 		private HttpCacheability? _cacheability;
 		private DateTime? _clientCacheExpirationUtcTimestamp;
 		private TimeSpan? _clientCacheMaxAge;
@@ -21,7 +22,6 @@ namespace Junior.Route.Routing.Caching
 		private HttpCacheRevalidation? _revalidation;
 		private DateTime? _serverCacheExpirationUtcTimestamp;
 		private TimeSpan? _serverCacheMaxAge;
-		private bool? _allowsServerCaching;
 
 		bool ICachePolicy.HasPolicy
 		{

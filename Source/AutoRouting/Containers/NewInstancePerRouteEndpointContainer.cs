@@ -15,7 +15,16 @@ namespace Junior.Route.AutoRouting.Containers
 		{
 			type.ThrowIfNull("type");
 
-			return Activator.CreateInstance(type);
+			Type resolvedType = ResolveType(type);
+
+			return Activator.CreateInstance(resolvedType);
+		}
+
+		protected virtual Type ResolveType(Type type)
+		{
+			type.ThrowIfNull("type");
+
+			return type;
 		}
 	}
 }

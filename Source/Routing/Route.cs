@@ -944,11 +944,11 @@ namespace Junior.Route.Routing
 
 				if (returnType != delegateType && delegateType.IsInterface && !returnType.ImplementsInterface<T>())
 				{
-					throw new ArgumentException(String.Format("Return type must implement {0}.", delegateType.FullName));
+					throw new ArgumentException(String.Format("Return type must implement {0}.", delegateType.FullName), "returnType");
 				}
 				if (returnType != delegateType && !delegateType.IsInterface && !returnType.IsSubclassOf(delegateType))
 				{
-					throw new ArgumentException(String.Format("Return type must derive {0}.", delegateType.FullName));
+					throw new ArgumentException(String.Format("Return type must derive {0}.", delegateType.FullName), "returnType");
 				}
 
 				_response = response;

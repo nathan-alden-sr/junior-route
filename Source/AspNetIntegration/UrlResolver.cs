@@ -47,11 +47,11 @@ namespace Junior.Route.AspNetIntegration
 
 			if (routes.Length > 1)
 			{
-				throw new ArgumentException(String.Format("More than one route exists with name '{0}'.", routeName));
+				throw new ArgumentException(String.Format("More than one route exists with name '{0}'.", routeName), "routeName");
 			}
 			if (!routes.Any())
 			{
-				throw new ArgumentException(String.Format("Route with name '{0}' was not found.", routeName));
+				throw new ArgumentException(String.Format("Route with name '{0}' was not found.", routeName), "routeName");
 			}
 
 			return Absolute(routes[0].ResolvedRelativeUrl);
@@ -63,7 +63,7 @@ namespace Junior.Route.AspNetIntegration
 
 			if (route == null)
 			{
-				throw new ArgumentException(String.Format("Route with ID '{0}' was not found.", routeId));
+				throw new ArgumentException(String.Format("Route with ID '{0}' was not found.", routeId), "routeId");
 			}
 
 			return Absolute(route.ResolvedRelativeUrl);

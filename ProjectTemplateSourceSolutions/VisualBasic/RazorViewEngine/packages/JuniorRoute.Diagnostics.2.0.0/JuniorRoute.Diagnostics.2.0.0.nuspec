@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>JuniorRoute.Diagnostics</id>
+    <version>2.0.0</version>
+    <title>JuniorRoute - Diagnostics</title>
+    <authors>Nathan Alden Sr.</authors>
+    <owners>Nathan Alden Sr.</owners>
+    <projectUrl>https://nathanalden.github.com/JuniorRoute</projectUrl>
+    <iconUrl>https://docs.google.com/uc?export=download&amp;id=0B8a4O6RATfaXQ2YxekpxbXRfUjQ</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>JuniorRoute is the easy-to-learn, easy-to-use routing framework for .NET. This package provides a diagnostics framework for easily creating diagnostics routes.</description>
+    <releaseNotes />
+    <tags>Junior</tags>
+    <dependencies>
+      <dependency id="JuniorCommon" version="2.0.1" />
+      <dependency id="JuniorRoute.Core" version="2.0.0" />
+      <dependency id="Spark" version="1.7.5" />
+    </dependencies>
+  </metadata>
+</package>

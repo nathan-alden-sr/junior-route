@@ -46,9 +46,9 @@ Public Class JuniorRouteConfiguration
 			.ClassesInNamespace(endpointNamespace)
 			.NameAfterRelativeClassNamespaceAndClassName(endpointNamespace)
 			.IdRandomly(guidFactory)
-			.ResolvedRelativeUrlFromRelativeClassNamespacesAndClassNames(endpointNamespace)
+			.ResolvedRelativeUrlFromRelativeClassNamespaceAndClassName(endpointNamespace)
 			.RestrictUsingAttributes (Of MethodAttribute)()
-			.RestrictRelativeUrlsToRelativeClassNamespacesAndClassNames(endpointNamespace)
+			.RestrictRelativePathsToRelativeClassNamespaceAndClassName(endpointNamespace)
 			.RespondWithMethodReturnValuesThatImplementIResponse(parameterMappers)
 			' Add diagnostic routes
 			.AdditionalRoutes(

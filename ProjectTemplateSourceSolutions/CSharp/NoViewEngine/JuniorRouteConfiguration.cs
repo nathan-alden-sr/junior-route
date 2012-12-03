@@ -48,9 +48,9 @@ namespace JuniorRouteWebApplication
 				.ClassesInNamespace(endpointNamespace)
 				.NameAfterRelativeClassNamespaceAndClassName(endpointNamespace)
 				.IdRandomly(guidFactory)
-				.ResolvedRelativeUrlFromRelativeClassNamespacesAndClassNames(endpointNamespace)
+				.ResolvedRelativeUrlFromRelativeClassNamespaceAndClassName(endpointNamespace)
 				.RestrictHttpMethodsToMethodsNamedAfterStandardHttpMethods()
-				.RestrictRelativeUrlsToRelativeClassNamespacesAndClassNames(endpointNamespace)
+				.RestrictRelativePathsToRelativeClassNamespaceAndClassName(endpointNamespace)
 				.RespondWithMethodReturnValuesThatImplementIResponse(parameterMappers)
 				// Add diagnostics routes
 				.AdditionalRoutes(

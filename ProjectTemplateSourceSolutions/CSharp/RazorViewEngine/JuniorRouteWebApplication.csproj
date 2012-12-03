@@ -1,0 +1,167 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{833724E4-FEA5-4001-9000-A80E010DE8A7}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>JuniorRouteWebApplication</RootNamespace>
+    <AssemblyName>JuniorRouteWebApplication</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <UseIISExpress>true</UseIISExpress>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="Global.asax" />
+    <Content Include="Web.config" />
+    <Content Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Containers\EndpointContainer.cs" />
+    <Compile Include="Endpoints\HelloWorld.cs" />
+    <Compile Include="JuniorRouteConfiguration.cs" />
+    <Compile Include="JuniorRoute.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="EcmaScript.NET">
+      <HintPath>packages\YUICompressor.NET.2.1.1.0\lib\NET20\EcmaScript.NET.dll</HintPath>
+    </Reference>
+    <Reference Include="Iesi.Collections">
+      <HintPath>packages\YUICompressor.NET.2.1.1.0\lib\NET20\Iesi.Collections.dll</HintPath>
+    </Reference>
+    <Reference Include="Junior.Common">
+      <HintPath>packages\JuniorCommon.2.0.1\lib\net40\Junior.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Junior.Route.AspNetIntegration">
+      <HintPath>packages\JuniorRoute.AspNetIntegration.2.0.0\lib\net40\Junior.Route.AspNetIntegration.dll</HintPath>
+    </Reference>
+    <Reference Include="Junior.Route.AspNetIntegration.Diagnostics">
+      <HintPath>packages\JuniorRoute.AspNetIntegration.Diagnostics.2.0.0\lib\net40\Junior.Route.AspNetIntegration.Diagnostics.dll</HintPath>
+    </Reference>
+    <Reference Include="Junior.Route.Assets">
+      <HintPath>packages\JuniorRoute.Assets.2.0.0\lib\net40\Junior.Route.Assets.dll</HintPath>
+    </Reference>
+    <Reference Include="Junior.Route.Assets.YuiCompressor">
+      <HintPath>packages\JuniorRoute.Assets.YuiCompressor.2.0.0\lib\net40\Junior.Route.Assets.YuiCompressor.dll</HintPath>
+    </Reference>
+    <Reference Include="Junior.Route.AutoRouting">
+      <HintPath>packages\JuniorRoute.AutoRouting.2.0.0\lib\net40\Junior.Route.AutoRouting.dll</HintPath>
+    </Reference>
+    <Reference Include="Junior.Route.Common">
+      <HintPath>packages\JuniorRoute.Core.2.0.0\lib\net40\Junior.Route.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Junior.Route.Diagnostics">
+      <HintPath>packages\JuniorRoute.Diagnostics.2.0.0\lib\net40\Junior.Route.Diagnostics.dll</HintPath>
+    </Reference>
+    <Reference Include="Junior.Route.Http">
+      <HintPath>packages\JuniorRoute.Core.2.0.0\lib\net40\Junior.Route.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="Junior.Route.Routing">
+      <HintPath>packages\JuniorRoute.Core.2.0.0\lib\net40\Junior.Route.Routing.dll</HintPath>
+    </Reference>
+    <Reference Include="Junior.Route.Routing.Diagnostics">
+      <HintPath>packages\JuniorRoute.Core.Diagnostics.2.0.0\lib\net40\Junior.Route.Routing.Diagnostics.dll</HintPath>
+    </Reference>
+    <Reference Include="Junior.Route.ViewEngines.Razor, Version=1.0.0.0, Culture=neutral, PublicKeyToken=39d86c91cf0eeeae, processorArchitecture=MSIL">
+      <HintPath>packages\JuniorRoute.ViewEngines.Razor.1.0.1\lib\net40\Junior.Route.ViewEngines.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="Junior.Route.ViewEngines.Razor.Routing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=39d86c91cf0eeeae, processorArchitecture=MSIL">
+      <HintPath>packages\JuniorRoute.ViewEngines.Razor.Routing.1.0.1\lib\net40\Junior.Route.ViewEngines.Razor.Routing.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>packages\Newtonsoft.Json.4.5.11\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Spark">
+      <HintPath>packages\Spark.1.7.5.0\lib\NET40\Spark.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Helpers, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>packages\Microsoft.AspNet.WebPages.2.0.20710.0\lib\net40\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>packages\Microsoft.AspNet.Mvc.4.0.20710.0\lib\net40\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>packages\Microsoft.AspNet.Razor.2.0.20715.0\lib\net40\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>packages\Microsoft.AspNet.WebPages.2.0.20710.0\lib\net40\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>packages\Microsoft.AspNet.WebPages.2.0.20710.0\lib\net40\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>packages\Microsoft.AspNet.WebPages.2.0.20710.0\lib\net40\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="Yahoo.Yui.Compressor">
+      <HintPath>packages\YUICompressor.NET.2.1.1.0\lib\NET20\Yahoo.Yui.Compressor.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Templates\HelloWorld.cshtml" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <SaveServerSettingsInUserFile>True</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

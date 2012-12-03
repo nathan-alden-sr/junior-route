@@ -137,40 +137,40 @@
       <HintPath>packages\JuniorCommon.2.0.1\lib\net40\Junior.Common.dll</HintPath>
     </Reference>
     <Reference Include="Junior.Route.AspNetIntegration">
-      <HintPath>packages\JuniorRoute.AspNetIntegration.1.0.2\lib\net40\Junior.Route.AspNetIntegration.dll</HintPath>
+      <HintPath>packages\JuniorRoute.AspNetIntegration.2.0.0\lib\net40\Junior.Route.AspNetIntegration.dll</HintPath>
     </Reference>
     <Reference Include="Junior.Route.AspNetIntegration.Diagnostics">
-      <HintPath>packages\JuniorRoute.AspNetIntegration.Diagnostics.1.0.1\lib\net40\Junior.Route.AspNetIntegration.Diagnostics.dll</HintPath>
+      <HintPath>packages\JuniorRoute.AspNetIntegration.Diagnostics.2.0.0\lib\net40\Junior.Route.AspNetIntegration.Diagnostics.dll</HintPath>
     </Reference>
     <Reference Include="Junior.Route.Assets">
-      <HintPath>packages\JuniorRoute.Assets.1.0.0\lib\net40\Junior.Route.Assets.dll</HintPath>
+      <HintPath>packages\JuniorRoute.Assets.2.0.0\lib\net40\Junior.Route.Assets.dll</HintPath>
     </Reference>
     <Reference Include="Junior.Route.Assets.YuiCompressor">
-      <HintPath>packages\JuniorRoute.Assets.YuiCompressor.1.0.2\lib\net40\Junior.Route.Assets.YuiCompressor.dll</HintPath>
+      <HintPath>packages\JuniorRoute.Assets.YuiCompressor.2.0.0\lib\net40\Junior.Route.Assets.YuiCompressor.dll</HintPath>
     </Reference>
     <Reference Include="Junior.Route.AutoRouting">
-      <HintPath>packages\JuniorRoute.AutoRouting.1.0.1\lib\net40\Junior.Route.AutoRouting.dll</HintPath>
+      <HintPath>packages\JuniorRoute.AutoRouting.2.0.0\lib\net40\Junior.Route.AutoRouting.dll</HintPath>
     </Reference>
     <Reference Include="Junior.Route.Common">
-      <HintPath>packages\JuniorRoute.Core.1.0.2\lib\net40\Junior.Route.Common.dll</HintPath>
+      <HintPath>packages\JuniorRoute.Core.2.0.0\lib\net40\Junior.Route.Common.dll</HintPath>
     </Reference>
     <Reference Include="Junior.Route.Diagnostics">
-      <HintPath>packages\JuniorRoute.Diagnostics.1.0.5\lib\net40\Junior.Route.Diagnostics.dll</HintPath>
+      <HintPath>packages\JuniorRoute.Diagnostics.2.0.0\lib\net40\Junior.Route.Diagnostics.dll</HintPath>
     </Reference>
     <Reference Include="Junior.Route.Http">
-      <HintPath>packages\JuniorRoute.Core.1.0.2\lib\net40\Junior.Route.Http.dll</HintPath>
+      <HintPath>packages\JuniorRoute.Core.2.0.0\lib\net40\Junior.Route.Http.dll</HintPath>
     </Reference>
     <Reference Include="Junior.Route.Routing">
-      <HintPath>packages\JuniorRoute.Core.1.0.2\lib\net40\Junior.Route.Routing.dll</HintPath>
+      <HintPath>packages\JuniorRoute.Core.2.0.0\lib\net40\Junior.Route.Routing.dll</HintPath>
     </Reference>
     <Reference Include="Junior.Route.Routing.Diagnostics">
-      <HintPath>packages\JuniorRoute.Core.Diagnostics.1.0.5\lib\net40\Junior.Route.Routing.Diagnostics.dll</HintPath>
+      <HintPath>packages\JuniorRoute.Core.Diagnostics.2.0.0\lib\net40\Junior.Route.Routing.Diagnostics.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
-      <HintPath>packages\Newtonsoft.Json.4.5.10\lib\net40\Newtonsoft.Json.dll</HintPath>
+      <HintPath>packages\Newtonsoft.Json.4.5.11\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Spark">
-      <HintPath>packages\Spark.1.7.4.0\lib\NET40\Spark.dll</HintPath>
+      <HintPath>packages\Spark.1.7.5.0\lib\NET40\Spark.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />

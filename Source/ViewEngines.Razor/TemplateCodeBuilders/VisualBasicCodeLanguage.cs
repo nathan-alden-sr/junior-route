@@ -3,7 +3,7 @@ using System.Web.Razor.Generator;
 
 namespace Junior.Route.ViewEngines.Razor.TemplateCodeBuilders
 {
-	public class VisualBasicCodeLanguage : CSharpRazorCodeLanguage
+	public class VisualBasicCodeLanguage : VBRazorCodeLanguage
 	{
 		private readonly bool _throwExceptionOnParserError;
 

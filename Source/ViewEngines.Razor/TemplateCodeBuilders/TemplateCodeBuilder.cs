@@ -34,7 +34,7 @@ namespace Junior.Route.ViewEngines.Razor.TemplateCodeBuilders
 			className.ThrowIfNull("className");
 			namespaceImports.ThrowIfNull("namespaceImports");
 
-			string defaultBaseClass = MakeGlobalNamespace(BuildTemplateTypeName<TTemplate>());
+			string defaultBaseClass = BuildTemplateTypeName<TTemplate>();
 			string templateWriterNamespaceAndTypeName = MakeGlobalNamespace(typeof(TemplateWriter).FullName);
 
 			var host = new RazorEngineHost(_codeLanguage, () => _markupParser)

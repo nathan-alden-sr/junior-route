@@ -32,7 +32,7 @@
 		<call target="RunUnitTests"/>
 		<if test="${BuildConfiguration == 'Release'}">
 			<call target="RecreateNuGetResultsDirectory"/>
-			<foreach item="String" in="Core,Assets,Assets-YuiCompressor,AspNetIntegration,Diagnostics,AspNetIntegration-Diagnostics,Core-Diagnostics,AutoRouting,ViewEngines-RazorEngine" delim="," property="SubProject">
+			<foreach item="String" in="Core,Assets,Assets-YuiCompressor,AspNetIntegration,Diagnostics,AspNetIntegration-Diagnostics,Core-Diagnostics,AutoRouting,ViewEngines-Razor,ViewEngines-Razor-Routing" delim="," property="SubProject">
 				<call target="StageNuGetFiles"/>
 				<call target="CreateNuGetPackage"/>
 				<call target="DeleteStagedNuGetFiles"/>
@@ -152,11 +152,19 @@
 				</fileset>
 			</copy>
 		</if>
-		<if test="${SubProject == 'ViewEngines-RazorEngine'}">
-			<property name="AssemblyInfoPath" value="${path::combine(SourceDirectory, 'ViewEngines.RazorEngine\Properties\AssemblyInfo.cs')}"/>
+		<if test="${SubProject == 'ViewEngines-Razor'}">
+			<property name="AssemblyInfoPath" value="${path::combine(SourceDirectory, 'ViewEngines.Razor\Properties\AssemblyInfo.cs')}"/>
 			<copy todir="${NuGetStagingBinDirectory}">
-				<fileset basedir="${path::combine(SourceDirectory, path::combine('ViewEngines.RazorEngine\bin', BuildConfiguration))}">
-					<include name="Junior.Route.ViewEngines.RazorEngine.*"/>
+				<fileset basedir="${path::combine(SourceDirectory, path::combine('ViewEngines.Razor\bin', BuildConfiguration))}">
+					<include name="Junior.Route.ViewEngines.Razor.*"/>
+				</fileset>
+			</copy>
+		</if>
+		<if test="${SubProject == 'ViewEngines-Razor-Routing'}">
+			<property name="AssemblyInfoPath" value="${path::combine(SourceDirectory, 'ViewEngines.Razor.Routing\Properties\AssemblyInfo.cs')}"/>
+			<copy todir="${NuGetStagingBinDirectory}">
+				<fileset basedir="${path::combine(SourceDirectory, path::combine('ViewEngines.Razor.Routing\bin', BuildConfiguration))}">
+					<include name="Junior.Route.ViewEngines.Razor.Routing.*"/>
 				</fileset>
 			</copy>
 		</if>

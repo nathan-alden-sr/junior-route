@@ -25,7 +25,7 @@ namespace Junior.Route.UnitTests.ViewEngines.Razor.Routing.TemplateRepositories
 	public static class FileSystemRepositoryTester
 	{
 		[TestFixture]
-		public class When_executing_template_with_anonymous_model
+		public class When_getting_template_with_anonymous_model
 		{
 			[SetUp]
 			public void SetUp()
@@ -46,7 +46,7 @@ namespace Junior.Route.UnitTests.ViewEngines.Razor.Routing.TemplateRepositories
 				_compiledTemplateFactory = MockRepository.GenerateMock<ICompiledTemplateFactory>();
 				_repository = new FileSystemRepository(_pathResolver, _fileSystem, _compiler, _classNameBuilder, _codeBuilder, _codeDomProviderFactory, _compiledTemplateFactory);
 				Stub(model);
-				Execute(model);
+				Get(model);
 			}
 
 			private void Stub<T>(T model)
@@ -65,12 +65,12 @@ namespace Junior.Route.UnitTests.ViewEngines.Razor.Routing.TemplateRepositories
 				_compiledTemplateFactory.Stub(arg => arg.CreateFromType<T>(Arg<Type>.Is.Anything)).Return(template);
 			}
 
-			private void Execute<T>(T model)
+			private void Get<T>(T model)
 			{
-				_repository.Execute<ITemplate<T>, T>("Template", model, _namespaces);
+				_repository.Get<ITemplate<T>, T>("Template", model, _namespaces);
 			}
 
-			private readonly IEnumerable<string> _namespaces = "System.Linq".ToEnumerable();
+			private readonly IEnumerable<string> _namespaces = "System.Text".ToEnumerable();
 			private ITemplatePathResolver _pathResolver;
 			private IFileSystem _fileSystem;
 			private ITemplateCompiler _compiler;
@@ -101,7 +101,7 @@ namespace Junior.Route.UnitTests.ViewEngines.Razor.Routing.TemplateRepositories
 		}
 
 		[TestFixture]
-		public class When_executing_template_with_non_anonymous_model
+		public class When_getting_template_with_non_anonymous_model
 		{
 			[SetUp]
 			public void SetUp()
@@ -130,10 +130,10 @@ namespace Junior.Route.UnitTests.ViewEngines.Razor.Routing.TemplateRepositories
 				_compiledTemplateFactory = MockRepository.GenerateMock<ICompiledTemplateFactory>();
 				_compiledTemplateFactory.Stub(arg => arg.CreateFromType<string>(Arg<Type>.Is.Anything)).Return(_template);
 				_repository = new FileSystemRepository(_pathResolver, _fileSystem, _compiler, _classNameBuilder, _codeBuilder, _codeDomProviderFactory, _compiledTemplateFactory);
-				_repository.Execute<ITemplate<string>, string>("Template", "Model", _namespaces);
+				_repository.Get<ITemplate<string>, string>("Template", "Model", _namespaces);
 			}
 
-			private readonly IEnumerable<string> _namespaces = "System.Linq".ToEnumerable();
+			private readonly IEnumerable<string> _namespaces = "System.Text".ToEnumerable();
 			private ITemplatePathResolver _pathResolver;
 			private IFileSystem _fileSystem;
 			private ITemplateCompiler _compiler;
@@ -144,12 +144,6 @@ namespace Junior.Route.UnitTests.ViewEngines.Razor.Routing.TemplateRepositories
 			private FileSystemRepository _repository;
 			private ITemplate<string> _template;
 			private CodeDomProvider _codeDomProvider;
-
-			[Test]
-			public void Must_execute_template()
-			{
-				_template.AssertWasCalled(arg => arg.Execute());
-			}
 
 			[Test]
 			public void Must_read_file_contents()
@@ -172,7 +166,7 @@ namespace Junior.Route.UnitTests.ViewEngines.Razor.Routing.TemplateRepositories
 			[Test]
 			public void Must_use_cached_type_on_subsequent_calls()
 			{
-				_repository.Execute<ITemplate<string>, string>("Template", "Model", _namespaces);
+				_repository.Get<ITemplate<string>, string>("Template", "Model", _namespaces);
 				_compiler.AssertWasCalled(
 					arg => arg.Compile<ITemplate<string>>(
 						Arg<string>.Is.Anything,
@@ -210,7 +204,7 @@ namespace Junior.Route.UnitTests.ViewEngines.Razor.Routing.TemplateRepositories
 		}
 
 		[TestFixture]
-		public class When_executing_template_without_model
+		public class When_getting_template_without_model
 		{
 			[SetUp]
 			public void SetUp()
@@ -230,10 +224,10 @@ namespace Junior.Route.UnitTests.ViewEngines.Razor.Routing.TemplateRepositories
 				_compiledTemplateFactory = MockRepository.GenerateMock<ICompiledTemplateFactory>();
 				_compiledTemplateFactory.Stub(arg => arg.CreateFromType(Arg<Type>.Is.Anything)).Return(_template);
 				_repository = new FileSystemRepository(_pathResolver, _fileSystem, _compiler, _classNameBuilder, _codeBuilder, _codeDomProviderFactory, _compiledTemplateFactory);
-				_repository.Execute("Template", _namespaces);
+				_repository.Get<ITemplate>("Template", _namespaces);
 			}
 
-			private readonly IEnumerable<string> _namespaces = "System.Linq".ToEnumerable();
+			private readonly IEnumerable<string> _namespaces = "System.Text".ToEnumerable();
 			private ITemplatePathResolver _pathResolver;
 			private IFileSystem _fileSystem;
 			private ITemplateCompiler _compiler;
@@ -244,12 +238,6 @@ namespace Junior.Route.UnitTests.ViewEngines.Razor.Routing.TemplateRepositories
 			private FileSystemRepository _repository;
 			private ITemplate _template;
 			private CodeDomProvider _codeDomProvider;
-
-			[Test]
-			public void Must_execute_template()
-			{
-				_template.AssertWasCalled(arg => arg.Execute());
-			}
 
 			[Test]
 			public void Must_read_file_contents()
@@ -272,9 +260,9 @@ namespace Junior.Route.UnitTests.ViewEngines.Razor.Routing.TemplateRepositories
 			[Test]
 			public void Must_use_cached_type_on_subsequent_calls()
 			{
-				_repository.Execute("Template", _namespaces);
+				_repository.Get<ITemplate>("Template", _namespaces);
 				_compiler.AssertWasCalled(
-					arg => arg.Compile<Template>(
+					arg => arg.Compile<ITemplate>(
 						Arg<string>.Is.Anything,
 						Arg<string>.Is.Anything,
 						Arg<ITemplateCodeBuilder>.Is.Anything,
@@ -305,7 +293,7 @@ namespace Junior.Route.UnitTests.ViewEngines.Razor.Routing.TemplateRepositories
 			[Test]
 			public void Must_use_provided_compiler()
 			{
-				_compiler.AssertWasCalled(arg => arg.Compile<Template>("Hello, world.", "ClassName", _codeBuilder, _codeDomProvider, null, _namespaces));
+				_compiler.AssertWasCalled(arg => arg.Compile<ITemplate>("Hello, world.", "ClassName", _codeBuilder, _codeDomProvider, null, _namespaces));
 			}
 		}
 	}

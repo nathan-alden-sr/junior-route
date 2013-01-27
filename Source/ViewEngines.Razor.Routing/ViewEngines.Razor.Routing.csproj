@@ -42,7 +42,6 @@
     <Compile Include="TemplatePathResolvers\TemplatePathResolver.cs" />
     <Compile Include="TemplatePathResolvers\VisualBasicResolver.cs" />
     <Compile Include="TemplateRepositories\FileSystemRepository.cs" />
-    <Compile Include="TemplateRepositories\ITemplateRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\JuniorRoute.snk">

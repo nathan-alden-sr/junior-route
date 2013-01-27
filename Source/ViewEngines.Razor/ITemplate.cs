@@ -1,12 +1,17 @@
-﻿namespace Junior.Route.ViewEngines.Razor
+﻿using Junior.Route.ViewEngines.Razor.TemplateRepositories;
+
+namespace Junior.Route.ViewEngines.Razor
 {
 	public interface ITemplate
 	{
-		string Contents
+		ITemplateRepository TemplateRepository
 		{
 			get;
+			set;
 		}
 
+		string Run();
+		string Run(TemplateRunContext context);
 		void Execute();
 		void Write(object value);
 		void WriteLiteral(string value);

@@ -37,6 +37,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="DynamicModelAttribute.cs" />
+    <Compile Include="TemplateWriter.cs" />
+    <Compile Include="ViewBag.cs" />
+    <Compile Include="TemplateRunContext.cs" />
     <Compile Include="TemplateCodeBuilders\BuildCodeResult.cs" />
     <Compile Include="CodeDomProviderFactories\FileExtensionFactory.cs" />
     <Compile Include="CodeDomProviderFactories\ICodeDomProviderFactory.cs" />
@@ -63,7 +66,7 @@
     <Compile Include="TemplateCodeBuilders\TemplateCodeBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CompiledTemplateFactories\ActivatorFactory.cs" />
-    <Compile Include="TemplateCodeBuilders\TemplateWriter.cs" />
+    <Compile Include="TemplateRepositories\ITemplateRepository.cs" />
     <Compile Include="TypeExtensions.cs" />
     <Compile Include="TemplateCodeBuilders\VisualBasicBuilder.cs" />
   </ItemGroup>

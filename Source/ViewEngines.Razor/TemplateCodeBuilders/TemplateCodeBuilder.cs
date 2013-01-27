@@ -15,16 +15,15 @@ namespace Junior.Route.ViewEngines.Razor.TemplateCodeBuilders
 {
 	public abstract class TemplateCodeBuilder : ITemplateCodeBuilder
 	{
+		private static readonly string[] _defaultNamespaces = new[] { "System", "System.Collections.Generic", "System.Linq" };
 		private static readonly string _namespace = typeof(TemplateCodeBuilder).Namespace + ".DynamicTemplates";
 		private readonly RazorCodeLanguage _codeLanguage;
-		private readonly HtmlMarkupParser _markupParser;
 
 		protected TemplateCodeBuilder(RazorCodeLanguage codeLanguage)
 		{
 			codeLanguage.ThrowIfNull("codeLanguage");
 
 			_codeLanguage = codeLanguage;
-			_markupParser = new HtmlMarkupParser();
 		}
 
 		public BuildCodeResult BuildCode<TTemplate>(string templateContents, string className, Action<CodeTypeDeclaration> typeConfigurationDelegate, IEnumerable<string> namespaceImports)
@@ -37,15 +36,20 @@ namespace Junior.Route.ViewEngines.Razor.TemplateCodeBuilders
 			string defaultBaseClass = BuildTemplateTypeName<TTemplate>();
 			string templateWriterNamespaceAndTypeName = MakeGlobalNamespace(typeof(TemplateWriter).FullName);
 
-			var host = new RazorEngineHost(_codeLanguage, () => _markupParser)
+			var host = new RazorEngineHost(_codeLanguage, () => new HtmlMarkupParser())
 				{
 					DefaultBaseClass = defaultBaseClass,
 					DefaultClassName = className,
 					DefaultNamespace = _namespace,
-					GeneratedClassContext = new GeneratedClassContext("Execute", "Write", "WriteLiteral", "WriteTo", "WriteLiteralTo", templateWriterNamespaceAndTypeName)
+					GeneratedClassContext = new GeneratedClassContext("Execute", "Write", "WriteLiteral", "WriteTo", "WriteLiteralTo", templateWriterNamespaceAndTypeName, "DefineSection")
 				};
 
-			host.NamespaceImports.AddRange(namespaceImports.Distinct());
+			IEnumerable<string> namespaces = _defaultNamespaces
+				.Concat(namespaceImports)
+				.Select(MakeGlobalNamespace)
+				.Distinct();
+
+			host.NamespaceImports.AddRange(namespaces);
 
 			var templateEngine = new RazorTemplateEngine(host);
 			GeneratorResults results = templateEngine.GenerateCode(new StringReader(templateContents));

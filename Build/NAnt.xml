@@ -193,9 +193,6 @@
 			</code>
 		</script>
 	</target>
-	<target name="DeleteStagedNuGetFiles">
-		<delete dir="${NuGetStagingDirectory}"/>
-	</target>
 	<target name="CreateNuGetPackage">
 		<exec
 			program="${NuGetPath}"
@@ -208,5 +205,8 @@
 			<arg value="-OutputDirectory"/>
 			<arg value="${NuGetResultsDirectory}"/>
 		</exec>
+	</target>
+	<target name="DeleteStagedNuGetFiles">
+		<delete dir="${NuGetStagingDirectory}"/>
 	</target>
 </project>

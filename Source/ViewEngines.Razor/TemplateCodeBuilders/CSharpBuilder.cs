@@ -16,7 +16,7 @@ namespace Junior.Route.ViewEngines.Razor.TemplateCodeBuilders
 		{
 			@namespace.ThrowIfNull("namespace");
 
-			return "global::" + @namespace;
+			return @namespace.StartsWith("global::") ? @namespace : "global::" + @namespace;
 		}
 
 		protected override string MakeTypeName(Type type)

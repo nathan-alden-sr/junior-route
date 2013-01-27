@@ -13,6 +13,7 @@ using Junior.Route.ViewEngines.Razor.Routing.TemplatePathResolvers;
 using Junior.Route.ViewEngines.Razor.TemplateClassNameBuilders;
 using Junior.Route.ViewEngines.Razor.TemplateCodeBuilders;
 using Junior.Route.ViewEngines.Razor.TemplateCompilers;
+using Junior.Route.ViewEngines.Razor.TemplateRepositories;
 
 namespace Junior.Route.ViewEngines.Razor.Routing.TemplateRepositories
 {
@@ -54,7 +55,7 @@ namespace Junior.Route.ViewEngines.Razor.Routing.TemplateRepositories
 			_compiledTemplateFactory = compiledTemplateFactory;
 		}
 
-		public string Execute<TTemplate>(string relativePath, IEnumerable<string> namespaceImports)
+		public TTemplate Get<TTemplate>(string relativePath, IEnumerable<string> namespaceImports)
 			where TTemplate : ITemplate
 		{
 			relativePath.ThrowIfNull("relativePath");
@@ -84,20 +85,20 @@ namespace Junior.Route.ViewEngines.Razor.Routing.TemplateRepositories
 				}
 			}
 
-			ITemplate template = _compiledTemplateFactory.CreateFromType(type);
+			var template = (TTemplate)_compiledTemplateFactory.CreateFromType(type);
 
-			template.Execute();
+			template.TemplateRepository = this;
 
-			return template.Contents;
+			return template;
 		}
 
-		public string Execute<TTemplate>(string relativePath)
+		public TTemplate Get<TTemplate>(string relativePath)
 			where TTemplate : ITemplate
 		{
-			return Execute<TTemplate>(relativePath, Enumerable.Empty<string>());
+			return Get<TTemplate>(relativePath, Enumerable.Empty<string>());
 		}
 
-		public string Execute<TTemplate, TModel>(string relativePath, TModel model, IEnumerable<string> namespaceImports)
+		public TTemplate Get<TTemplate, TModel>(string relativePath, TModel model, IEnumerable<string> namespaceImports)
 			where TTemplate : ITemplate<TModel>
 		{
 			relativePath.ThrowIfNull("relativePath");
@@ -134,43 +135,87 @@ namespace Junior.Route.ViewEngines.Razor.Routing.TemplateRepositories
 				}
 			}
 
-			ITemplate<TModel> template = _compiledTemplateFactory.CreateFromType<TModel>(type);
+			ITemplate<TModel> template = (TTemplate)_compiledTemplateFactory.CreateFromType<TModel>(type);
 
 			if (template == null)
 			{
 				throw new ArgumentException(String.Format("Model type {0} does not match template type {1}.", typeof(TModel).FullName, typeof(ITemplate<TModel>)), "model");
 			}
 
+			template.TemplateRepository = this;
 			template.Model = model;
-			template.Execute();
 
-			return template.Contents;
+			return (TTemplate)template;
 		}
 
-		public string Execute<TTemplate, TModel>(string relativePath, TModel model)
+		public TTemplate Get<TTemplate, TModel>(string relativePath, TModel model)
 			where TTemplate : ITemplate<TModel>
 		{
-			return Execute<TTemplate, TModel>(relativePath, model, Enumerable.Empty<string>());
+			return Get<TTemplate, TModel>(relativePath, model, Enumerable.Empty<string>());
 		}
 
-		public string Execute(string relativePath, IEnumerable<string> namespaceImports)
+		public Template Get(string relativePath, IEnumerable<string> namespaceImports)
 		{
-			return Execute<Template>(relativePath, namespaceImports);
+			return Get<Template>(relativePath, namespaceImports);
 		}
 
-		public string Execute(string relativePath)
+		public Template Get(string relativePath)
 		{
-			return Execute<Template>(relativePath, Enumerable.Empty<string>());
+			return Get<Template>(relativePath, Enumerable.Empty<string>());
 		}
 
-		public string Execute<TModel>(string relativePath, TModel model, IEnumerable<string> namespaceImports)
+		public Template<TModel> Get<TModel>(string relativePath, TModel model, IEnumerable<string> namespaceImports)
 		{
-			return Execute<Template<TModel>, TModel>(relativePath, model, namespaceImports);
+			return Get<Template<TModel>, TModel>(relativePath, model, namespaceImports);
 		}
 
-		public string Execute<TModel>(string relativePath, TModel model)
+		public Template<TModel> Get<TModel>(string relativePath, TModel model)
 		{
-			return Execute<Template<TModel>, TModel>(relativePath, model, Enumerable.Empty<string>());
+			return Get<Template<TModel>, TModel>(relativePath, model, Enumerable.Empty<string>());
+		}
+
+		public string Run<TTemplate>(string relativePath, IEnumerable<string> namespaceImports)
+			where TTemplate : ITemplate
+		{
+			return Get<TTemplate>(relativePath, namespaceImports).Run();
+		}
+
+		public string Run<TTemplate>(string relativePath)
+			where TTemplate : ITemplate
+		{
+			return Get<TTemplate>(relativePath).Run();
+		}
+
+		public string Run<TTemplate, TModel>(string relativePath, TModel model, IEnumerable<string> namespaceImports)
+			where TTemplate : ITemplate<TModel>
+		{
+			return Get<TTemplate, TModel>(relativePath, model, namespaceImports).Run();
+		}
+
+		public string Run<TTemplate, TModel>(string relativePath, TModel model)
+			where TTemplate : ITemplate<TModel>
+		{
+			return Get<TTemplate, TModel>(relativePath, model).Run();
+		}
+
+		public string Run(string relativePath, IEnumerable<string> namespaceImports)
+		{
+			return Get(relativePath, namespaceImports).Run();
+		}
+
+		public string Run(string relativePath)
+		{
+			return Get(relativePath).Run();
+		}
+
+		public string Run<TModel>(string relativePath, TModel model, IEnumerable<string> namespaceImports)
+		{
+			return Get(relativePath, model, namespaceImports).Run();
+		}
+
+		public string Run<TModel>(string relativePath, TModel model)
+		{
+			return Get(relativePath, model).Run();
 		}
 	}
 }

@@ -1,8 +1,7 @@
 ﻿Imports Junior.Route.AutoRouting.RestrictionMappers.Attributes
 Imports Junior.Route.Routing.Responses.Text
 Imports Junior.Route.Routing
-Imports Junior.Route.ViewEngines.Razor.Routing.TemplateRepositories
-Imports Junior.Route.ViewEngines.Razor
+Imports Junior.Route.ViewEngines.Razor.TemplateRepositories
 
 Namespace Endpoints
 	Public Class HelloWorld
@@ -14,7 +13,7 @@ Namespace Endpoints
 
 		<Method(HttpMethod.Get)>
 		Public Function GetResponse() As HtmlResponse
-			Dim content As String = _templateRespository.Execute("Templates\HelloWorld", New Model With {.Message = "Hello, world."})
+			Dim content As String = _templateRespository.Run("Templates\HelloWorld", New Model With {.Message = "Hello, world."})
 
 			Return New HtmlResponse(content)
 		End Function

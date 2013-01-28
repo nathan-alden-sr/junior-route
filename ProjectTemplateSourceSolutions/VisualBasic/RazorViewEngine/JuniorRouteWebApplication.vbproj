@@ -127,13 +127,15 @@
     </None>
     <Content Include="packages.config" />
     <Content Include="Templates\HelloWorld.vbhtml" />
+    <Content Include="Templates\Layout.vbhtml" />
+    <Content Include="Templates\Message.vbhtml" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="EcmaScript.NET">
-      <HintPath>packages\YUICompressor.NET.2.1.1.0\lib\NET20\EcmaScript.NET.dll</HintPath>
+    <Reference Include="EcmaScript.NET, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\EcmaScript.Net.1.0.1.0\lib\net20\EcmaScript.NET.dll</HintPath>
     </Reference>
-    <Reference Include="Iesi.Collections">
-      <HintPath>packages\YUICompressor.NET.2.1.1.0\lib\NET20\Iesi.Collections.dll</HintPath>
+    <Reference Include="Iesi.Collections, Version=1.0.1.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <HintPath>packages\Iesi.Collections.3.2.0.4000\lib\Net35\Iesi.Collections.dll</HintPath>
     </Reference>
     <Reference Include="Junior.Common">
       <HintPath>packages\JuniorCommon.2.0.1\lib\net40\Junior.Common.dll</HintPath>
@@ -147,8 +149,9 @@
     <Reference Include="Junior.Route.Assets">
       <HintPath>packages\JuniorRoute.Assets.2.0.0\lib\net40\Junior.Route.Assets.dll</HintPath>
     </Reference>
-    <Reference Include="Junior.Route.Assets.YuiCompressor">
-      <HintPath>packages\JuniorRoute.Assets.YuiCompressor.2.0.0\lib\net40\Junior.Route.Assets.YuiCompressor.dll</HintPath>
+    <Reference Include="Junior.Route.Assets.YuiCompressor, Version=2.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>packages\JuniorRoute.Assets.YuiCompressor.2.1.1\lib\net40\Junior.Route.Assets.YuiCompressor.dll</HintPath>
     </Reference>
     <Reference Include="Junior.Route.AutoRouting">
       <HintPath>packages\JuniorRoute.AutoRouting.2.0.0\lib\net40\Junior.Route.AutoRouting.dll</HintPath>
@@ -168,11 +171,13 @@
     <Reference Include="Junior.Route.Routing.Diagnostics">
       <HintPath>packages\JuniorRoute.Core.Diagnostics.2.0.0\lib\net40\Junior.Route.Routing.Diagnostics.dll</HintPath>
     </Reference>
-    <Reference Include="Junior.Route.ViewEngines.Razor, Version=1.0.0.0, Culture=neutral, PublicKeyToken=39d86c91cf0eeeae, processorArchitecture=MSIL">
-      <HintPath>packages\JuniorRoute.ViewEngines.Razor.1.0.1\lib\net40\Junior.Route.ViewEngines.Razor.dll</HintPath>
+    <Reference Include="Junior.Route.ViewEngines.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=39d86c91cf0eeeae, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>packages\JuniorRoute.ViewEngines.Razor.2.0.0\lib\net40\Junior.Route.ViewEngines.Razor.dll</HintPath>
     </Reference>
-    <Reference Include="Junior.Route.ViewEngines.Razor.Routing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=39d86c91cf0eeeae, processorArchitecture=MSIL">
-      <HintPath>packages\JuniorRoute.ViewEngines.Razor.Routing.1.0.1\lib\net40\Junior.Route.ViewEngines.Razor.Routing.dll</HintPath>
+    <Reference Include="Junior.Route.ViewEngines.Razor.Routing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=39d86c91cf0eeeae, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>packages\JuniorRoute.ViewEngines.Razor.Routing.2.0.1\lib\net40\Junior.Route.ViewEngines.Razor.Routing.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <Private>True</Private>
@@ -213,8 +218,9 @@
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="Yahoo.Yui.Compressor">
-      <HintPath>packages\YUICompressor.NET.2.1.1.0\lib\NET20\Yahoo.Yui.Compressor.dll</HintPath>
+    <Reference Include="Yahoo.Yui.Compressor, Version=2.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>packages\YUICompressor.NET.2.2.0.0\lib\NET20\Yahoo.Yui.Compressor.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup />

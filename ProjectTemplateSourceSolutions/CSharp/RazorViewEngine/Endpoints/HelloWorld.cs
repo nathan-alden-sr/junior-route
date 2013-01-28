@@ -1,5 +1,5 @@
 ﻿using Junior.Route.Routing.Responses.Text;
-using Junior.Route.ViewEngines.Razor.Routing.TemplateRepositories;
+using Junior.Route.ViewEngines.Razor.TemplateRepositories;
 
 namespace JuniorRouteWebApplication.Endpoints
 {
@@ -14,7 +14,7 @@ namespace JuniorRouteWebApplication.Endpoints
 
 		public HtmlResponse Get()
 		{
-			string content = _templateRepository.Execute(@"Templates\HelloWorld", new Model { Message = "Hello, world." });
+			string content = _templateRepository.Run(@"Templates\HelloWorld", new Model { Message = "Hello, world." });
 
 			return new HtmlResponse(content);
 		}

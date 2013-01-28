@@ -57,9 +57,6 @@
     <Content Include="packages\JuniorRoute.Assets.2.0.0.nupkg">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="packages\JuniorRoute.Assets.YuiCompressor.2.0.0.nupkg">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
     <Content Include="packages\JuniorRoute.AutoRouting.2.0.0.nupkg">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
@@ -78,19 +75,10 @@
     <Content Include="packages\Spark.1.7.5.0.nupkg">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="packages\YUICompressor.NET.2.1.1.0.nupkg">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
     <Content Include="PT3\CSharp\Web\T.zip">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="PT4\VisualBasic\Web\T.zip">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="packages\JuniorRoute.ViewEngines.Razor.1.0.1.nupkg">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="packages\JuniorRoute.ViewEngines.Razor.Routing.1.0.1.nupkg">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="packages\Microsoft.AspNet.Mvc.4.0.20710.0.nupkg">
@@ -103,6 +91,24 @@
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="packages\Microsoft.Web.Infrastructure.1.0.0.0.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="packages\EcmaScript.Net.1.0.1.0.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="packages\Iesi.Collections.3.2.0.4000.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="packages\JuniorRoute.Assets.YuiCompressor.2.1.1.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="packages\JuniorRoute.ViewEngines.Razor.2.0.1.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="packages\JuniorRoute.ViewEngines.Razor.Routing.2.0.1.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="packages\YUICompressor.NET.2.2.0.0.nupkg">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <None Include="source.extension.vsixmanifest">

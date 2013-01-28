@@ -44,10 +44,7 @@ namespace Junior.Route.ViewEngines.Razor.TemplateCodeBuilders
 					GeneratedClassContext = new GeneratedClassContext("Execute", "Write", "WriteLiteral", "WriteTo", "WriteLiteralTo", templateWriterNamespaceAndTypeName, "DefineSection")
 				};
 
-			IEnumerable<string> namespaces = _defaultNamespaces
-				.Concat(namespaceImports)
-				.Select(MakeGlobalNamespace)
-				.Distinct();
+			IEnumerable<string> namespaces = _defaultNamespaces.Concat(namespaceImports).Distinct();
 
 			host.NamespaceImports.AddRange(namespaces);
 

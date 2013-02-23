@@ -36,7 +36,9 @@
     <AssemblyOriginatorKeyFile>..\JuniorRoute.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AttributeValue.cs" />
     <Compile Include="DynamicModelAttribute.cs" />
+    <Compile Include="PositionTagged.cs" />
     <Compile Include="TemplateWriter.cs" />
     <Compile Include="ViewBag.cs" />
     <Compile Include="TemplateRunContext.cs" />

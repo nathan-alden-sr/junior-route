@@ -88,6 +88,11 @@ namespace Junior.Route.ViewEngines.Razor
 			}
 		}
 
+		public virtual void WriteAttribute(string name, PositionTagged<string> prefix, PositionTagged<string> suffix, params AttributeValue[] values)
+		{
+			WriteAttributeTo(_context.CurrentWriter, name, prefix, suffix, values);
+		}
+
 		public void DefineSection(string name, Action writeDelegate)
 		{
 			_context.DefineSection(name, writeDelegate);
@@ -221,6 +226,55 @@ namespace Junior.Route.ViewEngines.Razor
 			if (templateWriter != null)
 			{
 				templateWriter.WriteTo(textWriter);
+			}
+		}
+
+		public virtual void WriteAttributeTo(TextWriter writer, string name, PositionTagged<string> prefix, PositionTagged<string> suffix, params AttributeValue[] values)
+		{
+			if (values.Length == 0)
+			{
+				WriteLiteralTo(writer, prefix.Value);
+				WriteLiteralTo(writer, suffix.Value);
+				return;
+			}
+
+			bool first = true;
+			bool wroteSomething = false;
+
+			foreach (AttributeValue value in values)
+			{
+				PositionTagged<object> positionTagged = value.Value;
+
+				if (positionTagged.Value == null)
+				{
+					continue;
+				}
+
+				string stringValue = positionTagged.Value.Equals(true) ? name : (positionTagged.Value as string ?? positionTagged.Value.ToString());
+
+				if (first)
+				{
+					WriteLiteralTo(writer, prefix.Value);
+					first = false;
+				}
+				else
+				{
+					WriteLiteralTo(writer, value.Prefix.Value);
+				}
+				if (value.Literal)
+				{
+					WriteLiteralTo(writer, stringValue);
+				}
+				else
+				{
+					WriteTo(writer, stringValue);
+				}
+				wroteSomething = true;
+			}
+
+			if (wroteSomething)
+			{
+				WriteLiteralTo(writer, suffix.Value);
 			}
 		}
 

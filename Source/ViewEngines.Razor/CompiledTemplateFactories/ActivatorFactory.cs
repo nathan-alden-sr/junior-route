@@ -28,7 +28,7 @@ namespace Junior.Route.ViewEngines.Razor.CompiledTemplateFactories
 
 			if (template == null)
 			{
-				throw new ArgumentException(String.Format("Type {0} does not implement {1}.", type.FullName, typeof(ITemplate).FullName), "type");
+				throw new ArgumentException(String.Format("Type {0} does not implement {1}.", type.FullName, typeof(ITemplate<TModel>).FullName), "type");
 			}
 
 			return template;

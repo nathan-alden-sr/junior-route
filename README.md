@@ -12,9 +12,9 @@
 3. Extract JuniorRouteWebApplication.zip to its default folder
 4. Extract T.zip to its default folder
 5. Compare JuniorRouteWebApplication.csproj files in a compare tool and resolve differences
-** Be sure $(SolutionDir) is prepended to each packages reference's hint path
+	<ul><li>Be sure $(SolutionDir) is prepended to each packages reference's hint path</li></ul>
 6. Compare MyTemplate.vstemplate files in a compare tool and resolve differences
-** Be sure NuGet package versions have been updated appropriately
+	<ul><li>Be sure NuGet package versions have been updated appropriately</li></ul>
 7. Delete the JuniorRouteWebApplication.zip file, the T.zip file and the T folder
 8. Compress the contents of the JuniorRouteWebApplication folder (not the folder itself) to T.zip
 9. Cut T.zip and paste it in the appropriate folder

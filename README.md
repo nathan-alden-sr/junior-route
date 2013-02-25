@@ -5,10 +5,10 @@
 	3. Uncheck _Automatically import the template into Visual Studio_
 	4. Click _Finish_
 2. Cut JuniorRouteWebApplication.zip and paste it in the appropriate folder alongside T.zip
-** _PT1_: C#, no view engine
-** _PT2_: VB.NET, no view engine
-** _PT3_: C#, Razor view engine
-** _PT4_: VB.NET, Razor view engine
+	* _PT1_: C#, no view engine
+	* _PT2_: VB.NET, no view engine
+	* _PT3_: C#, Razor view engine
+	* _PT4_: VB.NET, Razor view engine
 3. Extract JuniorRouteWebApplication.zip to its default folder
 4. Extract T.zip to its default folder
 5. Compare JuniorRouteWebApplication.csproj files in a compare tool and resolve differences

@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>JuniorRoute.ViewEngines.Razor</id>
-    <version>2.0.1</version>
+    <version>2.0.3</version>
     <title>JuniorRoute - Razor View Engine</title>
     <authors>Nathan Alden Sr.</authors>
     <owners>Nathan Alden Sr.</owners>

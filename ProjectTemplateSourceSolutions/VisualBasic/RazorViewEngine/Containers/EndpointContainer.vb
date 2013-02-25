@@ -1,4 +1,5 @@
-﻿Imports Junior.Route.ViewEngines.Razor.CompiledTemplateFactories
+﻿Imports System.Web.Configuration
+Imports Junior.Route.ViewEngines.Razor.CompiledTemplateFactories
 Imports Junior.Route.ViewEngines.Razor.CodeDomProviderFactories
 Imports Junior.Route.AspNetIntegration
 Imports Junior.Common
@@ -27,8 +28,19 @@ Namespace Containers
 			Dim codeBuilder = New VisualBasicBuilder
 			Dim codeDomProviderFactory = New FileExtensionFactory
 			Dim compiledTemplateFactory = New ActivatorFactory
+			Dim compilationSection = CType(ConfigurationManager.GetSection("system.web/compilation"), CompilationSection)
+			Dim reloadChangedTemplateFiles = (Not compilationSection Is Nothing) And compilationSection.Debug
+			Dim fileSystemRepositoryConfiguration = New FileSystemRepositoryConfiguration(reloadChangedTemplateFiles)
 
-			_fileSystemRepository = New FileSystemRepository(pathResolver, fileSystem, compiler, classNameBuilder, codeBuilder, codeDomProviderFactory, compiledTemplateFactory)
+			_fileSystemRepository = New FileSystemRepository(
+			  pathResolver,
+			  fileSystem,
+			  compiler,
+			  classNameBuilder,
+			  codeBuilder,
+			  codeDomProviderFactory,
+			  compiledTemplateFactory,
+			  fileSystemRepositoryConfiguration)
 		End Sub
 
 		Public Function GetInstance(Of T)() As T Implements IContainer.GetInstance

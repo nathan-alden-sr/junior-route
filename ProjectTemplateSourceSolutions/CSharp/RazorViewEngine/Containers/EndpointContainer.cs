@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Configuration;
+using System.Web.Configuration;
 
 using Junior.Common;
 using Junior.Route.AspNetIntegration;
@@ -31,8 +33,19 @@ namespace JuniorRouteWebApplication.Containers
 			var codeBuilder = new CSharpBuilder();
 			var codeDomProviderFactory = new FileExtensionFactory();
 			var compiledTemplateFactory = new ActivatorFactory();
+			var compilationSection = (CompilationSection)ConfigurationManager.GetSection("system.web/compilation");
+			bool reloadChangedTemplateFiles = compilationSection != null && compilationSection.Debug;
+			var fileSystemRepositoryConfiguration = new FileSystemRepositoryConfiguration(reloadChangedTemplateFiles);
 
-			_fileSystemRepository = new FileSystemRepository(pathResolver, fileSystem, compiler, classNameBuilder, codeBuilder, codeDomProviderFactory, compiledTemplateFactory);
+			_fileSystemRepository = new FileSystemRepository(
+				pathResolver,
+				fileSystem,
+				compiler,
+				classNameBuilder,
+				codeBuilder,
+				codeDomProviderFactory,
+				compiledTemplateFactory,
+				fileSystemRepositoryConfiguration);
 		}
 
 		public T GetInstance<T>()

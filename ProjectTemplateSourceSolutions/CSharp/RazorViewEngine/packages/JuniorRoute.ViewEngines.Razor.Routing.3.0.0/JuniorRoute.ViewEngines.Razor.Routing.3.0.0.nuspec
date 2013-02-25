@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>JuniorRoute.ViewEngines.Razor.Routing</id>
-    <version>2.0.1</version>
+    <version>3.0.0</version>
     <title>JuniorRoute - Razor View Engine - Routing Integration</title>
     <authors>Nathan Alden Sr.</authors>
     <owners>Nathan Alden Sr.</owners>
@@ -15,7 +15,7 @@
     <dependencies>
       <dependency id="JuniorCommon" version="2.0.1" />
       <dependency id="JuniorRoute.Core" version="2.0.0" />
-      <dependency id="JuniorRoute.ViewEngines.Razor" version="2.0.0" />
+      <dependency id="JuniorRoute.ViewEngines.Razor" version="2.0.3" />
     </dependencies>
     <references>
       <reference file="Junior.Route.ViewEngines.Razor.Routing.dll" />

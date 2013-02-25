@@ -44,7 +44,8 @@ namespace Junior.Route.UnitTests.ViewEngines.Razor.Routing.TemplateRepositories
 				_codeDomProviderFactory = MockRepository.GenerateMock<ICodeDomProviderFactory>();
 				_codeDomProviderFactory.Stub(arg => arg.CreateFromFileExtension(Arg<string>.Is.Anything)).Return(_codeDomProvider);
 				_compiledTemplateFactory = MockRepository.GenerateMock<ICompiledTemplateFactory>();
-				_repository = new FileSystemRepository(_pathResolver, _fileSystem, _compiler, _classNameBuilder, _codeBuilder, _codeDomProviderFactory, _compiledTemplateFactory);
+				_fileSystemRepositoryConfiguration = MockRepository.GenerateMock<IFileSystemRepositoryConfiguration>();
+				_repository = new FileSystemRepository(_pathResolver, _fileSystem, _compiler, _classNameBuilder, _codeBuilder, _codeDomProviderFactory, _compiledTemplateFactory, _fileSystemRepositoryConfiguration);
 				Stub(model);
 				Get(model);
 			}
@@ -80,6 +81,7 @@ namespace Junior.Route.UnitTests.ViewEngines.Razor.Routing.TemplateRepositories
 			private ICompiledTemplateFactory _compiledTemplateFactory;
 			private FileSystemRepository _repository;
 			private CodeDomProvider _codeDomProvider;
+			private IFileSystemRepositoryConfiguration _fileSystemRepositoryConfiguration;
 
 			private void Assert<T>(T model)
 			{
@@ -129,7 +131,8 @@ namespace Junior.Route.UnitTests.ViewEngines.Razor.Routing.TemplateRepositories
 				_template = MockRepository.GenerateMock<ITemplate<string>>();
 				_compiledTemplateFactory = MockRepository.GenerateMock<ICompiledTemplateFactory>();
 				_compiledTemplateFactory.Stub(arg => arg.CreateFromType<string>(Arg<Type>.Is.Anything)).Return(_template);
-				_repository = new FileSystemRepository(_pathResolver, _fileSystem, _compiler, _classNameBuilder, _codeBuilder, _codeDomProviderFactory, _compiledTemplateFactory);
+				_fileSystemRepositoryConfiguration = MockRepository.GenerateMock<IFileSystemRepositoryConfiguration>();
+				_repository = new FileSystemRepository(_pathResolver, _fileSystem, _compiler, _classNameBuilder, _codeBuilder, _codeDomProviderFactory, _compiledTemplateFactory, _fileSystemRepositoryConfiguration);
 				_repository.Get<ITemplate<string>, string>("Template", "Model", _namespaces);
 			}
 
@@ -144,6 +147,7 @@ namespace Junior.Route.UnitTests.ViewEngines.Razor.Routing.TemplateRepositories
 			private FileSystemRepository _repository;
 			private ITemplate<string> _template;
 			private CodeDomProvider _codeDomProvider;
+			private IFileSystemRepositoryConfiguration _fileSystemRepositoryConfiguration;
 
 			[Test]
 			public void Must_read_file_contents()
@@ -223,7 +227,8 @@ namespace Junior.Route.UnitTests.ViewEngines.Razor.Routing.TemplateRepositories
 				_template = MockRepository.GenerateMock<ITemplate>();
 				_compiledTemplateFactory = MockRepository.GenerateMock<ICompiledTemplateFactory>();
 				_compiledTemplateFactory.Stub(arg => arg.CreateFromType(Arg<Type>.Is.Anything)).Return(_template);
-				_repository = new FileSystemRepository(_pathResolver, _fileSystem, _compiler, _classNameBuilder, _codeBuilder, _codeDomProviderFactory, _compiledTemplateFactory);
+				_fileSystemRepositoryConfiguration = MockRepository.GenerateMock<IFileSystemRepositoryConfiguration>();
+				_repository = new FileSystemRepository(_pathResolver, _fileSystem, _compiler, _classNameBuilder, _codeBuilder, _codeDomProviderFactory, _compiledTemplateFactory, _fileSystemRepositoryConfiguration);
 				_repository.Get<ITemplate>("Template", _namespaces);
 			}
 
@@ -238,6 +243,7 @@ namespace Junior.Route.UnitTests.ViewEngines.Razor.Routing.TemplateRepositories
 			private FileSystemRepository _repository;
 			private ITemplate _template;
 			private CodeDomProvider _codeDomProvider;
+			private IFileSystemRepositoryConfiguration _fileSystemRepositoryConfiguration;
 
 			[Test]
 			public void Must_read_file_contents()

@@ -24,7 +24,9 @@ namespace Junior.Route.ViewEngines.Razor.Routing.TemplateRepositories
 		private readonly ICodeDomProviderFactory _codeDomProviderFactory;
 		private readonly ICompiledTemplateFactory _compiledTemplateFactory;
 		private readonly ITemplateCompiler _compiler;
+		private readonly IFileSystemRepositoryConfiguration _configuration;
 		private readonly IFileSystem _fileSystem;
+		private readonly Dictionary<string, FileSystemWatcher> _fileSystemWatchersByAbsolutePath = new Dictionary<string, FileSystemWatcher>();
 		private readonly object _lockObject = new object();
 		private readonly ITemplatePathResolver _pathResolver;
 		private readonly Dictionary<string, Type> _templateTypesByAbsolutePath = new Dictionary<string, Type>();
@@ -36,7 +38,8 @@ namespace Junior.Route.ViewEngines.Razor.Routing.TemplateRepositories
 			ITemplateClassNameBuilder classNameBuilder,
 			ITemplateCodeBuilder codeBuilder,
 			ICodeDomProviderFactory codeDomProviderFactory,
-			ICompiledTemplateFactory compiledTemplateFactory)
+			ICompiledTemplateFactory compiledTemplateFactory,
+			IFileSystemRepositoryConfiguration configuration)
 		{
 			pathResolver.ThrowIfNull("pathResolver");
 			fileSystem.ThrowIfNull("fileSystem");
@@ -45,6 +48,7 @@ namespace Junior.Route.ViewEngines.Razor.Routing.TemplateRepositories
 			codeBuilder.ThrowIfNull("codeBuilder");
 			codeDomProviderFactory.ThrowIfNull("codeDomProviderFactory");
 			compiledTemplateFactory.ThrowIfNull("compiledTemplateFactory");
+			configuration.ThrowIfNull("configuration");
 
 			_pathResolver = pathResolver;
 			_fileSystem = fileSystem;
@@ -53,6 +57,7 @@ namespace Junior.Route.ViewEngines.Razor.Routing.TemplateRepositories
 			_codeBuilder = codeBuilder;
 			_codeDomProviderFactory = codeDomProviderFactory;
 			_compiledTemplateFactory = compiledTemplateFactory;
+			_configuration = configuration;
 		}
 
 		public TTemplate Get<TTemplate>(string relativePath, IEnumerable<string> namespaceImports)
@@ -82,6 +87,11 @@ namespace Junior.Route.ViewEngines.Razor.Routing.TemplateRepositories
 					type = _compiler.Compile<TTemplate>(templateContents, className, _codeBuilder, codeDomProvider, null, namespaceImports);
 
 					_templateTypesByAbsolutePath.Add(absolutePath, type);
+
+					if (_configuration.ReloadChangedTemplateFiles)
+					{
+						AddFileSystemWatcher(absolutePath);
+					}
 				}
 			}
 
@@ -132,6 +142,11 @@ namespace Junior.Route.ViewEngines.Razor.Routing.TemplateRepositories
 						namespaceImports);
 
 					_templateTypesByAbsolutePath.Add(absolutePath, type);
+
+					if (_configuration.ReloadChangedTemplateFiles)
+					{
+						AddFileSystemWatcher(absolutePath);
+					}
 				}
 			}
 
@@ -216,6 +231,36 @@ namespace Junior.Route.ViewEngines.Razor.Routing.TemplateRepositories
 		public string Run<TModel>(string relativePath, TModel model)
 		{
 			return Get(relativePath, model).Run();
+		}
+
+		private void AddFileSystemWatcher(string absolutePath)
+		{
+			var fileSystemWatcher = new FileSystemWatcher(Path.GetDirectoryName(absolutePath), Path.GetFileName(absolutePath))
+				{
+					EnableRaisingEvents = false,
+					IncludeSubdirectories = false,
+					NotifyFilter = NotifyFilters.CreationTime | NotifyFilters.DirectoryName | NotifyFilters.FileName | NotifyFilters.LastWrite | NotifyFilters.Size
+				};
+
+			fileSystemWatcher.Changed += FileSystemWatcherOnNotification;
+			fileSystemWatcher.Created += FileSystemWatcherOnNotification;
+			fileSystemWatcher.Deleted += FileSystemWatcherOnNotification;
+			fileSystemWatcher.Renamed += FileSystemWatcherOnNotification;
+			fileSystemWatcher.EnableRaisingEvents = true;
+
+			_fileSystemWatchersByAbsolutePath.Add(absolutePath, fileSystemWatcher);
+		}
+
+		private void FileSystemWatcherOnNotification(object sender, FileSystemEventArgs e)
+		{
+			lock (_lockObject)
+			{
+				FileSystemWatcher fileSystemWatcher = _fileSystemWatchersByAbsolutePath[e.FullPath];
+
+				fileSystemWatcher.EnableRaisingEvents = false;
+				_fileSystemWatchersByAbsolutePath.Remove(e.FullPath);
+				_templateTypesByAbsolutePath.Remove(e.FullPath);
+			}
 		}
 	}
 }

@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>JuniorCommon</id>
-    <version>2.0.1</version>
+    <version>3.0.0</version>
     <title>JuniorCommon</title>
     <authors>Nathan Alden Sr.</authors>
     <owners>Nathan Alden Sr.</owners>
@@ -12,5 +12,8 @@
     <description>JuniorCommon is a common library used by all other Junior projects.</description>
     <releaseNotes />
     <tags>Junior</tags>
+    <references>
+      <reference file="Junior.Common.dll" />
+    </references>
   </metadata>
 </package>

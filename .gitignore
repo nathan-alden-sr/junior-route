@@ -46,7 +46,3 @@ _ReSharper*/
 
 #NuGet
 packages/
-
-#Unignores
-!Binaries
-!Packages

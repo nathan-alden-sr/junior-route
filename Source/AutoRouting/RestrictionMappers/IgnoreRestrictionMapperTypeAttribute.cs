@@ -5,11 +5,11 @@ using Junior.Common;
 namespace Junior.Route.AutoRouting.RestrictionMappers
 {
 	[AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
-	public class IgnoreRestrictionAttributeTypeAttribute : Attribute
+	public class IgnoreRestrictionMapperTypeAttribute : Attribute
 	{
 		private readonly Type[] _ignoredTypes;
 
-		public IgnoreRestrictionAttributeTypeAttribute(params Type[] ignoredTypes)
+		public IgnoreRestrictionMapperTypeAttribute(params Type[] ignoredTypes)
 		{
 			ignoredTypes.ThrowIfNull("ignoredTypes");
 

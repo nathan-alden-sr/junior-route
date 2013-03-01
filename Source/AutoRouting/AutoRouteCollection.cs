@@ -177,7 +177,9 @@ namespace Junior.Route.AutoRouting
 						throw new ApplicationException(String.Format("Unable to determine a route ID for '{0}.{1}'.", matchingType.FullName, matchingMethod.Name));
 					}
 
+					IEnumerable<Type> ignoredResolvedRelativeUrlMapperTypes = matchingMethod.GetCustomAttributes<IgnoreResolvedRelativeUrlMapperTypeAttribute>().SelectMany(arg => arg.IgnoredTypes);
 					string resolvedRelativeUrl = _resolvedRelativeUrlMappers
+						.Where(arg => !ignoredResolvedRelativeUrlMapperTypes.Contains(arg.GetType()))
 						.Select(arg => new { Mapper = arg, Result = arg.Map(closureMatchingType, closureMatchingMethod) })
 						.FirstOrDefault(arg => arg.Result.ResultType == ResolvedRelativeUrlResultType.ResolvedRelativeUrlMapped)
 						.IfNotNull(arg => arg.Result.ResolvedRelativeUrl);
@@ -188,8 +190,9 @@ namespace Junior.Route.AutoRouting
 					}
 
 					var route = new Routing.Route(name, id.Value, resolvedRelativeUrl);
+					IEnumerable<Type> ignoredRestrictionMapperTypes = matchingMethod.GetCustomAttributes<IgnoreRestrictionMapperTypeAttribute>().SelectMany(arg => arg.IgnoredTypes);
 
-					foreach (IRestrictionMapper restrictionMapper in _restrictionMappers)
+					foreach (IRestrictionMapper restrictionMapper in _restrictionMappers.Where(arg => !ignoredRestrictionMapperTypes.Contains(arg.GetType())))
 					{
 						restrictionMapper.Map(matchingType, matchingMethod, route, _restrictionContainer);
 					}

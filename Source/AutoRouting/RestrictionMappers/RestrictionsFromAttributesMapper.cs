@@ -41,13 +41,8 @@ namespace Junior.Route.AutoRouting.RestrictionMappers
 			route.ThrowIfNull("route");
 
 			IEnumerable<RestrictionAttribute> restrictionAttributes = method.GetCustomAttributes(_attributeType, false).Cast<RestrictionAttribute>();
-			IgnoreRestrictionAttributeTypeAttribute[] ignoreRestrictionAttributeTypeAttributes = method.GetCustomAttributes<IgnoreRestrictionAttributeTypeAttribute>().ToArray();
 
-			foreach (RestrictionAttribute restrictionAttribute in
-				from restrictionAttribute in restrictionAttributes
-				let restrictionAttributeType = restrictionAttribute.GetType()
-				where ignoreRestrictionAttributeTypeAttributes.All(arg1 => arg1.IgnoredTypes.All(arg2 => arg2 != restrictionAttributeType))
-				select restrictionAttribute)
+			foreach (RestrictionAttribute restrictionAttribute in restrictionAttributes)
 			{
 				restrictionAttribute.Map(route, container);
 			}

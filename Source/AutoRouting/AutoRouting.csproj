@@ -73,13 +73,14 @@
     <Compile Include="ParameterMappers\ModelPropertyMappers\IModelPropertyMapper.cs" />
     <Compile Include="RequestContext.cs" />
     <Compile Include="ResolvedRelativeUrlMappers\Attributes\ResolvedRelativeUrlAttribute.cs" />
+    <Compile Include="ResolvedRelativeUrlMappers\IgnoreResolvedRelativeUrlMapperTypeAttribute.cs" />
     <Compile Include="ResolvedRelativeUrlMappers\ResolvedRelativeUrlFromRelativeClassNamespaceAndClassNameMapper.cs" />
     <Compile Include="ResolvedRelativeUrlMappers\ResolvedRelativeUrlAttributeMapper.cs" />
     <Compile Include="ResolvedRelativeUrlMappers\IResolvedRelativeUrlMapper.cs" />
     <Compile Include="ResolvedRelativeUrlMappers\ResolvedRelativeUrlResult.cs" />
     <Compile Include="ResolvedRelativeUrlMappers\ResolvedRelativeUrlResultType.cs" />
     <Compile Include="RestrictionMappers\Attributes\CookieAttribute.cs" />
-    <Compile Include="RestrictionMappers\IgnoreRestrictionAttributeTypeAttribute.cs" />
+    <Compile Include="RestrictionMappers\IgnoreRestrictionMapperTypeAttribute.cs" />
     <Compile Include="RestrictionMappers\Attributes\UrlAuthorityAttribute.cs" />
     <Compile Include="RestrictionMappers\Attributes\UrlFragmentAttribute.cs" />
     <Compile Include="RestrictionMappers\Attributes\UrlHostAttribute.cs" />

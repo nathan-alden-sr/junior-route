@@ -144,7 +144,7 @@ namespace Junior.Route.AutoRouting
 
 			IEnumerable<Type> matchingTypes = _assemblies
 				.SelectMany(arg => arg.GetTypes())
-				.Where(type => type.Namespace != null && !type.IsAbstract && !type.IsValueType && _classFilters.All(filter => filter.Matches(type)))
+				.Where(type => type.Namespace != null && (type.IsPublic || type.IsNestedPublic) && !type.IsAbstract && !type.IsValueType && _classFilters.All(filter => filter.Matches(type)))
 				.ToArray();
 
 			foreach (Type matchingType in matchingTypes)

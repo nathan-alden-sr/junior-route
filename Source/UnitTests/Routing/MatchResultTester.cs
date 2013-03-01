@@ -1,4 +1,6 @@
-﻿using Junior.Route.Routing;
+﻿using System.Linq;
+
+using Junior.Route.Routing;
 using Junior.Route.Routing.RequestValueComparers;
 using Junior.Route.Routing.Restrictions;
 
@@ -30,7 +32,7 @@ namespace Junior.Route.UnitTests.Routing
 			[Test]
 			public void Must_set_properties()
 			{
-				Assert.That(_matchResult.UnmatchedRestrictions, Is.Null);
+				Assert.That(_matchResult.UnmatchedRestrictions.Any(), Is.False);
 				Assert.That(_matchResult.CacheKey, Is.EqualTo(_cacheKey));
 				Assert.That(_matchResult.MatchedRestrictions, Is.EquivalentTo(_matchedRestrictions));
 				Assert.That(_matchResult.ResultType, Is.EqualTo(MatchResultType.RouteMatched));

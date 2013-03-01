@@ -9,22 +9,12 @@ using Junior.Route.AutoRouting.RestrictionMappers.Attributes;
 
 namespace Junior.Route.AutoRouting.RestrictionMappers
 {
-	public class RestrictionsFromAttributesMapper<T> : IRestrictionMapper
+	public class RestrictionsFromAttributesMapper<T> : RestrictionsFromAttributesMapper
 		where T : RestrictionAttribute
 	{
-		public void Map(Type type, MethodInfo method, Routing.Route route, IContainer container)
+		public RestrictionsFromAttributesMapper()
+			: base(typeof(T))
 		{
-			type.ThrowIfNull("type");
-			method.ThrowIfNull("method");
-			route.ThrowIfNull("route");
-			container.ThrowIfNull("container");
-
-			IEnumerable<T> attributes = method.GetCustomAttributes(typeof(T), false).Cast<T>();
-
-			foreach (T attribute in attributes)
-			{
-				attribute.Map(route, container);
-			}
 		}
 	}
 
@@ -50,11 +40,16 @@ namespace Junior.Route.AutoRouting.RestrictionMappers
 			method.ThrowIfNull("method");
 			route.ThrowIfNull("route");
 
-			IEnumerable<RestrictionAttribute> attributes = method.GetCustomAttributes(_attributeType, false).Cast<RestrictionAttribute>();
+			IEnumerable<RestrictionAttribute> restrictionAttributes = method.GetCustomAttributes(_attributeType, false).Cast<RestrictionAttribute>();
+			IgnoreRestrictionAttributeTypeAttribute[] ignoreRestrictionAttributeTypeAttributes = method.GetCustomAttributes<IgnoreRestrictionAttributeTypeAttribute>().ToArray();
 
-			foreach (RestrictionAttribute attribute in attributes)
+			foreach (RestrictionAttribute restrictionAttribute in
+				from restrictionAttribute in restrictionAttributes
+				let restrictionAttributeType = restrictionAttribute.GetType()
+				where ignoreRestrictionAttributeTypeAttributes.All(arg1 => arg1.IgnoredTypes.All(arg2 => arg2 != restrictionAttributeType))
+				select restrictionAttribute)
 			{
-				attribute.Map(route, container);
+				restrictionAttribute.Map(route, container);
 			}
 		}
 	}

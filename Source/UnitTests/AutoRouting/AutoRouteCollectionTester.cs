@@ -13,6 +13,8 @@ using Junior.Route.AutoRouting.NameMappers;
 using Junior.Route.AutoRouting.ResolvedRelativeUrlMappers;
 using Junior.Route.AutoRouting.ResponseMappers;
 using Junior.Route.AutoRouting.RestrictionMappers;
+using Junior.Route.AutoRouting.RestrictionMappers.Attributes;
+using Junior.Route.Routing;
 using Junior.Route.Routing.AuthenticationProviders;
 using Junior.Route.Routing.Restrictions;
 
@@ -437,6 +439,74 @@ namespace Junior.Route.UnitTests.AutoRouting
 			{
 				_idMapper1.AssertWasCalled(arg => arg.Map(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything));
 				_idMapper2.AssertWasNotCalled(arg => arg.Map(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything));
+			}
+		}
+
+		[TestFixture]
+		public class When_mapping_ignored_restrictions
+		{
+			[SetUp]
+			public void SetUp()
+			{
+				_classFilter = MockRepository.GenerateMock<IClassFilter>();
+				_classFilter
+					.Stub(arg => arg.Matches(typeof(Endpoint)))
+					.WhenCalled(arg => arg.ReturnValue = (Type)arg.Arguments.First() == typeof(Endpoint))
+					.Return(false);
+				_idMapper = MockRepository.GenerateMock<IIdMapper>();
+				_idMapper.Stub(arg => arg.Map(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(IdResult.IdMapped(Guid.NewGuid()));
+				_nameMapper = MockRepository.GenerateMock<INameMapper>();
+				_nameMapper.Stub(arg => arg.Map(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(NameResult.NameMapped(Guid.NewGuid().ToString()));
+				_resolvedRelativeUrlMapper = MockRepository.GenerateMock<IResolvedRelativeUrlMapper>();
+				_resolvedRelativeUrlMapper.Stub(arg => arg.Map(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(ResolvedRelativeUrlResult.ResolvedRelativeUrlMapped("relative"));
+				_responseMapper = MockRepository.GenerateMock<IResponseMapper>();
+				_httpRuntime = MockRepository.GenerateMock<IHttpRuntime>();
+				_autoRouteCollection = new AutoRouteCollection()
+					.Assemblies(typeof(Endpoint).Assembly)
+					.ClassFilters(_classFilter)
+					.NameMappers(_nameMapper)
+					.IdMappers(_idMapper)
+					.ResolvedRelativeUrlMappers(_resolvedRelativeUrlMapper)
+					.RestrictUsingAttributes<CookieAttribute>()
+					.ResponseMapper(_responseMapper)
+					.RestrictionContainer(new DefaultRestrictionContainer(_httpRuntime));
+				_routes = _autoRouteCollection.GenerateRouteCollection().ToArray();
+			}
+
+			private AutoRouteCollection _autoRouteCollection;
+			private IClassFilter _classFilter;
+			private IIdMapper _idMapper;
+			private INameMapper _nameMapper;
+			private IResolvedRelativeUrlMapper _resolvedRelativeUrlMapper;
+			private IResponseMapper _responseMapper;
+			private Route.Routing.Route[] _routes;
+			private IHttpRuntime _httpRuntime;
+
+			public class Endpoint
+			{
+				[Cookie("name", "value")]
+				[IgnoreRestrictionAttributeType(typeof(CookieAttribute))]
+				public void Method()
+				{
+				}
+			}
+
+			[Test]
+			public void Must_ignore_restriction_attribute_types_specified_in_ignorerestrictionattributetypeattribute()
+			{
+				var request = MockRepository.GenerateMock<HttpRequestBase>();
+				var cookieCollection = new HttpCookieCollection
+					{
+						new HttpCookie("name1", "value1")
+					};
+
+				request.Stub(arg => arg.Cookies).Return(cookieCollection);
+
+				MatchResult matchResult = _routes[0].MatchesRequest(request);
+
+				Assert.That(matchResult.ResultType, Is.EqualTo(MatchResultType.RouteMatched));
+				Assert.That(matchResult.MatchedRestrictions.Any(), Is.False);
+				Assert.That(matchResult.UnmatchedRestrictions.Any(), Is.False);
 			}
 		}
 

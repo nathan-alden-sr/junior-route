@@ -79,6 +79,7 @@
     <Compile Include="ResolvedRelativeUrlMappers\ResolvedRelativeUrlResult.cs" />
     <Compile Include="ResolvedRelativeUrlMappers\ResolvedRelativeUrlResultType.cs" />
     <Compile Include="RestrictionMappers\Attributes\CookieAttribute.cs" />
+    <Compile Include="RestrictionMappers\IgnoreRestrictionAttributeTypeAttribute.cs" />
     <Compile Include="RestrictionMappers\Attributes\UrlAuthorityAttribute.cs" />
     <Compile Include="RestrictionMappers\Attributes\UrlFragmentAttribute.cs" />
     <Compile Include="RestrictionMappers\Attributes\UrlHostAttribute.cs" />

@@ -15,8 +15,8 @@ namespace Junior.Route.Routing
 		private MatchResult(MatchResultType resultType, IEnumerable<IRestriction> matchedRestrictions, IEnumerable<IRestriction> unmatchedRestrictions, string cacheKey)
 		{
 			_resultType = resultType;
-			_matchedRestrictions = matchedRestrictions.IfNotNull(arg => new HashSet<IRestriction>(arg));
-			_unmatchedRestrictions = unmatchedRestrictions.IfNotNull(arg => new HashSet<IRestriction>(arg));
+			_matchedRestrictions = new HashSet<IRestriction>(matchedRestrictions ?? new IRestriction[0]);
+			_unmatchedRestrictions = new HashSet<IRestriction>(unmatchedRestrictions ?? new IRestriction[0]);
 			_cacheKey = cacheKey;
 		}
 

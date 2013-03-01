@@ -29,6 +29,10 @@
 {
 	background-color: #e5efff;
 }
+.route-table-view .resolved-relative-url-data a
+{
+	display: block;
+}
 .route-table-view .request-header
 {
 	background-color: #fff3da;

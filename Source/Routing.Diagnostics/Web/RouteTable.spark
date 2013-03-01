@@ -100,7 +100,7 @@
 					<td class="id-data">${route.Id}</td>
 					<td class="resolved-relative-url-data no-wrap">
 						<if condition='route.GetRestrictions<MethodRestriction>().Any(arg => String.Equals(arg.Method, "GET", StringComparison.OrdinalIgnoreCase))'>
-							<a href='${UrlResolver.Absolute("")}${route.ResolvedRelativeUrl}' target="_blank">${route.ResolvedRelativeUrl}</a>
+							<a href='${UrlResolver.Absolute("")}${route.ResolvedRelativeUrl}' target="_blank">${route.ResolvedRelativeUrl.Length > 0 ? route.ResolvedRelativeUrl : "/"}</a>
 						</if>
 						<else>
 							${route.ResolvedRelativeUrl}

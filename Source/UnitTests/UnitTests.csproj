@@ -163,7 +163,6 @@
     <Compile Include="Http\RequestHeaders\AcceptLanguageHeaderTester.cs" />
     <Compile Include="Http\RequestHeaders\AllowHeaderTester.cs" />
     <Compile Include="Http\RequestHeaders\BasicAuthorizationHeaderTester.cs" />
-    <Compile Include="MethodOptionsExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Http\RequestHeaders\AcceptHeaderTester.cs" />
     <Compile Include="Routing\AuthenticateResultTester.cs" />

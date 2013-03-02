@@ -46,6 +46,24 @@
     <Compile Include="..\Core AssemblyInfo.cs">
       <Link>Properties\Core AssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="AntiCsrf\AntiCsrfData.cs" />
+    <Compile Include="AntiCsrf\AntiCsrfHelper.cs" />
+    <Compile Include="AntiCsrf\AntiCsrfConfigurationSection.cs" />
+    <Compile Include="AntiCsrf\ConfigurationSectionAntiCsrfConfiguration.cs" />
+    <Compile Include="AntiCsrf\TokenGenerators\ConfigurationSectionCryptoAntiCsrfTokenGeneratorConfiguration.cs" />
+    <Compile Include="AntiCsrf\TokenGenerators\CryptoAntiCsrfTokenGenerator.cs" />
+    <Compile Include="AntiCsrf\TokenGenerators\CryptoAntiCsrfTokenGeneratorConfigurationSection.cs" />
+    <Compile Include="AntiCsrf\IAntiCsrfConfiguration.cs" />
+    <Compile Include="AntiCsrf\IAntiCsrfHelper.cs" />
+    <Compile Include="AntiCsrf\TokenGenerators\IAntiCsrfTokenGenerator.cs" />
+    <Compile Include="AntiCsrf\TokenGenerators\ICryptoAntiCsrfTokenGeneratorConfiguration.cs" />
+    <Compile Include="AntiCsrf\ResponseGenerators\DefaultAntiCsrfResponseGenerator.cs" />
+    <Compile Include="AntiCsrf\ResponseGenerators\IAntiCsrfResponseGenerator.cs" />
+    <Compile Include="AntiCsrf\ResponseGenerators\ResponseResult.cs" />
+    <Compile Include="AntiCsrf\ResponseGenerators\ResponseResultType.cs" />
+    <Compile Include="AntiCsrf\Validators\DefaultAntiCsrfTokenValidator.cs" />
+    <Compile Include="AntiCsrf\Validators\IAntiCsrfTokenValidator.cs" />
+    <Compile Include="AntiCsrf\Validators\ValidationResult.cs" />
     <Compile Include="AuthenticateResult.cs" />
     <Compile Include="AuthenticateResultType.cs" />
     <Compile Include="AuthenticationProviders\AuthenticationResultType.cs" />
@@ -182,6 +200,7 @@
       <HintPath>..\packages\Newtonsoft.Json.4.5.11\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Routing" />
     <Reference Include="System.Xml" />

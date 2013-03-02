@@ -7,13 +7,21 @@ using Junior.Common;
 using Junior.Route.AspNetIntegration.ResponseGenerators;
 using Junior.Route.AspNetIntegration.ResponseHandlers;
 using Junior.Route.Routing;
+using Junior.Route.Routing.AntiCsrf;
+using Junior.Route.Routing.AntiCsrf.ResponseGenerators;
+using Junior.Route.Routing.AntiCsrf.Validators;
 using Junior.Route.Routing.Caching;
 using Junior.Route.Routing.Responses;
+
+using ResponseResult = Junior.Route.Routing.AntiCsrf.ResponseGenerators.ResponseResult;
+using ResponseResultType = Junior.Route.Routing.AntiCsrf.ResponseGenerators.ResponseResultType;
 
 namespace Junior.Route.AspNetIntegration.AspNet
 {
 	public class AspNetHttpHandler : IHttpHandler
 	{
+		private readonly IAntiCsrfHelper _antiCsrfHelper;
+		private readonly IAntiCsrfResponseGenerator _antiCsrfResponseGenerator;
 		private readonly ICache _cache;
 		private readonly IResponseGenerator[] _responseGenerators;
 		private readonly IResponseHandler[] _responseHandlers;
@@ -27,9 +35,32 @@ namespace Junior.Route.AspNetIntegration.AspNet
 			responseHandlers.ThrowIfNull("responseHandlers");
 
 			_routes = routes;
+			_cache = cache;
 			_responseGenerators = responseGenerators.ToArray();
 			_responseHandlers = responseHandlers.ToArray();
+		}
+
+		public AspNetHttpHandler(
+			IRouteCollection routes,
+			ICache cache,
+			IEnumerable<IResponseGenerator> responseGenerators,
+			IEnumerable<IResponseHandler> responseHandlers,
+			IAntiCsrfHelper antiCsrfHelper,
+			IAntiCsrfResponseGenerator antiCsrfResponseGenerator)
+		{
+			routes.ThrowIfNull("routes");
+			cache.ThrowIfNull("cache");
+			responseGenerators.ThrowIfNull("responseGenerators");
+			responseHandlers.ThrowIfNull("responseHandlers");
+			antiCsrfHelper.ThrowIfNull("antiCsrfHelper");
+			antiCsrfResponseGenerator.ThrowIfNull("antiCsrfResponseGenerator");
+
+			_routes = routes;
 			_cache = cache;
+			_responseGenerators = responseGenerators.ToArray();
+			_responseHandlers = responseHandlers.ToArray();
+			_antiCsrfHelper = antiCsrfHelper;
+			_antiCsrfResponseGenerator = antiCsrfResponseGenerator;
 		}
 
 		public bool IsReusable
@@ -46,19 +77,31 @@ namespace Junior.Route.AspNetIntegration.AspNet
 
 			var request = new HttpRequestWrapper(context.Request);
 			var response = new HttpResponseWrapper(context.Response);
-			// ReSharper disable ImplicitlyCapturedClosure
-			RouteMatchResult[] routeMatchResults = _routes.Select(arg => new RouteMatchResult(arg, arg.MatchesRequest(request))).ToArray();
-			// ReSharper restore ImplicitlyCapturedClosure
-			ResponseResult responseResult = _responseGenerators
-				.Select(arg => arg.GetResponse(request, routeMatchResults))
-				.FirstOrDefault(arg => arg.ResultType != ResponseResultType.ResponseNotGenerated);
 
-			if (responseResult == null)
+			if (_antiCsrfHelper != null && _antiCsrfResponseGenerator != null)
 			{
-				throw new ApplicationException("No response was generated.");
-			}
+				ValidationResult validationResult = _antiCsrfHelper.ValidateRequest(request);
+				ResponseResult responseResult = _antiCsrfResponseGenerator.GetResponse(validationResult);
 
-			ProcessResponse(request, response, responseResult.Response, responseResult.CacheKey);
+				if (responseResult.ResultType == ResponseResultType.ResponseGenerated)
+				{
+					ProcessResponse(request, response, responseResult.Response, null);
+					return;
+				}
+			}
+			{
+				RouteMatchResult[] routeMatchResults = _routes.Select(arg => new RouteMatchResult(arg, arg.MatchesRequest(request))).ToArray();
+				ResponseGenerators.ResponseResult responseResult = _responseGenerators
+					.Select(arg => arg.GetResponse(request, routeMatchResults))
+					.FirstOrDefault(arg => arg.ResultType != ResponseGenerators.ResponseResultType.ResponseNotGenerated);
+
+				if (responseResult == null)
+				{
+					throw new ApplicationException("No response was generated.");
+				}
+
+				ProcessResponse(request, response, responseResult.Response, responseResult.CacheKey);
+			}
 		}
 
 		private void ProcessResponse(HttpRequestBase httpRequest, HttpResponseBase httpResponse, IResponse response, string cacheKey)

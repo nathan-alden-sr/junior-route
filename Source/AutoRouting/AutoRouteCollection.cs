@@ -562,19 +562,34 @@ namespace Junior.Route.AutoRouting
 			return Authenticate(FormsAuthenticationProvider.CreateWithNoRedirectOnFailedAuthentication(), new AuthenticateAttributeStrategy());
 		}
 
-		public AutoRouteCollection FormsAuthenticationWithRelativeUrlRedirectWhenAttributePresent(IUrlResolver urlResolver, string relativeUrl, bool appendReturnUrl = false, string returnUrlQueryStringField = "ReturnURL")
+		public AutoRouteCollection FormsAuthenticationWithRelativeUrlRedirectWhenAttributePresent(
+			IUrlResolver urlResolver,
+			string relativeUrl,
+			bool appendReturnUrl = false,
+			string returnUrlQueryStringField = "ReturnURL",
+			string cookieName = ".juniorauth")
 		{
-			return Authenticate(FormsAuthenticationProvider.CreateWithRelativeUrlRedirectOnFailedAuthentication(urlResolver, relativeUrl, appendReturnUrl, returnUrlQueryStringField), new AuthenticateAttributeStrategy());
+			return Authenticate(FormsAuthenticationProvider.CreateWithRelativeUrlRedirectOnFailedAuthentication(urlResolver, relativeUrl, appendReturnUrl, returnUrlQueryStringField, cookieName), new AuthenticateAttributeStrategy());
 		}
 
-		public AutoRouteCollection FormsAuthenticationWithRouteRedirectWhenAttributePresent(IUrlResolver urlResolver, string routeName, bool appendReturnUrl = false, string returnUrlQueryStringField = "ReturnURL")
+		public AutoRouteCollection FormsAuthenticationWithRouteRedirectWhenAttributePresent(
+			IUrlResolver urlResolver,
+			string routeName,
+			bool appendReturnUrl = false,
+			string returnUrlQueryStringField = "ReturnURL",
+			string cookieName = ".juniorauth")
 		{
-			return Authenticate(FormsAuthenticationProvider.CreateWithRouteRedirectOnFailedAuthentication(urlResolver, routeName, appendReturnUrl, returnUrlQueryStringField), new AuthenticateAttributeStrategy());
+			return Authenticate(FormsAuthenticationProvider.CreateWithRouteRedirectOnFailedAuthentication(urlResolver, routeName, appendReturnUrl, returnUrlQueryStringField, cookieName), new AuthenticateAttributeStrategy());
 		}
 
-		public AutoRouteCollection FormsAuthenticationWithRouteRedirectWhenAttributePresent(IUrlResolver urlResolver, Guid routeId, bool appendReturnUrl = false, string returnUrlQueryStringField = "ReturnURL")
+		public AutoRouteCollection FormsAuthenticationWithRouteRedirectWhenAttributePresent(
+			IUrlResolver urlResolver,
+			Guid routeId,
+			bool appendReturnUrl = false,
+			string returnUrlQueryStringField = "ReturnURL",
+			string cookieName = ".juniorauth")
 		{
-			return Authenticate(FormsAuthenticationProvider.CreateWithRouteRedirectOnFailedAuthentication(urlResolver, routeId, appendReturnUrl, returnUrlQueryStringField), new AuthenticateAttributeStrategy());
+			return Authenticate(FormsAuthenticationProvider.CreateWithRouteRedirectOnFailedAuthentication(urlResolver, routeId, appendReturnUrl, returnUrlQueryStringField, cookieName), new AuthenticateAttributeStrategy());
 		}
 
 		public AutoRouteCollection Authenticate(IAuthenticationProvider provider, IEnumerable<IAuthenticationStrategy> strategies)

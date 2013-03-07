@@ -69,7 +69,7 @@ namespace Junior.Route.AutoRouting.ResponseMappers
 				{
 					throw new ApplicationException(
 						String.Format(
-							"No request parameter mapper was found for parameter '{0} {1}' of '{2}.{3}'.",
+							"No request parameter mapper was found for parameter '{0} {1}' of {2}.{3}.",
 							parameterType.FullName,
 							parameterName,
 							type.FullName,

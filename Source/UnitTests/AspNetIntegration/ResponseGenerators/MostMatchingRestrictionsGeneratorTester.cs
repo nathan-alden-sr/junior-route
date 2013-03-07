@@ -73,13 +73,13 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseGenerators
 			private Response _route2Response;
 
 			[Test]
-			public void Must_use_response_of_route_with_most_matching_restrictions()
+			public async void Must_use_response_of_route_with_most_matching_restrictions()
 			{
 				ResponseResult result = _generator.GetResponse(_request, _routeMatchResults);
 
 				Assert.That(result.CacheKey, Is.EqualTo(_route2.Id.ToString()));
 				Assert.That(result.ResultType, Is.EqualTo(ResponseResultType.ResponseGenerated));
-				Assert.That(result.Response, Is.SameAs(_route2Response));
+				Assert.That(await result.Response, Is.SameAs(_route2Response));
 			}
 		}
 
@@ -117,13 +117,13 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseGenerators
 			private Response _route2Response;
 
 			[Test]
-			public void Must_generate_multiple_choices_response()
+			public async void Must_generate_multiple_choices_response()
 			{
 				ResponseResult result = _generator.GetResponse(_request, _routeMatchResults);
 
 				Assert.That(result.CacheKey, Is.Null);
 				Assert.That(result.ResultType, Is.EqualTo(ResponseResultType.ResponseGenerated));
-				Assert.That(result.Response.StatusCode.ParsedStatusCode, Is.EqualTo(HttpStatusCode.MultipleChoices));
+				Assert.That((await result.Response).StatusCode.ParsedStatusCode, Is.EqualTo(HttpStatusCode.MultipleChoices));
 			}
 		}
 	}

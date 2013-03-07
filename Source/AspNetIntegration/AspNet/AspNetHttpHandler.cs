@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 
 using Junior.Common;
 using Junior.Route.AspNetIntegration.ResponseGenerators;
 using Junior.Route.AspNetIntegration.ResponseHandlers;
 using Junior.Route.Routing;
-using Junior.Route.Routing.AntiCsrf;
+using Junior.Route.Routing.AntiCsrf.CookieManagers;
+using Junior.Route.Routing.AntiCsrf.NonceValidators;
 using Junior.Route.Routing.AntiCsrf.ResponseGenerators;
-using Junior.Route.Routing.AntiCsrf.Validators;
 using Junior.Route.Routing.Caching;
 using Junior.Route.Routing.Responses;
 
@@ -18,9 +19,10 @@ using ResponseResultType = Junior.Route.Routing.AntiCsrf.ResponseGenerators.Resp
 
 namespace Junior.Route.AspNetIntegration.AspNet
 {
-	public class AspNetHttpHandler : IHttpHandler
+	public class AspNetHttpHandler : HttpTaskAsyncHandler
 	{
-		private readonly IAntiCsrfHelper _antiCsrfHelper;
+		private readonly IAntiCsrfCookieManager _antiCsrfCookieManager;
+		private readonly IAntiCsrfNonceValidator _antiCsrfNonceValidator;
 		private readonly IAntiCsrfResponseGenerator _antiCsrfResponseGenerator;
 		private readonly ICache _cache;
 		private readonly IResponseGenerator[] _responseGenerators;
@@ -45,42 +47,45 @@ namespace Junior.Route.AspNetIntegration.AspNet
 			ICache cache,
 			IEnumerable<IResponseGenerator> responseGenerators,
 			IEnumerable<IResponseHandler> responseHandlers,
-			IAntiCsrfHelper antiCsrfHelper,
+			IAntiCsrfCookieManager antiCsrfCookieManager,
+			IAntiCsrfNonceValidator antiCsrfNonceValidator,
 			IAntiCsrfResponseGenerator antiCsrfResponseGenerator)
 		{
 			routes.ThrowIfNull("routes");
 			cache.ThrowIfNull("cache");
 			responseGenerators.ThrowIfNull("responseGenerators");
 			responseHandlers.ThrowIfNull("responseHandlers");
-			antiCsrfHelper.ThrowIfNull("antiCsrfHelper");
+			antiCsrfCookieManager.ThrowIfNull("antiCsrfSessionManager");
+			antiCsrfNonceValidator.ThrowIfNull("antiCsrfTokenValidator");
 			antiCsrfResponseGenerator.ThrowIfNull("antiCsrfResponseGenerator");
 
 			_routes = routes;
 			_cache = cache;
 			_responseGenerators = responseGenerators.ToArray();
 			_responseHandlers = responseHandlers.ToArray();
-			_antiCsrfHelper = antiCsrfHelper;
+			_antiCsrfCookieManager = antiCsrfCookieManager;
+			_antiCsrfNonceValidator = antiCsrfNonceValidator;
 			_antiCsrfResponseGenerator = antiCsrfResponseGenerator;
 		}
 
-		public bool IsReusable
+		public override bool IsReusable
 		{
 			get
 			{
-				return false;
+				return true;
 			}
 		}
 
-		public void ProcessRequest(HttpContext context)
+		public override async Task ProcessRequestAsync(HttpContext context)
 		{
 			context.ThrowIfNull("context");
 
 			var request = new HttpRequestWrapper(context.Request);
 			var response = new HttpResponseWrapper(context.Response);
 
-			if (_antiCsrfHelper != null && _antiCsrfResponseGenerator != null)
+			if (_antiCsrfCookieManager != null && _antiCsrfNonceValidator != null && _antiCsrfResponseGenerator != null)
 			{
-				ValidationResult validationResult = _antiCsrfHelper.ValidateRequest(request);
+				ValidationResult validationResult = await _antiCsrfNonceValidator.Validate(request);
 				ResponseResult responseResult = _antiCsrfResponseGenerator.GetResponse(validationResult);
 
 				if (responseResult.ResultType == ResponseResultType.ResponseGenerated)
@@ -88,6 +93,8 @@ namespace Junior.Route.AspNetIntegration.AspNet
 					ProcessResponse(request, response, responseResult.Response, null);
 					return;
 				}
+
+				_antiCsrfCookieManager.ConfigureCookie(request, response);
 			}
 			{
 				RouteMatchResult[] routeMatchResults = _routes.Select(arg => new RouteMatchResult(arg, arg.MatchesRequest(request))).ToArray();
@@ -100,7 +107,7 @@ namespace Junior.Route.AspNetIntegration.AspNet
 					throw new ApplicationException("No response was generated.");
 				}
 
-				ProcessResponse(request, response, responseResult.Response, responseResult.CacheKey);
+				ProcessResponse(request, response, await responseResult.Response, responseResult.CacheKey);
 			}
 		}
 

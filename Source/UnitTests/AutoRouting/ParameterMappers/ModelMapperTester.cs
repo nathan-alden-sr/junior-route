@@ -113,7 +113,7 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers
 				MethodInfo methodInfo = type.GetMethod(methodName);
 				ParameterInfo parameterInfo = methodInfo.GetParameters().Single(arg => arg.Name == parameterName);
 
-				Assert.DoesNotThrow(() => _modelMapper.Map(_request, type, methodInfo, parameterInfo));
+				Assert.That(() => _modelMapper.Map(_request, type, methodInfo, parameterInfo), Throws.Nothing);
 			}
 
 			[Test]

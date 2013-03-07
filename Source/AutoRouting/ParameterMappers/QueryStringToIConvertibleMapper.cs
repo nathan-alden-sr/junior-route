@@ -56,7 +56,7 @@ namespace Junior.Route.AutoRouting.ParameterMappers
 				{
 					throw new ApplicationException(
 						String.Format(
-							"Value for query string field '{0}' could not be converted to parameter '{1} {2}' of '{3}.{4}'.",
+							"Value for query string field '{0}' could not be converted to parameter '{1} {2}' of {3}.{4}.",
 							field,
 							parameterType.FullName,
 							parameterName,

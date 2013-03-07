@@ -42,11 +42,13 @@
     <AssemblyOriginatorKeyFile>..\JuniorRoute.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AntiCsrf\HtmlGenerators\DefaultHtmlGenerator.cs" />
     <Compile Include="AuthenticationStrategies\Attributes\AuthenticateAttribute.cs" />
     <Compile Include="AuthenticationStrategies\AuthenticateAttributeStrategy.cs" />
     <Compile Include="AuthenticationStrategies\IAuthenticationStrategy.cs" />
     <Compile Include="Containers\DefaultBundleDependencyContainer.cs" />
     <Compile Include="Containers\DefaultRestrictionContainer.cs" />
+    <Compile Include="ResponseContext.cs" />
     <Compile Include="FormsAuthentication\FormsAuthenticationHelper.cs" />
     <Compile Include="FormsAuthentication\FormsAuthenticationData.cs" />
     <Compile Include="FormsAuthentication\IFormsAuthenticationHelper.cs" />
@@ -58,6 +60,7 @@
     <Compile Include="IdMappers\IIdMapper.cs" />
     <Compile Include="IdMappers\RandomIdMapper.cs" />
     <Compile Include="IRequestContext.cs" />
+    <Compile Include="IResponseContext.cs" />
     <Compile Include="NameMappers\Attributes\NameAttribute.cs" />
     <Compile Include="NameMappers\NameAfterRelativeClassNamespaceAndClassNameMapper.cs" />
     <Compile Include="NameMappers\NameAfterRelativeClassNamespaceAndClassNameAndMethodNameMapper.cs" />
@@ -134,6 +137,7 @@
     <Compile Include="RestrictionMappers\IRestrictionMapper.cs" />
     <Compile Include="RestrictionMappers\RestrictionsFromAttributesMapper.cs" />
     <Compile Include="RestrictionMappers\HttpMethodFromMethodsNamedAfterStandardHttpMethodsMapper.cs" />
+    <Compile Include="TaskExtensions.cs" />
     <Compile Include="TypeExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -142,6 +146,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\JuniorCommon.3.0.0\lib\net40\Junior.Common.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Newtonsoft.Json.4.5.11\lib\net40\Newtonsoft.Json.dll</HintPath>

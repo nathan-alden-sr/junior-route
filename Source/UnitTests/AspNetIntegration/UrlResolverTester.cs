@@ -112,7 +112,7 @@ namespace Junior.Route.UnitTests.AspNetIntegration
 			[Test]
 			public void Must_throw_exception()
 			{
-				Assert.Throws<ArgumentException>(() => _urlResolver.Route(Guid.Parse("b8ce5c99-b2a2-46f3-9f48-ffdd70414c94")));
+				Assert.That(() => _urlResolver.Route(Guid.Parse("b8ce5c99-b2a2-46f3-9f48-ffdd70414c94")), Throws.InstanceOf<ArgumentException>());
 			}
 		}
 
@@ -165,7 +165,7 @@ namespace Junior.Route.UnitTests.AspNetIntegration
 			[Test]
 			public void Must_throw_exception()
 			{
-				Assert.Throws<ArgumentException>(() => _urlResolver.Route("name"));
+				Assert.That(() => _urlResolver.Route("name"), Throws.InstanceOf<ArgumentException>());
 			}
 		}
 
@@ -191,7 +191,7 @@ namespace Junior.Route.UnitTests.AspNetIntegration
 			[Test]
 			public void Must_throw_exception()
 			{
-				Assert.Throws<ArgumentException>(() => _urlResolver.Route("name1"));
+				Assert.That(() => _urlResolver.Route("name1"), Throws.InstanceOf<ArgumentException>());
 			}
 		}
 	}

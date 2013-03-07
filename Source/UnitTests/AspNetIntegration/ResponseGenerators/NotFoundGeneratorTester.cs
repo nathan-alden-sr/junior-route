@@ -26,12 +26,12 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseGenerators
 			private HttpRequestBase _request;
 
 			[Test]
-			public void Must_generate_not_found_response()
+			public async void Must_generate_not_found_response()
 			{
 				ResponseResult result = _generator.GetResponse(_request, Enumerable.Empty<RouteMatchResult>());
 
 				Assert.That(result.CacheKey, Is.Null);
-				Assert.That(result.Response.StatusCode.ParsedStatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+				Assert.That((await result.Response).StatusCode.ParsedStatusCode, Is.EqualTo(HttpStatusCode.NotFound));
 				Assert.That(result.ResultType, Is.EqualTo(ResponseResultType.ResponseGenerated));
 			}
 		}

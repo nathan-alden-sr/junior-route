@@ -1,13 +1,13 @@
 ﻿using System.Net;
 
+using Junior.Route.Routing.AntiCsrf.NonceValidators;
 using Junior.Route.Routing.AntiCsrf.ResponseGenerators;
-using Junior.Route.Routing.AntiCsrf.Validators;
 
 using NUnit.Framework;
 
 namespace Junior.Route.UnitTests.Routing.AntiCsrf.ResponseGenerators
 {
-	public static class DefaultAntiCsrfResponseGeneratorTester
+	public static class DefaultResponseGeneratorTester
 	{
 		[TestFixture]
 		public class When_handling_validation_results_that_are_failures
@@ -15,15 +15,17 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.ResponseGenerators
 			[SetUp]
 			public void SetUp()
 			{
-				_responseGenerator = new DefaultAntiCsrfResponseGenerator();
+				_responseGenerator = new DefaultResponseGenerator();
 			}
 
-			private DefaultAntiCsrfResponseGenerator _responseGenerator;
+			private DefaultResponseGenerator _responseGenerator;
 
 			[Test]
+			[TestCase(ValidationResult.CookieInvalid)]
 			[TestCase(ValidationResult.CookieMissing)]
 			[TestCase(ValidationResult.FormFieldMissing)]
-			[TestCase(ValidationResult.TokensDoNotMatch)]
+			[TestCase(ValidationResult.FormFieldInvalid)]
+			[TestCase(ValidationResult.NonceInvalid)]
 			public void Must_generate_unauthorized_response(ValidationResult validationResult)
 			{
 				ResponseResult responseResult = _responseGenerator.GetResponse(validationResult);
@@ -38,13 +40,13 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.ResponseGenerators
 			[SetUp]
 			public void SetUp()
 			{
-				_responseGenerator = new DefaultAntiCsrfResponseGenerator();
+				_responseGenerator = new DefaultResponseGenerator();
 			}
 
-			private DefaultAntiCsrfResponseGenerator _responseGenerator;
+			private DefaultResponseGenerator _responseGenerator;
 
 			[Test]
-			[TestCase(ValidationResult.TokensMatch)]
+			[TestCase(ValidationResult.NonceValid)]
 			[TestCase(ValidationResult.ValidationDisabled)]
 			[TestCase(ValidationResult.ValidationSkipped)]
 			public void Must_not_generate_response(ValidationResult result)

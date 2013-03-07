@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 
 using Junior.Common;
@@ -289,85 +290,6 @@ namespace Junior.Route.UnitTests.Routing
 		}
 
 		[TestFixture]
-		public class When_responding_with_delegate
-		{
-			[SetUp]
-			public void SetUp()
-			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
-				_request = MockRepository.GenerateMock<HttpRequestBase>();
-			}
-
-			private Route.Routing.Route _route;
-			private HttpRequestBase _request;
-
-			[Test]
-			public void Must_execute_delegate()
-			{
-				bool executed = false;
-
-				_route.RespondWith(
-					request =>
-						{
-							executed = true;
-							return (IResponse)Response.NoContent();
-						});
-
-				_route.ProcessResponse(_request);
-
-				Assert.That(executed, Is.True);
-			}
-
-			[Test]
-			public void Must_indicate_correct_return_type()
-			{
-				_route.RespondWith(request => Response.NoContent());
-
-				Assert.That(_route.ResponseType, Is.EqualTo(typeof(Response)));
-			}
-		}
-
-		[TestFixture]
-		public class When_responding_with_delegate_and_specific_return_type
-		{
-			[SetUp]
-			public void SetUp()
-			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
-				_request = MockRepository.GenerateMock<HttpRequestBase>();
-			}
-
-			private Route.Routing.Route _route;
-			private HttpRequestBase _request;
-
-			[Test]
-			public void Must_execute_delegate()
-			{
-				bool executed = false;
-
-				_route.RespondWith(
-					request =>
-						{
-							executed = true;
-							return (IResponse)Response.NoContent();
-						},
-					typeof(CssResponse));
-
-				_route.ProcessResponse(_request);
-
-				Assert.That(executed, Is.True);
-			}
-
-			[Test]
-			public void Must_indicate_correct_return_type()
-			{
-				_route.RespondWith(request => (IResponse)Response.NoContent(), typeof(CssResponse));
-
-				Assert.That(_route.ResponseType, Is.EqualTo(typeof(CssResponse)));
-			}
-		}
-
-		[TestFixture]
 		public class When_responding_with_response
 		{
 			[SetUp]
@@ -389,13 +311,13 @@ namespace Junior.Route.UnitTests.Routing
 			}
 
 			[Test]
-			public void Must_return_response()
+			public async void Must_return_response()
 			{
 				IResponse response = Response.NoContent();
 
 				_route.RespondWith(response);
 
-				IResponse processedResponse = _route.ProcessResponse(_request);
+				IResponse processedResponse = await _route.ProcessResponse(_request);
 
 				Assert.That(processedResponse, Is.EqualTo(response));
 			}
@@ -423,15 +345,241 @@ namespace Junior.Route.UnitTests.Routing
 			}
 
 			[Test]
-			public void Must_return_response()
+			public async void Must_return_response()
 			{
 				IResponse response = Response.NoContent();
 
 				_route.RespondWith(response, typeof(CssResponse));
 
-				IResponse processedResponse = _route.ProcessResponse(_request);
+				IResponse processedResponse = await _route.ProcessResponse(_request);
 
 				Assert.That(processedResponse, Is.EqualTo(response));
+			}
+		}
+
+		[TestFixture]
+		public class When_responding_with_response_delegate
+		{
+			[SetUp]
+			public void SetUp()
+			{
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_request = MockRepository.GenerateMock<HttpRequestBase>();
+			}
+
+			private Route.Routing.Route _route;
+			private HttpRequestBase _request;
+
+			[Test]
+			public async void Must_execute_delegate()
+			{
+				bool executed = false;
+
+				_route.RespondWith(
+					request =>
+						{
+							executed = true;
+							return (IResponse)Response.NoContent();
+						});
+
+				await _route.ProcessResponse(_request);
+
+				Assert.That(executed, Is.True);
+			}
+
+			[Test]
+			public void Must_indicate_correct_return_type()
+			{
+				_route.RespondWith(request => Response.NoContent());
+
+				Assert.That(_route.ResponseType, Is.EqualTo(typeof(Response)));
+			}
+		}
+
+		[TestFixture]
+		public class When_responding_with_response_delegate_and_specific_return_type
+		{
+			[SetUp]
+			public void SetUp()
+			{
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_request = MockRepository.GenerateMock<HttpRequestBase>();
+			}
+
+			private Route.Routing.Route _route;
+			private HttpRequestBase _request;
+
+			[Test]
+			public async void Must_execute_delegate()
+			{
+				bool executed = false;
+
+				_route.RespondWith(
+					request =>
+						{
+							executed = true;
+							return (IResponse)Response.NoContent();
+						},
+					typeof(CssResponse));
+
+				await _route.ProcessResponse(_request);
+
+				Assert.That(executed, Is.True);
+			}
+
+			[Test]
+			public void Must_indicate_correct_return_type()
+			{
+				_route.RespondWith(request => (IResponse)Response.NoContent(), typeof(CssResponse));
+
+				Assert.That(_route.ResponseType, Is.EqualTo(typeof(CssResponse)));
+			}
+		}
+
+		[TestFixture]
+		public class When_responding_with_task
+		{
+			[SetUp]
+			public void SetUp()
+			{
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_request = MockRepository.GenerateMock<HttpRequestBase>();
+			}
+
+			private Route.Routing.Route _route;
+			private HttpRequestBase _request;
+
+			[Test]
+			public void Must_indicate_correct_return_type()
+			{
+				_route.RespondWith(request => Task.FromResult(Response.NoContent()));
+
+				Assert.That(_route.ResponseType, Is.EqualTo(typeof(Response)));
+			}
+
+			[Test]
+			public async void Must_return_response()
+			{
+				IResponse response = Response.NoContent();
+
+				_route.RespondWith(Task.FromResult(response));
+
+				IResponse processedResponse = await _route.ProcessResponse(_request);
+
+				Assert.That(processedResponse, Is.EqualTo(response));
+			}
+		}
+
+		[TestFixture]
+		public class When_responding_with_task_and_specific_return_type
+		{
+			[SetUp]
+			public void SetUp()
+			{
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_request = MockRepository.GenerateMock<HttpRequestBase>();
+			}
+
+			private Route.Routing.Route _route;
+			private HttpRequestBase _request;
+
+			[Test]
+			public void Must_indicate_correct_return_type()
+			{
+				_route.RespondWith(request => Task.FromResult(new CssResponse("")), typeof(CssResponse));
+
+				Assert.That(_route.ResponseType, Is.EqualTo(typeof(CssResponse)));
+			}
+
+			[Test]
+			public async void Must_return_response()
+			{
+				IResponse response = Response.NoContent();
+
+				_route.RespondWith(Task.FromResult(response), typeof(CssResponse));
+
+				IResponse processedResponse = await _route.ProcessResponse(_request);
+
+				Assert.That(processedResponse, Is.EqualTo(response));
+			}
+		}
+
+		[TestFixture]
+		public class When_responding_with_task_delegate
+		{
+			[SetUp]
+			public void SetUp()
+			{
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_request = MockRepository.GenerateMock<HttpRequestBase>();
+			}
+
+			private Route.Routing.Route _route;
+			private HttpRequestBase _request;
+
+			[Test]
+			public async void Must_execute_delegate()
+			{
+				bool executed = false;
+
+				_route.RespondWith(
+					request =>
+						{
+							executed = true;
+							return Task.FromResult(Response.NoContent());
+						});
+
+				await _route.ProcessResponse(_request);
+
+				Assert.That(executed, Is.True);
+			}
+
+			[Test]
+			public void Must_indicate_correct_return_type()
+			{
+				_route.RespondWith(request => Task.FromResult(Response.NoContent()));
+
+				Assert.That(_route.ResponseType, Is.EqualTo(typeof(Response)));
+			}
+		}
+
+		[TestFixture]
+		public class When_responding_with_task_delegate_and_specific_return_type
+		{
+			[SetUp]
+			public void SetUp()
+			{
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_request = MockRepository.GenerateMock<HttpRequestBase>();
+			}
+
+			private Route.Routing.Route _route;
+			private HttpRequestBase _request;
+
+			[Test]
+			public async void Must_execute_delegate()
+			{
+				bool executed = false;
+
+				_route.RespondWith(
+					request =>
+						{
+							executed = true;
+							return Task.FromResult(new CssResponse(""));
+						},
+					typeof(CssResponse));
+
+				await _route.ProcessResponse(_request);
+
+				Assert.That(executed, Is.True);
+			}
+
+			[Test]
+			public void Must_indicate_correct_return_type()
+			{
+				_route.RespondWith(request => Task.FromResult(new CssResponse("")), typeof(CssResponse));
+
+				Assert.That(_route.ResponseType, Is.EqualTo(typeof(CssResponse)));
 			}
 		}
 

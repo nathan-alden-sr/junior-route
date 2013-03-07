@@ -23,7 +23,7 @@ namespace Junior.Route.UnitTests.ViewEngines.Razor.CompiledTemplateFactories
 			[Test]
 			public void Must_throw_exception()
 			{
-				Assert.Throws<ArgumentException>(() => _factory.CreateFromType(typeof(object)));
+				Assert.That(() => _factory.CreateFromType(typeof(object)), Throws.InstanceOf<ArgumentException>());
 			}
 		}
 

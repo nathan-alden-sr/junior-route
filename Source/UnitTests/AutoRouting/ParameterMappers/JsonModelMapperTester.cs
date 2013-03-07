@@ -50,7 +50,7 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers
 				MethodInfo methodInfo = type.GetMethod(methodName);
 				ParameterInfo parameterInfo = methodInfo.GetParameters().Single(arg => arg.Name == parameterName);
 
-				Assert.Throws<ApplicationException>(() => _mapper.Map(_request, type, methodInfo, parameterInfo));
+				Assert.That(() => _mapper.Map(_request, type, methodInfo, parameterInfo), Throws.InstanceOf<ApplicationException>());
 			}
 		}
 

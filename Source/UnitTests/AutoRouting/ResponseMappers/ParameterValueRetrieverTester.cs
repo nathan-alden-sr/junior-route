@@ -40,7 +40,7 @@ namespace Junior.Route.UnitTests.AutoRouting.ResponseMappers
 			[Test]
 			public void Must_throw_exception()
 			{
-				Assert.Throws<ApplicationException>(() => _retriever.GetParameterValues(_request, typeof(Endpoint), typeof(Endpoint).GetMethod("Method")));
+				Assert.That(() => _retriever.GetParameterValues(_request, typeof(Endpoint), typeof(Endpoint).GetMethod("Method")), Throws.InstanceOf<ApplicationException>());
 			}
 		}
 

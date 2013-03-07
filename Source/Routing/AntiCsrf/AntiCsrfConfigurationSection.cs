@@ -13,24 +13,6 @@ namespace Junior.Route.Routing.AntiCsrf
 			}
 		}
 
-		[ConfigurationProperty("cookieName", DefaultValue = ".junioranticsrftoken", IsRequired = false)]
-		public string CookieName
-		{
-			get
-			{
-				return (string)this["cookieName"];
-			}
-		}
-
-		[ConfigurationProperty("formFieldName", DefaultValue = "__JuniorAntiCsrfToken", IsRequired = false)]
-		public string FormFieldName
-		{
-			get
-			{
-				return (string)this["formFieldName"];
-			}
-		}
-
 		[ConfigurationProperty("validateHttpPost", DefaultValue = true, IsRequired = false)]
 		public bool ValidateHttpPost
 		{
@@ -55,6 +37,42 @@ namespace Junior.Route.Routing.AntiCsrf
 			get
 			{
 				return (bool)this["validateHttpDelete"];
+			}
+		}
+
+		[ConfigurationProperty("cookieName", DefaultValue = ".juniorroutesession", IsRequired = false)]
+		public string CookieName
+		{
+			get
+			{
+				return (string)this["cookieName"];
+			}
+		}
+
+		[ConfigurationProperty("formFieldName", DefaultValue = "__JuniorRouteNonce", IsRequired = false)]
+		public string FormFieldName
+		{
+			get
+			{
+				return (string)this["formFieldName"];
+			}
+		}
+
+		[ConfigurationProperty("nonceDurationInMinutes", DefaultValue = 60, IsRequired = false)]
+		public int NonceDurationInMinutes
+		{
+			get
+			{
+				return (int)this["nonceDurationInMinutes"];
+			}
+		}
+
+		[ConfigurationProperty("memoryCacheName", DefaultValue = "JuniorRoute", IsRequired = false)]
+		public string MemoryCacheName
+		{
+			get
+			{
+				return (string)this["memoryCacheName"];
 			}
 		}
 	}

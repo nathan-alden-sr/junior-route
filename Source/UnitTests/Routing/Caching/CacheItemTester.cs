@@ -43,8 +43,8 @@ namespace Junior.Route.UnitTests.Routing.Caching
 			{
 				var cacheResponse = new CacheResponse(Response.OK());
 
-				Assert.Throws<ArgumentException>(() => new CacheItem(cacheResponse, new DateTime(2012, 01, 01, 0, 0, 0, DateTimeKind.Local), new DateTime(2012, 01, 01, 0, 0, 0, DateTimeKind.Utc)));
-				Assert.Throws<ArgumentException>(() => new CacheItem(cacheResponse, new DateTime(2012, 01, 01, 0, 0, 0, DateTimeKind.Utc), new DateTime(2012, 01, 01, 0, 0, 0, DateTimeKind.Local)));
+				Assert.That(() => new CacheItem(cacheResponse, new DateTime(2012, 01, 01, 0, 0, 0, DateTimeKind.Local), new DateTime(2012, 01, 01, 0, 0, 0, DateTimeKind.Utc)), Throws.InstanceOf<ArgumentException>());
+				Assert.That(() => new CacheItem(cacheResponse, new DateTime(2012, 01, 01, 0, 0, 0, DateTimeKind.Utc), new DateTime(2012, 01, 01, 0, 0, 0, DateTimeKind.Local)), Throws.InstanceOf<ArgumentException>());
 			}
 		}
 	}

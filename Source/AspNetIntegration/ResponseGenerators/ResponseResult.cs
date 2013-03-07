@@ -1,14 +1,16 @@
-﻿using Junior.Route.Routing.Responses;
+﻿using System.Threading.Tasks;
+
+using Junior.Route.Routing.Responses;
 
 namespace Junior.Route.AspNetIntegration.ResponseGenerators
 {
 	public class ResponseResult
 	{
 		private readonly string _cacheKey;
-		private readonly IResponse _response;
+		private readonly Task<IResponse> _response;
 		private readonly ResponseResultType _resultType;
 
-		private ResponseResult(ResponseResultType resultType, IResponse response, string cacheKey)
+		private ResponseResult(ResponseResultType resultType, Task<IResponse> response, string cacheKey)
 		{
 			_resultType = resultType;
 			_response = response;
@@ -23,7 +25,7 @@ namespace Junior.Route.AspNetIntegration.ResponseGenerators
 			}
 		}
 
-		public IResponse Response
+		public Task<IResponse> Response
 		{
 			get
 			{
@@ -39,9 +41,14 @@ namespace Junior.Route.AspNetIntegration.ResponseGenerators
 			}
 		}
 
-		public static ResponseResult ResponseGenerated(IResponse response, string cacheKey = null)
+		public static ResponseResult ResponseGenerated(Task<IResponse> response, string cacheKey = null)
 		{
 			return new ResponseResult(ResponseResultType.ResponseGenerated, response, cacheKey);
+		}
+
+		public static ResponseResult ResponseGenerated(IResponse response, string cacheKey = null)
+		{
+			return ResponseGenerated(Task.FromResult(response), cacheKey);
 		}
 
 		public static ResponseResult ResponseNotGenerated()

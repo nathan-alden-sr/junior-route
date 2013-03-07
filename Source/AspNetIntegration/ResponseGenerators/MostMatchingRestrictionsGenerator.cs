@@ -1,6 +1,6 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 
 using Junior.Common;
@@ -39,12 +39,7 @@ namespace Junior.Route.AspNetIntegration.ResponseGenerators
 						return ResponseResult.ResponseGenerated(authenticateResult.FailedResponse ?? Response.Unauthorized());
 					}
 
-					IResponse response = bestMatch.Route.ProcessResponse(request);
-
-					if (response == null)
-					{
-						throw new ApplicationException("A matching route was found but it returned a null response.");
-					}
+					Task<IResponse> response = bestMatch.Route.ProcessResponse(request);
 
 					return ResponseResult.ResponseGenerated(response, bestMatch.MatchResult.CacheKey);
 				}

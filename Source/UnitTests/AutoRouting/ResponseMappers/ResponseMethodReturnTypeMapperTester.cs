@@ -21,7 +21,7 @@ namespace Junior.Route.UnitTests.AutoRouting.ResponseMappers
 		public class When_mapping_response
 		{
 			[SetUp]
-			public void SetUp()
+			public async void SetUp()
 			{
 				_parameterMapper = MockRepository.GenerateMock<IParameterMapper>();
 				_responseMethodReturnTypeMapper = new ResponseMethodReturnTypeMapper(_parameterMapper);
@@ -30,7 +30,7 @@ namespace Junior.Route.UnitTests.AutoRouting.ResponseMappers
 				_route = new Route.Routing.Route("name", Guid.NewGuid(), "relative");
 				_responseMethodReturnTypeMapper.Map(() => _container, typeof(Endpoint), typeof(Endpoint).GetMethod("Method"), _route);
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
-				_response = _route.ProcessResponse(_request);
+				_response = await _route.ProcessResponse(_request);
 			}
 
 			private ResponseMethodReturnTypeMapper _responseMethodReturnTypeMapper;

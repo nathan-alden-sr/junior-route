@@ -1,4 +1,6 @@
-﻿using Junior.Route.AspNetIntegration.ResponseGenerators;
+﻿using System.Threading.Tasks;
+
+using Junior.Route.AspNetIntegration.ResponseGenerators;
 using Junior.Route.Routing.Responses;
 
 using NUnit.Framework;
@@ -10,7 +12,7 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseGenerators
 	public static class ResponseResultTester
 	{
 		[TestFixture]
-		public class When_creating_response_generated_instance
+		public class When_creating_response_generated_instance_with_response
 		{
 			[SetUp]
 			public void SetUp()
@@ -21,6 +23,28 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseGenerators
 
 			private IResponse _response;
 			private ResponseResult _result;
+
+			[Test]
+			public async void Must_set_properties()
+			{
+				Assert.That(_result.CacheKey, Is.EqualTo("key"));
+				Assert.That(await _result.Response, Is.SameAs(_response));
+				Assert.That(_result.ResultType, Is.EqualTo(ResponseResultType.ResponseGenerated));
+			}
+		}
+
+		[TestFixture]
+		public class When_creating_response_generated_instance_with_task
+		{
+			[SetUp]
+			public void SetUp()
+			{
+				_response = Task.FromResult((IResponse)null);
+				_result = ResponseResult.ResponseGenerated(_response, "key");
+			}
+
+			private ResponseResult _result;
+			private Task<IResponse> _response;
 
 			[Test]
 			public void Must_set_properties()

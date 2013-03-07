@@ -186,7 +186,7 @@ namespace Junior.Route.AutoRouting
 
 					if (resolvedRelativeUrl == null)
 					{
-						throw new ApplicationException(String.Format("Unable to determine a route resolved relative URL for '{0}.{1}'.", matchingType.FullName, matchingMethod.Name));
+						throw new ApplicationException(String.Format("Unable to determine a route resolved relative URL for {0}.{1}.", matchingType.FullName, matchingMethod.Name));
 					}
 
 					var route = new Routing.Route(name, id.Value, resolvedRelativeUrl);

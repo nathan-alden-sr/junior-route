@@ -46,7 +46,7 @@ namespace Junior.Route.UnitTests.ViewEngines.Razor.TemplateCodeBuilders
 			[TestCase(".vb")]
 			public void Must_throw_exception(string extension)
 			{
-				Assert.Throws<ArgumentException>(() => _factory.CreateFromFileExtension(extension));
+				Assert.That(() => _factory.CreateFromFileExtension(extension), Throws.InstanceOf<ArgumentException>());
 			}
 		}
 

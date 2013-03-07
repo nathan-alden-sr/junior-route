@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 
 using Junior.Common;
@@ -24,7 +25,7 @@ namespace Junior.Route.Routing
 		private readonly Dictionary<Type, HashSet<IRestriction>> _restrictionsByRestrictionType = new Dictionary<Type, HashSet<IRestriction>>();
 		private IAuthenticationProvider _authenticationProvider;
 		private string _resolvedRelativeUrl;
-		private Func<HttpRequestBase, IResponse> _response = request => Response.NoContent();
+		private Func<HttpRequestBase, Task<IResponse>> _responseDelegate = async request => await Task.FromResult(Response.NoContent());
 
 		public Route(string name, IGuidFactory guidFactory, string resolvedRelativeUrl)
 		{
@@ -935,7 +936,7 @@ namespace Junior.Route.Routing
 
 		#region Responses
 
-		public Route RespondWith<T>(Func<HttpRequestBase, T> response, Type returnType)
+		public Route RespondWith<T>(Func<HttpRequestBase, T> responseDelegate, Type returnType)
 			where T : class, IResponse
 		{
 			lock (_lockObject)
@@ -951,18 +952,17 @@ namespace Junior.Route.Routing
 					throw new ArgumentException(String.Format("Return type must derive {0}.", delegateType.FullName), "returnType");
 				}
 
-				_response = response;
-
+				_responseDelegate = async request => await Task.FromResult(responseDelegate(request));
 				ResponseType = returnType;
 			}
 
 			return this;
 		}
 
-		public Route RespondWith<T>(Func<HttpRequestBase, T> response)
+		public Route RespondWith<T>(Func<HttpRequestBase, T> responseDelegate)
 			where T : class, IResponse
 		{
-			return RespondWith(response, typeof(T));
+			return RespondWith(responseDelegate, typeof(T));
 		}
 
 		public Route RespondWith<T>(T response, Type returnType)
@@ -977,11 +977,52 @@ namespace Junior.Route.Routing
 			return RespondWith(request => response);
 		}
 
+		public Route RespondWith<T>(Func<HttpRequestBase, Task<T>> responseDelegate, Type returnType)
+			where T : class, IResponse
+		{
+			lock (_lockObject)
+			{
+				Type delegateType = typeof(T);
+
+				if (returnType != delegateType && delegateType.IsInterface && !returnType.ImplementsInterface<T>())
+				{
+					throw new ArgumentException(String.Format("Return type must implement {0}.", delegateType.FullName), "returnType");
+				}
+				if (returnType != delegateType && !delegateType.IsInterface && !returnType.IsSubclassOf(delegateType))
+				{
+					throw new ArgumentException(String.Format("Return type must derive {0}.", delegateType.FullName), "returnType");
+				}
+
+				_responseDelegate = async request => await responseDelegate(request);
+				ResponseType = returnType;
+			}
+
+			return this;
+		}
+
+		public Route RespondWith<T>(Func<HttpRequestBase, Task<T>> responseDelegate)
+			where T : class, IResponse
+		{
+			return RespondWith(responseDelegate, typeof(T));
+		}
+
+		public Route RespondWith<T>(Task<T> response, Type returnType)
+			where T : class, IResponse
+		{
+			return RespondWith(request => response, returnType);
+		}
+
+		public Route RespondWith<T>(Task<T> response)
+			where T : class, IResponse
+		{
+			return RespondWith(request => response);
+		}
+
 		public Route RespondWithNoContent()
 		{
 			lock (_lockObject)
 			{
-				_response = request => Response.NoContent();
+				_responseDelegate = async request => await Task.FromResult(Response.NoContent());
 				ResponseType = null;
 			}
 
@@ -1021,14 +1062,11 @@ namespace Junior.Route.Routing
 				       : AuthenticateResult.AuthenticationFailed(_authenticationProvider.GetFailedAuthenticationResponse(request));
 		}
 
-		public IResponse ProcessResponse(HttpRequestBase request)
+		public async Task<IResponse> ProcessResponse(HttpRequestBase request)
 		{
 			request.ThrowIfNull("request");
 
-			lock (_lockObject)
-			{
-				return _response(request);
-			}
+			return await _responseDelegate(request);
 		}
 	}
 }

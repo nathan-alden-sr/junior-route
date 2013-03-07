@@ -1,4 +1,5 @@
-﻿using System.Configuration;
+﻿using System;
+using System.Configuration;
 
 namespace Junior.Route.Routing.AntiCsrf
 {
@@ -51,6 +52,22 @@ namespace Junior.Route.Routing.AntiCsrf
 			get
 			{
 				return _configurationSection.FormFieldName;
+			}
+		}
+
+		public TimeSpan NonceDuration
+		{
+			get
+			{
+				return TimeSpan.FromMinutes(_configurationSection.NonceDurationInMinutes);
+			}
+		}
+
+		public string MemoryCacheName
+		{
+			get
+			{
+				return _configurationSection.MemoryCacheName;
 			}
 		}
 	}

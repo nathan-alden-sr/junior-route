@@ -46,7 +46,7 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers.ModelPropertyMappe
 			[TestCase(typeof(Model), "I")]
 			public void Must_throw_exception(Type type, string propertyName)
 			{
-				Assert.Throws<ApplicationException>(() => _mapper.Map(_request, type, type.GetProperty(propertyName)));
+				Assert.That(() => _mapper.Map(_request, type, type.GetProperty(propertyName)), Throws.InstanceOf<ApplicationException>());
 			}
 		}
 

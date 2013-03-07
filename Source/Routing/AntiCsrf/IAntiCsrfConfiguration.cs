@@ -1,4 +1,6 @@
-﻿namespace Junior.Route.Routing.AntiCsrf
+﻿using System;
+
+namespace Junior.Route.Routing.AntiCsrf
 {
 	public interface IAntiCsrfConfiguration
 	{
@@ -23,6 +25,14 @@
 			get;
 		}
 		string FormFieldName
+		{
+			get;
+		}
+		TimeSpan NonceDuration
+		{
+			get;
+		}
+		string MemoryCacheName
 		{
 			get;
 		}

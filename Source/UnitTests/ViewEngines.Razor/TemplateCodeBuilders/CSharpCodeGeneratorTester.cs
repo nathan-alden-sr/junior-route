@@ -27,7 +27,7 @@ namespace Junior.Route.UnitTests.ViewEngines.Razor.TemplateCodeBuilders
 			[Test]
 			public void Must_not_throw_exception()
 			{
-				Assert.DoesNotThrow(() => _generator.VisitError(new RazorError("", 0, 0, 0)));
+				Assert.That(() => _generator.VisitError(new RazorError("", 0, 0, 0)), Throws.Nothing);
 			}
 		}
 
@@ -47,7 +47,7 @@ namespace Junior.Route.UnitTests.ViewEngines.Razor.TemplateCodeBuilders
 			[Test]
 			public void Must_throw_exception()
 			{
-				Assert.Throws<TemplateParsingException>(() => _generator.VisitError(new RazorError("", 0, 0, 0)));
+				Assert.That(() => _generator.VisitError(new RazorError("", 0, 0, 0)), Throws.InstanceOf<TemplateParsingException>());
 			}
 		}
 	}

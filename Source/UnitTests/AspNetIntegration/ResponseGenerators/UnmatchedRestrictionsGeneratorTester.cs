@@ -51,12 +51,12 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseGenerators
 			private IEnumerable<UrlRelativePathRestriction> _matchedRestrictions;
 
 			[Test]
-			public void Must_generate_not_acceptable_response()
+			public async void Must_generate_not_acceptable_response()
 			{
 				ResponseResult result = _generator.GetResponse(_request, _routeMatchResults);
 
 				Assert.That(result.CacheKey, Is.Null);
-				Assert.That(result.Response.StatusCode.ParsedStatusCode, Is.EqualTo(HttpStatusCode.NotAcceptable));
+				Assert.That((await result.Response).StatusCode.ParsedStatusCode, Is.EqualTo(HttpStatusCode.NotAcceptable));
 			}
 		}
 
@@ -93,12 +93,12 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseGenerators
 			private IEnumerable<UrlRelativePathRestriction> _matchedRestrictions;
 
 			[Test]
-			public void Must_generate_not_acceptable_response()
+			public async void Must_generate_not_acceptable_response()
 			{
 				ResponseResult result = _generator.GetResponse(_request, _routeMatchResults);
 
 				Assert.That(result.CacheKey, Is.Null);
-				Assert.That(result.Response.StatusCode.ParsedStatusCode, Is.EqualTo(HttpStatusCode.NotAcceptable));
+				Assert.That((await result.Response).StatusCode.ParsedStatusCode, Is.EqualTo(HttpStatusCode.NotAcceptable));
 			}
 		}
 
@@ -135,12 +135,12 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseGenerators
 			private IEnumerable<UrlRelativePathRestriction> _matchedRestrictions;
 
 			[Test]
-			public void Must_generate_unsupported_media_type_response()
+			public async void Must_generate_unsupported_media_type_response()
 			{
 				ResponseResult result = _generator.GetResponse(_request, _routeMatchResults);
 
 				Assert.That(result.CacheKey, Is.Null);
-				Assert.That(result.Response.StatusCode.ParsedStatusCode, Is.EqualTo(HttpStatusCode.UnsupportedMediaType));
+				Assert.That((await result.Response).StatusCode.ParsedStatusCode, Is.EqualTo(HttpStatusCode.UnsupportedMediaType));
 			}
 		}
 
@@ -177,13 +177,13 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseGenerators
 			private IEnumerable<UrlRelativePathRestriction> _matchedRestrictions;
 
 			[Test]
-			public void Must_generate_method_not_allowed_response()
+			public async void Must_generate_method_not_allowed_response()
 			{
 				ResponseResult result = _generator.GetResponse(_request, _routeMatchResults);
 
 				Assert.That(result.CacheKey, Is.Null);
-				Assert.That(result.Response.StatusCode.ParsedStatusCode, Is.EqualTo(HttpStatusCode.MethodNotAllowed));
-				Assert.That(result.Response.Headers.Any(arg => arg.Field == "Allow" && arg.Value == "GET"), Is.True);
+				Assert.That((await result.Response).StatusCode.ParsedStatusCode, Is.EqualTo(HttpStatusCode.MethodNotAllowed));
+				Assert.That((await result.Response).Headers.Any(arg => arg.Field == "Allow" && arg.Value == "GET"), Is.True);
 			}
 		}
 	}

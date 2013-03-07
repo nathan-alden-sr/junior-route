@@ -75,7 +75,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 			[Test]
 			public void Must_not_throw_exception()
 			{
-				Assert.DoesNotThrow(() => _autoRouteCollection.GenerateRouteCollection());
+				Assert.That(() => _autoRouteCollection.GenerateRouteCollection(), Throws.Nothing);
 			}
 		}
 
@@ -185,7 +185,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 			[Test]
 			public void Must_throw_exception()
 			{
-				Assert.Throws<ArgumentException>(() => _autoRouteCollection.GenerateRouteCollection());
+				Assert.That(() => _autoRouteCollection.GenerateRouteCollection(), Throws.InstanceOf<ArgumentException>());
 			}
 		}
 
@@ -237,7 +237,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 			[Test]
 			public void Must_throw_exception()
 			{
-				Assert.Throws<ArgumentException>(() => _autoRouteCollection.GenerateRouteCollection());
+				Assert.That(() => _autoRouteCollection.GenerateRouteCollection(), Throws.InstanceOf<ArgumentException>());
 			}
 		}
 
@@ -813,7 +813,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 			[Test]
 			public void Must_require_restriction_container()
 			{
-				Assert.Throws<InvalidOperationException>(() => _autoRouteCollection.GenerateRouteCollection());
+				Assert.That(() => _autoRouteCollection.GenerateRouteCollection(), Throws.InstanceOf<InvalidOperationException>());
 			}
 		}
 	}

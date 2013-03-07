@@ -23,7 +23,8 @@ namespace Junior.Route.AutoRouting.AntiCsrf.HtmlGenerators
 			IResponseContext responseContext,
 			IAntiCsrfCookieManager cookieManager,
 			IAntiCsrfNonceRepository nonceRepository,
-			IGuidFactory guidFactory, ISystemClock systemClock)
+			IGuidFactory guidFactory,
+			ISystemClock systemClock)
 		{
 			configuration.ThrowIfNull("configuration");
 			responseContext.ThrowIfNull("responseContext");

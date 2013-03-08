@@ -38,9 +38,6 @@ NUnit Staging/
 _ReSharper*/
 *.resharper
 
-#Subversion files
-.svn
-
 # Office Temp Files
 ~$*
 

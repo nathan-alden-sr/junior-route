@@ -22,8 +22,11 @@
 11. Open ProjectTemplates.sln
 12. Edit source.extension.vsixmanifest in a text editor
 	1. Update the Version element
-13. Set the release configuration to Release
-14. Rebuild the solution
-15. Copy and paste Junior.Route.ProjectTemplates.vsix from bin\Release to the Extensions folder
-16. Upload the new .vsix to the Visual Studio Extension Gallery
+13. Replace .nupkg files as necessary
+	1. Set Build Action to Content
+	2. Set Include in VSIX to True
+14. Set the release configuration to Release
+15. Rebuild the solution
+16. Copy and paste Junior.Route.ProjectTemplates.vsix from bin\Release to the Extensions folder
+17. Upload the new .vsix to the Visual Studio Extension Gallery
 	<ul><li>Be sure to update the extension's version number</li></ul>

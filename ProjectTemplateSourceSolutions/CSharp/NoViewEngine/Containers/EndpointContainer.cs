@@ -5,27 +5,15 @@ using System.Linq.Expressions;
 using System.Reflection;
 
 using Junior.Common;
-using Junior.Route.AspNetIntegration;
 using Junior.Route.AutoRouting;
 using Junior.Route.AutoRouting.AntiCsrf.HtmlGenerators;
 using Junior.Route.AutoRouting.Containers;
-using Junior.Route.Common;
-using Junior.Route.Routing;
 using Junior.Route.Routing.AntiCsrf;
 using Junior.Route.Routing.AntiCsrf.CookieManagers;
 using Junior.Route.Routing.AntiCsrf.HtmlGenerators;
 using Junior.Route.Routing.AntiCsrf.NonceRepositories;
 using Junior.Route.Routing.AntiCsrf.NonceValidators;
 using Junior.Route.Routing.AntiCsrf.ResponseGenerators;
-using Junior.Route.ViewEngines.Razor.CodeDomProviderFactories;
-using Junior.Route.ViewEngines.Razor.CompiledTemplateFactories;
-using Junior.Route.ViewEngines.Razor.Routing.TemplatePathResolvers;
-using Junior.Route.ViewEngines.Razor.Routing.TemplateRepositories;
-using Junior.Route.ViewEngines.Razor.TemplateAssemblyReferenceResolvers;
-using Junior.Route.ViewEngines.Razor.TemplateClassNameBuilders;
-using Junior.Route.ViewEngines.Razor.TemplateCodeBuilders;
-using Junior.Route.ViewEngines.Razor.TemplateCompilers;
-using Junior.Route.ViewEngines.Razor.TemplateRepositories;
 
 using JuniorRouteWebApplication.Endpoints;
 
@@ -39,16 +27,12 @@ namespace JuniorRouteWebApplication.Containers
 		private readonly Dictionary<Type, object> _instancesByRequestedType = new Dictionary<Type, object>();
 		private readonly object _lockObject = new object();
 
-		public EndpointContainer(IHttpRuntime httpRuntime)
+		public EndpointContainer()
 		{
-			httpRuntime.ThrowIfNull("httpRuntime");
-
 			// Common
 			AddMapping<IGuidFactory, GuidFactory>();
 			AddMapping<ISystemClock, SystemClock>();
 			AddMapping<IResponseContext, ResponseContext>();
-			AddMapping<IFileSystem, FileSystem>();
-			AddInstance(httpRuntime);
 
 			// Anti-CSRF
 			AddMapping<IAntiCsrfConfiguration, ConfigurationSectionAntiCsrfConfiguration>();
@@ -57,17 +41,6 @@ namespace JuniorRouteWebApplication.Containers
 			AddMapping<IAntiCsrfNonceRepository, MemoryCacheNonceRepository>();
 			AddMapping<IAntiCsrfNonceValidator, DefaultNonceValidator>();
 			AddMapping<IAntiCsrfResponseGenerator, DefaultResponseGenerator>();
-
-			// Razor
-			AddMapping<ITemplatePathResolver, CSharpResolver>();
-			AddMapping<ITemplateCompiler, TemplateCompiler>();
-			AddMapping<ITemplateClassNameBuilder, RandomGuidBuilder>();
-			AddMapping<ITemplateCodeBuilder, CSharpBuilder>();
-			AddMapping<ICodeDomProviderFactory, FileExtensionFactory>();
-			AddMapping<ICompiledTemplateFactory, ActivatorFactory>();
-			AddMapping<ITemplateAssemblyReferenceResolver, AppDomainResolver>();
-			AddMapping<IFileSystemRepositoryConfiguration, DebugAttributeConfiguration>();
-			AddMapping<ITemplateRepository, FileSystemRepository>();
 
 			// Endpoints
 			AddMapping<HelloWorld, HelloWorld>();
@@ -102,7 +75,7 @@ namespace JuniorRouteWebApplication.Containers
 
 				if (constructorInfos.Length == 0)
 				{
-					throw new ArgumentException(String.Format("No public instance constructors found for type {0}.", type.FullName));
+					throw new ArgumentException(String.Format("No public instance constructors found for type {0}.", concreteType.FullName));
 				}
 
 				KeyValuePair<ConstructorInfo, ParameterInfo[]> pair = constructorInfos
@@ -136,16 +109,6 @@ namespace JuniorRouteWebApplication.Containers
 			lock (_lockObject)
 			{
 				_concreteTypesByRequestedType.Add(typeof(TRequestedType), typeof(TConcreteType));
-			}
-		}
-
-		private void AddInstance<TRequestedType>(TRequestedType instance)
-		{
-			instance.ThrowIfNull("instance");
-
-			lock (_lockObject)
-			{
-				_instancesByRequestedType.Add(typeof(TRequestedType), instance);
 			}
 		}
 	}

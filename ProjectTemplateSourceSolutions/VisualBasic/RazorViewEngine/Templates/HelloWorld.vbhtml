@@ -3,6 +3,7 @@
 	Layout = "Templates\Layout"
 End Code
 <div style="font-size: 3em;">@Model.Message</div>
+@Model.AntiCsrfHtml
 @Include("Templates\Message")
 @Section Time
 	@DateTime.Now.ToLongDateString()

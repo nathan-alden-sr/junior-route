@@ -2,6 +2,6 @@
 
 Public Module JuniorRoute
 	Public Sub Start()
-		JuniorRouteApplication.RegisterConfiguration(Of JuniorRouteConfiguration)()
+		JuniorRouteApplication.RegisterConfiguration (Of JuniorRouteConfiguration)()
 	End Sub
 End Module

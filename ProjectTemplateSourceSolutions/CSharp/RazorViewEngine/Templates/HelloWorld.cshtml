@@ -3,6 +3,7 @@
 	Layout = @"Templates\Layout";
 }
 <div style="font-size: 3em;">@Model.Message</div>
+@Model.AntiCsrfHtml
 @Include(@"Templates\Message")
 @section Time
 {

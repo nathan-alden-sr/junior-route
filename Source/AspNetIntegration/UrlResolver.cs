@@ -43,7 +43,7 @@ namespace Junior.Route.AspNetIntegration
 		{
 			routeName.ThrowIfNull("routeName");
 
-			Routing.Route[] routes = _routes.Value.Where(arg => arg.Name == routeName).ToArray();
+			Routing.Route[] routes = _routes.Value.GetRoutes(routeName).ToArray();
 
 			if (routes.Length > 1)
 			{
@@ -59,7 +59,7 @@ namespace Junior.Route.AspNetIntegration
 
 		public string Route(Guid routeId)
 		{
-			Routing.Route route = _routes.Value.SingleOrDefault(arg => arg.Id == routeId);
+			Routing.Route route = _routes.Value.GetRoute(routeId);
 
 			if (route == null)
 			{

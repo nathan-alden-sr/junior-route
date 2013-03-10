@@ -30,21 +30,36 @@ namespace Junior.Route.Routing
 
 		public Route GetRoute(Guid id)
 		{
-			return _routesById[id];
+			Route route;
+
+			return _routesById.TryGetValue(id, out route) ? route : null;
 		}
 
 		public Route GetRoute(string name)
 		{
 			name.ThrowIfNull("name");
 
-			return _routesByName[name].Single();
+			List<Route> routes;
+
+			if (!_routesByName.TryGetValue(name, out routes))
+			{
+				return null;
+			}
+			if (routes.Count > 1)
+			{
+				throw new ApplicationException(String.Format("More than one route exists with name '{0}'.", name));
+			}
+
+			return routes[0];
 		}
 
 		public IEnumerable<Route> GetRoutes(string name)
 		{
 			name.ThrowIfNull("name");
 
-			return _routesByName[name];
+			List<Route> routes;
+
+			return _routesByName.TryGetValue(name, out routes) ? routes : Enumerable.Empty<Route>();
 		}
 
 		public IEnumerable<Route> GetRoutes()

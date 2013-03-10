@@ -152,6 +152,24 @@ namespace Junior.Route.UnitTests.Routing
 		}
 
 		[TestFixture]
+		public class When_getting_route_by_id_that_does_not_exist
+		{
+			[SetUp]
+			public void SetUp()
+			{
+				_routeCollection = new RouteCollection();
+			}
+
+			private RouteCollection _routeCollection;
+
+			[Test]
+			public void Must_return_null()
+			{
+				Assert.That(_routeCollection.GetRoute(Guid.NewGuid()), Is.Null);
+			}
+		}
+
+		[TestFixture]
 		public class When_getting_route_by_name
 		{
 			[SetUp]
@@ -172,6 +190,42 @@ namespace Junior.Route.UnitTests.Routing
 			public void Must_get_correct_route()
 			{
 				Assert.That(_routeCollection.GetRoute("test1"), Is.SameAs(_route));
+			}
+		}
+
+		[TestFixture]
+		public class When_getting_route_by_name_that_does_not_exist
+		{
+			[SetUp]
+			public void SetUp()
+			{
+				_routeCollection = new RouteCollection();
+			}
+
+			private RouteCollection _routeCollection;
+
+			[Test]
+			public void Must_return_null()
+			{
+				Assert.That(_routeCollection.GetRoute(""), Is.Null);
+			}
+		}
+
+		[TestFixture]
+		public class When_getting_routes_by_name_that_does_not_exist
+		{
+			[SetUp]
+			public void SetUp()
+			{
+				_routeCollection = new RouteCollection();
+			}
+
+			private RouteCollection _routeCollection;
+
+			[Test]
+			public void Must_return_empty()
+			{
+				Assert.That(_routeCollection.GetRoutes(""), Is.Empty);
 			}
 		}
 	}

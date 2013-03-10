@@ -92,21 +92,28 @@ namespace Junior.Route.UnitTests.Assets.FileSystem
 				_comparer = MockRepository.GenerateMock<IComparer<AssetFile>>();
 				_concatenator = MockRepository.GenerateMock<IAssetConcatenator>();
 				_concatenator.Stub(arg => arg.Concatenate(Arg<IEnumerable<string>>.Is.Anything)).Return("");
-				_transformer = MockRepository.GenerateMock<IAssetTransformer>();
-				_transformer.Stub(arg => arg.Transform(Arg<string>.Is.Anything)).Return("");
-				_bundle.GetContents(_fileSystem, _comparer, _concatenator, _transformer);
+				_transformer1 = MockRepository.GenerateMock<IAssetTransformer>();
+				_transformer1.Stub(arg => arg.Transform(Arg<string>.Is.Anything)).Return("");
+				_transformer2 = MockRepository.GenerateMock<IAssetTransformer>();
+				_transformer2.Stub(arg => arg.Transform(Arg<string>.Is.Anything)).Return("");
+				_bundle.GetContents(_fileSystem, _comparer, _concatenator, _transformer1, _transformer2);
 			}
 
 			private Bundle _bundle;
 			private IFileSystem _fileSystem;
 			private IAssetConcatenator _concatenator;
-			private IAssetTransformer _transformer;
+			private IAssetTransformer _transformer1;
 			private IComparer<AssetFile> _comparer;
+			private IAssetTransformer _transformer2;
 
 			[Test]
 			public void Must_concatenate_results()
 			{
-				_concatenator.AssertWasCalled(arg => arg.Concatenate(Arg<IEnumerable<string>>.Is.Anything));
+				_concatenator.AssertWasCalled(arg => arg.Concatenate(Arg<IEnumerable<string>>.Is.Anything), options => options.Repeat.Once());
+
+				var assetContents = (IEnumerable<string>)_concatenator.GetArgumentsForCallsMadeOn(arg => arg.Concatenate(Arg<IEnumerable<string>>.Is.Anything))[0][0];
+
+				Assert.That(assetContents.Count(), Is.EqualTo(3));
 			}
 
 			[Test]
@@ -142,7 +149,8 @@ namespace Junior.Route.UnitTests.Assets.FileSystem
 			[Test]
 			public void Must_transform_results()
 			{
-				_transformer.AssertWasCalled(arg => arg.Transform(Arg<string>.Is.Anything));
+				_transformer1.AssertWasCalled(arg => arg.Transform(Arg<string>.Is.Anything), options => options.Repeat.Times(3));
+				_transformer2.AssertWasCalled(arg => arg.Transform(Arg<string>.Is.Anything), options => options.Repeat.Times(3));
 			}
 
 			[Test]

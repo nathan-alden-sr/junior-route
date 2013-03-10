@@ -157,12 +157,12 @@ namespace Junior.Route.Assets.FileSystem
 
 		private BundleContents GetContents(IFileSystem fileSystem, IEnumerable<AssetFile> assets, IAssetConcatenator concatenator, IEnumerable<IAssetTransformer> transformers)
 		{
-			string[] transformedAssets = assets
-				.Select(arg => GetFileContents(fileSystem, arg))
-				.SelectMany(assetContents => transformers, (assetContents, transformer) => transformer.Transform(assetContents))
+			string[] transformedFileContents = assets
+				.Select(asset => GetFileContents(fileSystem, asset))
+				.Select(fileContents => transformers.Aggregate(fileContents, (current, transformer) => transformer.Transform(current)))
 				.ToArray();
 
-			return new BundleContents(concatenator.Concatenate(transformedAssets));
+			return new BundleContents(concatenator.Concatenate(transformedFileContents));
 		}
 
 		public static Bundle FromDirectory(string relativeDirectory, Encoding encoding = null, string searchPattern = "*.*", SearchOption option = SearchOption.AllDirectories, IFileFilter filter = null)

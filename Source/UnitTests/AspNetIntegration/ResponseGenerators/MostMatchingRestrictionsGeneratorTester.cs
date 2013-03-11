@@ -23,16 +23,16 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseGenerators
 			public void SetUp()
 			{
 				_generator = new MostMatchingRestrictionsGenerator();
-				_request = MockRepository.GenerateMock<HttpRequestBase>();
+				_context = MockRepository.GenerateMock<HttpContextBase>();
 			}
 
 			private MostMatchingRestrictionsGenerator _generator;
-			private HttpRequestBase _request;
+			private HttpContextBase _context;
 
 			[Test]
 			public void Must_use_response_of_route_with_most_matching_restrictions()
 			{
-				ResponseResult result = _generator.GetResponse(_request, Enumerable.Empty<RouteMatchResult>());
+				ResponseResult result = _generator.GetResponse(_context, Enumerable.Empty<RouteMatchResult>());
 
 				Assert.That(result.ResultType, Is.EqualTo(ResponseResultType.ResponseNotGenerated));
 			}
@@ -48,6 +48,8 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseGenerators
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 				_request.Stub(arg => arg.Url).Return(new Uri("http://localhost"));
 				_request.Stub(arg => arg.HttpMethod).Return("GET");
+				_context = MockRepository.GenerateMock<HttpContextBase>();
+				_context.Stub(arg => arg.Request).Return(_request);
 				_route1Response = new Response(200);
 				_route1 = new Route.Routing.Route("name1", Guid.NewGuid(), "relative1");
 				_route1.RestrictByMethods(HttpMethod.Get);
@@ -71,11 +73,12 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseGenerators
 			private IEnumerable<RouteMatchResult> _routeMatchResults;
 			private Response _route1Response;
 			private Response _route2Response;
+			private HttpContextBase _context;
 
 			[Test]
 			public async void Must_use_response_of_route_with_most_matching_restrictions()
 			{
-				ResponseResult result = _generator.GetResponse(_request, _routeMatchResults);
+				ResponseResult result = _generator.GetResponse(_context, _routeMatchResults);
 
 				Assert.That(result.CacheKey, Is.EqualTo(_route2.Id.ToString()));
 				Assert.That(result.ResultType, Is.EqualTo(ResponseResultType.ResponseGenerated));
@@ -93,6 +96,8 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseGenerators
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 				_request.Stub(arg => arg.Url).Return(new Uri("http://localhost"));
 				_request.Stub(arg => arg.HttpMethod).Return("GET");
+				_context = MockRepository.GenerateMock<HttpContextBase>();
+				_context.Stub(arg => arg.Request).Return(_request);
 				_route1Response = new Response(200);
 				_route1 = new Route.Routing.Route("name1", Guid.NewGuid(), "relative1");
 				_route1.RestrictByMethods(HttpMethod.Get);
@@ -115,11 +120,12 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseGenerators
 			private List<RouteMatchResult> _routeMatchResults;
 			private Response _route1Response;
 			private Response _route2Response;
+			private HttpContextBase _context;
 
 			[Test]
 			public async void Must_generate_multiple_choices_response()
 			{
-				ResponseResult result = _generator.GetResponse(_request, _routeMatchResults);
+				ResponseResult result = _generator.GetResponse(_context, _routeMatchResults);
 
 				Assert.That(result.CacheKey, Is.Null);
 				Assert.That(result.ResultType, Is.EqualTo(ResponseResultType.ResponseGenerated));

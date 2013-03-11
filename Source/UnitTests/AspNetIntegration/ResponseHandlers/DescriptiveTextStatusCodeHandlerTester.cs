@@ -27,6 +27,9 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseHandlers
 				_httpResponse = MockRepository.GenerateMock<HttpResponseBase>();
 				_httpResponse.Stub(arg => arg.Cache).Return(_httpCachePolicyBase);
 				_httpResponse.Stub(arg => arg.TrySkipIisCustomErrors).PropertyBehavior();
+				_httpContext = MockRepository.GenerateMock<HttpContextBase>();
+				_httpContext.Stub(arg => arg.Request).Return(_httpRequest);
+				_httpContext.Stub(arg => arg.Response).Return(_httpResponse);
 				_cachePolicy = MockRepository.GenerateMock<ICachePolicy>();
 				_cachePolicy.Stub(arg => arg.Clone()).Return(_cachePolicy);
 				_response = MockRepository.GenerateMock<IResponse>();
@@ -42,6 +45,7 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseHandlers
 			private IResponse _response;
 			private ICachePolicy _cachePolicy;
 			private HttpCachePolicyBase _httpCachePolicyBase;
+			private HttpContextBase _httpContext;
 
 			[Test]
 			[TestCase(200)]
@@ -49,7 +53,7 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseHandlers
 			{
 				_response.Stub(arg => arg.StatusCode).Return(new StatusAndSubStatusCode(statusCode));
 
-				ResponseHandlerResult result = _handler.HandleResponse(_httpRequest, _httpResponse, _response, null, null);
+				ResponseHandlerResult result = _handler.HandleResponse(_httpContext, _response, null, null);
 
 				Assert.That(result.ResultType, Is.EqualTo(ResponseHandlerResultType.ResponseWritten));
 			}
@@ -61,7 +65,7 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseHandlers
 				_response.Stub(arg => arg.StatusCode).Return(new StatusAndSubStatusCode(statusCode));
 				_httpRequest.Headers["Accept"] = "text/plain";
 
-				ResponseHandlerResult result = _handler.HandleResponse(_httpRequest, _httpResponse, _response, null, null);
+				ResponseHandlerResult result = _handler.HandleResponse(_httpContext, _response, null, null);
 
 				Assert.That(result.ResultType, Is.EqualTo(ResponseHandlerResultType.ResponseWritten));
 			}
@@ -72,7 +76,7 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseHandlers
 			{
 				_response.Stub(arg => arg.StatusCode).Return(new StatusAndSubStatusCode(statusCode));
 
-				ResponseHandlerResult result = _handler.HandleResponse(_httpRequest, _httpResponse, _response, null, null);
+				ResponseHandlerResult result = _handler.HandleResponse(_httpContext, _response, null, null);
 
 				Assert.That(result.ResultType, Is.EqualTo(ResponseHandlerResultType.ResponseWritten));
 			}
@@ -82,7 +86,7 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseHandlers
 			public void Must_not_allow_client_caching(int statusCode)
 			{
 				_response.Stub(arg => arg.StatusCode).Return(new StatusAndSubStatusCode(statusCode));
-				_handler.HandleResponse(_httpRequest, _httpResponse, _response, null, null);
+				_handler.HandleResponse(_httpContext, _response, null, null);
 
 				_httpCachePolicyBase.AssertWasCalled(arg => arg.SetCacheability(HttpCacheability.NoCache));
 			}
@@ -95,7 +99,7 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseHandlers
 			{
 				_response.Stub(arg => arg.StatusCode).Return(new StatusAndSubStatusCode(statusCode));
 
-				ResponseHandlerResult result = _handler.HandleResponse(_httpRequest, _httpResponse, _response, null, null);
+				ResponseHandlerResult result = _handler.HandleResponse(_httpContext, _response, null, null);
 
 				Assert.That(result.ResultType, Is.EqualTo(ResponseHandlerResultType.ResponseNotHandled));
 			}
@@ -107,7 +111,7 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseHandlers
 				_response.Stub(arg => arg.StatusCode).Return(new StatusAndSubStatusCode(statusCode));
 				_httpRequest.Headers["Accept"] = "application/json";
 
-				ResponseHandlerResult result = _handler.HandleResponse(_httpRequest, _httpResponse, _response, null, null);
+				ResponseHandlerResult result = _handler.HandleResponse(_httpContext, _response, null, null);
 
 				Assert.That(result.ResultType, Is.EqualTo(ResponseHandlerResultType.ResponseNotHandled));
 			}
@@ -117,7 +121,7 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseHandlers
 			public void Must_set_try_skip_iis_custom_errors_flag(int statusCode)
 			{
 				_response.Stub(arg => arg.StatusCode).Return(new StatusAndSubStatusCode(statusCode));
-				_handler.HandleResponse(_httpRequest, _httpResponse, _response, null, null);
+				_handler.HandleResponse(_httpContext, _response, null, null);
 
 				Assert.That(_httpResponse.TrySkipIisCustomErrors, Is.True);
 			}

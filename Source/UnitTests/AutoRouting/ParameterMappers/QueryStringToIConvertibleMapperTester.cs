@@ -22,16 +22,14 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers
 			{
 				_mapper = new QueryStringToIConvertibleMapper(errorHandling:DataConversionErrorHandling.ThrowException);
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
-				_request
-					.Stub(arg => arg.QueryString)
-					.Return(new NameValueCollection
-						{
-							{ "I", "1.2" }
-						});
+				_request.Stub(arg => arg.QueryString).Return(new NameValueCollection { { "I", "1.2" } });
+				_context = MockRepository.GenerateMock<HttpContextBase>();
+				_context.Stub(arg => arg.Request).Return(_request);
 			}
 
 			private QueryStringToIConvertibleMapper _mapper;
 			private HttpRequestBase _request;
+			private HttpContextBase _context;
 
 			public class Endpoint
 			{
@@ -47,7 +45,7 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers
 				MethodInfo methodInfo = type.GetMethod(methodName);
 				ParameterInfo parameterInfo = methodInfo.GetParameters().Single(arg => arg.Name == parameterName);
 
-				Assert.That(() => _mapper.Map(_request, type, methodInfo, parameterInfo), Throws.InstanceOf<ApplicationException>());
+				Assert.That(() => _mapper.Map(_context, type, methodInfo, parameterInfo), Throws.InstanceOf<ApplicationException>());
 			}
 		}
 
@@ -59,16 +57,14 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers
 			{
 				_mapper = new QueryStringToIConvertibleMapper();
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
-				_request
-					.Stub(arg => arg.QueryString)
-					.Return(new NameValueCollection
-						{
-							{ "I", "1.2" }
-						});
+				_request.Stub(arg => arg.QueryString).Return(new NameValueCollection { { "I", "1.2" } });
+				_context = MockRepository.GenerateMock<HttpContextBase>();
+				_context.Stub(arg => arg.Request).Return(_request);
 			}
 
 			private QueryStringToIConvertibleMapper _mapper;
 			private HttpRequestBase _request;
+			private HttpContextBase _context;
 
 			public class Endpoint
 			{
@@ -83,7 +79,7 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers
 			{
 				MethodInfo methodInfo = type.GetMethod(methodName);
 				ParameterInfo parameterInfo = methodInfo.GetParameters().Single(arg => arg.Name == parameterName);
-				MapResult result = _mapper.Map(_request, type, methodInfo, parameterInfo);
+				MapResult result = _mapper.Map(_context, type, methodInfo, parameterInfo);
 
 				Assert.That(result.ResultType, Is.EqualTo(MapResultType.ValueMapped));
 				Assert.That(result.Value, Is.EqualTo(expectedValue));
@@ -98,16 +94,14 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers
 			{
 				_mapper = new QueryStringToIConvertibleMapper();
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
-				_request
-					.Stub(arg => arg.QueryString)
-					.Return(new NameValueCollection
-						{
-							{ "D", "1.2" }
-						});
+				_request.Stub(arg => arg.QueryString).Return(new NameValueCollection { { "D", "1.2" } });
+				_context = MockRepository.GenerateMock<HttpContextBase>();
+				_context.Stub(arg => arg.Request).Return(_request);
 			}
 
 			private QueryStringToIConvertibleMapper _mapper;
 			private HttpRequestBase _request;
+			private HttpContextBase _context;
 
 			public class Endpoint
 			{
@@ -122,7 +116,7 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers
 			{
 				MethodInfo methodInfo = type.GetMethod(methodName);
 				ParameterInfo parameterInfo = methodInfo.GetParameters().Single(arg => arg.Name == parameterName);
-				MapResult result = _mapper.Map(_request, type, methodInfo, parameterInfo);
+				MapResult result = _mapper.Map(_context, type, methodInfo, parameterInfo);
 
 				Assert.That(result.ResultType, Is.EqualTo(MapResultType.ValueMapped));
 				Assert.That(result.Value, Is.EqualTo(expectedValue));
@@ -137,17 +131,14 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers
 			{
 				_mapper = new QueryStringToIConvertibleMapper(true);
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
-				_request
-					.Stub(arg => arg.QueryString)
-					.Return(new NameValueCollection
-						{
-							{ "S", "value" },
-							{ "I", "0" }
-						});
+				_request.Stub(arg => arg.QueryString).Return(new NameValueCollection { { "S", "value" }, { "I", "0" } });
+				_context = MockRepository.GenerateMock<HttpContextBase>();
+				_context.Stub(arg => arg.Request).Return(_request);
 			}
 
 			private QueryStringToIConvertibleMapper _mapper;
 			private HttpRequestBase _request;
+			private HttpContextBase _context;
 
 			public class Endpoint1
 			{
@@ -170,7 +161,7 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers
 			{
 				MethodInfo methodInfo = type.GetMethod(methodName);
 				ParameterInfo parameterInfo = methodInfo.GetParameters().Single(arg => arg.Name == parameterName);
-				MapResult result = _mapper.Map(_request, type, methodInfo, parameterInfo);
+				MapResult result = _mapper.Map(_context, type, methodInfo, parameterInfo);
 
 				Assert.That(result.ResultType, Is.EqualTo(MapResultType.ValueMapped));
 				Assert.That(result.Value, Is.EqualTo(expectedValue));
@@ -184,18 +175,18 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers
 			public void SetUp()
 			{
 				_mapper = new QueryStringToIConvertibleMapper();
-				_request = MockRepository.GenerateMock<HttpRequestBase>();
+				_context = MockRepository.GenerateMock<HttpContextBase>();
 			}
 
 			private QueryStringToIConvertibleMapper _mapper;
-			private HttpRequestBase _request;
+			private HttpContextBase _context;
 
 			[Test]
 			[TestCase(typeof(string))]
 			[TestCase(typeof(int))]
 			public void Must_map_types_implementing_iconvertible(Type parameterType)
 			{
-				Assert.That(_mapper.CanMapType(_request, parameterType), Is.True);
+				Assert.That(_mapper.CanMapType(_context, parameterType), Is.True);
 			}
 		}
 
@@ -206,18 +197,18 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers
 			public void SetUp()
 			{
 				_mapper = new QueryStringToIConvertibleMapper();
-				_request = MockRepository.GenerateMock<HttpRequestBase>();
+				_context = MockRepository.GenerateMock<HttpContextBase>();
 			}
 
 			private QueryStringToIConvertibleMapper _mapper;
-			private HttpRequestBase _request;
+			private HttpContextBase _context;
 
 			[Test]
 			[TestCase(typeof(object))]
 			[TestCase(typeof(HttpRequestBase))]
 			public void Must_not_map_types_not_implementing_iconvertible(Type propertyType)
 			{
-				Assert.That(_mapper.CanMapType(_request, propertyType), Is.False);
+				Assert.That(_mapper.CanMapType(_context, propertyType), Is.False);
 			}
 		}
 	}

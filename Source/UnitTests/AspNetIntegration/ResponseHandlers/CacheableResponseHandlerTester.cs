@@ -31,6 +31,9 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseHandlers
 				_httpRequest.Stub(arg => arg.Headers).Return(new NameValueCollection());
 				_httpResponse = MockRepository.GenerateMock<HttpResponseBase>();
 				_httpResponse.Stub(arg => arg.Headers).Return(new NameValueCollection());
+				_httpContext = MockRepository.GenerateMock<HttpContextBase>();
+				_httpContext.Stub(arg => arg.Request).Return(_httpRequest);
+				_httpContext.Stub(arg => arg.Response).Return(_httpResponse);
 				_cachePolicy = MockRepository.GenerateMock<ICachePolicy>();
 				_cachePolicy.Stub(arg => arg.Clone()).Return(_cachePolicy);
 				_cachePolicy.Stub(arg => arg.ClientCacheExpirationUtcTimestamp).Return(DateTime.UtcNow);
@@ -50,6 +53,7 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseHandlers
 			private IResponse _response;
 			private ICachePolicy _cachePolicy;
 			private ICache _cache;
+			private HttpContextBase _httpContext;
 
 			[Test]
 			public void Must_cache_if_cache_policy_allows_server_caching()
@@ -58,7 +62,7 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseHandlers
 				_cachePolicy.Stub(arg => arg.ServerCacheExpirationUtcTimestamp).Return(DateTime.UtcNow);
 				_response.CachePolicy.Stub(arg => arg.HasPolicy).Return(true);
 
-				_handler.HandleResponse(_httpRequest, _httpResponse, _response, _cache, "key");
+				_handler.HandleResponse(_httpContext, _response, _cache, "key");
 
 				_cache.AssertWasCalled(arg => arg.Add(Arg<string>.Is.Equal("key"), Arg<CacheResponse>.Is.Anything, Arg<DateTime>.Is.Anything));
 			}
@@ -68,7 +72,7 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseHandlers
 			{
 				_response.CachePolicy.Stub(arg => arg.HasPolicy).Return(true);
 
-				ResponseHandlerResult result = _handler.HandleResponse(_httpRequest, _httpResponse, _response, null, null);
+				ResponseHandlerResult result = _handler.HandleResponse(_httpContext, _response, null, null);
 
 				Assert.That(result.ResultType, Is.EqualTo(ResponseHandlerResultType.ResponseNotHandled));
 			}
@@ -78,7 +82,7 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseHandlers
 			{
 				_response.CachePolicy.Stub(arg => arg.HasPolicy).Return(false);
 
-				ResponseHandlerResult result = _handler.HandleResponse(_httpRequest, _httpResponse, _response, _cache, "key");
+				ResponseHandlerResult result = _handler.HandleResponse(_httpContext, _response, _cache, "key");
 
 				Assert.That(result.ResultType, Is.EqualTo(ResponseHandlerResultType.ResponseNotHandled));
 			}

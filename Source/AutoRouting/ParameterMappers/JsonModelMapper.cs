@@ -43,23 +43,23 @@ namespace Junior.Route.AutoRouting.ParameterMappers
 		{
 		}
 
-		public bool CanMapType(HttpRequestBase request, Type parameterType)
+		public bool CanMapType(HttpContextBase context, Type parameterType)
 		{
-			request.ThrowIfNull("request");
+			context.ThrowIfNull("context");
 			parameterType.ThrowIfNull("parameterType");
 
-			return request.ContentType == "application/json" && _parameterTypeMatchDelegate(parameterType);
+			return context.Request.ContentType == "application/json" && _parameterTypeMatchDelegate(parameterType);
 		}
 
-		public MapResult Map(HttpRequestBase request, Type type, MethodInfo method, ParameterInfo parameter)
+		public MapResult Map(HttpContextBase context, Type type, MethodInfo method, ParameterInfo parameter)
 		{
-			request.ThrowIfNull("request");
+			context.ThrowIfNull("request");
 			type.ThrowIfNull("type");
 			method.ThrowIfNull("method");
 			parameter.ThrowIfNull("parameter");
 
 			Type parameterType = parameter.ParameterType;
-			var reader = new StreamReader(request.InputStream, request.ContentEncoding);
+			var reader = new StreamReader(context.Request.InputStream, context.Request.ContentEncoding);
 			string json = reader.ReadToEnd();
 			object jsonModel;
 

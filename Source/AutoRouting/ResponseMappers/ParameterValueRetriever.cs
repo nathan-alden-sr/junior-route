@@ -25,9 +25,9 @@ namespace Junior.Route.AutoRouting.ResponseMappers
 			}
 		}
 
-		public IEnumerable<object> GetParameterValues(HttpRequestBase request, Type type, MethodInfo method)
+		public IEnumerable<object> GetParameterValues(HttpContextBase context, Type type, MethodInfo method)
 		{
-			request.ThrowIfNull("request");
+			context.ThrowIfNull("context");
 			type.ThrowIfNull("type");
 			method.ThrowIfNull("method");
 
@@ -44,9 +44,9 @@ namespace Junior.Route.AutoRouting.ResponseMappers
 				{
 					bool mapped = false;
 
-					foreach (IParameterMapper parameterMapper in _parameterMappers.Where(arg => arg.CanMapType(request, parameterType)))
+					foreach (IParameterMapper parameterMapper in _parameterMappers.Where(arg => arg.CanMapType(context, parameterType)))
 					{
-						MapResult mapResult = parameterMapper.Map(request, type, method, parameterInfo);
+						MapResult mapResult = parameterMapper.Map(context, type, method, parameterInfo);
 
 						if (mapResult.ResultType == MapResultType.ValueNotMapped)
 						{

@@ -8,9 +8,9 @@ namespace Junior.Route.AspNetIntegration.ResponseGenerators
 {
 	public class NotFoundGenerator : IResponseGenerator
 	{
-		public ResponseResult GetResponse(HttpRequestBase request, IEnumerable<RouteMatchResult> routeMatchResults)
+		public ResponseResult GetResponse(HttpContextBase context, IEnumerable<RouteMatchResult> routeMatchResults)
 		{
-			request.ThrowIfNull("request");
+			context.ThrowIfNull("context");
 			routeMatchResults.ThrowIfNull("routeMatchResults");
 
 			return ResponseResult.ResponseGenerated(Response.NotFound());

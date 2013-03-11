@@ -65,7 +65,7 @@ namespace Junior.Route.AutoRouting.ResponseMappers
 				Func<object, object[], IResponse> @delegate = Expression.Lambda<Func<object, object[], IResponse>>(unaryExpression, instanceParameterExpression, parametersParameterExpression).Compile();
 
 				route.RespondWith(
-					request =>
+					context =>
 						{
 							object instance;
 
@@ -83,7 +83,7 @@ namespace Junior.Route.AutoRouting.ResponseMappers
 							}
 
 							var parameterValueRetriever = new ParameterValueRetriever(_parameterMappers);
-							object[] parameterValues = parameterValueRetriever.GetParameterValues(request, type, method).ToArray();
+							object[] parameterValues = parameterValueRetriever.GetParameterValues(context, type, method).ToArray();
 
 							return @delegate(instance, parameterValues);
 						},
@@ -112,7 +112,7 @@ namespace Junior.Route.AutoRouting.ResponseMappers
 				Func<object, object[], Task<IResponse>> @delegate = Expression.Lambda<Func<object, object[], Task<IResponse>>>(unaryExpression, instanceParameterExpression, parametersParameterExpression).Compile();
 
 				route.RespondWith(
-					request =>
+					context =>
 						{
 							object instance;
 
@@ -130,7 +130,7 @@ namespace Junior.Route.AutoRouting.ResponseMappers
 							}
 
 							var parameterValueRetriever = new ParameterValueRetriever(_parameterMappers);
-							object[] parameterValues = parameterValueRetriever.GetParameterValues(request, type, method).ToArray();
+							object[] parameterValues = parameterValueRetriever.GetParameterValues(context, type, method).ToArray();
 
 							return @delegate(instance, parameterValues);
 						},

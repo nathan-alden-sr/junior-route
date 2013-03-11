@@ -6,14 +6,14 @@ using Junior.Common;
 
 namespace Junior.Route.AutoRouting.ParameterMappers
 {
-	public class DefaultValueMapper : IParameterMapper
+	public class HttpContextBaseMapper : IParameterMapper
 	{
 		public bool CanMapType(HttpContextBase context, Type parameterType)
 		{
 			context.ThrowIfNull("context");
 			parameterType.ThrowIfNull("parameterType");
 
-			return true;
+			return parameterType == typeof(HttpContextBase);
 		}
 
 		public MapResult Map(HttpContextBase context, Type type, MethodInfo method, ParameterInfo parameter)
@@ -23,7 +23,7 @@ namespace Junior.Route.AutoRouting.ParameterMappers
 			method.ThrowIfNull("method");
 			parameter.ThrowIfNull("parameter");
 
-			return MapResult.ValueMapped(parameter.ParameterType.GetDefaultValue());
+			return MapResult.ValueMapped(context);
 		}
 	}
 }

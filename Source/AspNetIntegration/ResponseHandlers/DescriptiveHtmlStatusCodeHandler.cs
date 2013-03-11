@@ -47,10 +47,9 @@ namespace Junior.Route.AspNetIntegration.ResponseHandlers
 		{
 		}
 
-		public ResponseHandlerResult HandleResponse(HttpRequestBase httpRequest, HttpResponseBase httpResponse, IResponse suggestedResponse, ICache cache, string cacheKey)
+		public ResponseHandlerResult HandleResponse(HttpContextBase context, IResponse suggestedResponse, ICache cache, string cacheKey)
 		{
-			httpRequest.ThrowIfNull("httpRequest");
-			httpResponse.ThrowIfNull("httpResponse");
+			context.ThrowIfNull("context");
 			suggestedResponse.ThrowIfNull("suggestedResponse");
 
 			StatusAndSubStatusCode statusCode = suggestedResponse.StatusCode;
@@ -60,7 +59,7 @@ namespace Junior.Route.AspNetIntegration.ResponseHandlers
 				return ResponseHandlerResult.ResponseNotHandled();
 			}
 
-			AcceptHeader[] acceptHeaders = AcceptHeader.ParseMany(httpRequest.Headers["Accept"]).ToArray();
+			AcceptHeader[] acceptHeaders = AcceptHeader.ParseMany(context.Request.Headers["Accept"]).ToArray();
 
 			if (acceptHeaders.Any() && !acceptHeaders.Any(arg => arg.MediaTypeMatches("text/html")))
 			{
@@ -85,9 +84,9 @@ namespace Junior.Route.AspNetIntegration.ResponseHandlers
 
 			response.CachePolicy.NoClientCaching();
 
-			new CacheResponse(response).WriteResponse(httpResponse);
+			new CacheResponse(response).WriteResponse(context.Response);
 
-			httpResponse.TrySkipIisCustomErrors = true;
+			context.Response.TrySkipIisCustomErrors = true;
 
 			return ResponseHandlerResult.ResponseWritten();
 		}

@@ -90,7 +90,7 @@ namespace Junior.Route.AspNetIntegration.AspNet
 
 				if (responseResult.ResultType == ResponseResultType.ResponseGenerated)
 				{
-					ProcessResponse(request, response, responseResult.Response, null);
+					ProcessResponse(context, responseResult.Response, null);
 					return;
 				}
 
@@ -99,7 +99,7 @@ namespace Junior.Route.AspNetIntegration.AspNet
 			{
 				RouteMatchResult[] routeMatchResults = _routes.Select(arg => new RouteMatchResult(arg, arg.MatchesRequest(request))).ToArray();
 				ResponseGenerators.ResponseResult responseResult = _responseGenerators
-					.Select(arg => arg.GetResponse(request, routeMatchResults))
+					.Select(arg => arg.GetResponse(new HttpContextWrapper(context), routeMatchResults))
 					.FirstOrDefault(arg => arg.ResultType != ResponseGenerators.ResponseResultType.ResponseNotGenerated);
 
 				if (responseResult == null)
@@ -107,15 +107,15 @@ namespace Junior.Route.AspNetIntegration.AspNet
 					throw new ApplicationException("No response was generated.");
 				}
 
-				ProcessResponse(request, response, await responseResult.Response, responseResult.CacheKey);
+				ProcessResponse(context, await responseResult.Response, responseResult.CacheKey);
 			}
 		}
 
-		private void ProcessResponse(HttpRequestBase httpRequest, HttpResponseBase httpResponse, IResponse response, string cacheKey)
+		private void ProcessResponse(HttpContext context, IResponse response, string cacheKey)
 		{
 			foreach (IResponseHandler handler in _responseHandlers)
 			{
-				ResponseHandlerResult handlerResult = handler.HandleResponse(httpRequest, httpResponse, response, _cache, cacheKey);
+				ResponseHandlerResult handlerResult = handler.HandleResponse(new HttpContextWrapper(context), response, _cache, cacheKey);
 
 				switch (handlerResult.ResultType)
 				{

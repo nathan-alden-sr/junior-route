@@ -8,15 +8,14 @@ namespace Junior.Route.AspNetIntegration.ResponseHandlers
 {
 	public class NonCacheableResponseHandler : IResponseHandler
 	{
-		public ResponseHandlerResult HandleResponse(HttpRequestBase httpRequest, HttpResponseBase httpResponse, IResponse suggestedResponse, ICache cache, string cacheKey)
+		public ResponseHandlerResult HandleResponse(HttpContextBase context, IResponse suggestedResponse, ICache cache, string cacheKey)
 		{
-			httpRequest.ThrowIfNull("httpRequest");
-			httpResponse.ThrowIfNull("httpResponse");
+			context.ThrowIfNull("context");
 			suggestedResponse.ThrowIfNull("suggestedResponse");
 
 			var cacheResponse = new CacheResponse(suggestedResponse);
 
-			cacheResponse.WriteResponse(httpResponse);
+			cacheResponse.WriteResponse(context.Response);
 
 			return ResponseHandlerResult.ResponseWritten();
 		}

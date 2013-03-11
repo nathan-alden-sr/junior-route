@@ -26,11 +26,14 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers
 				_request.Stub(arg => arg.ContentEncoding).Return(Encoding.ASCII);
 				_request.Stub(arg => arg.ContentType).Return("application/json");
 				_request.Stub(arg => arg.InputStream).Return(new MemoryStream(Encoding.ASCII.GetBytes("{")));
+				_context = MockRepository.GenerateMock<HttpContextBase>();
+				_context.Stub(arg => arg.Request).Return(_request);
 				_mapper = new JsonModelMapper(DataConversionErrorHandling.ThrowException);
 			}
 
 			private HttpRequestBase _request;
 			private JsonModelMapper _mapper;
+			private HttpContextBase _context;
 
 			public class Endpoint
 			{
@@ -50,7 +53,7 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers
 				MethodInfo methodInfo = type.GetMethod(methodName);
 				ParameterInfo parameterInfo = methodInfo.GetParameters().Single(arg => arg.Name == parameterName);
 
-				Assert.That(() => _mapper.Map(_request, type, methodInfo, parameterInfo), Throws.InstanceOf<ApplicationException>());
+				Assert.That(() => _mapper.Map(_context, type, methodInfo, parameterInfo), Throws.InstanceOf<ApplicationException>());
 			}
 		}
 
@@ -64,11 +67,14 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers
 				_request.Stub(arg => arg.ContentEncoding).Return(Encoding.ASCII);
 				_request.Stub(arg => arg.ContentType).Return("application/json");
 				_request.Stub(arg => arg.InputStream).Return(new MemoryStream(Encoding.ASCII.GetBytes("{")));
+				_context = MockRepository.GenerateMock<HttpContextBase>();
+				_context.Stub(arg => arg.Request).Return(_request);
 				_mapper = new JsonModelMapper();
 			}
 
 			private HttpRequestBase _request;
 			private JsonModelMapper _mapper;
+			private HttpContextBase _context;
 
 			public class Endpoint
 			{
@@ -87,7 +93,7 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers
 			{
 				MethodInfo methodInfo = type.GetMethod(methodName);
 				ParameterInfo parameterInfo = methodInfo.GetParameters().Single(arg => arg.Name == parameterName);
-				MapResult result = _mapper.Map(_request, type, methodInfo, parameterInfo);
+				MapResult result = _mapper.Map(_context, type, methodInfo, parameterInfo);
 
 				Assert.That(result.ResultType, Is.EqualTo(MapResultType.ValueMapped));
 				Assert.That(result.Value, Is.EqualTo(parameterInfo.ParameterType.GetDefaultValue()));
@@ -104,11 +110,14 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers
 				_request.Stub(arg => arg.ContentEncoding).Return(Encoding.ASCII);
 				_request.Stub(arg => arg.ContentType).Return("application/json");
 				_request.Stub(arg => arg.InputStream).Return(new MemoryStream(Encoding.ASCII.GetBytes(@"{ ""S"" : ""value"", ""I"": 1 }")));
+				_context = MockRepository.GenerateMock<HttpContextBase>();
+				_context.Stub(arg => arg.Request).Return(_request);
 				_mapper = new JsonModelMapper();
 			}
 
 			private HttpRequestBase _request;
 			private JsonModelMapper _mapper;
+			private HttpContextBase _context;
 
 			public class Endpoint
 			{
@@ -138,7 +147,7 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers
 			{
 				MethodInfo methodInfo = type.GetMethod(methodName);
 				ParameterInfo parameterInfo = methodInfo.GetParameters().Single(arg => arg.Name == parameterName);
-				MapResult result = _mapper.Map(_request, type, methodInfo, parameterInfo);
+				MapResult result = _mapper.Map(_context, type, methodInfo, parameterInfo);
 
 				Assert.That(result.ResultType, Is.EqualTo(MapResultType.ValueMapped));
 				Assert.That(result.Value, Is.TypeOf<Model>());
@@ -158,13 +167,16 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers
 			{
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 				_request.Stub(arg => arg.ContentType).Return("application/json");
+				_context = MockRepository.GenerateMock<HttpContextBase>();
+				_context.Stub(arg => arg.Request).Return(_request);
 				_mapper = new JsonModelMapper(type => _executed = true);
-				_mapper.CanMapType(_request, typeof(object));
+				_mapper.CanMapType(_context, typeof(object));
 			}
 
 			private bool _executed;
 			private JsonModelMapper _mapper;
 			private HttpRequestBase _request;
+			private HttpContextBase _context;
 
 			[Test]
 			public void Must_call_delegate()
@@ -181,11 +193,14 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers
 			{
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 				_request.Stub(arg => arg.ContentType).Return("application/json");
+				_context = MockRepository.GenerateMock<HttpContextBase>();
+				_context.Stub(arg => arg.Request).Return(_request);
 				_mapper = new JsonModelMapper();
 			}
 
 			private JsonModelMapper _mapper;
 			private HttpRequestBase _request;
+			private HttpContextBase _context;
 
 			public class Model
 			{
@@ -204,7 +219,7 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers
 			[TestCase(typeof(JsonModel))]
 			public void Must_map_types_ending_in_model(Type type)
 			{
-				Assert.That(_mapper.CanMapType(_request, type), Is.True);
+				Assert.That(_mapper.CanMapType(_context, type), Is.True);
 			}
 
 			[Test]
@@ -212,7 +227,7 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers
 			[TestCase(typeof(object))]
 			public void Must_not_map_types_not_ending_in_model(Type type)
 			{
-				Assert.That(_mapper.CanMapType(_request, type), Is.False);
+				Assert.That(_mapper.CanMapType(_context, type), Is.False);
 			}
 		}
 	}

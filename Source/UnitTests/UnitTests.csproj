@@ -85,6 +85,12 @@
     <Compile Include="AutoRouting\NameMappers\NameAfterRelativeClassNamespaceAndClassNameAndMethodNameMapperTester.cs" />
     <Compile Include="AutoRouting\NameMappers\NameAttributeMapperTester.cs" />
     <Compile Include="AutoRouting\NameMappers\NameResultTester.cs" />
+    <Compile Include="AutoRouting\ParameterMappers\HttpSessionStateBaseMapperTester.cs" />
+    <Compile Include="AutoRouting\ParameterMappers\HttpServerUtilityBaseMapperTester.cs" />
+    <Compile Include="AutoRouting\ParameterMappers\HttpResponseBaseMapperTester.cs" />
+    <Compile Include="AutoRouting\ParameterMappers\HttpRequestBaseMapperTester.cs" />
+    <Compile Include="AutoRouting\ParameterMappers\HttpApplicationStateBaseMapperTester.cs" />
+    <Compile Include="AutoRouting\ParameterMappers\HttpContextBaseMapperTester.cs" />
     <Compile Include="AutoRouting\ParameterMappers\MapResultTester.cs" />
     <Compile Include="AutoRouting\ParameterMappers\ModelMapperTester.cs" />
     <Compile Include="AutoRouting\ParameterMappers\JsonModelMapperTester.cs" />

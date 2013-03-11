@@ -31,10 +31,9 @@ namespace Junior.Route.AspNetIntegration.ResponseHandlers
 			_systemClock = systemClock;
 		}
 
-		public ResponseHandlerResult HandleResponse(HttpRequestBase httpRequest, HttpResponseBase httpResponse, IResponse suggestedResponse, ICache cache, string cacheKey)
+		public ResponseHandlerResult HandleResponse(HttpContextBase context, IResponse suggestedResponse, ICache cache, string cacheKey)
 		{
-			httpRequest.ThrowIfNull("request");
-			httpResponse.ThrowIfNull("httpResponse");
+			context.ThrowIfNull("context");
 			suggestedResponse.ThrowIfNull("suggestedResponse");
 
 			if (!suggestedResponse.CachePolicy.HasPolicy || cache == null || cacheKey == null)
@@ -47,7 +46,7 @@ namespace Junior.Route.AspNetIntegration.ResponseHandlers
 
 			#region If-Match precondition header
 
-			IfMatchHeader[] ifMatchHeaders = IfMatchHeader.ParseMany(httpRequest.Headers["If-Match"]).ToArray();
+			IfMatchHeader[] ifMatchHeaders = IfMatchHeader.ParseMany(context.Request.Headers["If-Match"]).ToArray();
 
 			// Only consider If-Match headers if response status code is 2xx or 412
 			if (ifMatchHeaders.Any() && ((suggestedResponse.StatusCode.StatusCode >= 200 && suggestedResponse.StatusCode.StatusCode <= 299) || suggestedResponse.StatusCode.StatusCode == 412))
@@ -57,7 +56,7 @@ namespace Junior.Route.AspNetIntegration.ResponseHandlers
 				if (ifMatchHeaders.All(arg => arg.EntityTag.Value != responseETag) ||
 				    (responseETag == null && ifMatchHeaders.Any(arg => arg.EntityTag.Value == "*")))
 				{
-					return WriteResponse(httpResponse, Response.PreconditionFailed());
+					return WriteResponse(context.Response, Response.PreconditionFailed());
 				}
 			}
 
@@ -65,7 +64,7 @@ namespace Junior.Route.AspNetIntegration.ResponseHandlers
 
 			#region If-None-Match precondition header
 
-			IfNoneMatchHeader[] ifNoneMatchHeaders = IfNoneMatchHeader.ParseMany(httpRequest.Headers["If-None-Match"]).ToArray();
+			IfNoneMatchHeader[] ifNoneMatchHeaders = IfNoneMatchHeader.ParseMany(context.Request.Headers["If-None-Match"]).ToArray();
 
 			if (ifNoneMatchHeaders.Any())
 			{
@@ -75,21 +74,21 @@ namespace Junior.Route.AspNetIntegration.ResponseHandlers
 				if (ifNoneMatchHeaders.Any(arg => arg.EntityTag.Value == responseETag) ||
 				    (ifNoneMatchHeaders.Any(arg => arg.EntityTag.Value == "*") && responseETag != null))
 				{
-					if (String.Equals(httpRequest.HttpMethod, "GET", StringComparison.OrdinalIgnoreCase) || String.Equals(httpRequest.HttpMethod, "HEAD", StringComparison.OrdinalIgnoreCase))
+					if (String.Equals(context.Request.HttpMethod, "GET", StringComparison.OrdinalIgnoreCase) || String.Equals(context.Request.HttpMethod, "HEAD", StringComparison.OrdinalIgnoreCase))
 					{
 						if (cacheItem != null)
 						{
-							cacheItem.Response.CachePolicy.Apply(httpResponse.Cache);
+							cacheItem.Response.CachePolicy.Apply(context.Response.Cache);
 						}
 						else
 						{
-							suggestedResponse.CachePolicy.Apply(httpResponse.Cache);
+							suggestedResponse.CachePolicy.Apply(context.Response.Cache);
 						}
 
-						return WriteResponse(httpResponse, Response.NotModified());
+						return WriteResponse(context.Response, Response.NotModified());
 					}
 
-					return WriteResponse(httpResponse, Response.PreconditionFailed());
+					return WriteResponse(context.Response, Response.PreconditionFailed());
 				}
 			}
 
@@ -97,7 +96,7 @@ namespace Junior.Route.AspNetIntegration.ResponseHandlers
 
 			#region If-Modified-Since precondition header
 
-			IfModifiedSinceHeader ifModifiedSinceHeader = IfModifiedSinceHeader.Parse(httpRequest.Headers["If-Modified-Since"]);
+			IfModifiedSinceHeader ifModifiedSinceHeader = IfModifiedSinceHeader.Parse(context.Request.Headers["If-Modified-Since"]);
 			bool validIfModifiedSinceHttpDate = ifModifiedSinceHeader != null && ifModifiedSinceHeader.HttpDate <= _systemClock.UtcDateTime;
 
 			// Only consider an If-Modified-Since header if response status code is 200 and the HTTP-date is valid
@@ -106,7 +105,7 @@ namespace Junior.Route.AspNetIntegration.ResponseHandlers
 				// Return 304 if the response was cached before the HTTP-date
 				if (cacheItem != null && cacheItem.CachedUtcTimestamp < ifModifiedSinceHeader.HttpDate)
 				{
-					return WriteResponse(httpResponse, Response.NotModified());
+					return WriteResponse(context.Response, Response.NotModified());
 				}
 			}
 
@@ -114,7 +113,7 @@ namespace Junior.Route.AspNetIntegration.ResponseHandlers
 
 			#region If-Unmodified-Since precondition header
 
-			IfUnmodifiedSinceHeader ifUnmodifiedSinceHeader = IfUnmodifiedSinceHeader.Parse(httpRequest.Headers["If-Unmodified-Since"]);
+			IfUnmodifiedSinceHeader ifUnmodifiedSinceHeader = IfUnmodifiedSinceHeader.Parse(context.Request.Headers["If-Unmodified-Since"]);
 			bool validIfUnmodifiedSinceHttpDate = ifUnmodifiedSinceHeader != null && ifUnmodifiedSinceHeader.HttpDate <= _systemClock.UtcDateTime;
 
 			// Only consider an If-Unmodified-Since header if response status code is 2xx or 412 and the HTTP-date is valid
@@ -123,7 +122,7 @@ namespace Junior.Route.AspNetIntegration.ResponseHandlers
 				// Return 412 if the previous response was removed from the cache or was cached again at a later time
 				if (cacheItem == null || cacheItem.CachedUtcTimestamp >= ifUnmodifiedSinceHeader.HttpDate)
 				{
-					return WriteResponse(httpResponse, Response.PreconditionFailed());
+					return WriteResponse(context.Response, Response.PreconditionFailed());
 				}
 			}
 
@@ -132,25 +131,25 @@ namespace Junior.Route.AspNetIntegration.ResponseHandlers
 			#region No server caching
 
 			// Do not cache the response when the response sends a non-cacheable status code, or when an Authorization header is present
-			if (!_cacheableStatusCodes.Contains(suggestedResponse.StatusCode) || httpRequest.Headers["Authorization"] != null)
+			if (!_cacheableStatusCodes.Contains(suggestedResponse.StatusCode) || context.Request.Headers["Authorization"] != null)
 			{
-				return WriteResponse(httpResponse, suggestedResponse);
+				return WriteResponse(context.Response, suggestedResponse);
 			}
 
-			CacheControlHeader cacheControlHeader = CacheControlHeader.Parse(httpRequest.Headers["Cache-Control"]);
+			CacheControlHeader cacheControlHeader = CacheControlHeader.Parse(context.Request.Headers["Cache-Control"]);
 
 			// Do not cache the response if a "Cache-Control: no-cache" or "Cache-Control: no-store" header is present
 			if (cacheControlHeader != null && (cacheControlHeader.NoCache || cacheControlHeader.NoStore))
 			{
-				return WriteResponse(httpResponse, suggestedResponse);
+				return WriteResponse(context.Response, suggestedResponse);
 			}
 
-			IEnumerable<PragmaHeader> pragmaHeader = PragmaHeader.ParseMany(httpRequest.Headers["Pragma"]);
+			IEnumerable<PragmaHeader> pragmaHeader = PragmaHeader.ParseMany(context.Request.Headers["Pragma"]);
 
 			// Do not cache the response if a "Pragma: no-cache" header is present
 			if (pragmaHeader.Any(arg => String.Equals(arg.Name, "no-cache", StringComparison.OrdinalIgnoreCase)))
 			{
-				return WriteResponse(httpResponse, suggestedResponse);
+				return WriteResponse(context.Response, suggestedResponse);
 			}
 
 			#endregion
@@ -158,7 +157,7 @@ namespace Junior.Route.AspNetIntegration.ResponseHandlers
 			// Return 504 if the response has not been cached but the client is requesting to receive only a cached response
 			if (cacheItem == null && cacheControlHeader != null && cacheControlHeader.OnlyIfCached)
 			{
-				return WriteResponse(httpResponse, Response.GatewayTimeout());
+				return WriteResponse(context.Response, Response.GatewayTimeout());
 			}
 
 			if (cacheItem != null)
@@ -174,7 +173,7 @@ namespace Junior.Route.AspNetIntegration.ResponseHandlers
 				    _systemClock.UtcDateTime - cacheItem.ExpiresUtcTimestamp.Value <= cacheControlHeader.MaxStale ||
 				    cacheItem.ExpiresUtcTimestamp.Value - _systemClock.UtcDateTime < cacheControlHeader.MinFresh)
 				{
-					return WriteResponseInCache(httpResponse, cacheItem);
+					return WriteResponseInCache(context.Response, cacheItem);
 				}
 			}
 
@@ -190,7 +189,7 @@ namespace Junior.Route.AspNetIntegration.ResponseHandlers
 				cache.Add(cacheKey, cacheResponse, expirationUtcTimestamp);
 			}
 
-			return WriteResponse(httpResponse, cacheResponse);
+			return WriteResponse(context.Response, cacheResponse);
 		}
 
 		private static ResponseHandlerResult WriteResponse(HttpResponseBase httpResponse, IResponse response)

@@ -19,16 +19,16 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseGenerators
 			public void SetUp()
 			{
 				_generator = new NotFoundGenerator();
-				_request = MockRepository.GenerateMock<HttpRequestBase>();
+				_context = MockRepository.GenerateMock<HttpContextBase>();
 			}
 
 			private NotFoundGenerator _generator;
-			private HttpRequestBase _request;
+			private HttpContextBase _context;
 
 			[Test]
 			public async void Must_generate_not_found_response()
 			{
-				ResponseResult result = _generator.GetResponse(_request, Enumerable.Empty<RouteMatchResult>());
+				ResponseResult result = _generator.GetResponse(_context, Enumerable.Empty<RouteMatchResult>());
 
 				Assert.That(result.CacheKey, Is.Null);
 				Assert.That((await result.Response).StatusCode.ParsedStatusCode, Is.EqualTo(HttpStatusCode.NotFound));

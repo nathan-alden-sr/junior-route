@@ -21,14 +21,14 @@ namespace Junior.Route.UnitTests.AutoRouting.ResponseMappers
 			{
 				_mapper = new NoContentMapper();
 				_route = new Route.Routing.Route("name", Guid.NewGuid(), "relative");
-				_request = MockRepository.GenerateMock<HttpRequestBase>();
+				_context = MockRepository.GenerateMock<HttpContextBase>();
 				_mapper.Map(() => null, typeof(string), typeof(string).GetMethod("Trim", Type.EmptyTypes), _route);
-				_response = await _route.ProcessResponse(_request);
+				_response = await _route.ProcessResponse(_context);
 			}
 
 			private NoContentMapper _mapper;
 			private Route.Routing.Route _route;
-			private HttpRequestBase _request;
+			private HttpContextBase _context;
 			private IResponse _response;
 
 			[Test]

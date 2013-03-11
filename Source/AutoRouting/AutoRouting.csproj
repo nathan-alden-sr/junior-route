@@ -48,7 +48,6 @@
     <Compile Include="AuthenticationStrategies\IAuthenticationStrategy.cs" />
     <Compile Include="Containers\DefaultBundleDependencyContainer.cs" />
     <Compile Include="Containers\DefaultRestrictionContainer.cs" />
-    <Compile Include="ResponseContext.cs" />
     <Compile Include="FormsAuthentication\FormsAuthenticationHelper.cs" />
     <Compile Include="FormsAuthentication\FormsAuthenticationData.cs" />
     <Compile Include="FormsAuthentication\IFormsAuthenticationHelper.cs" />
@@ -59,8 +58,6 @@
     <Compile Include="IdMappers\IdResultType.cs" />
     <Compile Include="IdMappers\IIdMapper.cs" />
     <Compile Include="IdMappers\RandomIdMapper.cs" />
-    <Compile Include="IRequestContext.cs" />
-    <Compile Include="IResponseContext.cs" />
     <Compile Include="NameMappers\Attributes\NameAttribute.cs" />
     <Compile Include="NameMappers\NameAfterRelativeClassNamespaceAndClassNameMapper.cs" />
     <Compile Include="NameMappers\NameAfterRelativeClassNamespaceAndClassNameAndMethodNameMapper.cs" />
@@ -68,13 +65,18 @@
     <Compile Include="NameMappers\NameAttributeMapper.cs" />
     <Compile Include="NameMappers\NameResult.cs" />
     <Compile Include="NameMappers\NameResultType.cs" />
+    <Compile Include="ParameterMappers\HttpApplicationStateBaseMapper.cs" />
+    <Compile Include="ParameterMappers\HttpContextBaseMapper.cs" />
+    <Compile Include="ParameterMappers\HttpRequestBaseMapper.cs" />
+    <Compile Include="ParameterMappers\HttpResponseBaseMapper.cs" />
+    <Compile Include="ParameterMappers\HttpServerUtilityBaseMapper.cs" />
+    <Compile Include="ParameterMappers\HttpSessionStateBaseMapper.cs" />
     <Compile Include="ParameterMappers\JsonModelMapper.cs" />
     <Compile Include="ParameterMappers\ModelMapper.cs" />
     <Compile Include="ParameterMappers\ModelPropertyMappers\DefaultValueMapper.cs" />
     <Compile Include="ParameterMappers\ModelPropertyMappers\QueryStringToIConvertibleMapper.cs" />
     <Compile Include="ParameterMappers\ModelPropertyMappers\FormToIConvertibleMapper.cs" />
     <Compile Include="ParameterMappers\ModelPropertyMappers\IModelPropertyMapper.cs" />
-    <Compile Include="RequestContext.cs" />
     <Compile Include="ResolvedRelativeUrlMappers\Attributes\ResolvedRelativeUrlAttribute.cs" />
     <Compile Include="ResolvedRelativeUrlMappers\IgnoreResolvedRelativeUrlMapperTypeAttribute.cs" />
     <Compile Include="ResolvedRelativeUrlMappers\ResolvedRelativeUrlFromRelativeClassNamespaceAndClassNameMapper.cs" />

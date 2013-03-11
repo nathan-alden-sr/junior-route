@@ -296,11 +296,11 @@ namespace Junior.Route.UnitTests.Routing
 			public void SetUp()
 			{
 				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
-				_request = MockRepository.GenerateMock<HttpRequestBase>();
+				_context = MockRepository.GenerateMock<HttpContextBase>();
 			}
 
 			private Route.Routing.Route _route;
-			private HttpRequestBase _request;
+			private HttpContextBase _context;
 
 			[Test]
 			public void Must_indicate_correct_return_type()
@@ -317,7 +317,7 @@ namespace Junior.Route.UnitTests.Routing
 
 				_route.RespondWith(response);
 
-				IResponse processedResponse = await _route.ProcessResponse(_request);
+				IResponse processedResponse = await _route.ProcessResponse(_context);
 
 				Assert.That(processedResponse, Is.EqualTo(response));
 			}
@@ -330,11 +330,11 @@ namespace Junior.Route.UnitTests.Routing
 			public void SetUp()
 			{
 				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
-				_request = MockRepository.GenerateMock<HttpRequestBase>();
+				_context = MockRepository.GenerateMock<HttpContextBase>();
 			}
 
 			private Route.Routing.Route _route;
-			private HttpRequestBase _request;
+			private HttpContextBase _context;
 
 			[Test]
 			public void Must_indicate_correct_return_type()
@@ -351,7 +351,7 @@ namespace Junior.Route.UnitTests.Routing
 
 				_route.RespondWith(response, typeof(CssResponse));
 
-				IResponse processedResponse = await _route.ProcessResponse(_request);
+				IResponse processedResponse = await _route.ProcessResponse(_context);
 
 				Assert.That(processedResponse, Is.EqualTo(response));
 			}
@@ -364,11 +364,11 @@ namespace Junior.Route.UnitTests.Routing
 			public void SetUp()
 			{
 				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
-				_request = MockRepository.GenerateMock<HttpRequestBase>();
+				_context = MockRepository.GenerateMock<HttpContextBase>();
 			}
 
 			private Route.Routing.Route _route;
-			private HttpRequestBase _request;
+			private HttpContextBase _context;
 
 			[Test]
 			public async void Must_execute_delegate()
@@ -382,7 +382,7 @@ namespace Junior.Route.UnitTests.Routing
 							return (IResponse)Response.NoContent();
 						});
 
-				await _route.ProcessResponse(_request);
+				await _route.ProcessResponse(_context);
 
 				Assert.That(executed, Is.True);
 			}
@@ -403,11 +403,11 @@ namespace Junior.Route.UnitTests.Routing
 			public void SetUp()
 			{
 				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
-				_request = MockRepository.GenerateMock<HttpRequestBase>();
+				_context = MockRepository.GenerateMock<HttpContextBase>();
 			}
 
 			private Route.Routing.Route _route;
-			private HttpRequestBase _request;
+			private HttpContextBase _context;
 
 			[Test]
 			public async void Must_execute_delegate()
@@ -422,7 +422,7 @@ namespace Junior.Route.UnitTests.Routing
 						},
 					typeof(CssResponse));
 
-				await _route.ProcessResponse(_request);
+				await _route.ProcessResponse(_context);
 
 				Assert.That(executed, Is.True);
 			}
@@ -443,11 +443,11 @@ namespace Junior.Route.UnitTests.Routing
 			public void SetUp()
 			{
 				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
-				_request = MockRepository.GenerateMock<HttpRequestBase>();
+				_context = MockRepository.GenerateMock<HttpContextBase>();
 			}
 
 			private Route.Routing.Route _route;
-			private HttpRequestBase _request;
+			private HttpContextBase _context;
 
 			[Test]
 			public void Must_indicate_correct_return_type()
@@ -464,7 +464,7 @@ namespace Junior.Route.UnitTests.Routing
 
 				_route.RespondWith(Task.FromResult(response));
 
-				IResponse processedResponse = await _route.ProcessResponse(_request);
+				IResponse processedResponse = await _route.ProcessResponse(_context);
 
 				Assert.That(processedResponse, Is.EqualTo(response));
 			}
@@ -477,11 +477,11 @@ namespace Junior.Route.UnitTests.Routing
 			public void SetUp()
 			{
 				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
-				_request = MockRepository.GenerateMock<HttpRequestBase>();
+				_context = MockRepository.GenerateMock<HttpContextBase>();
 			}
 
 			private Route.Routing.Route _route;
-			private HttpRequestBase _request;
+			private HttpContextBase _context;
 
 			[Test]
 			public void Must_indicate_correct_return_type()
@@ -498,7 +498,7 @@ namespace Junior.Route.UnitTests.Routing
 
 				_route.RespondWith(Task.FromResult(response), typeof(CssResponse));
 
-				IResponse processedResponse = await _route.ProcessResponse(_request);
+				IResponse processedResponse = await _route.ProcessResponse(_context);
 
 				Assert.That(processedResponse, Is.EqualTo(response));
 			}
@@ -511,11 +511,11 @@ namespace Junior.Route.UnitTests.Routing
 			public void SetUp()
 			{
 				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
-				_request = MockRepository.GenerateMock<HttpRequestBase>();
+				_context = MockRepository.GenerateMock<HttpContextBase>();
 			}
 
 			private Route.Routing.Route _route;
-			private HttpRequestBase _request;
+			private HttpContextBase _context;
 
 			[Test]
 			public async void Must_execute_delegate()
@@ -529,7 +529,7 @@ namespace Junior.Route.UnitTests.Routing
 							return Task.FromResult(Response.NoContent());
 						});
 
-				await _route.ProcessResponse(_request);
+				await _route.ProcessResponse(_context);
 
 				Assert.That(executed, Is.True);
 			}
@@ -550,11 +550,11 @@ namespace Junior.Route.UnitTests.Routing
 			public void SetUp()
 			{
 				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
-				_request = MockRepository.GenerateMock<HttpRequestBase>();
+				_context = MockRepository.GenerateMock<HttpContextBase>();
 			}
 
 			private Route.Routing.Route _route;
-			private HttpRequestBase _request;
+			private HttpContextBase _context;
 
 			[Test]
 			public async void Must_execute_delegate()
@@ -569,7 +569,7 @@ namespace Junior.Route.UnitTests.Routing
 						},
 					typeof(CssResponse));
 
-				await _route.ProcessResponse(_request);
+				await _route.ProcessResponse(_context);
 
 				Assert.That(executed, Is.True);
 			}

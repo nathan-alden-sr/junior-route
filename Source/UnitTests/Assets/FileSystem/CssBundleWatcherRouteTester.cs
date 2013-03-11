@@ -115,10 +115,10 @@ namespace Junior.Route.UnitTests.Assets.FileSystem
 				_httpRuntime = MockRepository.GenerateMock<IHttpRuntime>();
 				_systemClock = MockRepository.GenerateMock<ISystemClock>();
 				_systemClock.Stub(arg => arg.UtcDateTime).Return(new DateTime(2012, 1, 1, 0, 0, 0, DateTimeKind.Utc));
-				_request = MockRepository.GenerateMock<HttpRequestBase>();
+				_context = MockRepository.GenerateMock<HttpContextBase>();
 				_routeId = Guid.NewGuid();
 				_watcherRoute = new CssBundleWatcherRoute("route", _routeId, "relative", _watcher, _httpRuntime, _systemClock);
-				_response = await _watcherRoute.ProcessResponse(_request);
+				_response = await _watcherRoute.ProcessResponse(_context);
 			}
 
 			[TearDown]
@@ -136,7 +136,7 @@ namespace Junior.Route.UnitTests.Assets.FileSystem
 			private CssBundleWatcherRoute _watcherRoute;
 			private IHttpRuntime _httpRuntime;
 			private ISystemClock _systemClock;
-			private HttpRequestBase _request;
+			private HttpContextBase _context;
 			private IResponse _response;
 			private Guid _routeId;
 

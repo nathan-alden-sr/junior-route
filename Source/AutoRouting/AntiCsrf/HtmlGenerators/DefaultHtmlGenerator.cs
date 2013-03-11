@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Web;
 
 using Junior.Common;
 using Junior.Route.Routing.AntiCsrf;
@@ -15,40 +16,31 @@ namespace Junior.Route.AutoRouting.AntiCsrf.HtmlGenerators
 		private readonly IAntiCsrfCookieManager _cookieManager;
 		private readonly IGuidFactory _guidFactory;
 		private readonly IAntiCsrfNonceRepository _nonceRepository;
-		private readonly IResponseContext _responseContext;
 		private readonly ISystemClock _systemClock;
 
-		public DefaultHtmlGenerator(
-			IAntiCsrfConfiguration configuration,
-			IResponseContext responseContext,
-			IAntiCsrfCookieManager cookieManager,
-			IAntiCsrfNonceRepository nonceRepository,
-			IGuidFactory guidFactory,
-			ISystemClock systemClock)
+		public DefaultHtmlGenerator(IAntiCsrfConfiguration configuration, IAntiCsrfCookieManager cookieManager, IAntiCsrfNonceRepository nonceRepository, IGuidFactory guidFactory, ISystemClock systemClock)
 		{
 			configuration.ThrowIfNull("configuration");
-			responseContext.ThrowIfNull("responseContext");
 			cookieManager.ThrowIfNull("cookieManager");
 			nonceRepository.ThrowIfNull("nonceRepository");
 			guidFactory.ThrowIfNull("guidFactory");
 			systemClock.ThrowIfNull("systemClock");
 
 			_configuration = configuration;
-			_responseContext = responseContext;
 			_cookieManager = cookieManager;
 			_nonceRepository = nonceRepository;
 			_guidFactory = guidFactory;
 			_systemClock = systemClock;
 		}
 
-		public async Task<string> GenerateHiddenInputHtml()
+		public async Task<string> GenerateHiddenInputHtml(HttpResponseBase response)
 		{
 			if (!_configuration.Enabled)
 			{
 				return "";
 			}
 
-			Guid? sessionId = _cookieManager.GetSessionId(_responseContext.Response);
+			Guid? sessionId = _cookieManager.GetSessionId(response);
 
 			if (sessionId == null)
 			{

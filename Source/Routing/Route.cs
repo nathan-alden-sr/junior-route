@@ -25,7 +25,7 @@ namespace Junior.Route.Routing
 		private readonly Dictionary<Type, HashSet<IRestriction>> _restrictionsByRestrictionType = new Dictionary<Type, HashSet<IRestriction>>();
 		private IAuthenticationProvider _authenticationProvider;
 		private string _resolvedRelativeUrl;
-		private Func<HttpRequestBase, Task<IResponse>> _responseDelegate = async request => await Task.FromResult(Response.NoContent());
+		private Func<HttpContextBase, Task<IResponse>> _responseDelegate = async context => await Task.FromResult(Response.NoContent());
 
 		public Route(string name, IGuidFactory guidFactory, string resolvedRelativeUrl)
 		{
@@ -936,7 +936,7 @@ namespace Junior.Route.Routing
 
 		#region Responses
 
-		public Route RespondWith<T>(Func<HttpRequestBase, T> responseDelegate, Type returnType)
+		public Route RespondWith<T>(Func<HttpContextBase, T> responseDelegate, Type returnType)
 			where T : class, IResponse
 		{
 			lock (_lockObject)
@@ -952,14 +952,14 @@ namespace Junior.Route.Routing
 					throw new ArgumentException(String.Format("Return type must derive {0}.", delegateType.FullName), "returnType");
 				}
 
-				_responseDelegate = async request => await Task.FromResult(responseDelegate(request));
+				_responseDelegate = async context => await Task.FromResult(responseDelegate(context));
 				ResponseType = returnType;
 			}
 
 			return this;
 		}
 
-		public Route RespondWith<T>(Func<HttpRequestBase, T> responseDelegate)
+		public Route RespondWith<T>(Func<HttpContextBase, T> responseDelegate)
 			where T : class, IResponse
 		{
 			return RespondWith(responseDelegate, typeof(T));
@@ -968,16 +968,16 @@ namespace Junior.Route.Routing
 		public Route RespondWith<T>(T response, Type returnType)
 			where T : class, IResponse
 		{
-			return RespondWith(request => response, returnType);
+			return RespondWith(context => response, returnType);
 		}
 
 		public Route RespondWith<T>(T response)
 			where T : class, IResponse
 		{
-			return RespondWith(request => response);
+			return RespondWith(context => response);
 		}
 
-		public Route RespondWith<T>(Func<HttpRequestBase, Task<T>> responseDelegate, Type returnType)
+		public Route RespondWith<T>(Func<HttpContextBase, Task<T>> responseDelegate, Type returnType)
 			where T : class, IResponse
 		{
 			lock (_lockObject)
@@ -993,14 +993,14 @@ namespace Junior.Route.Routing
 					throw new ArgumentException(String.Format("Return type must derive {0}.", delegateType.FullName), "returnType");
 				}
 
-				_responseDelegate = async request => await responseDelegate(request);
+				_responseDelegate = async context => await responseDelegate(context);
 				ResponseType = returnType;
 			}
 
 			return this;
 		}
 
-		public Route RespondWith<T>(Func<HttpRequestBase, Task<T>> responseDelegate)
+		public Route RespondWith<T>(Func<HttpContextBase, Task<T>> responseDelegate)
 			where T : class, IResponse
 		{
 			return RespondWith(responseDelegate, typeof(T));
@@ -1009,20 +1009,20 @@ namespace Junior.Route.Routing
 		public Route RespondWith<T>(Task<T> response, Type returnType)
 			where T : class, IResponse
 		{
-			return RespondWith(request => response, returnType);
+			return RespondWith(context => response, returnType);
 		}
 
 		public Route RespondWith<T>(Task<T> response)
 			where T : class, IResponse
 		{
-			return RespondWith(request => response);
+			return RespondWith(context => response);
 		}
 
 		public Route RespondWithNoContent()
 		{
 			lock (_lockObject)
 			{
-				_responseDelegate = async request => await Task.FromResult(Response.NoContent());
+				_responseDelegate = async context => await Task.FromResult(Response.NoContent());
 				ResponseType = null;
 			}
 
@@ -1062,11 +1062,11 @@ namespace Junior.Route.Routing
 				       : AuthenticateResult.AuthenticationFailed(_authenticationProvider.GetFailedAuthenticationResponse(request));
 		}
 
-		public async Task<IResponse> ProcessResponse(HttpRequestBase request)
+		public async Task<IResponse> ProcessResponse(HttpContextBase context)
 		{
-			request.ThrowIfNull("request");
+			context.ThrowIfNull("context");
 
-			return await _responseDelegate(request);
+			return await _responseDelegate(context);
 		}
 	}
 }

@@ -23,13 +23,13 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers
 			{
 				_container = MockRepository.GenerateMock<IContainer>();
 				_container.Stub(arg => arg.GetInstance(typeof(Model))).Return(new Model());
-				_request = MockRepository.GenerateMock<HttpRequestBase>();
+				_context = MockRepository.GenerateMock<HttpContextBase>();
 				_mapper = new ModelMapper(_container);
 			}
 
 			private IContainer _container;
 			private ModelMapper _mapper;
-			private HttpRequestBase _request;
+			private HttpContextBase _context;
 
 			public class Endpoint
 			{
@@ -49,7 +49,7 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers
 				MethodInfo methodInfo = type.GetMethod(methodName);
 				ParameterInfo parameterInfo = methodInfo.GetParameters().Single(arg => arg.Name == parameterName);
 
-				_mapper.Map(_request, type, methodInfo, parameterInfo);
+				_mapper.Map(_context, type, methodInfo, parameterInfo);
 
 				_container.AssertWasCalled(arg => arg.GetInstance(parameterInfo.ParameterType));
 			}
@@ -61,7 +61,7 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers
 			[SetUp]
 			public void SetUp()
 			{
-				_request = MockRepository.GenerateMock<HttpRequestBase>();
+				_context = MockRepository.GenerateMock<HttpContextBase>();
 				_modelPropertyMapper1 = MockRepository.GenerateMock<IModelPropertyMapper>();
 				_modelPropertyMapper1
 					.Stub(arg => arg.CanMapType(Arg<Type>.Is.Anything))
@@ -78,7 +78,7 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers
 			}
 
 			private ModelMapper _modelMapper;
-			private HttpRequestBase _request;
+			private HttpContextBase _context;
 			private IModelPropertyMapper _modelPropertyMapper1;
 			private IModelPropertyMapper _modelPropertyMapper2;
 
@@ -113,7 +113,7 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers
 				MethodInfo methodInfo = type.GetMethod(methodName);
 				ParameterInfo parameterInfo = methodInfo.GetParameters().Single(arg => arg.Name == parameterName);
 
-				Assert.That(() => _modelMapper.Map(_request, type, methodInfo, parameterInfo), Throws.Nothing);
+				Assert.That(() => _modelMapper.Map(_context, type, methodInfo, parameterInfo), Throws.Nothing);
 			}
 
 			[Test]
@@ -123,7 +123,7 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers
 				MethodInfo methodInfo = type.GetMethod(methodName);
 				ParameterInfo parameterInfo = methodInfo.GetParameters().Single(arg => arg.Name == parameterName);
 
-				_modelMapper.Map(_request, type, methodInfo, parameterInfo);
+				_modelMapper.Map(_context, type, methodInfo, parameterInfo);
 
 				_modelPropertyMapper1.AssertWasCalled(arg => arg.Map(Arg<HttpRequestBase>.Is.Anything, Arg<Type>.Is.Anything, Arg<PropertyInfo>.Is.Anything));
 				_modelPropertyMapper2.AssertWasNotCalled(arg => arg.Map(Arg<HttpRequestBase>.Is.Anything, Arg<Type>.Is.Anything, Arg<PropertyInfo>.Is.Anything));
@@ -136,7 +136,7 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers
 			[SetUp]
 			public void SetUp()
 			{
-				_request = MockRepository.GenerateMock<HttpRequestBase>();
+				_context = MockRepository.GenerateMock<HttpContextBase>();
 				_mapper = new ModelMapper(
 					type =>
 						{
@@ -157,13 +157,13 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers
 			}
 
 			private ModelMapper _mapper;
-			private HttpRequestBase _request;
+			private HttpContextBase _context;
 			private bool _executed;
 
 			[Test]
 			public void Must_use_container_to_get_instance()
 			{
-				_mapper.CanMapType(_request, typeof(object));
+				_mapper.CanMapType(_context, typeof(object));
 
 				Assert.That(_executed, Is.True);
 			}
@@ -175,7 +175,7 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers
 			[SetUp]
 			public void SetUp()
 			{
-				_request = MockRepository.GenerateMock<HttpRequestBase>();
+				_context = MockRepository.GenerateMock<HttpContextBase>();
 				_mapper = new ModelMapper();
 			}
 
@@ -199,14 +199,14 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers
 			}
 
 			private ModelMapper _mapper;
-			private HttpRequestBase _request;
+			private HttpContextBase _context;
 
 			[Test]
 			[TestCase(typeof(Model))]
 			[TestCase(typeof(AnotherModel))]
 			public void Must_map_types_ending_in_model(Type type)
 			{
-				Assert.That(_mapper.CanMapType(_request, type), Is.True);
+				Assert.That(_mapper.CanMapType(_context, type), Is.True);
 			}
 
 			[Test]
@@ -214,7 +214,7 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers
 			[TestCase(typeof(object))]
 			public void Must_not_map_types_not_ending_in_model(Type type)
 			{
-				Assert.That(_mapper.CanMapType(_request, type), Is.False);
+				Assert.That(_mapper.CanMapType(_context, type), Is.False);
 			}
 		}
 	}

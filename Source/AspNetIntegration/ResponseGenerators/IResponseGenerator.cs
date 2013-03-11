@@ -5,6 +5,6 @@ namespace Junior.Route.AspNetIntegration.ResponseGenerators
 {
 	public interface IResponseGenerator
 	{
-		ResponseResult GetResponse(HttpRequestBase request, IEnumerable<RouteMatchResult> routeMatchResults);
+		ResponseResult GetResponse(HttpContextBase context, IEnumerable<RouteMatchResult> routeMatchResults);
 	}
 }

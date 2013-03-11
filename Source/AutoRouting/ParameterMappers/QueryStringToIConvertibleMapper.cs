@@ -19,31 +19,31 @@ namespace Junior.Route.AutoRouting.ParameterMappers
 			_errorHandling = errorHandling;
 		}
 
-		public bool CanMapType(HttpRequestBase request, Type parameterType)
+		public bool CanMapType(HttpContextBase context, Type parameterType)
 		{
-			request.ThrowIfNull("request");
+			context.ThrowIfNull("context");
 			parameterType.ThrowIfNull("parameterType");
 
 			return parameterType.ImplementsInterface<IConvertible>();
 		}
 
-		public MapResult Map(HttpRequestBase request, Type type, MethodInfo method, ParameterInfo parameter)
+		public MapResult Map(HttpContextBase context, Type type, MethodInfo method, ParameterInfo parameter)
 		{
-			request.ThrowIfNull("request");
+			context.ThrowIfNull("context");
 			type.ThrowIfNull("type");
 			method.ThrowIfNull("method");
 			parameter.ThrowIfNull("parameter");
 
 			Type parameterType = parameter.ParameterType;
 			string parameterName = parameter.Name;
-			string field = request.QueryString.AllKeys.LastOrDefault(arg => String.Equals(arg, parameterName, _caseSensitive ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase));
+			string field = context.Request.QueryString.AllKeys.LastOrDefault(arg => String.Equals(arg, parameterName, _caseSensitive ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase));
 
 			if (field == null)
 			{
 				return MapResult.ValueNotMapped();
 			}
 
-			IConvertible value = request.QueryString[field];
+			IConvertible value = context.Request.QueryString[field];
 			object convertedValue;
 
 			try

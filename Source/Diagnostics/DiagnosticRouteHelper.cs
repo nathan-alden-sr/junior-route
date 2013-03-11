@@ -35,7 +35,7 @@ namespace Junior.Route.Diagnostics
 			return new Routing.Route(name, guidFactory.Random(), resolvedRelativeUrl)
 				.RestrictByMethods(HttpMethod.Get)
 				.RestrictByUrlRelativePath(resolvedRelativeUrl, CaseInsensitivePlainComparer.Instance, httpRuntime)
-				.RespondWith(request => GetViewResponse(viewTemplate, namespaces, populateView));
+				.RespondWith(context => GetViewResponse(viewTemplate, namespaces, populateView));
 		}
 
 		public Routing.Route GetViewRoute<T>(string name, IGuidFactory guidFactory, string resolvedRelativeUrl, string viewTemplate, IEnumerable<string> namespaces, IHttpRuntime httpRuntime, Action<T> populateView = null)
@@ -53,7 +53,7 @@ namespace Junior.Route.Diagnostics
 			return new Routing.Route(name, guidFactory.Random(), resolvedRelativeUrl)
 				.RestrictByMethods(HttpMethod.Get)
 				.RestrictByUrlRelativePath(resolvedRelativeUrl, CaseInsensitivePlainComparer.Instance, httpRuntime)
-				.RespondWith(request => new CssResponse(stylesheet));
+				.RespondWith(context => new CssResponse(stylesheet));
 		}
 
 		public Routing.Route GetJavaScriptRoute(string name, IGuidFactory guidFactory, string resolvedRelativeUrl, string javaScript, IHttpRuntime httpRuntime)
@@ -65,7 +65,7 @@ namespace Junior.Route.Diagnostics
 			return new Routing.Route(name, guidFactory.Random(), resolvedRelativeUrl)
 				.RestrictByMethods(HttpMethod.Get)
 				.RestrictByUrlRelativePath(resolvedRelativeUrl, CaseInsensitivePlainComparer.Instance, httpRuntime)
-				.RespondWith(request => new JavaScriptResponse(javaScript));
+				.RespondWith(context => new JavaScriptResponse(javaScript));
 		}
 
 		private static HtmlResponse GetViewResponse<T>(byte[] viewTemplate, IEnumerable<string> namespaces, Action<T> populateView = null)

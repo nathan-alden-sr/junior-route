@@ -6,7 +6,7 @@ namespace Junior.Route.AutoRouting.ParameterMappers
 {
 	public interface IParameterMapper
 	{
-		bool CanMapType(HttpRequestBase request, Type parameterType);
-		MapResult Map(HttpRequestBase request, Type type, MethodInfo method, ParameterInfo parameter);
+		bool CanMapType(HttpContextBase context, Type parameterType);
+		MapResult Map(HttpContextBase context, Type type, MethodInfo method, ParameterInfo parameter);
 	}
 }

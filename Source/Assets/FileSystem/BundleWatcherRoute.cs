@@ -44,7 +44,7 @@ namespace Junior.Route.Assets.FileSystem
 			ConfigureRoute();
 		}
 
-		protected abstract T GetResponse(HttpRequestBase request, string bundleContents);
+		protected abstract T GetResponse(HttpContextBase context, string bundleContents);
 
 		private void ConfigureRoute()
 		{
@@ -55,7 +55,7 @@ namespace Junior.Route.Assets.FileSystem
 				RestrictByMethods(HttpMethod.Get);
 				RestrictByUrlRelativePath(_relativePath, CaseInsensitivePlainComparer.Instance, _httpRuntime);
 				RestrictByUrlQuery(@"^(?:\?(?i:v=[a-f0-9]{32}))?$", CaseInsensitiveRegexComparer.Instance);
-				RespondWith(request => GetResponse(request, _watcher.Contents));
+				RespondWith(context => GetResponse(context, _watcher.Contents));
 			}
 		}
 

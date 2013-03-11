@@ -66,17 +66,17 @@ namespace Junior.Route.AutoRouting.ParameterMappers
 		{
 		}
 
-		public bool CanMapType(HttpRequestBase request, Type parameterType)
+		public bool CanMapType(HttpContextBase context, Type parameterType)
 		{
-			request.ThrowIfNull("request");
+			context.ThrowIfNull("context");
 			parameterType.ThrowIfNull("parameterType");
 
 			return _parameterTypeMatchDelegate(parameterType);
 		}
 
-		public MapResult Map(HttpRequestBase request, Type type, MethodInfo method, ParameterInfo parameter)
+		public MapResult Map(HttpContextBase context, Type type, MethodInfo method, ParameterInfo parameter)
 		{
-			request.ThrowIfNull("request");
+			context.ThrowIfNull("context");
 			type.ThrowIfNull("type");
 			method.ThrowIfNull("method");
 			parameter.ThrowIfNull("parameter");
@@ -89,7 +89,7 @@ namespace Junior.Route.AutoRouting.ParameterMappers
 			{
 				PropertyInfo closureProperty = property;
 				var mappedValue = _modelPropertyMappers
-					.Select(arg => new { Mapper = arg, MapResult = arg.Map(request, modelType, closureProperty) })
+					.Select(arg => new { Mapper = arg, MapResult = arg.Map(context.Request, modelType, closureProperty) })
 					.FirstOrDefault(arg => arg.MapResult.ResultType == MapResultType.ValueMapped);
 
 				if (mappedValue == null)

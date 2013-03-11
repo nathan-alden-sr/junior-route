@@ -1,8 +1,10 @@
-﻿namespace Junior.Route.AutoRouting.FormsAuthentication
+﻿using System.Web;
+
+namespace Junior.Route.AutoRouting.FormsAuthentication
 {
 	public interface IFormsAuthenticationData<out TUserData>
 		where TUserData : class
 	{
-		TUserData GetUserData(string cookieName = ".juniorauth");
+		TUserData GetUserData(HttpRequestBase request, string cookieName = ".juniorauth");
 	}
 }

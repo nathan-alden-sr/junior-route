@@ -2,7 +2,6 @@
 using System.Web;
 
 using Junior.Common;
-using Junior.Route.AutoRouting;
 using Junior.Route.AutoRouting.FormsAuthentication;
 using Junior.Route.Routing.Responses;
 
@@ -26,19 +25,16 @@ namespace Junior.Route.UnitTests.AutoRouting.FormsAuthentication
 
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 				_request.Stub(arg => arg.Cookies).Return(new HttpCookieCollection { cookie.GetHttpCookie() });
-				_requestContext = MockRepository.GenerateMock<IRequestContext>();
-				_requestContext.Stub(arg => arg.Request).Return(_request);
-				_authenticationData = new FormsAuthenticationData<dynamic>(_requestContext);
+				_authenticationData = new FormsAuthenticationData<dynamic>();
 			}
 
-			private IRequestContext _requestContext;
 			private HttpRequestBase _request;
 			private FormsAuthenticationData<dynamic> _authenticationData;
 
 			[Test]
 			public void Must_not_get_user_data()
 			{
-				dynamic userData = _authenticationData.GetUserData();
+				dynamic userData = _authenticationData.GetUserData(_request);
 
 				Assert.That((object)userData, Is.Null);
 			}
@@ -52,19 +48,16 @@ namespace Junior.Route.UnitTests.AutoRouting.FormsAuthentication
 			{
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 				_request.Stub(arg => arg.Cookies).Return(new HttpCookieCollection { new HttpCookie(".juniorauth", "invalid") });
-				_requestContext = MockRepository.GenerateMock<IRequestContext>();
-				_requestContext.Stub(arg => arg.Request).Return(_request);
-				_authenticationData = new FormsAuthenticationData<dynamic>(_requestContext);
+				_authenticationData = new FormsAuthenticationData<dynamic>();
 			}
 
-			private IRequestContext _requestContext;
 			private HttpRequestBase _request;
 			private FormsAuthenticationData<dynamic> _authenticationData;
 
 			[Test]
 			public void Must_not_get_user_data()
 			{
-				dynamic userData = _authenticationData.GetUserData();
+				dynamic userData = _authenticationData.GetUserData(_request);
 
 				Assert.That((object)userData, Is.Null);
 			}
@@ -78,19 +71,16 @@ namespace Junior.Route.UnitTests.AutoRouting.FormsAuthentication
 			{
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 				_request.Stub(arg => arg.Cookies).Return(new HttpCookieCollection());
-				_requestContext = MockRepository.GenerateMock<IRequestContext>();
-				_requestContext.Stub(arg => arg.Request).Return(_request);
-				_authenticationData = new FormsAuthenticationData<dynamic>(_requestContext);
+				_authenticationData = new FormsAuthenticationData<dynamic>();
 			}
 
-			private IRequestContext _requestContext;
 			private HttpRequestBase _request;
 			private FormsAuthenticationData<dynamic> _authenticationData;
 
 			[Test]
 			public void Must_not_get_user_data()
 			{
-				dynamic userData = _authenticationData.GetUserData();
+				dynamic userData = _authenticationData.GetUserData(_request);
 
 				Assert.That((object)userData, Is.Null);
 			}
@@ -108,19 +98,16 @@ namespace Junior.Route.UnitTests.AutoRouting.FormsAuthentication
 
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 				_request.Stub(arg => arg.Cookies).Return(new HttpCookieCollection { cookie.GetHttpCookie() });
-				_requestContext = MockRepository.GenerateMock<IRequestContext>();
-				_requestContext.Stub(arg => arg.Request).Return(_request);
-				_authenticationData = new FormsAuthenticationData<dynamic>(_requestContext);
+				_authenticationData = new FormsAuthenticationData<dynamic>();
 			}
 
-			private IRequestContext _requestContext;
 			private HttpRequestBase _request;
 			private FormsAuthenticationData<dynamic> _authenticationData;
 
 			[Test]
 			public void Must_get_user_data()
 			{
-				dynamic userData = _authenticationData.GetUserData();
+				dynamic userData = _authenticationData.GetUserData(_request);
 
 				Assert.That((object)userData, Is.Not.Null);
 				Assert.That((string)userData.P, Is.EqualTo("V"));

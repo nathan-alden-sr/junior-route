@@ -28,6 +28,9 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseHandlers
 				_httpResponse = MockRepository.GenerateMock<HttpResponseBase>();
 				_httpResponse.Stub(arg => arg.BinaryWrite(Arg<byte[]>.Is.Anything)).WhenCalled(arg => _responseWritten = true);
 				_httpResponse.Stub(arg => arg.Cache).Return(_httpCachePolicyBase);
+				_httpContext = MockRepository.GenerateMock<HttpContextBase>();
+				_httpContext.Stub(arg => arg.Request).Return(_httpRequest);
+				_httpContext.Stub(arg => arg.Response).Return(_httpResponse);
 				_cachePolicy = MockRepository.GenerateMock<ICachePolicy>();
 				_cachePolicy.Stub(arg => arg.Clone()).Return(_cachePolicy);
 				_response = MockRepository.GenerateMock<IResponse>();
@@ -37,7 +40,7 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseHandlers
 				_response.Stub(arg => arg.Headers).Return(Enumerable.Empty<Header>());
 				_response.Stub(arg => arg.StatusCode).Return(new StatusAndSubStatusCode(HttpStatusCode.OK));
 				_cache = MockRepository.GenerateMock<ICache>();
-				_result = _handler.HandleResponse(_httpRequest, _httpResponse, _response, _cache, "key");
+				_result = _handler.HandleResponse(_httpContext, _response, _cache, "key");
 			}
 
 			private NonCacheableResponseHandler _handler;
@@ -49,6 +52,7 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseHandlers
 			private bool _responseWritten;
 			private ICachePolicy _cachePolicy;
 			private HttpCachePolicyBase _httpCachePolicyBase;
+			private HttpContextBase _httpContext;
 
 			[Test]
 			public void Must_result_in_response_written()

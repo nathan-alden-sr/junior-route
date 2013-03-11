@@ -28,9 +28,9 @@ namespace Junior.Route.Assets.FileSystem
 			_systemClock = systemClock;
 		}
 
-		protected override CssResponse GetResponse(HttpRequestBase request, string bundleContents)
+		protected override CssResponse GetResponse(HttpContextBase context, string bundleContents)
 		{
-			request.ThrowIfNull("request");
+			context.ThrowIfNull("context");
 			bundleContents.ThrowIfNull("bundleContents");
 
 			return new CssResponse(bundleContents, ConfigureResponse);

@@ -21,13 +21,13 @@ namespace Junior.Route.UnitTests.AutoRouting.ResponseMappers
 			public void SetUp()
 			{
 				_mapper = MockRepository.GenerateMock<IParameterMapper>();
-				_mapper.Stub(arg => arg.CanMapType(Arg<HttpRequestBase>.Is.Anything, Arg<Type>.Is.Anything)).Return(false);
+				_mapper.Stub(arg => arg.CanMapType(Arg<HttpContextBase>.Is.Anything, Arg<Type>.Is.Anything)).Return(false);
 				_retriever = new ParameterValueRetriever(new[] { _mapper });
-				_request = MockRepository.GenerateMock<HttpRequestBase>();
+				_context = MockRepository.GenerateMock<HttpContextBase>();
 			}
 
 			private ParameterValueRetriever _retriever;
-			private HttpRequestBase _request;
+			private HttpContextBase _context;
 			private IParameterMapper _mapper;
 
 			public class Endpoint
@@ -40,7 +40,7 @@ namespace Junior.Route.UnitTests.AutoRouting.ResponseMappers
 			[Test]
 			public void Must_throw_exception()
 			{
-				Assert.That(() => _retriever.GetParameterValues(_request, typeof(Endpoint), typeof(Endpoint).GetMethod("Method")), Throws.InstanceOf<ApplicationException>());
+				Assert.That(() => _retriever.GetParameterValues(_context, typeof(Endpoint), typeof(Endpoint).GetMethod("Method")), Throws.InstanceOf<ApplicationException>());
 			}
 		}
 
@@ -51,25 +51,25 @@ namespace Junior.Route.UnitTests.AutoRouting.ResponseMappers
 			public void SetUp()
 			{
 				_mapper1 = MockRepository.GenerateMock<IParameterMapper>();
-				_mapper1.Stub(arg => arg.CanMapType(Arg<HttpRequestBase>.Is.Anything, Arg<Type>.Is.Anything)).Return(false);
+				_mapper1.Stub(arg => arg.CanMapType(Arg<HttpContextBase>.Is.Anything, Arg<Type>.Is.Anything)).Return(false);
 				_mapper2 = MockRepository.GenerateMock<IParameterMapper>();
-				_mapper2.Stub(arg => arg.CanMapType(Arg<HttpRequestBase>.Is.Anything, Arg<Type>.Is.Anything)).Return(true);
+				_mapper2.Stub(arg => arg.CanMapType(Arg<HttpContextBase>.Is.Anything, Arg<Type>.Is.Anything)).Return(true);
 				_mapper2
-					.Stub(arg => arg.Map(Arg<HttpRequestBase>.Is.Anything, Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything, Arg<ParameterInfo>.Is.Anything))
+					.Stub(arg => arg.Map(Arg<HttpContextBase>.Is.Anything, Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything, Arg<ParameterInfo>.Is.Anything))
 					.WhenCalled(arg => arg.ReturnValue = MapResult.ValueMapped(100))
 					.Return(null);
 				_mapper3 = MockRepository.GenerateMock<IParameterMapper>();
-				_mapper3.Stub(arg => arg.CanMapType(Arg<HttpRequestBase>.Is.Anything, Arg<Type>.Is.Anything)).Return(false);
+				_mapper3.Stub(arg => arg.CanMapType(Arg<HttpContextBase>.Is.Anything, Arg<Type>.Is.Anything)).Return(false);
 				_retriever = new ParameterValueRetriever(new[] { _mapper1, _mapper2, _mapper3 });
-				_request = MockRepository.GenerateMock<HttpRequestBase>();
-				_values = _retriever.GetParameterValues(_request, typeof(Endpoint), typeof(Endpoint).GetMethod("Method"));
+				_context = MockRepository.GenerateMock<HttpContextBase>();
+				_values = _retriever.GetParameterValues(_context, typeof(Endpoint), typeof(Endpoint).GetMethod("Method"));
 			}
 
 			private IParameterMapper _mapper1;
 			private IParameterMapper _mapper2;
 			private IParameterMapper _mapper3;
 			private ParameterValueRetriever _retriever;
-			private HttpRequestBase _request;
+			private HttpContextBase _context;
 			private IEnumerable<object> _values;
 
 			public class Endpoint
@@ -82,9 +82,9 @@ namespace Junior.Route.UnitTests.AutoRouting.ResponseMappers
 			[Test]
 			public void Must_use_first_mapper_that_maps_successfully()
 			{
-				_mapper1.AssertWasNotCalled(arg => arg.Map(Arg<HttpRequestBase>.Is.Anything, Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything, Arg<ParameterInfo>.Is.Anything));
-				_mapper2.AssertWasCalled(arg => arg.Map(Arg<HttpRequestBase>.Is.Anything, Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything, Arg<ParameterInfo>.Is.Anything));
-				_mapper3.AssertWasNotCalled(arg => arg.Map(Arg<HttpRequestBase>.Is.Anything, Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything, Arg<ParameterInfo>.Is.Anything));
+				_mapper1.AssertWasNotCalled(arg => arg.Map(Arg<HttpContextBase>.Is.Anything, Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything, Arg<ParameterInfo>.Is.Anything));
+				_mapper2.AssertWasCalled(arg => arg.Map(Arg<HttpContextBase>.Is.Anything, Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything, Arg<ParameterInfo>.Is.Anything));
+				_mapper3.AssertWasNotCalled(arg => arg.Map(Arg<HttpContextBase>.Is.Anything, Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything, Arg<ParameterInfo>.Is.Anything));
 				Assert.That(_values, Is.EquivalentTo(new[] { 100 }));
 			}
 		}

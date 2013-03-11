@@ -13,9 +13,9 @@ namespace Junior.Route.AspNetIntegration.ResponseGenerators
 {
 	public class UnmatchedRestrictionsGenerator : IResponseGenerator
 	{
-		public ResponseResult GetResponse(HttpRequestBase request, IEnumerable<RouteMatchResult> routeMatchResults)
+		public ResponseResult GetResponse(HttpContextBase context, IEnumerable<RouteMatchResult> routeMatchResults)
 		{
-			request.ThrowIfNull("request");
+			context.ThrowIfNull("context");
 			routeMatchResults.ThrowIfNull("routeMatchResults");
 
 			RouteMatchResult[] unmatchedResults = routeMatchResults.Where(arg => arg.MatchResult.ResultType == MatchResultType.RouteNotMatched).ToArray();

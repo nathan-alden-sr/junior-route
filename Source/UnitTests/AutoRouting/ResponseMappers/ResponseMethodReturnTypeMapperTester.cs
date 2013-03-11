@@ -29,14 +29,14 @@ namespace Junior.Route.UnitTests.AutoRouting.ResponseMappers
 				_container.Stub(arg => arg.GetInstance(typeof(Endpoint))).Return(new Endpoint());
 				_route = new Route.Routing.Route("name", Guid.NewGuid(), "relative");
 				_responseMethodReturnTypeMapper.Map(() => _container, typeof(Endpoint), typeof(Endpoint).GetMethod("Method"), _route);
-				_request = MockRepository.GenerateMock<HttpRequestBase>();
-				_response = await _route.ProcessResponse(_request);
+				_context = MockRepository.GenerateMock<HttpContextBase>();
+				_response = await _route.ProcessResponse(_context);
 			}
 
 			private ResponseMethodReturnTypeMapper _responseMethodReturnTypeMapper;
 			private IContainer _container;
 			private Route.Routing.Route _route;
-			private HttpRequestBase _request;
+			private HttpContextBase _context;
 			private IResponse _response;
 			private IParameterMapper _parameterMapper;
 

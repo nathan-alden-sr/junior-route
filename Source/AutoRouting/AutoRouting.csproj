@@ -46,6 +46,7 @@
     <Compile Include="AuthenticationStrategies\Attributes\AuthenticateAttribute.cs" />
     <Compile Include="AuthenticationStrategies\AuthenticateAttributeStrategy.cs" />
     <Compile Include="AuthenticationStrategies\IAuthenticationStrategy.cs" />
+    <Compile Include="BundleRoute.cs" />
     <Compile Include="Containers\DefaultBundleDependencyContainer.cs" />
     <Compile Include="Containers\DefaultRestrictionContainer.cs" />
     <Compile Include="FormsAuthentication\FormsAuthenticationHelper.cs" />

@@ -21,8 +21,8 @@
 	<property name="NUnitResultsDirectory" value="${path::combine(BuildDirectory, 'NUnit Results')}"/>
 
 	<!-- Paths -->
-	<property name="NUnitConsolePath" value="${path::combine(BuildDirectory, 'NUnit-2.6.1\bin\nunit-console.exe')}"/>
-	<property name="NuGetPath" value="${path::combine(BuildDirectory, 'NuGet-2.0\NuGet.exe')}"/>
+	<property name="NUnitConsolePath" value="${path::combine(BuildDirectory, 'NUnit-2.6.2\bin\nunit-console.exe')}"/>
+	<property name="NuGetPath" value="${path::combine(BuildDirectory, 'NuGet-2.2.1\NuGet.exe')}"/>
 	<property name="SolutionPath" value="${path::combine(SourceDirectory, project::get-name() + '.sln')}"/>
 
 	<!-- Build -->

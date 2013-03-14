@@ -683,6 +683,25 @@ namespace Junior.Route.AutoRouting
 			return CssBundle(bundle, routeName, relativePath, concatenator, (IEnumerable<IAssetTransformer>)transformers);
 		}
 
+		public AutoRouteCollection CssBundles(IEnumerable<BundleRoute> bundleRoutes)
+		{
+			bundleRoutes.ThrowIfNull("bundleRoutes");
+
+			foreach (BundleRoute bundleRoute in bundleRoutes)
+			{
+				if (bundleRoute.AssetOrder != null)
+				{
+					CssBundle(bundleRoute.Bundle, bundleRoute.RouteName, bundleRoute.RelativePath, bundleRoute.AssetOrder, bundleRoute.Concatenator, bundleRoute.Transformers);
+				}
+				else
+				{
+					CssBundle(bundleRoute.Bundle, bundleRoute.RouteName, bundleRoute.RelativePath, bundleRoute.Concatenator, bundleRoute.Transformers);
+				}
+			}
+
+			return this;
+		}
+
 		public AutoRouteCollection JavaScriptBundle(Bundle bundle, string routeName, string relativePath, IComparer<AssetFile> assetOrder, IAssetConcatenator concatenator, IEnumerable<IAssetTransformer> transformers)
 		{
 			ThrowIfNoBundleDependencyContainer();
@@ -736,6 +755,25 @@ namespace Junior.Route.AutoRouting
 		public AutoRouteCollection JavaScriptBundle(Bundle bundle, string routeName, string relativePath, IAssetConcatenator concatenator, params IAssetTransformer[] transformers)
 		{
 			return JavaScriptBundle(bundle, routeName, relativePath, concatenator, (IEnumerable<IAssetTransformer>)transformers);
+		}
+
+		public AutoRouteCollection JavaScriptBundles(IEnumerable<BundleRoute> bundleRoutes)
+		{
+			bundleRoutes.ThrowIfNull("bundleRoutes");
+
+			foreach (BundleRoute bundleRoute in bundleRoutes)
+			{
+				if (bundleRoute.AssetOrder != null)
+				{
+					JavaScriptBundle(bundleRoute.Bundle, bundleRoute.RouteName, bundleRoute.RelativePath, bundleRoute.AssetOrder, bundleRoute.Concatenator, bundleRoute.Transformers);
+				}
+				else
+				{
+					JavaScriptBundle(bundleRoute.Bundle, bundleRoute.RouteName, bundleRoute.RelativePath, bundleRoute.Concatenator, bundleRoute.Transformers);
+				}
+			}
+
+			return this;
 		}
 
 		#endregion

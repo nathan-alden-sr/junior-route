@@ -12,7 +12,7 @@
 		<dependencies>
 			<group>
 				<dependency id="JuniorCommon" version="3.0.0"/>
-				<dependency id="JuniorRoute.Core" version="4.0.0"/>
+				<dependency id="JuniorRoute.Core" version="4.1.0"/>
 				<dependency id="JuniorRoute.Assets" version="4.0.1"/>
 			</group>
 		</dependencies>

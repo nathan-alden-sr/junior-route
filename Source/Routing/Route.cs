@@ -1018,6 +1018,24 @@ namespace Junior.Route.Routing
 			return RespondWith(context => response);
 		}
 
+		public Route RespondWithNoContent(Action<HttpContextBase> @delegate)
+		{
+			@delegate.ThrowIfNull("delegate");
+
+			lock (_lockObject)
+			{
+				_responseDelegate = async context =>
+					{
+						@delegate(context);
+
+						return await Task.FromResult(Response.NoContent());
+					};
+				ResponseType = null;
+			}
+
+			return this;
+		}
+
 		public Route RespondWithNoContent()
 		{
 			lock (_lockObject)

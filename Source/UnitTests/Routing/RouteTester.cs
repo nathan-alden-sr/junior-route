@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using System.Web;
 
@@ -286,6 +287,73 @@ namespace Junior.Route.UnitTests.Routing
 				IEnumerable<Type> types = _route.GetRestrictionTypes();
 
 				Assert.That(types, Is.EquivalentTo(new[] { typeof(HeaderRestriction<DateHeader>), typeof(HeaderRestriction<AllowHeader>), typeof(MethodRestriction) }));
+			}
+		}
+
+		[TestFixture]
+		public class When_responding_with_nocontentresponse
+		{
+			[SetUp]
+			public void SetUp()
+			{
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_context = MockRepository.GenerateMock<HttpContextBase>();
+				_route.RespondWithNoContent();
+			}
+
+			private Route.Routing.Route _route;
+			private HttpContextBase _context;
+
+			[Test]
+			public void Must_indicate_null_return_type()
+			{
+				Assert.That(_route.ResponseType, Is.Null);
+			}
+
+			[Test]
+			public async void Must_return_nocontentresponse()
+			{
+				IResponse processedResponse = await _route.ProcessResponse(_context);
+
+				Assert.That(processedResponse.StatusCode.ParsedStatusCode, Is.EqualTo(HttpStatusCode.NoContent));
+			}
+		}
+
+		[TestFixture]
+		public class When_responding_with_nocontentresponse_using_delegate
+		{
+			[SetUp]
+			public void SetUp()
+			{
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_context = MockRepository.GenerateMock<HttpContextBase>();
+				_route.RespondWithNoContent(context => _delegateCalled = true);
+			}
+
+			private Route.Routing.Route _route;
+			private HttpContextBase _context;
+			private bool _delegateCalled;
+
+			[Test]
+			public async void Must_call_delegate()
+			{
+				await _route.ProcessResponse(_context);
+
+				Assert.That(_delegateCalled, Is.True);
+			}
+
+			[Test]
+			public void Must_indicate_null_return_type()
+			{
+				Assert.That(_route.ResponseType, Is.Null);
+			}
+
+			[Test]
+			public async void Must_return_nocontentresponse()
+			{
+				IResponse processedResponse = await _route.ProcessResponse(_context);
+
+				Assert.That(processedResponse.StatusCode.ParsedStatusCode, Is.EqualTo(HttpStatusCode.NoContent));
 			}
 		}
 

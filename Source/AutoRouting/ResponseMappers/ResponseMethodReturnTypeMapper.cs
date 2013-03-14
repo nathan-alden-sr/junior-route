@@ -39,14 +39,9 @@ namespace Junior.Route.AutoRouting.ResponseMappers
 			method.ThrowIfNull("method");
 			route.ThrowIfNull("route");
 
-			if (method.ReturnType == typeof(void))
-			{
-				route.RespondWithNoContent();
-				return;
-			}
-
 			bool methodReturnTypeImplementsIResponse = method.ReturnType.ImplementsInterface<IResponse>();
 			bool methodReturnTypeIsTaskT = method.ReturnType.IsGenericType && method.ReturnType.GetGenericTypeDefinition() == typeof(Task<>);
+			bool methodReturnTypeIsVoid = method.ReturnType == typeof(void);
 
 			if (methodReturnTypeImplementsIResponse)
 			{
@@ -135,6 +130,44 @@ namespace Junior.Route.AutoRouting.ResponseMappers
 							return @delegate(instance, parameterValues);
 						},
 					methodGenericArgumentType);
+			}
+			else if (methodReturnTypeIsVoid)
+			{
+				ParameterInfo[] parameterInfos = method.GetParameters();
+				ParameterExpression instanceParameterExpression = Expression.Parameter(typeof(object), "instance");
+				ParameterExpression parametersParameterExpression = Expression.Parameter(typeof(object[]), "parameters");
+				MethodCallExpression methodCallExpression =
+					Expression.Call(
+						Expression.Convert(instanceParameterExpression, type),
+						method,
+						parameterInfos.Select((arg, index) => Expression.Convert(
+							Expression.ArrayIndex(parametersParameterExpression, Expression.Constant(index)),
+							arg.ParameterType)));
+				Action<object, object[]> @delegate = Expression.Lambda<Action<object, object[]>>(methodCallExpression, instanceParameterExpression, parametersParameterExpression).Compile();
+
+				route.RespondWithNoContent(
+					context =>
+						{
+							object instance;
+
+							try
+							{
+								instance = container().GetInstance(type);
+							}
+							catch (Exception exception)
+							{
+								throw new ApplicationException(String.Format("Unable to resolve instance of type {0}.", type.FullName), exception);
+							}
+							if (instance == null)
+							{
+								throw new ApplicationException(String.Format("Unable to resolve instance of type {0}.", type.FullName));
+							}
+
+							var parameterValueRetriever = new ParameterValueRetriever(_parameterMappers);
+							object[] parameterValues = parameterValueRetriever.GetParameterValues(context, type, method).ToArray();
+
+							@delegate(instance, parameterValues);
+						});
 			}
 			else
 			{

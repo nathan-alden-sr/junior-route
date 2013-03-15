@@ -54,7 +54,7 @@ namespace Junior.Route.Routing.Responses.Application
 		}
 
 		public JsonResponse(object content, Action<Response> configurationDelegate = null)
-			: base(new Response().ApplicationJson().Content(() => JsonConvert.SerializeObject(content, _serializerSettings)))
+			: base(new Response().ApplicationJson().Content(() => JsonConvert.SerializeObject(content, _serializerSettings)), configurationDelegate)
 		{
 		}
 
@@ -64,7 +64,7 @@ namespace Junior.Route.Routing.Responses.Application
 		}
 
 		public JsonResponse(object content, Encoding encoding, Action<Response> configurationDelegate = null)
-			: base(new Response().ApplicationJson().ContentEncoding(encoding).Content(() => JsonConvert.SerializeObject(content, _serializerSettings)))
+			: base(new Response().ApplicationJson().ContentEncoding(encoding).Content(() => JsonConvert.SerializeObject(content, _serializerSettings)), configurationDelegate)
 		{
 		}
 

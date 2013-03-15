@@ -14,7 +14,7 @@ namespace Junior.Route.UnitTests.Routing.Responses
 			private class Foo : ImmutableResponse
 			{
 				public Foo(Action<Response> configurationDelegate)
-					: base(Response.OK(), configurationDelegate)
+					: base(new Response().OK(), configurationDelegate)
 				{
 				}
 			}

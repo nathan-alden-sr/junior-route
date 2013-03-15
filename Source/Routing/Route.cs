@@ -25,7 +25,7 @@ namespace Junior.Route.Routing
 		private readonly Dictionary<Type, HashSet<IRestriction>> _restrictionsByRestrictionType = new Dictionary<Type, HashSet<IRestriction>>();
 		private IAuthenticationProvider _authenticationProvider;
 		private string _resolvedRelativeUrl;
-		private Func<HttpContextBase, Task<IResponse>> _responseDelegate = async context => await Task.FromResult(Response.NoContent());
+		private Func<HttpContextBase, Task<IResponse>> _responseDelegate = async context => await Task.FromResult(new Response().NoContent());
 
 		public Route(string name, IGuidFactory guidFactory, string resolvedRelativeUrl)
 		{
@@ -1028,7 +1028,7 @@ namespace Junior.Route.Routing
 					{
 						@delegate(context);
 
-						return await Task.FromResult(Response.NoContent());
+						return await Task.FromResult(new Response().NoContent());
 					};
 				ResponseType = null;
 			}
@@ -1040,7 +1040,7 @@ namespace Junior.Route.Routing
 		{
 			lock (_lockObject)
 			{
-				_responseDelegate = async context => await Task.FromResult(Response.NoContent());
+				_responseDelegate = async context => await Task.FromResult(new Response().NoContent());
 				ResponseType = null;
 			}
 

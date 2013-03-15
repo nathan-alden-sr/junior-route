@@ -19,13 +19,18 @@ namespace Junior.Route.Routing.Responses
 		private readonly CachePolicy _cachePolicy = new CachePolicy();
 		private readonly HashSet<Cookie> _cookies = new HashSet<Cookie>();
 		private readonly HashSet<Header> _headers = new HashSet<Header>();
-		private readonly StatusAndSubStatusCode _statusCode;
 		private Func<byte[]> _binaryContent;
 		private string _charset = "utf-8";
 		private Encoding _contentEncoding = _defaultContentEncoding;
 		private string _contentType;
 		private Encoding _headerEncoding = _defaultHeaderEncoding;
+		private StatusAndSubStatusCode _statusCode;
 		private Func<string> _stringContent;
+
+		public Response()
+			: this(new StatusAndSubStatusCode(HttpStatusCode.OK))
+		{
+		}
 
 		public Response(StatusAndSubStatusCode statusCode)
 		{
@@ -305,458 +310,472 @@ namespace Junior.Route.Routing.Responses
 
 		#region HTTP status codes
 
-		public static Response Continue()
+		public Response StatusCode(int statusCode, int subStatusCode = 0)
 		{
-			return new Response(HttpStatusCode.Continue);
+			_statusCode = new StatusAndSubStatusCode(statusCode, subStatusCode);
+
+			return this;
 		}
 
-		public static Response SwitchingProtocols()
+		public Response StatusCode(HttpStatusCode statusCode, int subStatusCode = 0)
 		{
-			return new Response(HttpStatusCode.SwitchingProtocols);
+			_statusCode = new StatusAndSubStatusCode(statusCode, subStatusCode);
+
+			return this;
 		}
 
-		public static Response OK()
+		public Response Continue()
 		{
-			return new Response(HttpStatusCode.OK);
+			return StatusCode(HttpStatusCode.Continue);
 		}
 
-		public static Response Created()
+		public Response SwitchingProtocols()
 		{
-			return new Response(HttpStatusCode.Created);
+			return StatusCode(HttpStatusCode.SwitchingProtocols);
 		}
 
-		public static Response Accepted()
+		public Response OK()
 		{
-			return new Response(HttpStatusCode.Accepted);
+			return StatusCode(HttpStatusCode.OK);
 		}
 
-		public static Response NonAuthoritativeInformation()
+		public Response Created()
 		{
-			return new Response(HttpStatusCode.NonAuthoritativeInformation);
+			return StatusCode(HttpStatusCode.Created);
 		}
 
-		public static Response NoContent()
+		public Response Accepted()
 		{
-			return new Response(HttpStatusCode.NoContent);
+			return StatusCode(HttpStatusCode.Accepted);
 		}
 
-		public static Response ResetContent()
+		public Response NonAuthoritativeInformation()
 		{
-			return new Response(HttpStatusCode.ResetContent);
+			return StatusCode(HttpStatusCode.NonAuthoritativeInformation);
 		}
 
-		public static Response PartialContent()
+		public Response NoContent()
 		{
-			return new Response(HttpStatusCode.PartialContent);
+			return StatusCode(HttpStatusCode.NoContent);
 		}
 
-		public static Response Ambiguous()
+		public Response ResetContent()
 		{
-			return new Response(HttpStatusCode.Ambiguous);
+			return StatusCode(HttpStatusCode.ResetContent);
 		}
 
-		public static Response MultipleChoices()
+		public Response PartialContent()
 		{
-			return new Response(HttpStatusCode.MultipleChoices);
+			return StatusCode(HttpStatusCode.PartialContent);
 		}
 
-		public static Response Moved()
+		public Response Ambiguous()
 		{
-			return new Response(HttpStatusCode.Moved);
+			return StatusCode(HttpStatusCode.Ambiguous);
 		}
 
-		public static Response Moved(string location)
+		public Response MultipleChoices()
+		{
+			return StatusCode(HttpStatusCode.MultipleChoices);
+		}
+
+		public Response Moved()
+		{
+			return StatusCode(HttpStatusCode.Moved);
+		}
+
+		public Response Moved(string location)
 		{
 			location.ThrowIfNull("location");
 
-			return new Response(HttpStatusCode.Moved).Header("Location", location);
+			return StatusCode(HttpStatusCode.Moved).Header("Location", location);
 		}
 
-		public static Response MovedToRoute(IUrlResolver urlResolver, string routeName)
+		public Response MovedToRoute(IUrlResolver urlResolver, string routeName)
 		{
 			urlResolver.ThrowIfNull("urlResolver");
 
 			return Moved(urlResolver.Route(routeName));
 		}
 
-		public static Response MovedToRoute(IUrlResolver urlResolver, Guid routeId)
+		public Response MovedToRoute(IUrlResolver urlResolver, Guid routeId)
 		{
 			urlResolver.ThrowIfNull("urlResolver");
 
 			return Moved(urlResolver.Route(routeId));
 		}
 
-		public static Response MovedToRelativeUrl(IUrlResolver urlResolver, string relativeUrl)
+		public Response MovedToRelativeUrl(IUrlResolver urlResolver, string relativeUrl)
 		{
 			urlResolver.ThrowIfNull("urlResolver");
 
 			return Moved(urlResolver.Absolute(relativeUrl));
 		}
 
-		public static Response MovedPermanently()
+		public Response MovedPermanently()
 		{
-			return new Response(HttpStatusCode.MovedPermanently);
+			return StatusCode(HttpStatusCode.MovedPermanently);
 		}
 
-		public static Response MovedPermanently(string location)
+		public Response MovedPermanently(string location)
 		{
 			location.ThrowIfNull("location");
 
-			return new Response(HttpStatusCode.MovedPermanently).Header("Location", location);
+			return StatusCode(HttpStatusCode.MovedPermanently).Header("Location", location);
 		}
 
-		public static Response MovedPermanentlyToRoute(IUrlResolver urlResolver, string routeName)
+		public Response MovedPermanentlyToRoute(IUrlResolver urlResolver, string routeName)
 		{
 			urlResolver.ThrowIfNull("urlResolver");
 
 			return MovedPermanently(urlResolver.Route(routeName));
 		}
 
-		public static Response MovedPermanentlyToRoute(IUrlResolver urlResolver, Guid routeId)
+		public Response MovedPermanentlyToRoute(IUrlResolver urlResolver, Guid routeId)
 		{
 			urlResolver.ThrowIfNull("urlResolver");
 
 			return MovedPermanently(urlResolver.Route(routeId));
 		}
 
-		public static Response MovedPermanentlyToRelativeUrl(IUrlResolver urlResolver, string relativeUrl)
+		public Response MovedPermanentlyToRelativeUrl(IUrlResolver urlResolver, string relativeUrl)
 		{
 			urlResolver.ThrowIfNull("urlResolver");
 
 			return MovedPermanently(urlResolver.Absolute(relativeUrl));
 		}
 
-		public static Response Found()
+		public Response Found()
 		{
-			return new Response(HttpStatusCode.Found);
+			return StatusCode(HttpStatusCode.Found);
 		}
 
-		public static Response Found(string location)
+		public Response Found(string location)
 		{
 			location.ThrowIfNull("location");
 
-			return new Response(HttpStatusCode.Found).Header("Location", location);
+			return StatusCode(HttpStatusCode.Found).Header("Location", location);
 		}
 
-		public static Response FoundRoute(IUrlResolver urlResolver, string routeName)
+		public Response FoundRoute(IUrlResolver urlResolver, string routeName)
 		{
 			urlResolver.ThrowIfNull("urlResolver");
 
 			return Found(urlResolver.Route(routeName));
 		}
 
-		public static Response FoundRoute(IUrlResolver urlResolver, Guid routeId)
+		public Response FoundRoute(IUrlResolver urlResolver, Guid routeId)
 		{
 			urlResolver.ThrowIfNull("urlResolver");
 
 			return Found(urlResolver.Route(routeId));
 		}
 
-		public static Response FoundRelativeUrl(IUrlResolver urlResolver, string relativeUrl)
+		public Response FoundRelativeUrl(IUrlResolver urlResolver, string relativeUrl)
 		{
 			urlResolver.ThrowIfNull("urlResolver");
 
 			return Found(urlResolver.Absolute(relativeUrl));
 		}
 
-		public static Response Redirect()
+		public Response Redirect()
 		{
-			return new Response(HttpStatusCode.Redirect);
+			return StatusCode(HttpStatusCode.Redirect);
 		}
 
-		public static Response Redirect(string location)
+		public Response Redirect(string location)
 		{
 			location.ThrowIfNull("location");
 
-			return new Response(HttpStatusCode.Redirect).Header("Location", location);
+			return StatusCode(HttpStatusCode.Redirect).Header("Location", location);
 		}
 
-		public static Response RedirectToRoute(IUrlResolver urlResolver, string routeName)
+		public Response RedirectToRoute(IUrlResolver urlResolver, string routeName)
 		{
 			urlResolver.ThrowIfNull("urlResolver");
 
 			return Redirect(urlResolver.Route(routeName));
 		}
 
-		public static Response RedirectToRoute(IUrlResolver urlResolver, Guid routeId)
+		public Response RedirectToRoute(IUrlResolver urlResolver, Guid routeId)
 		{
 			urlResolver.ThrowIfNull("urlResolver");
 
 			return Redirect(urlResolver.Route(routeId));
 		}
 
-		public static Response RedirectToRelativeUrl(IUrlResolver urlResolver, string relativeUrl)
+		public Response RedirectToRelativeUrl(IUrlResolver urlResolver, string relativeUrl)
 		{
 			urlResolver.ThrowIfNull("urlResolver");
 
 			return Redirect(urlResolver.Absolute(relativeUrl));
 		}
 
-		public static Response RedirectMethod()
+		public Response RedirectMethod()
 		{
-			return new Response(HttpStatusCode.RedirectMethod);
+			return StatusCode(HttpStatusCode.RedirectMethod);
 		}
 
-		public static Response RedirectMethod(string location)
+		public Response RedirectMethod(string location)
 		{
 			location.ThrowIfNull("location");
 
-			return new Response(HttpStatusCode.RedirectMethod).Header("Location", location);
+			return StatusCode(HttpStatusCode.RedirectMethod).Header("Location", location);
 		}
 
-		public static Response RedirectMethodToRoute(IUrlResolver urlResolver, string routeName)
+		public Response RedirectMethodToRoute(IUrlResolver urlResolver, string routeName)
 		{
 			urlResolver.ThrowIfNull("urlResolver");
 
 			return RedirectMethod(urlResolver.Route(routeName));
 		}
 
-		public static Response RedirectMethodToRoute(IUrlResolver urlResolver, Guid routeId)
+		public Response RedirectMethodToRoute(IUrlResolver urlResolver, Guid routeId)
 		{
 			urlResolver.ThrowIfNull("urlResolver");
 
 			return RedirectMethod(urlResolver.Route(routeId));
 		}
 
-		public static Response RedirectMethodToRelativeUrl(IUrlResolver urlResolver, string relativeUrl)
+		public Response RedirectMethodToRelativeUrl(IUrlResolver urlResolver, string relativeUrl)
 		{
 			urlResolver.ThrowIfNull("urlResolver");
 
 			return RedirectMethod(urlResolver.Absolute(relativeUrl));
 		}
 
-		public static Response SeeOther()
+		public Response SeeOther()
 		{
-			return new Response(HttpStatusCode.SeeOther);
+			return StatusCode(HttpStatusCode.SeeOther);
 		}
 
-		public static Response SeeOther(string location)
+		public Response SeeOther(string location)
 		{
 			location.ThrowIfNull("location");
 
-			return new Response(HttpStatusCode.SeeOther).Header("Location", location);
+			return StatusCode(HttpStatusCode.SeeOther).Header("Location", location);
 		}
 
-		public static Response SeeOtherRoute(IUrlResolver urlResolver, string routeName)
+		public Response SeeOtherRoute(IUrlResolver urlResolver, string routeName)
 		{
 			urlResolver.ThrowIfNull("urlResolver");
 
 			return SeeOther(urlResolver.Route(routeName));
 		}
 
-		public static Response SeeOtherRoute(IUrlResolver urlResolver, Guid routeId)
+		public Response SeeOtherRoute(IUrlResolver urlResolver, Guid routeId)
 		{
 			urlResolver.ThrowIfNull("urlResolver");
 
 			return SeeOther(urlResolver.Route(routeId));
 		}
 
-		public static Response SeeOtherRelativeUrl(IUrlResolver urlResolver, string relativeUrl)
+		public Response SeeOtherRelativeUrl(IUrlResolver urlResolver, string relativeUrl)
 		{
 			urlResolver.ThrowIfNull("urlResolver");
 
 			return SeeOther(urlResolver.Absolute(relativeUrl));
 		}
 
-		public static Response NotModified()
+		public Response NotModified()
 		{
-			return new Response(HttpStatusCode.NotModified);
+			return StatusCode(HttpStatusCode.NotModified);
 		}
 
-		public static Response UseProxy()
+		public Response UseProxy()
 		{
-			return new Response(HttpStatusCode.UseProxy);
+			return StatusCode(HttpStatusCode.UseProxy);
 		}
 
-		public static Response Unused()
+		public Response Unused()
 		{
-			return new Response(HttpStatusCode.Unused);
+			return StatusCode(HttpStatusCode.Unused);
 		}
 
-		public static Response RedirectKeepVerb()
+		public Response RedirectKeepVerb()
 		{
-			return new Response(HttpStatusCode.RedirectKeepVerb);
+			return StatusCode(HttpStatusCode.RedirectKeepVerb);
 		}
 
-		public static Response RedirectKeepVerb(string location)
+		public Response RedirectKeepVerb(string location)
 		{
 			location.ThrowIfNull("location");
 
-			return new Response(HttpStatusCode.RedirectKeepVerb).Header("Location", location);
+			return StatusCode(HttpStatusCode.RedirectKeepVerb).Header("Location", location);
 		}
 
-		public static Response RedirectToRouteKeepVerb(IUrlResolver urlResolver, string routeName)
+		public Response RedirectToRouteKeepVerb(IUrlResolver urlResolver, string routeName)
 		{
 			urlResolver.ThrowIfNull("urlResolver");
 
 			return RedirectKeepVerb(urlResolver.Route(routeName));
 		}
 
-		public static Response RedirectToRouteKeepVerb(IUrlResolver urlResolver, Guid routeId)
+		public Response RedirectToRouteKeepVerb(IUrlResolver urlResolver, Guid routeId)
 		{
 			urlResolver.ThrowIfNull("urlResolver");
 
 			return RedirectKeepVerb(urlResolver.Route(routeId));
 		}
 
-		public static Response RedirectToRelativeUrlKeepVerb(IUrlResolver urlResolver, string relativeUrl)
+		public Response RedirectToRelativeUrlKeepVerb(IUrlResolver urlResolver, string relativeUrl)
 		{
 			urlResolver.ThrowIfNull("urlResolver");
 
 			return RedirectKeepVerb(urlResolver.Absolute(relativeUrl));
 		}
 
-		public static Response TemporaryRedirect()
+		public Response TemporaryRedirect()
 		{
-			return new Response(HttpStatusCode.TemporaryRedirect);
+			return StatusCode(HttpStatusCode.TemporaryRedirect);
 		}
 
-		public static Response TemporaryRedirect(string location)
+		public Response TemporaryRedirect(string location)
 		{
 			location.ThrowIfNull("location");
 
-			return new Response(HttpStatusCode.TemporaryRedirect).Header("Location", location);
+			return StatusCode(HttpStatusCode.TemporaryRedirect).Header("Location", location);
 		}
 
-		public static Response TemporaryRedirectToRoute(IUrlResolver urlResolver, string routeName)
+		public Response TemporaryRedirectToRoute(IUrlResolver urlResolver, string routeName)
 		{
 			urlResolver.ThrowIfNull("urlResolver");
 
 			return TemporaryRedirect(urlResolver.Route(routeName));
 		}
 
-		public static Response TemporaryRedirectToRoute(IUrlResolver urlResolver, Guid routeId)
+		public Response TemporaryRedirectToRoute(IUrlResolver urlResolver, Guid routeId)
 		{
 			urlResolver.ThrowIfNull("urlResolver");
 
 			return TemporaryRedirect(urlResolver.Route(routeId));
 		}
 
-		public static Response TemporaryRedirectToRelativeUrl(IUrlResolver urlResolver, string relativeUrl)
+		public Response TemporaryRedirectToRelativeUrl(IUrlResolver urlResolver, string relativeUrl)
 		{
 			urlResolver.ThrowIfNull("urlResolver");
 
 			return TemporaryRedirect(urlResolver.Absolute(relativeUrl));
 		}
 
-		public static Response BadRequest()
+		public Response BadRequest()
 		{
-			return new Response(HttpStatusCode.BadRequest);
+			return StatusCode(HttpStatusCode.BadRequest);
 		}
 
-		public static Response Unauthorized()
+		public Response Unauthorized()
 		{
-			return new Response(HttpStatusCode.Unauthorized);
+			return StatusCode(HttpStatusCode.Unauthorized);
 		}
 
-		public static Response PaymentRequired()
+		public Response PaymentRequired()
 		{
-			return new Response(HttpStatusCode.PaymentRequired);
+			return StatusCode(HttpStatusCode.PaymentRequired);
 		}
 
-		public static Response Forbidden()
+		public Response Forbidden()
 		{
-			return new Response(HttpStatusCode.Forbidden);
+			return StatusCode(HttpStatusCode.Forbidden);
 		}
 
-		public static Response NotFound()
+		public Response NotFound()
 		{
-			return new Response(HttpStatusCode.NotFound);
+			return StatusCode(HttpStatusCode.NotFound);
 		}
 
-		public static Response MethodNotAllowed()
+		public Response MethodNotAllowed()
 		{
-			return new Response(HttpStatusCode.MethodNotAllowed);
+			return StatusCode(HttpStatusCode.MethodNotAllowed);
 		}
 
-		public static Response NotAcceptable()
+		public Response NotAcceptable()
 		{
-			return new Response(HttpStatusCode.NotAcceptable);
+			return StatusCode(HttpStatusCode.NotAcceptable);
 		}
 
-		public static Response ProxyAuthenticationRequired()
+		public Response ProxyAuthenticationRequired()
 		{
-			return new Response(HttpStatusCode.ProxyAuthenticationRequired);
+			return StatusCode(HttpStatusCode.ProxyAuthenticationRequired);
 		}
 
-		public static Response RequestTimeout()
+		public Response RequestTimeout()
 		{
-			return new Response(HttpStatusCode.RequestTimeout);
+			return StatusCode(HttpStatusCode.RequestTimeout);
 		}
 
-		public static Response Conflict()
+		public Response Conflict()
 		{
-			return new Response(HttpStatusCode.Conflict);
+			return StatusCode(HttpStatusCode.Conflict);
 		}
 
-		public static Response Gone()
+		public Response Gone()
 		{
-			return new Response(HttpStatusCode.Gone);
+			return StatusCode(HttpStatusCode.Gone);
 		}
 
-		public static Response LengthRequired()
+		public Response LengthRequired()
 		{
-			return new Response(HttpStatusCode.LengthRequired);
+			return StatusCode(HttpStatusCode.LengthRequired);
 		}
 
-		public static Response PreconditionFailed()
+		public Response PreconditionFailed()
 		{
-			return new Response(HttpStatusCode.PreconditionFailed);
+			return StatusCode(HttpStatusCode.PreconditionFailed);
 		}
 
-		public static Response RequestEntityTooLarge()
+		public Response RequestEntityTooLarge()
 		{
-			return new Response(HttpStatusCode.RequestEntityTooLarge);
+			return StatusCode(HttpStatusCode.RequestEntityTooLarge);
 		}
 
-		public static Response RequestUriTooLong()
+		public Response RequestUriTooLong()
 		{
-			return new Response(HttpStatusCode.RequestUriTooLong);
+			return StatusCode(HttpStatusCode.RequestUriTooLong);
 		}
 
-		public static Response UnsupportedMediaType()
+		public Response UnsupportedMediaType()
 		{
-			return new Response(HttpStatusCode.UnsupportedMediaType);
+			return StatusCode(HttpStatusCode.UnsupportedMediaType);
 		}
 
-		public static Response RequestedRangeNotSatisfiable()
+		public Response RequestedRangeNotSatisfiable()
 		{
-			return new Response(HttpStatusCode.RequestedRangeNotSatisfiable);
+			return StatusCode(HttpStatusCode.RequestedRangeNotSatisfiable);
 		}
 
-		public static Response ExpectationFailed()
+		public Response ExpectationFailed()
 		{
-			return new Response(HttpStatusCode.ExpectationFailed);
+			return StatusCode(HttpStatusCode.ExpectationFailed);
 		}
 
-		public static Response InternalServerError()
+		public Response InternalServerError()
 		{
-			return new Response(HttpStatusCode.InternalServerError);
+			return StatusCode(HttpStatusCode.InternalServerError);
 		}
 
-		public static Response NotImplemented()
+		public Response NotImplemented()
 		{
-			return new Response(HttpStatusCode.NotImplemented);
+			return StatusCode(HttpStatusCode.NotImplemented);
 		}
 
-		public static Response BadGateway()
+		public Response BadGateway()
 		{
-			return new Response(HttpStatusCode.BadGateway);
+			return StatusCode(HttpStatusCode.BadGateway);
 		}
 
-		public static Response ServiceUnavailable()
+		public Response ServiceUnavailable()
 		{
-			return new Response(HttpStatusCode.ServiceUnavailable);
+			return StatusCode(HttpStatusCode.ServiceUnavailable);
 		}
 
-		public static Response GatewayTimeout()
+		public Response GatewayTimeout()
 		{
-			return new Response(HttpStatusCode.GatewayTimeout);
+			return StatusCode(HttpStatusCode.GatewayTimeout);
 		}
 
-		public static Response HttpVersionNotSupported()
+		public Response HttpVersionNotSupported()
 		{
-			return new Response(HttpStatusCode.HttpVersionNotSupported);
+			return StatusCode(HttpStatusCode.HttpVersionNotSupported);
 		}
 
 		#endregion

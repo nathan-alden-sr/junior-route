@@ -39,35 +39,35 @@ namespace Junior.Route.AspNetIntegration.ResponseGenerators
 							.Distinct(StringComparer.OrdinalIgnoreCase)
 							.OrderBy(arg => arg);
 
-						return ResponseResult.ResponseGenerated(Response.MethodNotAllowed().Header("Allow", String.Join(", ", methods)));
+						return ResponseResult.ResponseGenerated(new Response().MethodNotAllowed().Header("Allow", String.Join(", ", methods)));
 					}
 
 					IEnumerable<HeaderRestriction<AcceptHeader>> acceptHeaderRestrictions = unmatchedRestrictions.OfType<HeaderRestriction<AcceptHeader>>();
 
 					if (acceptHeaderRestrictions.Any())
 					{
-						return ResponseResult.ResponseGenerated(Response.NotAcceptable());
+						return ResponseResult.ResponseGenerated(new Response().NotAcceptable());
 					}
 
 					IEnumerable<HeaderRestriction<AcceptCharsetHeader>> acceptCharsetHeaderRestrictions = unmatchedRestrictions.OfType<HeaderRestriction<AcceptCharsetHeader>>();
 
 					if (acceptCharsetHeaderRestrictions.Any())
 					{
-						return ResponseResult.ResponseGenerated(Response.NotAcceptable());
+						return ResponseResult.ResponseGenerated(new Response().NotAcceptable());
 					}
 
 					IEnumerable<HeaderRestriction<AcceptEncodingHeader>> acceptEncodingHeaderRestrictions = unmatchedRestrictions.OfType<HeaderRestriction<AcceptEncodingHeader>>();
 
 					if (acceptEncodingHeaderRestrictions.Any())
 					{
-						return ResponseResult.ResponseGenerated(Response.NotAcceptable());
+						return ResponseResult.ResponseGenerated(new Response().NotAcceptable());
 					}
 
 					IEnumerable<HeaderRestriction<ContentEncodingHeader>> contentEncodingHeaderRestrictions = unmatchedRestrictions.OfType<HeaderRestriction<ContentEncodingHeader>>();
 
 					if (contentEncodingHeaderRestrictions.Any())
 					{
-						return ResponseResult.ResponseGenerated(Response.UnsupportedMediaType());
+						return ResponseResult.ResponseGenerated(new Response().UnsupportedMediaType());
 					}
 				}
 			}

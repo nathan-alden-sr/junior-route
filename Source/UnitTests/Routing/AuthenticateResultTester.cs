@@ -13,7 +13,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_failedResponse = Response.OK();
+				_failedResponse = new Response().OK();
 				_authenticateResult = AuthenticateResult.AuthenticationFailed(_failedResponse);
 			}
 

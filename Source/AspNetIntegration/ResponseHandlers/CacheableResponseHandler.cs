@@ -56,7 +56,7 @@ namespace Junior.Route.AspNetIntegration.ResponseHandlers
 				if (ifMatchHeaders.All(arg => arg.EntityTag.Value != responseETag) ||
 				    (responseETag == null && ifMatchHeaders.Any(arg => arg.EntityTag.Value == "*")))
 				{
-					return WriteResponse(context.Response, Response.PreconditionFailed());
+					return WriteResponse(context.Response, new Response().PreconditionFailed());
 				}
 			}
 
@@ -85,10 +85,10 @@ namespace Junior.Route.AspNetIntegration.ResponseHandlers
 							suggestedResponse.CachePolicy.Apply(context.Response.Cache);
 						}
 
-						return WriteResponse(context.Response, Response.NotModified());
+						return WriteResponse(context.Response, new Response().NotModified());
 					}
 
-					return WriteResponse(context.Response, Response.PreconditionFailed());
+					return WriteResponse(context.Response, new Response().PreconditionFailed());
 				}
 			}
 
@@ -105,7 +105,7 @@ namespace Junior.Route.AspNetIntegration.ResponseHandlers
 				// Return 304 if the response was cached before the HTTP-date
 				if (cacheItem != null && cacheItem.CachedUtcTimestamp < ifModifiedSinceHeader.HttpDate)
 				{
-					return WriteResponse(context.Response, Response.NotModified());
+					return WriteResponse(context.Response, new Response().NotModified());
 				}
 			}
 
@@ -122,7 +122,7 @@ namespace Junior.Route.AspNetIntegration.ResponseHandlers
 				// Return 412 if the previous response was removed from the cache or was cached again at a later time
 				if (cacheItem == null || cacheItem.CachedUtcTimestamp >= ifUnmodifiedSinceHeader.HttpDate)
 				{
-					return WriteResponse(context.Response, Response.PreconditionFailed());
+					return WriteResponse(context.Response, new Response().PreconditionFailed());
 				}
 			}
 
@@ -157,7 +157,7 @@ namespace Junior.Route.AspNetIntegration.ResponseHandlers
 			// Return 504 if the response has not been cached but the client is requesting to receive only a cached response
 			if (cacheItem == null && cacheControlHeader != null && cacheControlHeader.OnlyIfCached)
 			{
-				return WriteResponse(context.Response, Response.GatewayTimeout());
+				return WriteResponse(context.Response, new Response().GatewayTimeout());
 			}
 
 			if (cacheItem != null)

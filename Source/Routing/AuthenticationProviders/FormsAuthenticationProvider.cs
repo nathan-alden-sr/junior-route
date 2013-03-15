@@ -51,7 +51,7 @@ namespace Junior.Route.Routing.AuthenticationProviders
 		{
 			if (_failedAuthenticationRedirectAbsoluteUrlDelegate == null)
 			{
-				return Response.Unauthorized();
+				return new Response().Unauthorized();
 			}
 
 			string absoluteUrl = _failedAuthenticationRedirectAbsoluteUrlDelegate();
@@ -69,7 +69,7 @@ namespace Junior.Route.Routing.AuthenticationProviders
 				absoluteUrl += (absoluteUrl.IndexOf('?') > -1 ? "&" : "?") + returnUrlQueryString;
 			}
 
-			return String.Equals(request.HttpMethod, "GET", StringComparison.OrdinalIgnoreCase) ? Response.Found(absoluteUrl) : Response.SeeOther(absoluteUrl);
+			return String.Equals(request.HttpMethod, "GET", StringComparison.OrdinalIgnoreCase) ? new Response().Found(absoluteUrl) : new Response().SeeOther(absoluteUrl);
 		}
 
 		public static FormsAuthenticationProvider CreateWithNoRedirectOnFailedAuthentication()

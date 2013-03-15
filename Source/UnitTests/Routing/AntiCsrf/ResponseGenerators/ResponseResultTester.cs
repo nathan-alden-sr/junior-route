@@ -13,7 +13,7 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.ResponseGenerators
 			[SetUp]
 			public void SetUp()
 			{
-				_response = Response.OK();
+				_response = new Response().OK();
 				_responseResult = ResponseResult.ResponseGenerated(_response);
 			}
 

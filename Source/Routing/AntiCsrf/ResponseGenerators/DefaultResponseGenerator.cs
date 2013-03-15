@@ -14,7 +14,7 @@ namespace Junior.Route.Routing.AntiCsrf.ResponseGenerators
 				case ValidationResult.FormFieldMissing:
 				case ValidationResult.FormFieldInvalid:
 				case ValidationResult.NonceInvalid:
-					Response response = Response.Unauthorized().TextPlain().Content("Anti-CSRF validation failed.");
+					Response response = new Response().Unauthorized().TextPlain().Content("Anti-CSRF validation failed.");
 
 					return ResponseResult.ResponseGenerated(response);
 				default:

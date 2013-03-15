@@ -27,7 +27,7 @@ namespace Junior.Route.AspNetIntegration.ResponseGenerators
 
 				if (bestMatches.Length > 1)
 				{
-					return ResponseResult.ResponseGenerated(Response.MultipleChoices());
+					return ResponseResult.ResponseGenerated(new Response().MultipleChoices());
 				}
 				if (bestMatches.Length == 1)
 				{
@@ -36,7 +36,7 @@ namespace Junior.Route.AspNetIntegration.ResponseGenerators
 
 					if (authenticateResult.ResultType == AuthenticateResultType.AuthenticationFailed)
 					{
-						return ResponseResult.ResponseGenerated(authenticateResult.FailedResponse ?? Response.Unauthorized());
+						return ResponseResult.ResponseGenerated(authenticateResult.FailedResponse ?? new Response().Unauthorized());
 					}
 
 					Task<IResponse> responseTask = bestMatch.Route.ProcessResponse(context);

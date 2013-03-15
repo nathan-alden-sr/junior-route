@@ -15,7 +15,7 @@ namespace Junior.Route.UnitTests.Routing.Caching
 			[SetUp]
 			public void SetUp()
 			{
-				_cacheResponse = new CacheResponse(Response.OK());
+				_cacheResponse = new CacheResponse(new Response().OK());
 				_cachedUtcTimestamp = new DateTime(2012, 01, 01, 0, 0, 0, DateTimeKind.Utc);
 				_expiresUtcTimestamp = new DateTime(2013, 01, 01, 0, 0, 0, DateTimeKind.Utc);
 				_cacheItem = new CacheItem(_cacheResponse, _cachedUtcTimestamp, _expiresUtcTimestamp);
@@ -41,7 +41,7 @@ namespace Junior.Route.UnitTests.Routing.Caching
 			[Test]
 			public void Must_throw_exception()
 			{
-				var cacheResponse = new CacheResponse(Response.OK());
+				var cacheResponse = new CacheResponse(new Response().OK());
 
 				Assert.That(() => new CacheItem(cacheResponse, new DateTime(2012, 01, 01, 0, 0, 0, DateTimeKind.Local), new DateTime(2012, 01, 01, 0, 0, 0, DateTimeKind.Utc)), Throws.InstanceOf<ArgumentException>());
 				Assert.That(() => new CacheItem(cacheResponse, new DateTime(2012, 01, 01, 0, 0, 0, DateTimeKind.Utc), new DateTime(2012, 01, 01, 0, 0, 0, DateTimeKind.Local)), Throws.InstanceOf<ArgumentException>());

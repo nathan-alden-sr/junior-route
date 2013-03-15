@@ -20,7 +20,7 @@ namespace Junior.Route.UnitTests.Routing.Caching
 			[SetUp]
 			public void SetUp()
 			{
-				Response response = Response
+				Response response = new Response()
 					.OK()
 					.ApplicationJson()
 					.Charset("utf-8")
@@ -67,7 +67,7 @@ namespace Junior.Route.UnitTests.Routing.Caching
 				_httpResponseBase.Stub(arg => arg.Cookies).Return(new HttpCookieCollection());
 				_httpResponseBase.Stub(arg => arg.Headers).Return(new NameValueCollection());
 
-				Response response = Response
+				Response response = new Response()
 					.OK()
 					.ApplicationJson()
 					.Charset("utf-8")

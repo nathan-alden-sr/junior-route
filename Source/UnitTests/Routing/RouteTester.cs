@@ -373,7 +373,7 @@ namespace Junior.Route.UnitTests.Routing
 			[Test]
 			public void Must_indicate_correct_return_type()
 			{
-				_route.RespondWith(request => Response.NoContent());
+				_route.RespondWith(request => new Response().NoContent());
 
 				Assert.That(_route.ResponseType, Is.EqualTo(typeof(Response)));
 			}
@@ -381,7 +381,7 @@ namespace Junior.Route.UnitTests.Routing
 			[Test]
 			public async void Must_return_response()
 			{
-				IResponse response = Response.NoContent();
+				IResponse response = new Response().NoContent();
 
 				_route.RespondWith(response);
 
@@ -407,7 +407,7 @@ namespace Junior.Route.UnitTests.Routing
 			[Test]
 			public void Must_indicate_correct_return_type()
 			{
-				_route.RespondWith(request => (IResponse)Response.NoContent(), typeof(CssResponse));
+				_route.RespondWith(request => (IResponse)new Response().NoContent(), typeof(CssResponse));
 
 				Assert.That(_route.ResponseType, Is.EqualTo(typeof(CssResponse)));
 			}
@@ -415,7 +415,7 @@ namespace Junior.Route.UnitTests.Routing
 			[Test]
 			public async void Must_return_response()
 			{
-				IResponse response = Response.NoContent();
+				IResponse response = new Response().NoContent();
 
 				_route.RespondWith(response, typeof(CssResponse));
 
@@ -447,7 +447,7 @@ namespace Junior.Route.UnitTests.Routing
 					request =>
 						{
 							executed = true;
-							return (IResponse)Response.NoContent();
+							return (IResponse)new Response().NoContent();
 						});
 
 				await _route.ProcessResponse(_context);
@@ -458,7 +458,7 @@ namespace Junior.Route.UnitTests.Routing
 			[Test]
 			public void Must_indicate_correct_return_type()
 			{
-				_route.RespondWith(request => Response.NoContent());
+				_route.RespondWith(request => new Response().NoContent());
 
 				Assert.That(_route.ResponseType, Is.EqualTo(typeof(Response)));
 			}
@@ -486,7 +486,7 @@ namespace Junior.Route.UnitTests.Routing
 					request =>
 						{
 							executed = true;
-							return (IResponse)Response.NoContent();
+							return (IResponse)new Response().NoContent();
 						},
 					typeof(CssResponse));
 
@@ -498,7 +498,7 @@ namespace Junior.Route.UnitTests.Routing
 			[Test]
 			public void Must_indicate_correct_return_type()
 			{
-				_route.RespondWith(request => (IResponse)Response.NoContent(), typeof(CssResponse));
+				_route.RespondWith(request => (IResponse)new Response().NoContent(), typeof(CssResponse));
 
 				Assert.That(_route.ResponseType, Is.EqualTo(typeof(CssResponse)));
 			}
@@ -520,7 +520,7 @@ namespace Junior.Route.UnitTests.Routing
 			[Test]
 			public void Must_indicate_correct_return_type()
 			{
-				_route.RespondWith(request => Task.FromResult(Response.NoContent()));
+				_route.RespondWith(request => Task.FromResult(new Response().NoContent()));
 
 				Assert.That(_route.ResponseType, Is.EqualTo(typeof(Response)));
 			}
@@ -528,7 +528,7 @@ namespace Junior.Route.UnitTests.Routing
 			[Test]
 			public async void Must_return_response()
 			{
-				IResponse response = Response.NoContent();
+				IResponse response = new Response().NoContent();
 
 				_route.RespondWith(Task.FromResult(response));
 
@@ -562,7 +562,7 @@ namespace Junior.Route.UnitTests.Routing
 			[Test]
 			public async void Must_return_response()
 			{
-				IResponse response = Response.NoContent();
+				IResponse response = new Response().NoContent();
 
 				_route.RespondWith(Task.FromResult(response), typeof(CssResponse));
 
@@ -594,7 +594,7 @@ namespace Junior.Route.UnitTests.Routing
 					request =>
 						{
 							executed = true;
-							return Task.FromResult(Response.NoContent());
+							return Task.FromResult(new Response().NoContent());
 						});
 
 				await _route.ProcessResponse(_context);
@@ -605,7 +605,7 @@ namespace Junior.Route.UnitTests.Routing
 			[Test]
 			public void Must_indicate_correct_return_type()
 			{
-				_route.RespondWith(request => Task.FromResult(Response.NoContent()));
+				_route.RespondWith(request => Task.FromResult(new Response().NoContent()));
 
 				Assert.That(_route.ResponseType, Is.EqualTo(typeof(Response)));
 			}

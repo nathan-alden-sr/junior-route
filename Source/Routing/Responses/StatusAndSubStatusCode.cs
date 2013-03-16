@@ -62,7 +62,7 @@ namespace Junior.Route.Routing.Responses
 		{
 			get
 			{
-				return String.Format("{0}.{1} ({2})");
+				return String.Format("{0}.{1} ({2})", _statusCode, _subStatusCode, StatusDescription);
 			}
 		}
 

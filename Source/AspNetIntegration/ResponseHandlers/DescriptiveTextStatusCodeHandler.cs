@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -66,9 +67,14 @@ namespace Junior.Route.AspNetIntegration.ResponseHandlers
 				return ResponseHandlerResult.ResponseNotHandled();
 			}
 
+			string content = String.Format(
+				"HTTP {0}{1} {2}",
+				statusCode.StatusCode,
+				statusCode.SubStatusCode == 0 ? "" : "." + statusCode.SubStatusCode.ToString(CultureInfo.InvariantCulture),
+				statusCode.StatusDescription.Length > 0 ? String.Format("({0})", statusCode.StatusDescription) : "");
 			Response response = new Response(statusCode)
 				.TextPlain()
-				.Content(String.Format("{0} {1}", statusCode.StatusDescription, statusCode.StatusDescription.Length > 0 ? String.Format("({0})", statusCode.StatusDescription) : ""));
+				.Content(content);
 
 			response.CachePolicy.NoClientCaching();
 

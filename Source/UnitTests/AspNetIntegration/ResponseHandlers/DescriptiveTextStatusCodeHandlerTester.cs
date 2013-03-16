@@ -1,5 +1,6 @@
 ﻿using System.Collections.Specialized;
 using System.Linq;
+using System.Text;
 using System.Web;
 
 using Junior.Route.AspNetIntegration.ResponseHandlers;
@@ -20,7 +21,7 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseHandlers
 			[SetUp]
 			public void SetUp()
 			{
-				_handler = new DescriptiveTextStatusCodeHandler(200);
+				_handler = new DescriptiveTextStatusCodeHandler(new StatusAndSubStatusCode(200), new StatusAndSubStatusCode(200, 1));
 				_httpRequest = MockRepository.GenerateMock<HttpRequestBase>();
 				_httpRequest.Stub(arg => arg.Headers).Return(new NameValueCollection());
 				_httpCachePolicyBase = MockRepository.GenerateMock<HttpCachePolicyBase>();
@@ -114,6 +115,17 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseHandlers
 				ResponseHandlerResult result = _handler.HandleResponse(_httpContext, _response, null, null);
 
 				Assert.That(result.ResultType, Is.EqualTo(ResponseHandlerResultType.ResponseNotHandled));
+			}
+
+			[Test]
+			[TestCase(200, 0, "HTTP 200 (OK)")]
+			[TestCase(200, 1, "HTTP 200.1 (OK)")]
+			public void Must_respond_with_status_code_and_description(int statusCode, int subStatusCode, string response)
+			{
+				_response.Stub(arg => arg.StatusCode).Return(new StatusAndSubStatusCode(statusCode, subStatusCode));
+				_handler.HandleResponse(_httpContext, _response, null, null);
+
+				_httpResponse.AssertWasCalled(arg => arg.BinaryWrite(Encoding.UTF8.GetBytes(response)));
 			}
 
 			[Test]

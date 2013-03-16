@@ -103,5 +103,15 @@ namespace Junior.Route.Routing.Responses
 				return (_statusCode * 397) ^ _subStatusCode;
 			}
 		}
+
+		public static bool operator ==(StatusAndSubStatusCode left, StatusAndSubStatusCode right)
+		{
+			return Equals(left, right);
+		}
+
+		public static bool operator !=(StatusAndSubStatusCode left, StatusAndSubStatusCode right)
+		{
+			return !Equals(left, right);
+		}
 	}
 }

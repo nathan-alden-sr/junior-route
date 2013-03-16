@@ -25,6 +25,7 @@ namespace Junior.Route.UnitTests.Routing.Responses
 			public void Must_be_equal()
 			{
 				Assert.That(_statusAndSubStatusCode1.Equals(_statusAndSubStatusCode2), Is.True);
+				Assert.That(_statusAndSubStatusCode1 == _statusAndSubStatusCode2, Is.True);
 			}
 		}
 
@@ -45,6 +46,7 @@ namespace Junior.Route.UnitTests.Routing.Responses
 			public void Must_be_equal()
 			{
 				Assert.That(_statusAndSubStatusCode1.Equals(_statusAndSubStatusCode2), Is.False);
+				Assert.That(_statusAndSubStatusCode1 != _statusAndSubStatusCode2, Is.True);
 			}
 		}
 

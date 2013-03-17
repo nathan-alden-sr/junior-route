@@ -52,6 +52,9 @@
     <Compile Include="JuniorRouteApplication.cs" />
     <Compile Include="JuniorRouteApplicationConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RequestFilters\FilterResult.cs" />
+    <Compile Include="RequestFilters\FilterResultType.cs" />
+    <Compile Include="RequestFilters\IRequestFilter.cs" />
     <Compile Include="ResponseGenerators\IResponseGenerator.cs" />
     <Compile Include="ResponseGenerators\NotFoundGenerator.cs" />
     <Compile Include="ResponseGenerators\ResponseResult.cs" />

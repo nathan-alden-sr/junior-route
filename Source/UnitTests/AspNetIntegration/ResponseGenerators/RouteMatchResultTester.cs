@@ -18,16 +18,18 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseGenerators
 			public void SetUp()
 			{
 				_route = new Route.Routing.Route("name", Guid.NewGuid(), "relative");
-				_result = new RouteMatchResult(_route, MatchResult.RouteMatched(Enumerable.Empty<IRestriction>(), "key"));
+				_matchResult = MatchResult.RouteMatched(Enumerable.Empty<IRestriction>(), "key");
+				_result = new RouteMatchResult(_route, _matchResult);
 			}
 
 			private Route.Routing.Route _route;
 			private RouteMatchResult _result;
+			private MatchResult _matchResult;
 
 			[Test]
 			public void Must_set_properties()
 			{
-				Assert.That(_result.MatchResult.MatchedRestrictions, Is.Empty);
+				Assert.That(_result.MatchResult, Is.SameAs(_matchResult));
 				Assert.That(_result.Route, Is.SameAs(_route));
 			}
 		}

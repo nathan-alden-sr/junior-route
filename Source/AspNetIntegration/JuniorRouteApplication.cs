@@ -4,6 +4,7 @@ using System.Web;
 
 using Junior.Common;
 using Junior.Route.AspNetIntegration.ErrorHandlers;
+using Junior.Route.AspNetIntegration.RequestFilters;
 
 namespace Junior.Route.AspNetIntegration
 {
@@ -33,17 +34,20 @@ namespace Junior.Route.AspNetIntegration
 				throw new InvalidOperationException("No configuration was provided.");
 			}
 
-			application.PostAuthenticateRequest += (sender, args) => HttpContext.Current.RemapHandler(_configuration.HttpHandler);
+			application.PostAuthenticateRequest += (sender, args) =>
+				{
+					HttpContext context = HttpContext.Current;
+
+					if (!_configuration.RequestFilters.Any() || _configuration.RequestFilters.Any(arg => arg.Filter(new HttpContextWrapper(context)).ResultType == FilterResultType.UseJuniorRouteHandler))
+					{
+						context.RemapHandler(_configuration.HttpHandler);
+					}
+				};
 			application.Error += ApplicationOnError;
 		}
 
 		private static void ApplicationOnError(object sender, EventArgs e)
 		{
-			if (_configuration.ErrorHandlers == null)
-			{
-				return;
-			}
-
 			var application = (HttpApplication)sender;
 			var context = new HttpContextWrapper(application.Context);
 

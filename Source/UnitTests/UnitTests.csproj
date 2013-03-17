@@ -41,6 +41,8 @@
     <AssemblyOriginatorKeyFile>..\JuniorRoute.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AspNetIntegration\ErrorHandlers\HandleResultTester.cs" />
+    <Compile Include="AspNetIntegration\RequestFilters\RequestFilterTester.cs" />
     <Compile Include="AspNetIntegration\ResponseHandlers\CacheableResponseHandlerTester.cs" />
     <Compile Include="AspNetIntegration\ResponseHandlers\DescriptiveTextStatusCodeHandlerTester.cs" />
     <Compile Include="AspNetIntegration\ResponseHandlers\DescriptiveHtmlStatusCodeHandlerTester.cs" />

@@ -310,6 +310,15 @@ namespace Junior.Route.Routing.Responses
 
 		#region HTTP status codes
 
+		public Response StatusCode(StatusAndSubStatusCode statusCode)
+		{
+			statusCode.ThrowIfNull("statusCode");
+
+			_statusCode = statusCode;
+
+			return this;
+		}
+
 		public Response StatusCode(int statusCode, int subStatusCode = 0)
 		{
 			_statusCode = new StatusAndSubStatusCode(statusCode, subStatusCode);

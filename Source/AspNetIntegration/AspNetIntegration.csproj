@@ -44,6 +44,9 @@
   <ItemGroup>
     <Compile Include="AspNet\AspNetHttpHandler.cs" />
     <Compile Include="AspNet\AspNetRuntimeCache.cs" />
+    <Compile Include="ErrorHandlers\HandleResult.cs" />
+    <Compile Include="ErrorHandlers\HandleResultType.cs" />
+    <Compile Include="ErrorHandlers\IErrorHandler.cs" />
     <Compile Include="FileSystem.cs" />
     <Compile Include="HttpRuntimeWrapper.cs" />
     <Compile Include="JuniorRouteApplication.cs" />

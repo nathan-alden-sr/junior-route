@@ -21,6 +21,7 @@ namespace Junior.Route.Routing.Caching
 		private readonly Cookie[] _cookies;
 		private readonly Encoding _headerEncoding;
 		private readonly Header[] _headers;
+		private readonly bool _skipIisCustomErrors;
 		private readonly StatusAndSubStatusCode _statusCode;
 
 		public CacheResponse(IResponse response)
@@ -35,6 +36,7 @@ namespace Junior.Route.Routing.Caching
 			_headerEncoding = response.HeaderEncoding ?? _defaultHeaderEncoding;
 			_cookies = response.Cookies.Select(arg => arg.Clone()).ToArray();
 			_cachePolicy = response.CachePolicy.Clone();
+			_skipIisCustomErrors = response.SkipIisCustomErrors;
 			_content = response.GetContent();
 		}
 
@@ -102,6 +104,14 @@ namespace Junior.Route.Routing.Caching
 			}
 		}
 
+		public bool SkipIisCustomErrors
+		{
+			get
+			{
+				return _skipIisCustomErrors;
+			}
+		}
+
 		public byte[] Content
 		{
 			get
@@ -129,6 +139,7 @@ namespace Junior.Route.Routing.Caching
 				response.Cookies.Add(cookie.GetHttpCookie());
 			}
 			_cachePolicy.Apply(response.Cache);
+			response.TrySkipIisCustomErrors = _skipIisCustomErrors;
 
 			response.BinaryWrite(_content);
 		}

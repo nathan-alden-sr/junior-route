@@ -39,6 +39,10 @@ namespace Junior.Route.Routing.Responses
 		{
 			get;
 		}
+		bool SkipIisCustomErrors
+		{
+			get;
+		}
 
 		byte[] GetContent();
 	}

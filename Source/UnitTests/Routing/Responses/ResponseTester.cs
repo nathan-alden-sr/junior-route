@@ -241,6 +241,24 @@ namespace Junior.Route.UnitTests.Routing.Responses
 		}
 
 		[TestFixture]
+		public class When_not_skipping_iis_custom_errors
+		{
+			[SetUp]
+			public void SetUp()
+			{
+				_response = new Response().DoNotSkipIisCustomErrors();
+			}
+
+			private Response _response;
+
+			[Test]
+			public void Must_set_property()
+			{
+				Assert.That(((IResponse)_response).SkipIisCustomErrors, Is.False);
+			}
+		}
+
+		[TestFixture]
 		public class When_setting_charset
 		{
 			[SetUp]
@@ -642,6 +660,24 @@ namespace Junior.Route.UnitTests.Routing.Responses
 				{
 					Assert.That(pair.Key.ContentType, Is.EqualTo(pair.Value));
 				}
+			}
+		}
+
+		[TestFixture]
+		public class When_skipping_iis_custom_errors
+		{
+			[SetUp]
+			public void SetUp()
+			{
+				_response = new Response().SkipIisCustomErrors();
+			}
+
+			private Response _response;
+
+			[Test]
+			public void Must_set_property()
+			{
+				Assert.That(((IResponse)_response).SkipIisCustomErrors, Is.True);
 			}
 		}
 	}

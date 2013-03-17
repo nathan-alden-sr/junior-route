@@ -86,6 +86,14 @@ namespace Junior.Route.Routing.Responses
 			}
 		}
 
+		public bool SkipIisCustomErrors
+		{
+			get
+			{
+				return _response.SkipIisCustomErrors;
+			}
+		}
+
 		public byte[] GetContent()
 		{
 			return _response.GetContent();

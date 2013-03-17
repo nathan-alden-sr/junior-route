@@ -24,6 +24,7 @@ namespace Junior.Route.Routing.Responses
 		private Encoding _contentEncoding = _defaultContentEncoding;
 		private string _contentType;
 		private Encoding _headerEncoding = _defaultHeaderEncoding;
+		private bool _skipIisCustomErrors = true;
 		private StatusAndSubStatusCode _statusCode;
 		private Func<string> _stringContent;
 
@@ -141,6 +142,14 @@ namespace Junior.Route.Routing.Responses
 			get
 			{
 				return _cachePolicy;
+			}
+		}
+
+		bool IResponse.SkipIisCustomErrors
+		{
+			get
+			{
+				return _skipIisCustomErrors;
 			}
 		}
 
@@ -329,6 +338,20 @@ namespace Junior.Route.Routing.Responses
 		public Response StatusCode(HttpStatusCode statusCode, int subStatusCode = 0)
 		{
 			_statusCode = new StatusAndSubStatusCode(statusCode, subStatusCode);
+
+			return this;
+		}
+
+		public Response SkipIisCustomErrors()
+		{
+			_skipIisCustomErrors = true;
+
+			return this;
+		}
+
+		public Response DoNotSkipIisCustomErrors()
+		{
+			_skipIisCustomErrors = false;
 
 			return this;
 		}
@@ -667,123 +690,171 @@ namespace Junior.Route.Routing.Responses
 			return TemporaryRedirect(urlResolver.Absolute(relativeUrl));
 		}
 
-		public Response BadRequest()
+		public Response BadRequest(bool skipIisCustomErrors = true)
 		{
+			_skipIisCustomErrors = skipIisCustomErrors;
+
 			return StatusCode(HttpStatusCode.BadRequest);
 		}
 
-		public Response Unauthorized()
+		public Response Unauthorized(bool skipIisCustomErrors = true)
 		{
+			_skipIisCustomErrors = skipIisCustomErrors;
+
 			return StatusCode(HttpStatusCode.Unauthorized);
 		}
 
-		public Response PaymentRequired()
+		public Response PaymentRequired(bool skipIisCustomErrors = true)
 		{
+			_skipIisCustomErrors = skipIisCustomErrors;
+
 			return StatusCode(HttpStatusCode.PaymentRequired);
 		}
 
-		public Response Forbidden()
+		public Response Forbidden(bool skipIisCustomErrors = true)
 		{
+			_skipIisCustomErrors = skipIisCustomErrors;
+
 			return StatusCode(HttpStatusCode.Forbidden);
 		}
 
-		public Response NotFound()
+		public Response NotFound(bool skipIisCustomErrors = true)
 		{
+			_skipIisCustomErrors = skipIisCustomErrors;
+
 			return StatusCode(HttpStatusCode.NotFound);
 		}
 
-		public Response MethodNotAllowed()
+		public Response MethodNotAllowed(bool skipIisCustomErrors = true)
 		{
+			_skipIisCustomErrors = skipIisCustomErrors;
+
 			return StatusCode(HttpStatusCode.MethodNotAllowed);
 		}
 
-		public Response NotAcceptable()
+		public Response NotAcceptable(bool skipIisCustomErrors = true)
 		{
+			_skipIisCustomErrors = skipIisCustomErrors;
+
 			return StatusCode(HttpStatusCode.NotAcceptable);
 		}
 
-		public Response ProxyAuthenticationRequired()
+		public Response ProxyAuthenticationRequired(bool skipIisCustomErrors = true)
 		{
+			_skipIisCustomErrors = skipIisCustomErrors;
+
 			return StatusCode(HttpStatusCode.ProxyAuthenticationRequired);
 		}
 
-		public Response RequestTimeout()
+		public Response RequestTimeout(bool skipIisCustomErrors = true)
 		{
+			_skipIisCustomErrors = skipIisCustomErrors;
+
 			return StatusCode(HttpStatusCode.RequestTimeout);
 		}
 
-		public Response Conflict()
+		public Response Conflict(bool skipIisCustomErrors = true)
 		{
+			_skipIisCustomErrors = skipIisCustomErrors;
+
 			return StatusCode(HttpStatusCode.Conflict);
 		}
 
-		public Response Gone()
+		public Response Gone(bool skipIisCustomErrors = true)
 		{
+			_skipIisCustomErrors = skipIisCustomErrors;
+
 			return StatusCode(HttpStatusCode.Gone);
 		}
 
-		public Response LengthRequired()
+		public Response LengthRequired(bool skipIisCustomErrors = true)
 		{
+			_skipIisCustomErrors = skipIisCustomErrors;
+
 			return StatusCode(HttpStatusCode.LengthRequired);
 		}
 
-		public Response PreconditionFailed()
+		public Response PreconditionFailed(bool skipIisCustomErrors = true)
 		{
+			_skipIisCustomErrors = skipIisCustomErrors;
+
 			return StatusCode(HttpStatusCode.PreconditionFailed);
 		}
 
-		public Response RequestEntityTooLarge()
+		public Response RequestEntityTooLarge(bool skipIisCustomErrors = true)
 		{
+			_skipIisCustomErrors = skipIisCustomErrors;
+
 			return StatusCode(HttpStatusCode.RequestEntityTooLarge);
 		}
 
-		public Response RequestUriTooLong()
+		public Response RequestUriTooLong(bool skipIisCustomErrors = true)
 		{
+			_skipIisCustomErrors = skipIisCustomErrors;
+
 			return StatusCode(HttpStatusCode.RequestUriTooLong);
 		}
 
-		public Response UnsupportedMediaType()
+		public Response UnsupportedMediaType(bool skipIisCustomErrors = true)
 		{
+			_skipIisCustomErrors = skipIisCustomErrors;
+
 			return StatusCode(HttpStatusCode.UnsupportedMediaType);
 		}
 
-		public Response RequestedRangeNotSatisfiable()
+		public Response RequestedRangeNotSatisfiable(bool skipIisCustomErrors = true)
 		{
+			_skipIisCustomErrors = skipIisCustomErrors;
+
 			return StatusCode(HttpStatusCode.RequestedRangeNotSatisfiable);
 		}
 
-		public Response ExpectationFailed()
+		public Response ExpectationFailed(bool skipIisCustomErrors = true)
 		{
+			_skipIisCustomErrors = skipIisCustomErrors;
+
 			return StatusCode(HttpStatusCode.ExpectationFailed);
 		}
 
-		public Response InternalServerError()
+		public Response InternalServerError(bool skipIisCustomErrors = true)
 		{
+			_skipIisCustomErrors = skipIisCustomErrors;
+
 			return StatusCode(HttpStatusCode.InternalServerError);
 		}
 
-		public Response NotImplemented()
+		public Response NotImplemented(bool skipIisCustomErrors = true)
 		{
+			_skipIisCustomErrors = skipIisCustomErrors;
+
 			return StatusCode(HttpStatusCode.NotImplemented);
 		}
 
-		public Response BadGateway()
+		public Response BadGateway(bool skipIisCustomErrors = true)
 		{
+			_skipIisCustomErrors = skipIisCustomErrors;
+
 			return StatusCode(HttpStatusCode.BadGateway);
 		}
 
-		public Response ServiceUnavailable()
+		public Response ServiceUnavailable(bool skipIisCustomErrors = true)
 		{
+			_skipIisCustomErrors = skipIisCustomErrors;
+
 			return StatusCode(HttpStatusCode.ServiceUnavailable);
 		}
 
-		public Response GatewayTimeout()
+		public Response GatewayTimeout(bool skipIisCustomErrors = true)
 		{
+			_skipIisCustomErrors = skipIisCustomErrors;
+
 			return StatusCode(HttpStatusCode.GatewayTimeout);
 		}
 
-		public Response HttpVersionNotSupported()
+		public Response HttpVersionNotSupported(bool skipIisCustomErrors = true)
 		{
+			_skipIisCustomErrors = skipIisCustomErrors;
+
 			return StatusCode(HttpStatusCode.HttpVersionNotSupported);
 		}
 

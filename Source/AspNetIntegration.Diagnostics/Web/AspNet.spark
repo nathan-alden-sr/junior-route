@@ -16,6 +16,14 @@
 				<td>${CacheType.FullName}</td>
 			</tr>
 			<tr>
+				<td>Request filters</td>
+				<td>
+					<for each="var filter in RequestFilterTypes">
+						<div>${filter.FullName}</div>
+					</for>
+				</td>
+			</tr>
+			<tr>
 				<td>Response generators</td>
 				<td>
 					<for each="var generator in ResponseGeneratorTypes">
@@ -27,6 +35,14 @@
 				<td>Response handlers</td>
 				<td>
 					<for each="var handler in ResponseHandlerTypes">
+						<div>${handler.FullName}</div>
+					</for>
+				</td>
+			</tr>
+			<tr>
+				<td>Error handlers</td>
+				<td>
+					<for each="var handler in ErrorHandlerTypes">
 						<div>${handler.FullName}</div>
 					</for>
 				</td>

@@ -34,16 +34,18 @@ namespace Junior.Route.AspNetIntegration
 				throw new InvalidOperationException("No configuration was provided.");
 			}
 
-			application.PostAuthenticateRequest += (sender, args) =>
-				{
-					HttpContext context = HttpContext.Current;
-
-					if (!_configuration.RequestFilters.Any() || _configuration.RequestFilters.Any(arg => arg.Filter(new HttpContextWrapper(context)).ResultType == FilterResultType.UseJuniorRouteHandler))
-					{
-						context.RemapHandler(_configuration.HttpHandler);
-					}
-				};
+			application.PostAuthenticateRequest += OnApplicationOnPostAuthenticateRequest;
 			application.Error += ApplicationOnError;
+		}
+
+		private static void OnApplicationOnPostAuthenticateRequest(object sender, EventArgs e)
+		{
+			HttpContext context = HttpContext.Current;
+
+			if (!_configuration.RequestFilters.Any() || _configuration.RequestFilters.Any(arg => arg.Filter(new HttpContextWrapper(context)).ResultType == FilterResultType.UseJuniorRouteHandler))
+			{
+				context.RemapHandler(_configuration.HttpHandler);
+			}
 		}
 
 		private static void ApplicationOnError(object sender, EventArgs e)

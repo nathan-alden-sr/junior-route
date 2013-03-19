@@ -8,13 +8,13 @@ using Junior.Route.Routing.AntiCsrf.NonceRepositories;
 
 namespace Junior.Route.Routing.AntiCsrf.NonceValidators
 {
-	public class DefaultNonceValidator : IAntiCsrfNonceValidator
+	public class DefaultValidator : IAntiCsrfNonceValidator
 	{
 		private readonly IAntiCsrfConfiguration _configuration;
 		private readonly IAntiCsrfNonceRepository _nonceRepository;
 		private readonly ISystemClock _systemClock;
 
-		public DefaultNonceValidator(IAntiCsrfConfiguration configuration, IAntiCsrfNonceRepository nonceRepository, ISystemClock systemClock)
+		public DefaultValidator(IAntiCsrfConfiguration configuration, IAntiCsrfNonceRepository nonceRepository, ISystemClock systemClock)
 		{
 			configuration.ThrowIfNull("configuration");
 			nonceRepository.ThrowIfNull("nonceRepository");

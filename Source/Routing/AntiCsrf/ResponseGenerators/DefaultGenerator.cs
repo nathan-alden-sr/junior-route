@@ -3,7 +3,7 @@ using Junior.Route.Routing.Responses;
 
 namespace Junior.Route.Routing.AntiCsrf.ResponseGenerators
 {
-	public class DefaultResponseGenerator : IAntiCsrfResponseGenerator
+	public class DefaultGenerator : IAntiCsrfResponseGenerator
 	{
 		public ResponseResult GetResponse(ValidationResult result)
 		{

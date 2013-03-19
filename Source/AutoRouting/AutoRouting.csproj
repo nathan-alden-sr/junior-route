@@ -42,7 +42,7 @@
     <AssemblyOriginatorKeyFile>..\JuniorRoute.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="AntiCsrf\HtmlGenerators\DefaultHtmlGenerator.cs" />
+    <Compile Include="AntiCsrf\HtmlGenerators\DefaultGenerator.cs" />
     <Compile Include="AuthenticationStrategies\Attributes\AuthenticateAttribute.cs" />
     <Compile Include="AuthenticationStrategies\AuthenticateAttributeStrategy.cs" />
     <Compile Include="AuthenticationStrategies\IAuthenticationStrategy.cs" />

@@ -7,7 +7,7 @@ using NUnit.Framework;
 
 namespace Junior.Route.UnitTests.Routing.AntiCsrf.ResponseGenerators
 {
-	public static class DefaultResponseGeneratorTester
+	public static class DefaultGeneratorTester
 	{
 		[TestFixture]
 		public class When_handling_validation_results_that_are_failures
@@ -15,10 +15,10 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.ResponseGenerators
 			[SetUp]
 			public void SetUp()
 			{
-				_responseGenerator = new DefaultResponseGenerator();
+				_generator = new DefaultGenerator();
 			}
 
-			private DefaultResponseGenerator _responseGenerator;
+			private DefaultGenerator _generator;
 
 			[Test]
 			[TestCase(ValidationResult.CookieInvalid)]
@@ -28,7 +28,7 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.ResponseGenerators
 			[TestCase(ValidationResult.NonceInvalid)]
 			public void Must_generate_unauthorized_response(ValidationResult validationResult)
 			{
-				ResponseResult responseResult = _responseGenerator.GetResponse(validationResult);
+				ResponseResult responseResult = _generator.GetResponse(validationResult);
 
 				Assert.That(responseResult.Response.StatusCode.ParsedStatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
 			}
@@ -40,10 +40,10 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.ResponseGenerators
 			[SetUp]
 			public void SetUp()
 			{
-				_responseGenerator = new DefaultResponseGenerator();
+				_generator = new DefaultGenerator();
 			}
 
-			private DefaultResponseGenerator _responseGenerator;
+			private DefaultGenerator _generator;
 
 			[Test]
 			[TestCase(ValidationResult.NonceValid)]
@@ -51,7 +51,7 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.ResponseGenerators
 			[TestCase(ValidationResult.ValidationSkipped)]
 			public void Must_not_generate_response(ValidationResult result)
 			{
-				Assert.That(_responseGenerator.GetResponse(result).ResultType, Is.EqualTo(ResponseResultType.ResponseNotGenerated));
+				Assert.That(_generator.GetResponse(result).ResultType, Is.EqualTo(ResponseResultType.ResponseNotGenerated));
 			}
 		}
 	}

@@ -10,7 +10,7 @@ using Junior.Route.Routing.AntiCsrf.NonceRepositories;
 
 namespace Junior.Route.AutoRouting.AntiCsrf.HtmlGenerators
 {
-	public class DefaultHtmlGenerator : IAntiCsrfHtmlGenerator
+	public class DefaultGenerator : IAntiCsrfHtmlGenerator
 	{
 		private readonly IAntiCsrfConfiguration _configuration;
 		private readonly IAntiCsrfCookieManager _cookieManager;
@@ -18,7 +18,7 @@ namespace Junior.Route.AutoRouting.AntiCsrf.HtmlGenerators
 		private readonly IAntiCsrfNonceRepository _nonceRepository;
 		private readonly ISystemClock _systemClock;
 
-		public DefaultHtmlGenerator(IAntiCsrfConfiguration configuration, IAntiCsrfCookieManager cookieManager, IAntiCsrfNonceRepository nonceRepository, IGuidFactory guidFactory, ISystemClock systemClock)
+		public DefaultGenerator(IAntiCsrfConfiguration configuration, IAntiCsrfCookieManager cookieManager, IAntiCsrfNonceRepository nonceRepository, IGuidFactory guidFactory, ISystemClock systemClock)
 		{
 			configuration.ThrowIfNull("configuration");
 			cookieManager.ThrowIfNull("cookieManager");

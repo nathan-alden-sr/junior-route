@@ -14,7 +14,7 @@ using Rhino.Mocks;
 
 namespace Junior.Route.UnitTests.Routing.AntiCsrf.NonceValidators
 {
-	public static class DefaultNonceValidatorTester
+	public static class DefaultValidatorTester
 	{
 		[TestFixture]
 		public class When_delete_is_disabled_for_validation
@@ -25,14 +25,14 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.NonceValidators
 				_configuration = MockRepository.GenerateMock<IAntiCsrfConfiguration>();
 				_nonceRepository = MockRepository.GenerateMock<IAntiCsrfNonceRepository>();
 				_systemClock = MockRepository.GenerateMock<ISystemClock>();
-				_nonceValidator = new DefaultNonceValidator(_configuration, _nonceRepository, _systemClock);
+				_validator = new DefaultValidator(_configuration, _nonceRepository, _systemClock);
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 			}
 
 			private IAntiCsrfConfiguration _configuration;
 			private IAntiCsrfNonceRepository _nonceRepository;
 			private ISystemClock _systemClock;
-			private DefaultNonceValidator _nonceValidator;
+			private DefaultValidator _validator;
 			private HttpRequestBase _request;
 
 			[Test]
@@ -42,7 +42,7 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.NonceValidators
 				_configuration.Stub(arg => arg.Enabled).Return(true);
 				_configuration.Stub(arg => arg.ValidateHttpDelete).Return(false);
 
-				Assert.That(await _nonceValidator.Validate(_request), Is.EqualTo(ValidationResult.ValidationSkipped));
+				Assert.That(await _validator.Validate(_request), Is.EqualTo(ValidationResult.ValidationSkipped));
 			}
 		}
 
@@ -55,14 +55,14 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.NonceValidators
 				_configuration = MockRepository.GenerateMock<IAntiCsrfConfiguration>();
 				_nonceRepository = MockRepository.GenerateMock<IAntiCsrfNonceRepository>();
 				_systemClock = MockRepository.GenerateMock<ISystemClock>();
-				_nonceValidator = new DefaultNonceValidator(_configuration, _nonceRepository, _systemClock);
+				_validator = new DefaultValidator(_configuration, _nonceRepository, _systemClock);
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 			}
 
 			private IAntiCsrfConfiguration _configuration;
 			private IAntiCsrfNonceRepository _nonceRepository;
 			private ISystemClock _systemClock;
-			private DefaultNonceValidator _nonceValidator;
+			private DefaultValidator _validator;
 			private HttpRequestBase _request;
 
 			[Test]
@@ -73,7 +73,7 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.NonceValidators
 				_configuration.Stub(arg => arg.Enabled).Return(true);
 				_configuration.Stub(arg => arg.ValidateHttpDelete).Return(true);
 
-				Assert.That(await _nonceValidator.Validate(_request), Is.Not.EqualTo(ValidationResult.ValidationSkipped));
+				Assert.That(await _validator.Validate(_request), Is.Not.EqualTo(ValidationResult.ValidationSkipped));
 			}
 		}
 
@@ -86,14 +86,14 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.NonceValidators
 				_configuration = MockRepository.GenerateMock<IAntiCsrfConfiguration>();
 				_nonceRepository = MockRepository.GenerateMock<IAntiCsrfNonceRepository>();
 				_systemClock = MockRepository.GenerateMock<ISystemClock>();
-				_nonceValidator = new DefaultNonceValidator(_configuration, _nonceRepository, _systemClock);
+				_validator = new DefaultValidator(_configuration, _nonceRepository, _systemClock);
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 			}
 
 			private IAntiCsrfConfiguration _configuration;
 			private IAntiCsrfNonceRepository _nonceRepository;
 			private ISystemClock _systemClock;
-			private DefaultNonceValidator _nonceValidator;
+			private DefaultValidator _validator;
 			private HttpRequestBase _request;
 
 			[Test]
@@ -103,7 +103,7 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.NonceValidators
 				_configuration.Stub(arg => arg.Enabled).Return(true);
 				_configuration.Stub(arg => arg.ValidateHttpPost).Return(false);
 
-				Assert.That(await _nonceValidator.Validate(_request), Is.EqualTo(ValidationResult.ValidationSkipped));
+				Assert.That(await _validator.Validate(_request), Is.EqualTo(ValidationResult.ValidationSkipped));
 			}
 		}
 
@@ -116,14 +116,14 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.NonceValidators
 				_configuration = MockRepository.GenerateMock<IAntiCsrfConfiguration>();
 				_nonceRepository = MockRepository.GenerateMock<IAntiCsrfNonceRepository>();
 				_systemClock = MockRepository.GenerateMock<ISystemClock>();
-				_nonceValidator = new DefaultNonceValidator(_configuration, _nonceRepository, _systemClock);
+				_validator = new DefaultValidator(_configuration, _nonceRepository, _systemClock);
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 			}
 
 			private IAntiCsrfConfiguration _configuration;
 			private IAntiCsrfNonceRepository _nonceRepository;
 			private ISystemClock _systemClock;
-			private DefaultNonceValidator _nonceValidator;
+			private DefaultValidator _validator;
 			private HttpRequestBase _request;
 
 			[Test]
@@ -134,7 +134,7 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.NonceValidators
 				_configuration.Stub(arg => arg.Enabled).Return(true);
 				_configuration.Stub(arg => arg.ValidateHttpPost).Return(true);
 
-				Assert.That(await _nonceValidator.Validate(_request), Is.Not.EqualTo(ValidationResult.ValidationSkipped));
+				Assert.That(await _validator.Validate(_request), Is.Not.EqualTo(ValidationResult.ValidationSkipped));
 			}
 		}
 
@@ -147,14 +147,14 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.NonceValidators
 				_configuration = MockRepository.GenerateMock<IAntiCsrfConfiguration>();
 				_nonceRepository = MockRepository.GenerateMock<IAntiCsrfNonceRepository>();
 				_systemClock = MockRepository.GenerateMock<ISystemClock>();
-				_nonceValidator = new DefaultNonceValidator(_configuration, _nonceRepository, _systemClock);
+				_validator = new DefaultValidator(_configuration, _nonceRepository, _systemClock);
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 			}
 
 			private IAntiCsrfConfiguration _configuration;
 			private IAntiCsrfNonceRepository _nonceRepository;
 			private ISystemClock _systemClock;
-			private DefaultNonceValidator _nonceValidator;
+			private DefaultValidator _validator;
 			private HttpRequestBase _request;
 
 			[Test]
@@ -164,7 +164,7 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.NonceValidators
 				_configuration.Stub(arg => arg.Enabled).Return(true);
 				_configuration.Stub(arg => arg.ValidateHttpPut).Return(false);
 
-				Assert.That(await _nonceValidator.Validate(_request), Is.EqualTo(ValidationResult.ValidationSkipped));
+				Assert.That(await _validator.Validate(_request), Is.EqualTo(ValidationResult.ValidationSkipped));
 			}
 		}
 
@@ -177,14 +177,14 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.NonceValidators
 				_configuration = MockRepository.GenerateMock<IAntiCsrfConfiguration>();
 				_nonceRepository = MockRepository.GenerateMock<IAntiCsrfNonceRepository>();
 				_systemClock = MockRepository.GenerateMock<ISystemClock>();
-				_nonceValidator = new DefaultNonceValidator(_configuration, _nonceRepository, _systemClock);
+				_validator = new DefaultValidator(_configuration, _nonceRepository, _systemClock);
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 			}
 
 			private IAntiCsrfConfiguration _configuration;
 			private IAntiCsrfNonceRepository _nonceRepository;
 			private ISystemClock _systemClock;
-			private DefaultNonceValidator _nonceValidator;
+			private DefaultValidator _validator;
 			private HttpRequestBase _request;
 
 			[Test]
@@ -195,7 +195,7 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.NonceValidators
 				_configuration.Stub(arg => arg.Enabled).Return(true);
 				_configuration.Stub(arg => arg.ValidateHttpPut).Return(true);
 
-				Assert.That(await _nonceValidator.Validate(_request), Is.Not.EqualTo(ValidationResult.ValidationSkipped));
+				Assert.That(await _validator.Validate(_request), Is.Not.EqualTo(ValidationResult.ValidationSkipped));
 			}
 		}
 
@@ -208,14 +208,14 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.NonceValidators
 				_configuration = MockRepository.GenerateMock<IAntiCsrfConfiguration>();
 				_nonceRepository = MockRepository.GenerateMock<IAntiCsrfNonceRepository>();
 				_systemClock = MockRepository.GenerateMock<ISystemClock>();
-				_nonceValidator = new DefaultNonceValidator(_configuration, _nonceRepository, _systemClock);
+				_validator = new DefaultValidator(_configuration, _nonceRepository, _systemClock);
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 			}
 
 			private IAntiCsrfConfiguration _configuration;
 			private IAntiCsrfNonceRepository _nonceRepository;
 			private ISystemClock _systemClock;
-			private DefaultNonceValidator _nonceValidator;
+			private DefaultValidator _validator;
 			private HttpRequestBase _request;
 
 			[Test]
@@ -223,7 +223,7 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.NonceValidators
 			{
 				_configuration.Stub(arg => arg.Enabled).Return(false);
 
-				Assert.That(await _nonceValidator.Validate(_request), Is.EqualTo(ValidationResult.ValidationDisabled));
+				Assert.That(await _validator.Validate(_request), Is.EqualTo(ValidationResult.ValidationDisabled));
 			}
 		}
 
@@ -236,14 +236,14 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.NonceValidators
 				_configuration = MockRepository.GenerateMock<IAntiCsrfConfiguration>();
 				_nonceRepository = MockRepository.GenerateMock<IAntiCsrfNonceRepository>();
 				_systemClock = MockRepository.GenerateMock<ISystemClock>();
-				_nonceValidator = new DefaultNonceValidator(_configuration, _nonceRepository, _systemClock);
+				_validator = new DefaultValidator(_configuration, _nonceRepository, _systemClock);
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 			}
 
 			private IAntiCsrfConfiguration _configuration;
 			private IAntiCsrfNonceRepository _nonceRepository;
 			private ISystemClock _systemClock;
-			private DefaultNonceValidator _nonceValidator;
+			private DefaultValidator _validator;
 			private HttpRequestBase _request;
 
 			[Test]
@@ -257,7 +257,7 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.NonceValidators
 				_configuration.Stub(arg => arg.FormFieldName).Return("name");
 				_configuration.Stub(arg => arg.CookieName).Return("name");
 
-				Assert.That(await _nonceValidator.Validate(_request), Is.EqualTo(ValidationResult.CookieMissing));
+				Assert.That(await _validator.Validate(_request), Is.EqualTo(ValidationResult.CookieMissing));
 			}
 		}
 
@@ -270,14 +270,14 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.NonceValidators
 				_configuration = MockRepository.GenerateMock<IAntiCsrfConfiguration>();
 				_nonceRepository = MockRepository.GenerateMock<IAntiCsrfNonceRepository>();
 				_systemClock = MockRepository.GenerateMock<ISystemClock>();
-				_nonceValidator = new DefaultNonceValidator(_configuration, _nonceRepository, _systemClock);
+				_validator = new DefaultValidator(_configuration, _nonceRepository, _systemClock);
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 			}
 
 			private IAntiCsrfConfiguration _configuration;
 			private IAntiCsrfNonceRepository _nonceRepository;
 			private ISystemClock _systemClock;
-			private DefaultNonceValidator _nonceValidator;
+			private DefaultValidator _validator;
 			private HttpRequestBase _request;
 
 			[Test]
@@ -291,7 +291,7 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.NonceValidators
 				_configuration.Stub(arg => arg.FormFieldName).Return("name");
 				_configuration.Stub(arg => arg.CookieName).Return("name");
 
-				Assert.That(await _nonceValidator.Validate(_request), Is.EqualTo(ValidationResult.CookieInvalid));
+				Assert.That(await _validator.Validate(_request), Is.EqualTo(ValidationResult.CookieInvalid));
 			}
 		}
 
@@ -304,14 +304,14 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.NonceValidators
 				_configuration = MockRepository.GenerateMock<IAntiCsrfConfiguration>();
 				_nonceRepository = MockRepository.GenerateMock<IAntiCsrfNonceRepository>();
 				_systemClock = MockRepository.GenerateMock<ISystemClock>();
-				_nonceValidator = new DefaultNonceValidator(_configuration, _nonceRepository, _systemClock);
+				_validator = new DefaultValidator(_configuration, _nonceRepository, _systemClock);
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 			}
 
 			private IAntiCsrfConfiguration _configuration;
 			private IAntiCsrfNonceRepository _nonceRepository;
 			private ISystemClock _systemClock;
-			private DefaultNonceValidator _nonceValidator;
+			private DefaultValidator _validator;
 			private HttpRequestBase _request;
 
 			[Test]
@@ -323,7 +323,7 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.NonceValidators
 				_configuration.Stub(arg => arg.ValidateHttpPost).Return(true);
 				_configuration.Stub(arg => arg.FormFieldName).Return("name");
 
-				Assert.That(await _nonceValidator.Validate(_request), Is.EqualTo(ValidationResult.FormFieldMissing));
+				Assert.That(await _validator.Validate(_request), Is.EqualTo(ValidationResult.FormFieldMissing));
 			}
 		}
 
@@ -336,14 +336,14 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.NonceValidators
 				_configuration = MockRepository.GenerateMock<IAntiCsrfConfiguration>();
 				_nonceRepository = MockRepository.GenerateMock<IAntiCsrfNonceRepository>();
 				_systemClock = MockRepository.GenerateMock<ISystemClock>();
-				_nonceValidator = new DefaultNonceValidator(_configuration, _nonceRepository, _systemClock);
+				_validator = new DefaultValidator(_configuration, _nonceRepository, _systemClock);
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 			}
 
 			private IAntiCsrfConfiguration _configuration;
 			private IAntiCsrfNonceRepository _nonceRepository;
 			private ISystemClock _systemClock;
-			private DefaultNonceValidator _nonceValidator;
+			private DefaultValidator _validator;
 			private HttpRequestBase _request;
 
 			[Test]
@@ -357,7 +357,7 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.NonceValidators
 				_configuration.Stub(arg => arg.FormFieldName).Return("name");
 				_configuration.Stub(arg => arg.CookieName).Return("name");
 
-				Assert.That(await _nonceValidator.Validate(_request), Is.EqualTo(ValidationResult.FormFieldInvalid));
+				Assert.That(await _validator.Validate(_request), Is.EqualTo(ValidationResult.FormFieldInvalid));
 			}
 		}
 
@@ -370,14 +370,14 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.NonceValidators
 				_configuration = MockRepository.GenerateMock<IAntiCsrfConfiguration>();
 				_nonceRepository = MockRepository.GenerateMock<IAntiCsrfNonceRepository>();
 				_systemClock = MockRepository.GenerateMock<ISystemClock>();
-				_nonceValidator = new DefaultNonceValidator(_configuration, _nonceRepository, _systemClock);
+				_validator = new DefaultValidator(_configuration, _nonceRepository, _systemClock);
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 			}
 
 			private IAntiCsrfConfiguration _configuration;
 			private IAntiCsrfNonceRepository _nonceRepository;
 			private ISystemClock _systemClock;
-			private DefaultNonceValidator _nonceValidator;
+			private DefaultValidator _validator;
 			private HttpRequestBase _request;
 
 			[Test]
@@ -392,7 +392,7 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.NonceValidators
 				_configuration.Stub(arg => arg.CookieName).Return("name");
 				_nonceRepository.Stub(arg => arg.Exists(Arg<Guid>.Is.Anything, Arg<Guid>.Is.Anything, Arg<DateTime>.Is.Anything)).Return(Task.FromResult(true));
 
-				Assert.That(await _nonceValidator.Validate(_request), Is.EqualTo(ValidationResult.NonceValid));
+				Assert.That(await _validator.Validate(_request), Is.EqualTo(ValidationResult.NonceValid));
 			}
 		}
 
@@ -405,14 +405,14 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.NonceValidators
 				_configuration = MockRepository.GenerateMock<IAntiCsrfConfiguration>();
 				_nonceRepository = MockRepository.GenerateMock<IAntiCsrfNonceRepository>();
 				_systemClock = MockRepository.GenerateMock<ISystemClock>();
-				_nonceValidator = new DefaultNonceValidator(_configuration, _nonceRepository, _systemClock);
+				_validator = new DefaultValidator(_configuration, _nonceRepository, _systemClock);
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 			}
 
 			private IAntiCsrfConfiguration _configuration;
 			private IAntiCsrfNonceRepository _nonceRepository;
 			private ISystemClock _systemClock;
-			private DefaultNonceValidator _nonceValidator;
+			private DefaultValidator _validator;
 			private HttpRequestBase _request;
 
 			[Test]
@@ -427,7 +427,7 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.NonceValidators
 				_configuration.Stub(arg => arg.CookieName).Return("name");
 				_nonceRepository.Stub(arg => arg.Exists(Arg<Guid>.Is.Anything, Arg<Guid>.Is.Anything, Arg<DateTime>.Is.Anything)).Return(Task.FromResult(false));
 
-				Assert.That(await _nonceValidator.Validate(_request), Is.EqualTo(ValidationResult.NonceInvalid));
+				Assert.That(await _validator.Validate(_request), Is.EqualTo(ValidationResult.NonceInvalid));
 			}
 		}
 	}

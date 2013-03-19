@@ -85,13 +85,18 @@ namespace Junior.Route.AspNetIntegration.AspNet
 
 			if (_antiCsrfCookieManager != null && _antiCsrfNonceValidator != null && _antiCsrfResponseGenerator != null)
 			{
-				ValidationResult validationResult = await _antiCsrfNonceValidator.Validate(request);
-				ResponseResult responseResult = _antiCsrfResponseGenerator.GetResponse(validationResult);
+				string contentType = context.Request.ContentType;
 
-				if (responseResult.ResultType == ResponseResultType.ResponseGenerated)
+				if (String.Equals(contentType, "application/x-www-form-urlencoded", StringComparison.OrdinalIgnoreCase) || String.Equals(contentType, "multipart/form-data", StringComparison.OrdinalIgnoreCase))
 				{
-					ProcessResponse(context, responseResult.Response, null);
-					return;
+					ValidationResult validationResult = await _antiCsrfNonceValidator.Validate(request);
+					ResponseResult responseResult = _antiCsrfResponseGenerator.GetResponse(validationResult);
+
+					if (responseResult.ResultType == ResponseResultType.ResponseGenerated)
+					{
+						ProcessResponse(context, responseResult.Response, null);
+						return;
+					}
 				}
 
 				_antiCsrfCookieManager.ConfigureCookie(request, response);

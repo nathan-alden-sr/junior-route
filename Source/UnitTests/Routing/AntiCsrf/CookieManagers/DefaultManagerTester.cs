@@ -12,7 +12,7 @@ using Rhino.Mocks;
 
 namespace Junior.Route.UnitTests.Routing.AntiCsrf.CookieManagers
 {
-	public static class DefaultCookieManagerTester
+	public static class DefaultManagerTester
 	{
 		[TestFixture]
 		public class When_configuring_cookie_and_request_cookie_does_not_exist
@@ -31,10 +31,10 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.CookieManagers
 				_request.Stub(arg => arg.Cookies).Return(requestCookies);
 				_response = MockRepository.GenerateMock<HttpResponseBase>();
 				_response.Stub(arg => arg.Cookies).Return(responseCookies);
-				_cookieManager = new DefaultCookieManager(_configuration, _guidFactory);
+				_manager = new DefaultManager(_configuration, _guidFactory);
 			}
 
-			private DefaultCookieManager _cookieManager;
+			private DefaultManager _manager;
 			private IAntiCsrfConfiguration _configuration;
 			private IGuidFactory _guidFactory;
 			private HttpRequestBase _request;
@@ -43,7 +43,7 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.CookieManagers
 			[Test]
 			public void Must_add_cookie_to_response()
 			{
-				_cookieManager.ConfigureCookie(_request, _response);
+				_manager.ConfigureCookie(_request, _response);
 
 				Assert.That(_response.Cookies.AllKeys.Contains("name"));
 			}
@@ -54,7 +54,7 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.CookieManagers
 				Guid sessionId = Guid.Parse("7c5ec674-f3cb-442a-a72e-877bdb66f777");
 
 				_guidFactory.Stub(arg => arg.Random()).Return(sessionId);
-				_cookieManager.ConfigureCookie(_request, _response);
+				_manager.ConfigureCookie(_request, _response);
 
 				Assert.That(_response.Cookies["name"].Value, Is.EqualTo(sessionId.ToString("N")));
 			}
@@ -62,7 +62,7 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.CookieManagers
 			[Test]
 			public void Must_set_http_only_flag()
 			{
-				_cookieManager.ConfigureCookie(_request, _response);
+				_manager.ConfigureCookie(_request, _response);
 
 				Assert.That(_response.Cookies["name"].HttpOnly, Is.True);
 			}
@@ -81,12 +81,12 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.CookieManagers
 				_request.Stub(arg => arg.Cookies).Return(new HttpCookieCollection { new HttpCookie("name", _sessionId.ToString("N")) });
 				_response = MockRepository.GenerateMock<HttpResponseBase>();
 				_response.Stub(arg => arg.Cookies).Return(new HttpCookieCollection());
-				_cookieManager = new DefaultCookieManager(_configuration, _guidFactory);
+				_cookieManager = new DefaultManager(_configuration, _guidFactory);
 				_cookieManager.ConfigureCookie(_request, _response);
 				_sessionId = Guid.Parse("6a9ef3cd-eb3f-49b6-90ba-0dfda4cb183d");
 			}
 
-			private DefaultCookieManager _cookieManager;
+			private DefaultManager _cookieManager;
 			private IAntiCsrfConfiguration _configuration;
 			private IGuidFactory _guidFactory;
 			private HttpRequestBase _request;
@@ -119,12 +119,12 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.CookieManagers
 				_response = MockRepository.GenerateMock<HttpResponseBase>();
 				_response.Stub(arg => arg.Cookies).Return(new HttpCookieCollection());
 
-				_cookieManager = new DefaultCookieManager(_configuration, _guidFactory);
+				_cookieManager = new DefaultManager(_configuration, _guidFactory);
 			}
 
 			private IAntiCsrfConfiguration _configuration;
 			private IGuidFactory _guidFactory;
-			private DefaultCookieManager _cookieManager;
+			private DefaultManager _cookieManager;
 			private HttpResponseBase _response;
 
 			[Test]
@@ -146,12 +146,12 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.CookieManagers
 				_response = MockRepository.GenerateMock<HttpResponseBase>();
 				_sessionId = Guid.Parse("98b92ab2-3905-4e25-aefe-cff7dc5df9d3");
 				_response.Stub(arg => arg.Cookies).Return(new HttpCookieCollection { new HttpCookie("name", _sessionId.ToString("N")) { HttpOnly = true } });
-				_cookieManager = new DefaultCookieManager(_configuration, _guidFactory);
+				_cookieManager = new DefaultManager(_configuration, _guidFactory);
 			}
 
 			private IAntiCsrfConfiguration _configuration;
 			private IGuidFactory _guidFactory;
-			private DefaultCookieManager _cookieManager;
+			private DefaultManager _cookieManager;
 			private HttpResponseBase _response;
 			private Guid _sessionId;
 

@@ -62,7 +62,7 @@
     <Compile Include="Assets\FileSystem\DirectoryAssetTester.cs" />
     <Compile Include="Assets\FileSystem\JavaScriptBundleWatcherRouteTester.cs" />
     <Compile Include="Assets\FileSystem\CssBundleWatcherRouteTester.cs" />
-    <Compile Include="AutoRouting\AntiCsrf\HtmlGenerators\DefaultHtmlGeneratorTester.cs" />
+    <Compile Include="AutoRouting\AntiCsrf\HtmlGenerators\DefaultGeneratorTester.cs" />
     <Compile Include="AutoRouting\IdMappers\IdResultTester.cs" />
     <Compile Include="AutoRouting\NameMappers\Attributes\NameAttributeTester.cs" />
     <Compile Include="AutoRouting\AuthenticationStrategies\AuthenticateAttributeStrategyTester.cs" />
@@ -175,10 +175,10 @@
     <Compile Include="Http\RequestHeaders\BasicAuthorizationHeaderTester.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Http\RequestHeaders\AcceptHeaderTester.cs" />
-    <Compile Include="Routing\AntiCsrf\CookieManagers\DefaultCookieManagerTester.cs" />
-    <Compile Include="Routing\AntiCsrf\NonceRepositories\MemoryCacheNonceRepositoryTester.cs" />
-    <Compile Include="Routing\AntiCsrf\NonceValidators\DefaultNonceValidatorTester.cs" />
-    <Compile Include="Routing\AntiCsrf\ResponseGenerators\DefaultResponseGeneratorTester.cs" />
+    <Compile Include="Routing\AntiCsrf\CookieManagers\DefaultManagerTester.cs" />
+    <Compile Include="Routing\AntiCsrf\NonceRepositories\MemoryCacheRepositoryTester.cs" />
+    <Compile Include="Routing\AntiCsrf\NonceValidators\DefaultValidatorTester.cs" />
+    <Compile Include="Routing\AntiCsrf\ResponseGenerators\DefaultGeneratorTester.cs" />
     <Compile Include="Routing\AntiCsrf\ResponseGenerators\ResponseResultTester.cs" />
     <Compile Include="Routing\AuthenticateResultTester.cs" />
     <Compile Include="Routing\AuthenticationProviders\FormsAuthenticationProviderTester.cs" />

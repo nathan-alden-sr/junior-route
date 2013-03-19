@@ -9,7 +9,7 @@ using Rhino.Mocks;
 
 namespace Junior.Route.UnitTests.Routing.AntiCsrf.NonceRepositories
 {
-	public static class MemoryCacheNonceRepositoryTester
+	public static class MemoryCacheRepositoryTester
 	{
 		[TestFixture]
 		public class When_adding_nonce_to_cache
@@ -19,11 +19,11 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.NonceRepositories
 			{
 				_configuration = MockRepository.GenerateMock<IAntiCsrfConfiguration>();
 				_configuration.Stub(arg => arg.MemoryCacheName).Return("cache");
-				_nonceRepository = new MemoryCacheNonceRepository(_configuration);
+				_repository = new MemoryCacheRepository(_configuration);
 			}
 
 			private IAntiCsrfConfiguration _configuration;
-			private MemoryCacheNonceRepository _nonceRepository;
+			private MemoryCacheRepository _repository;
 
 			[Test]
 			[Ignore]
@@ -31,7 +31,7 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.NonceRepositories
 #warning Update to use async Assert.That(..., Throws.InstanceOf<>) when NUnit 2.6.3 becomes available
 			public async void Must_require_utc_created_timestamp()
 			{
-				await _nonceRepository.Add(Guid.NewGuid(), Guid.NewGuid(), DateTime.Now, DateTime.UtcNow);
+				await _repository.Add(Guid.NewGuid(), Guid.NewGuid(), DateTime.Now, DateTime.UtcNow);
 			}
 
 			[Test]
@@ -40,7 +40,7 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.NonceRepositories
 #warning Update to use async Assert.That(..., Throws.InstanceOf<>) when NUnit 2.6.3 becomes available
 			public async void Must_require_utc_expires_timestamp()
 			{
-				await _nonceRepository.Add(Guid.NewGuid(), Guid.NewGuid(), DateTime.UtcNow, DateTime.Now);
+				await _repository.Add(Guid.NewGuid(), Guid.NewGuid(), DateTime.UtcNow, DateTime.Now);
 			}
 		}
 
@@ -52,21 +52,21 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.NonceRepositories
 			{
 				_configuration = MockRepository.GenerateMock<IAntiCsrfConfiguration>();
 				_configuration.Stub(arg => arg.MemoryCacheName).Return("cache");
-				_nonceRepository = new MemoryCacheNonceRepository(_configuration);
+				_repository = new MemoryCacheRepository(_configuration);
 				_sessionId = Guid.Parse("710f7634-b013-4fb8-abf5-97c98e4993c3");
 				_nonce = Guid.Parse("0dd344d0-7115-4c0e-864a-afaecb339138");
-				await _nonceRepository.Add(_sessionId, _nonce, DateTime.UtcNow.Subtract(TimeSpan.FromSeconds(1)), DateTime.UtcNow.Subtract(TimeSpan.FromSeconds(1)));
+				await _repository.Add(_sessionId, _nonce, DateTime.UtcNow.Subtract(TimeSpan.FromSeconds(1)), DateTime.UtcNow.Subtract(TimeSpan.FromSeconds(1)));
 			}
 
 			private IAntiCsrfConfiguration _configuration;
-			private MemoryCacheNonceRepository _nonceRepository;
+			private MemoryCacheRepository _repository;
 			private Guid _sessionId;
 			private Guid _nonce;
 
 			[Test]
 			public async void Must_not_exist()
 			{
-				Assert.That(await _nonceRepository.Exists(_sessionId, _nonce, DateTime.UtcNow), Is.False);
+				Assert.That(await _repository.Exists(_sessionId, _nonce, DateTime.UtcNow), Is.False);
 			}
 		}
 
@@ -78,21 +78,21 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.NonceRepositories
 			{
 				_configuration = MockRepository.GenerateMock<IAntiCsrfConfiguration>();
 				_configuration.Stub(arg => arg.MemoryCacheName).Return("cache");
-				_nonceRepository = new MemoryCacheNonceRepository(_configuration);
+				_repository = new MemoryCacheRepository(_configuration);
 				_sessionId = Guid.Parse("710f7634-b013-4fb8-abf5-97c98e4993c3");
 				_nonce = Guid.Parse("0dd344d0-7115-4c0e-864a-afaecb339138");
-				await _nonceRepository.Add(_sessionId, _nonce, DateTime.UtcNow, DateTime.MaxValue.ToUniversalTime());
+				await _repository.Add(_sessionId, _nonce, DateTime.UtcNow, DateTime.MaxValue.ToUniversalTime());
 			}
 
 			private IAntiCsrfConfiguration _configuration;
-			private MemoryCacheNonceRepository _nonceRepository;
+			private MemoryCacheRepository _repository;
 			private Guid _sessionId;
 			private Guid _nonce;
 
 			[Test]
 			public async void Must_exist()
 			{
-				Assert.That(await _nonceRepository.Exists(_sessionId, _nonce, DateTime.MinValue.ToUniversalTime()), Is.True);
+				Assert.That(await _repository.Exists(_sessionId, _nonce, DateTime.MinValue.ToUniversalTime()), Is.True);
 			}
 		}
 	}

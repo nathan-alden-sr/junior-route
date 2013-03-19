@@ -14,7 +14,7 @@ using Rhino.Mocks;
 
 namespace Junior.Route.UnitTests.AutoRouting.AntiCsrf.HtmlGenerators
 {
-	public static class DefaultHtmlGeneratorTester
+	public static class DefaultGeneratorTester
 	{
 		[TestFixture]
 		public class When_generating_hidden_input_html_and_configuration_is_disabled
@@ -29,7 +29,7 @@ namespace Junior.Route.UnitTests.AutoRouting.AntiCsrf.HtmlGenerators
 				_guidFactory = MockRepository.GenerateMock<IGuidFactory>();
 				_systemClock = MockRepository.GenerateMock<ISystemClock>();
 				_response = MockRepository.GenerateMock<HttpResponseBase>();
-				_htmlGenerator = new DefaultHtmlGenerator(_configuration, _cookieManager, _nonceRepository, _guidFactory, _systemClock);
+				_generator = new DefaultGenerator(_configuration, _cookieManager, _nonceRepository, _guidFactory, _systemClock);
 			}
 
 			private IAntiCsrfConfiguration _configuration;
@@ -37,13 +37,13 @@ namespace Junior.Route.UnitTests.AutoRouting.AntiCsrf.HtmlGenerators
 			private IAntiCsrfNonceRepository _nonceRepository;
 			private IGuidFactory _guidFactory;
 			private ISystemClock _systemClock;
-			private DefaultHtmlGenerator _htmlGenerator;
+			private DefaultGenerator _generator;
 			private HttpResponseBase _response;
 
 			[Test]
 			public async void Must_generate_empty_string()
 			{
-				Assert.That(await _htmlGenerator.GenerateHiddenInputHtml(_response), Is.EqualTo(""));
+				Assert.That(await _generator.GenerateHiddenInputHtml(_response), Is.EqualTo(""));
 			}
 		}
 
@@ -61,7 +61,7 @@ namespace Junior.Route.UnitTests.AutoRouting.AntiCsrf.HtmlGenerators
 				_guidFactory = MockRepository.GenerateMock<IGuidFactory>();
 				_systemClock = MockRepository.GenerateMock<ISystemClock>();
 				_response = MockRepository.GenerateMock<HttpResponseBase>();
-				_htmlGenerator = new DefaultHtmlGenerator(_configuration, _cookieManager, _nonceRepository, _guidFactory, _systemClock);
+				_generator = new DefaultGenerator(_configuration, _cookieManager, _nonceRepository, _guidFactory, _systemClock);
 			}
 
 			private IAntiCsrfConfiguration _configuration;
@@ -69,13 +69,13 @@ namespace Junior.Route.UnitTests.AutoRouting.AntiCsrf.HtmlGenerators
 			private IAntiCsrfNonceRepository _nonceRepository;
 			private IGuidFactory _guidFactory;
 			private ISystemClock _systemClock;
-			private DefaultHtmlGenerator _htmlGenerator;
+			private DefaultGenerator _generator;
 			private HttpResponseBase _response;
 
 			[Test]
 			public async void Must_generate_empty_string()
 			{
-				Assert.That(await _htmlGenerator.GenerateHiddenInputHtml(_response), Is.EqualTo(""));
+				Assert.That(await _generator.GenerateHiddenInputHtml(_response), Is.EqualTo(""));
 			}
 		}
 
@@ -101,8 +101,8 @@ namespace Junior.Route.UnitTests.AutoRouting.AntiCsrf.HtmlGenerators
 				_currentUtcTimestamp = new DateTime(2013, 1, 2);
 				_systemClock.Stub(arg => arg.UtcDateTime).Return(_currentUtcTimestamp);
 				_response = MockRepository.GenerateMock<HttpResponseBase>();
-				_htmlGenerator = new DefaultHtmlGenerator(_configuration, _cookieManager, _nonceRepository, _guidFactory, _systemClock);
-				_hiddenInputHtml = await _htmlGenerator.GenerateHiddenInputHtml(_response);
+				_generator = new DefaultGenerator(_configuration, _cookieManager, _nonceRepository, _guidFactory, _systemClock);
+				_hiddenInputHtml = await _generator.GenerateHiddenInputHtml(_response);
 			}
 
 			private IAntiCsrfConfiguration _configuration;
@@ -110,7 +110,7 @@ namespace Junior.Route.UnitTests.AutoRouting.AntiCsrf.HtmlGenerators
 			private IAntiCsrfNonceRepository _nonceRepository;
 			private IGuidFactory _guidFactory;
 			private ISystemClock _systemClock;
-			private DefaultHtmlGenerator _htmlGenerator;
+			private DefaultGenerator _generator;
 			private Guid _sessionId;
 			private Guid _nonce;
 			private DateTime _currentUtcTimestamp;

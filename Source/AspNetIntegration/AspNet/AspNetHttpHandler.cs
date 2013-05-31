@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mime;
 using System.Threading.Tasks;
 using System.Web;
 
@@ -85,17 +86,26 @@ namespace Junior.Route.AspNetIntegration.AspNet
 
 			if (_antiCsrfCookieManager != null && _antiCsrfNonceValidator != null && _antiCsrfResponseGenerator != null)
 			{
-				string contentType = context.Request.ContentType;
-
-				if (String.Equals(contentType, "application/x-www-form-urlencoded", StringComparison.OrdinalIgnoreCase) || String.Equals(contentType, "multipart/form-data", StringComparison.OrdinalIgnoreCase))
+				if (!String.IsNullOrEmpty(context.Request.ContentType))
 				{
-					ValidationResult validationResult = await _antiCsrfNonceValidator.Validate(request);
-					ResponseResult responseResult = _antiCsrfResponseGenerator.GetResponse(validationResult);
-
-					if (responseResult.ResultType == ResponseResultType.ResponseGenerated)
+					try
 					{
-						ProcessResponse(context, responseResult.Response, null);
-						return;
+						var contentType = new ContentType(context.Request.ContentType);
+
+						if (String.Equals(contentType.MediaType, "application/x-www-form-urlencoded", StringComparison.OrdinalIgnoreCase) || String.Equals(contentType.MediaType, "multipart/form-data", StringComparison.OrdinalIgnoreCase))
+						{
+							ValidationResult validationResult = await _antiCsrfNonceValidator.Validate(request);
+							ResponseResult responseResult = _antiCsrfResponseGenerator.GetResponse(validationResult);
+
+							if (responseResult.ResultType == ResponseResultType.ResponseGenerated)
+							{
+								ProcessResponse(context, responseResult.Response, null);
+								return;
+							}
+						}
+					}
+					catch (FormatException)
+					{
 					}
 				}
 

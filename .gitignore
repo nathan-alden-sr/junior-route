@@ -1,8 +1,8 @@
-#OS junk files
+# OS junk files
 [Tt]humbs.db
 *.DS_Store
 
-#Visual Studio files
+# Visual Studio files
 *.[Oo]bj
 *.user
 *.aps
@@ -26,11 +26,11 @@
 *.unsuccessfulbuild
 ipch/
 obj/
-[Bb]in
+[Bb]in/
 [Dd]ebug*/
 Ankh.NoLoad
 
-#Tooling
+# Tooling
 NuGet Results/
 NuGet Staging/
 NUnit Results/
@@ -41,5 +41,9 @@ _ReSharper*/
 # Office Temp Files
 ~$*
 
-#NuGet
+# NuGet
 packages/
+
+# Exceptions
+!Build/nant-0.92/bin
+!Build/NUnit-2.6.2/bin

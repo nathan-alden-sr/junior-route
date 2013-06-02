@@ -11,8 +11,8 @@
 		<iconUrl>https://docs.google.com/uc?export=download&amp;id=0B8a4O6RATfaXQ2YxekpxbXRfUjQ</iconUrl>
 		<dependencies>
 			<group>
-				<dependency id="JuniorCommon" version="3.0.1"/>
-				<dependency id="Newtonsoft.Json" version="5.0.3"/>
+				<dependency id="JuniorCommon" version="3.1.0"/>
+				<dependency id="Newtonsoft.Json" version="5.0.5"/>
 			</group>
 		</dependencies>
 		<references>

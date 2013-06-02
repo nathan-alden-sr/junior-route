@@ -11,8 +11,8 @@
 		<iconUrl>https://docs.google.com/uc?export=download&amp;id=0B8a4O6RATfaXQ2YxekpxbXRfUjQ</iconUrl>
 		<dependencies>
 			<group>
-				<dependency id="JuniorCommon" version="3.0.1"/>
-				<dependency id="JuniorRoute.Diagnostics" version="5.0.0"/>
+				<dependency id="JuniorCommon" version="3.1.0"/>
+				<dependency id="JuniorRoute.Diagnostics" version="5.1.0"/>
 			</group>
 		</dependencies>
 		<references>

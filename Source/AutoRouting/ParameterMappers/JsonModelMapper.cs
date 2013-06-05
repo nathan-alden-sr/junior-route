@@ -13,10 +13,7 @@ namespace Junior.Route.AutoRouting.ParameterMappers
 	{
 		private readonly DataConversionErrorHandling _errorHandling;
 		private readonly Func<Type, bool> _parameterTypeMatchDelegate;
-		private readonly JsonSerializerSettings _serializerSettings = new JsonSerializerSettings
-			{
-				DateFormatHandling = DateFormatHandling.IsoDateFormat
-			};
+		private readonly JsonSerializerSettings _serializerSettings;
 
 		public JsonModelMapper(Func<Type, bool> parameterTypeMatchDelegate, JsonSerializerSettings serializerSettings, DataConversionErrorHandling errorHandling = DataConversionErrorHandling.UseDefaultValue)
 		{
@@ -29,7 +26,7 @@ namespace Junior.Route.AutoRouting.ParameterMappers
 		}
 
 		public JsonModelMapper(Func<Type, bool> parameterTypeMatchDelegate, DataConversionErrorHandling errorHandling = DataConversionErrorHandling.UseDefaultValue)
-			: this(parameterTypeMatchDelegate, new JsonSerializerSettings { DateFormatHandling = DateFormatHandling.IsoDateFormat }, errorHandling)
+			: this(parameterTypeMatchDelegate, new JsonSerializerSettings(), errorHandling)
 		{
 		}
 
@@ -39,7 +36,7 @@ namespace Junior.Route.AutoRouting.ParameterMappers
 		}
 
 		public JsonModelMapper(DataConversionErrorHandling errorHandling = DataConversionErrorHandling.UseDefaultValue)
-			: this(type => type.Name.EndsWith("Model"), new JsonSerializerSettings { DateFormatHandling = DateFormatHandling.IsoDateFormat }, errorHandling)
+			: this(type => type.Name.EndsWith("Model"), new JsonSerializerSettings(), errorHandling)
 		{
 		}
 

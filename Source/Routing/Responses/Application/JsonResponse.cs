@@ -7,12 +7,6 @@ namespace Junior.Route.Routing.Responses.Application
 {
 	public class JsonResponse : ImmutableResponse
 	{
-		private static readonly JsonSerializerSettings _serializerSettings = new JsonSerializerSettings
-			{
-				DateFormatHandling = DateFormatHandling.IsoDateFormat,
-				Formatting = Formatting.None
-			};
-
 		public JsonResponse(Func<byte[]> content, Action<Response> configurationDelegate = null)
 			: base(new Response().ApplicationJson().Content(content), configurationDelegate)
 		{
@@ -54,7 +48,7 @@ namespace Junior.Route.Routing.Responses.Application
 		}
 
 		public JsonResponse(object content, Action<Response> configurationDelegate = null)
-			: base(new Response().ApplicationJson().Content(() => JsonConvert.SerializeObject(content, _serializerSettings)), configurationDelegate)
+			: base(new Response().ApplicationJson().Content(() => JsonConvert.SerializeObject(content)), configurationDelegate)
 		{
 		}
 
@@ -64,7 +58,7 @@ namespace Junior.Route.Routing.Responses.Application
 		}
 
 		public JsonResponse(object content, Encoding encoding, Action<Response> configurationDelegate = null)
-			: base(new Response().ApplicationJson().ContentEncoding(encoding).Content(() => JsonConvert.SerializeObject(content, _serializerSettings)), configurationDelegate)
+			: base(new Response().ApplicationJson().ContentEncoding(encoding).Content(() => JsonConvert.SerializeObject(content)), configurationDelegate)
 		{
 		}
 

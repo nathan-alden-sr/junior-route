@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using System.Web;
 
 using Junior.Common;
-using Junior.Route.Common;
 using Junior.Route.Http.RequestHeaders;
 using Junior.Route.Routing.AuthenticationProviders;
 using Junior.Route.Routing.RequestValueComparers;
@@ -888,34 +887,6 @@ namespace Junior.Route.Routing
 
 		#region Authentication
 
-		public Route FormsAuthenticationProviderWithNoRedirectOnFailedAuthentication()
-		{
-			_authenticationProvider = FormsAuthenticationProvider.CreateWithNoRedirectOnFailedAuthentication();
-
-			return this;
-		}
-
-		public Route FormsAuthenticationProviderWithRouteRedirectOnFailedAuthentication(IUrlResolver urlResolver, string routeName, bool appendReturnUrl = false, string returnUrlQueryStringField = "ReturnURL")
-		{
-			_authenticationProvider = FormsAuthenticationProvider.CreateWithRouteRedirectOnFailedAuthentication(urlResolver, routeName, appendReturnUrl, returnUrlQueryStringField);
-
-			return this;
-		}
-
-		public Route FormsAuthenticationProviderWithRouteRedirectOnFailedAuthentication(IUrlResolver urlResolver, Guid routeId, bool appendReturnUrl = false, string returnUrlQueryStringField = "ReturnURL")
-		{
-			_authenticationProvider = FormsAuthenticationProvider.CreateWithRouteRedirectOnFailedAuthentication(urlResolver, routeId, appendReturnUrl, returnUrlQueryStringField);
-
-			return this;
-		}
-
-		public Route FormsAuthenticationProviderWithRelativeUrlRedirectOnFailedAuthentication(IUrlResolver urlResolver, string relativeUrl, bool appendReturnUrl = false, string returnUrlQueryStringField = "ReturnURL")
-		{
-			_authenticationProvider = FormsAuthenticationProvider.CreateWithRouteRedirectOnFailedAuthentication(urlResolver, relativeUrl, appendReturnUrl, returnUrlQueryStringField);
-
-			return this;
-		}
-
 		public Route AuthenticationProvider(IAuthenticationProvider provider)
 		{
 			provider.ThrowIfNull("provider");
@@ -1025,11 +996,11 @@ namespace Junior.Route.Routing
 			lock (_lockObject)
 			{
 				_responseDelegate = async context =>
-					{
-						@delegate(context);
+					                          {
+						                          @delegate(context);
 
-						return await Task.FromResult(new Response().NoContent());
-					};
+						                          return await Task.FromResult(new Response().NoContent());
+					                          };
 				ResponseType = null;
 			}
 
@@ -1064,16 +1035,17 @@ namespace Junior.Route.Routing
 			}
 		}
 
-		public AuthenticateResult Authenticate(HttpRequestBase request)
+		public AuthenticateResult Authenticate(HttpRequestBase request, HttpResponseBase response)
 		{
 			request.ThrowIfNull("request");
+			response.ThrowIfNull("response");
 
 			if (_authenticationProvider == null)
 			{
 				return AuthenticateResult.NoAuthenticationPerformed();
 			}
 
-			AuthenticationResult result = _authenticationProvider.Authenticate(request, this);
+			AuthenticationResult result = _authenticationProvider.Authenticate(request, response, this);
 
 			return result == AuthenticationResult.AuthenticationSucceeded
 				       ? AuthenticateResult.AuthenticationSucceeded()

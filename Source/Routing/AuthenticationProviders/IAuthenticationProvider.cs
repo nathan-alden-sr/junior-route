@@ -6,7 +6,7 @@ namespace Junior.Route.Routing.AuthenticationProviders
 {
 	public interface IAuthenticationProvider
 	{
-		AuthenticationResult Authenticate(HttpRequestBase request, Route route);
+		AuthenticationResult Authenticate(HttpRequestBase request, HttpResponseBase response, Route route);
 		IResponse GetFailedAuthenticationResponse(HttpRequestBase request);
 	}
 }

@@ -31,7 +31,7 @@ namespace Junior.Route.Routing.AntiCsrf.NonceValidators
 
 			if (!_configuration.Enabled)
 			{
-				return await Task.FromResult(ValidationResult.ValidationDisabled);
+				return ValidationResult.ValidationDisabled;
 			}
 			bool isPostNeedingValidation = (String.Equals(request.HttpMethod, "POST", StringComparison.OrdinalIgnoreCase) && _configuration.ValidateHttpPost);
 			bool isPutNeedingValidation = (String.Equals(request.HttpMethod, "PUT", StringComparison.OrdinalIgnoreCase) && _configuration.ValidateHttpPut);
@@ -39,22 +39,22 @@ namespace Junior.Route.Routing.AntiCsrf.NonceValidators
 
 			if (!isPostNeedingValidation && !isPutNeedingValidation && !isDeleteNeedingValidation)
 			{
-				return await Task.FromResult(ValidationResult.ValidationSkipped);
+				return ValidationResult.ValidationSkipped;
 			}
 			if (!request.Form.AllKeys.Contains(_configuration.FormFieldName))
 			{
-				return await Task.FromResult(ValidationResult.FormFieldMissing);
+				return ValidationResult.FormFieldMissing;
 			}
 			if (!request.Cookies.AllKeys.Contains(_configuration.CookieName))
 			{
-				return await Task.FromResult(ValidationResult.CookieMissing);
+				return ValidationResult.CookieMissing;
 			}
 
 			Guid nonce;
 
 			if (!Guid.TryParse(request.Form[_configuration.FormFieldName], out nonce))
 			{
-				return await Task.FromResult(ValidationResult.FormFieldInvalid);
+				return ValidationResult.FormFieldInvalid;
 			}
 
 			HttpCookie cookie = request.Cookies[_configuration.CookieName];
@@ -62,7 +62,7 @@ namespace Junior.Route.Routing.AntiCsrf.NonceValidators
 
 			if (!Guid.TryParse(cookie.Value, out sessionId))
 			{
-				return await Task.FromResult(ValidationResult.CookieInvalid);
+				return ValidationResult.CookieInvalid;
 			}
 
 			return await _nonceRepository.Exists(sessionId, nonce, _systemClock.UtcDateTime) ? ValidationResult.NonceValid : ValidationResult.NonceInvalid;

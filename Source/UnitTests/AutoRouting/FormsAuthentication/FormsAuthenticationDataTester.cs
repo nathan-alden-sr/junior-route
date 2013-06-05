@@ -19,17 +19,20 @@ namespace Junior.Route.UnitTests.AutoRouting.FormsAuthentication
 			[SetUp]
 			public void SetUp()
 			{
-				var systemClock = MockRepository.GenerateMock<ISystemClock>();
-				var helper = new FormsAuthenticationHelper(systemClock);
+				_systemClock = MockRepository.GenerateMock<ISystemClock>();
+				_configuration = MockRepository.GenerateMock<IFormsAuthenticationConfiguration>();
+				var helper = new FormsAuthenticationHelper(_configuration, _systemClock);
 				Cookie cookie = helper.GenerateTicket(DateTime.Now.AddYears(-1), @"{ ""P"": ""V"" }");
 
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 				_request.Stub(arg => arg.Cookies).Return(new HttpCookieCollection { cookie.GetHttpCookie() });
-				_authenticationData = new FormsAuthenticationData<dynamic>();
+				_authenticationData = new FormsAuthenticationData<dynamic>(_configuration);
 			}
 
 			private HttpRequestBase _request;
 			private FormsAuthenticationData<dynamic> _authenticationData;
+			private ISystemClock _systemClock;
+			private IFormsAuthenticationConfiguration _configuration;
 
 			[Test]
 			public void Must_not_get_user_data()
@@ -48,11 +51,13 @@ namespace Junior.Route.UnitTests.AutoRouting.FormsAuthentication
 			{
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 				_request.Stub(arg => arg.Cookies).Return(new HttpCookieCollection { new HttpCookie(".juniorauth", "invalid") });
-				_authenticationData = new FormsAuthenticationData<dynamic>();
+				_configuration = MockRepository.GenerateMock<IFormsAuthenticationConfiguration>();
+				_authenticationData = new FormsAuthenticationData<dynamic>(_configuration);
 			}
 
 			private HttpRequestBase _request;
 			private FormsAuthenticationData<dynamic> _authenticationData;
+			private IFormsAuthenticationConfiguration _configuration;
 
 			[Test]
 			public void Must_not_get_user_data()
@@ -71,11 +76,13 @@ namespace Junior.Route.UnitTests.AutoRouting.FormsAuthentication
 			{
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 				_request.Stub(arg => arg.Cookies).Return(new HttpCookieCollection());
-				_authenticationData = new FormsAuthenticationData<dynamic>();
+				_configuration = MockRepository.GenerateMock<IFormsAuthenticationConfiguration>();
+				_authenticationData = new FormsAuthenticationData<dynamic>(_configuration);
 			}
 
 			private HttpRequestBase _request;
 			private FormsAuthenticationData<dynamic> _authenticationData;
+			private IFormsAuthenticationConfiguration _configuration;
 
 			[Test]
 			public void Must_not_get_user_data()
@@ -92,17 +99,22 @@ namespace Junior.Route.UnitTests.AutoRouting.FormsAuthentication
 			[SetUp]
 			public void SetUp()
 			{
-				var systemClock = MockRepository.GenerateMock<ISystemClock>();
-				var helper = new FormsAuthenticationHelper(systemClock);
+				_systemClock = MockRepository.GenerateMock<ISystemClock>();
+				_configuration = MockRepository.GenerateMock<IFormsAuthenticationConfiguration>();
+				_configuration.Stub(arg => arg.CookieName).Return("name");
+				_configuration.Stub(arg => arg.CookiePath).Return("/");
+				var helper = new FormsAuthenticationHelper(_configuration, _systemClock);
 				Cookie cookie = helper.GenerateTicket(DateTime.Now.AddYears(1), @"{ ""P"": ""V"" }");
 
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 				_request.Stub(arg => arg.Cookies).Return(new HttpCookieCollection { cookie.GetHttpCookie() });
-				_authenticationData = new FormsAuthenticationData<dynamic>();
+				_authenticationData = new FormsAuthenticationData<dynamic>(_configuration);
 			}
 
 			private HttpRequestBase _request;
 			private FormsAuthenticationData<dynamic> _authenticationData;
+			private ISystemClock _systemClock;
+			private IFormsAuthenticationConfiguration _configuration;
 
 			[Test]
 			public void Must_get_user_data()

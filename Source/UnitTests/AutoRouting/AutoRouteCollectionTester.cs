@@ -129,11 +129,12 @@ namespace Junior.Route.UnitTests.AutoRouting
 			public void Must_use_strategy_to_assign_provider()
 			{
 				var request = MockRepository.GenerateMock<HttpRequestBase>();
+				var response = MockRepository.GenerateMock<HttpResponseBase>();
 
-				_routes[0].Authenticate(request);
+				_routes[0].Authenticate(request, response);
 
 				_authenticationStrategy.AssertWasCalled(arg => arg.MustAuthenticate(typeof(Endpoint), typeof(Endpoint).GetMethod("Method")));
-				_authenticationProvider.AssertWasCalled(arg => arg.Authenticate(request, _routes[0]));
+				_authenticationProvider.AssertWasCalled(arg => arg.Authenticate(request, response, _routes[0]));
 			}
 		}
 

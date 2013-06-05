@@ -11,15 +11,22 @@ namespace Junior.Route.AutoRouting.FormsAuthentication
 	public class FormsAuthenticationData<TUserData> : IFormsAuthenticationData<TUserData>
 		where TUserData : class
 	{
-		private readonly JsonSerializerSettings _serializerSettings = new JsonSerializerSettings { DateFormatHandling = DateFormatHandling.IsoDateFormat };
+		private readonly IFormsAuthenticationConfiguration _configuration;
 
-		public TUserData GetUserData(HttpRequestBase request, string cookieName = ".juniorauth")
+		public FormsAuthenticationData(IFormsAuthenticationConfiguration configuration)
+		{
+			configuration.ThrowIfNull("configuration");
+
+			_configuration = configuration;
+		}
+
+		public TUserData GetUserData(HttpRequestBase request)
 		{
 			request.ThrowIfNull("request");
 
-			FormsAuthenticationTicket ticket = GetTicket(request, cookieName);
+			FormsAuthenticationTicket ticket = GetTicket(request, _configuration.CookieName);
 
-			return ticket != null && !ticket.Expired ? JsonConvert.DeserializeObject<TUserData>(ticket.UserData ?? "{}", _serializerSettings) : null;
+			return ticket != null && !ticket.Expired ? JsonConvert.DeserializeObject<TUserData>(ticket.UserData ?? "{}") : null;
 		}
 
 		private static FormsAuthenticationTicket GetTicket(HttpRequestBase request, string cookieName)

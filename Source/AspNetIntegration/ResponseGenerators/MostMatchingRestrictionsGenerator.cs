@@ -32,7 +32,7 @@ namespace Junior.Route.AspNetIntegration.ResponseGenerators
 				if (bestMatches.Length == 1)
 				{
 					RouteMatchResult bestMatch = bestMatches[0];
-					AuthenticateResult authenticateResult = bestMatch.Route.Authenticate(context.Request);
+					AuthenticateResult authenticateResult = bestMatch.Route.Authenticate(context.Request, context.Response);
 
 					if (authenticateResult.ResultType == AuthenticateResultType.AuthenticationFailed)
 					{

@@ -48,8 +48,10 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseGenerators
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 				_request.Stub(arg => arg.Url).Return(new Uri("http://localhost"));
 				_request.Stub(arg => arg.HttpMethod).Return("GET");
+				_response = MockRepository.GenerateMock<HttpResponseBase>();
 				_context = MockRepository.GenerateMock<HttpContextBase>();
 				_context.Stub(arg => arg.Request).Return(_request);
+				_context.Stub(arg => arg.Response).Return(_response);
 				_route1Response = new Response(200);
 				_route1 = new Route.Routing.Route("name1", Guid.NewGuid(), "relative1");
 				_route1.RestrictByMethods(HttpMethod.Get);
@@ -74,6 +76,7 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseGenerators
 			private Response _route1Response;
 			private Response _route2Response;
 			private HttpContextBase _context;
+			private HttpResponseBase _response;
 
 			[Test]
 			public async void Must_use_response_of_route_with_most_matching_restrictions()

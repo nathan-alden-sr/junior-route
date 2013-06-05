@@ -43,14 +43,18 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AntiCsrf\HtmlGenerators\DefaultGenerator.cs" />
+    <Compile Include="AuthenticationProviders\FormsAuthenticationProvider.cs" />
     <Compile Include="AuthenticationStrategies\Attributes\AuthenticateAttribute.cs" />
     <Compile Include="AuthenticationStrategies\AuthenticateAttributeStrategy.cs" />
     <Compile Include="AuthenticationStrategies\IAuthenticationStrategy.cs" />
     <Compile Include="BundleRoute.cs" />
     <Compile Include="Containers\DefaultBundleDependencyContainer.cs" />
     <Compile Include="Containers\DefaultRestrictionContainer.cs" />
+    <Compile Include="FormsAuthentication\ConfigurationSectionFormsAuthenticationConfiguration.cs" />
+    <Compile Include="FormsAuthentication\FormsAuthenticationConfigurationSection.cs" />
     <Compile Include="FormsAuthentication\FormsAuthenticationHelper.cs" />
     <Compile Include="FormsAuthentication\FormsAuthenticationData.cs" />
+    <Compile Include="FormsAuthentication\IFormsAuthenticationConfiguration.cs" />
     <Compile Include="FormsAuthentication\IFormsAuthenticationHelper.cs" />
     <Compile Include="FormsAuthentication\IFormsAuthenticationData.cs" />
     <Compile Include="IdMappers\Attributes\IdAttribute.cs" />
@@ -145,9 +149,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Junior.Common, Version=3.0.0.0, Culture=neutral, PublicKeyToken=998713eb9a0cce30, processorArchitecture=MSIL">
+    <Reference Include="Junior.Common, Version=3.3.0.0, Culture=neutral, PublicKeyToken=998713eb9a0cce30, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\JuniorCommon.3.1.0\lib\net45\Junior.Common.dll</HintPath>
+      <HintPath>..\packages\JuniorCommon.3.3.1\lib\net45\Junior.Common.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -155,6 +159,7 @@
       <HintPath>..\packages\Newtonsoft.Json.5.0.5\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Web" />
   </ItemGroup>
   <ItemGroup>

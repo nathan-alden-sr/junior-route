@@ -78,7 +78,7 @@
     <Compile Include="AutoRouting\Containers\SingleInstancePerRouteEndpointContainerTester.cs" />
     <Compile Include="AutoRouting\Containers\NewInstancePerRouteEndpointContainerTester.cs" />
     <Compile Include="AutoRouting\FormsAuthentication\FormsAuthenticationHelperTester.cs" />
-    <Compile Include="AutoRouting\FormsAuthentication\FormsAuthenticationRequestContextTester.cs" />
+    <Compile Include="AutoRouting\FormsAuthentication\FormsAuthenticationDataTester.cs" />
     <Compile Include="AutoRouting\IdMappers\Attributes\IdAttributeTester.cs" />
     <Compile Include="AutoRouting\IdMappers\RandomIdMapperTester.cs" />
     <Compile Include="AutoRouting\IdMappers\IdAttributeMapperTester.cs" />

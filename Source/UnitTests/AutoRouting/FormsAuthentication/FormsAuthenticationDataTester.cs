@@ -11,7 +11,7 @@ using Rhino.Mocks;
 
 namespace Junior.Route.UnitTests.AutoRouting.FormsAuthentication
 {
-	public static class FormsAuthenticationRequestContextTester
+	public static class FormsAuthenticationDataTester
 	{
 		[TestFixture]
 		public class When_getting_user_data_from_expired_ticket

@@ -46,7 +46,33 @@ namespace Junior.Route.AspNetIntegration.Diagnostics.Web
 			private set;
 		}
 
-		public void Populate(Type cacheType, IEnumerable<Type> requestFilterTypes, IEnumerable<Type> responseGeneratorTypes, IEnumerable<Type> responseHandlerTypes, IEnumerable<Type> errorHandlerTypes)
+		public Type AntiCsrfCookieManagerType
+		{
+			get;
+			private set;
+		}
+
+		public Type AntiCsrfNonceValidatorType
+		{
+			get;
+			private set;
+		}
+
+		public Type AntiCsrfResponseGeneratorType
+		{
+			get;
+			private set;
+		}
+
+		public void Populate(
+			Type cacheType,
+			IEnumerable<Type> requestFilterTypes,
+			IEnumerable<Type> responseGeneratorTypes,
+			IEnumerable<Type> responseHandlerTypes,
+			IEnumerable<Type> errorHandlerTypes,
+			Type antiCsrfCookieManagerType,
+			Type antiCsrfNonceValidatorType,
+			Type antiCsrfResponseGeneratorType)
 		{
 			cacheType.ThrowIfNull("cacheType");
 			requestFilterTypes.ThrowIfNull("requestFilterTypes");
@@ -59,6 +85,9 @@ namespace Junior.Route.AspNetIntegration.Diagnostics.Web
 			ResponseGeneratorTypes = responseGeneratorTypes;
 			ResponseHandlerTypes = responseHandlerTypes;
 			ErrorHandlerTypes = errorHandlerTypes;
+			AntiCsrfCookieManagerType = antiCsrfCookieManagerType;
+			AntiCsrfNonceValidatorType = antiCsrfNonceValidatorType;
+			AntiCsrfResponseGeneratorType = antiCsrfResponseGeneratorType;
 		}
 	}
 }

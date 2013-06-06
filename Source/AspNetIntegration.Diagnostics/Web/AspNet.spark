@@ -47,6 +47,24 @@
 					</for>
 				</td>
 			</tr>
+			<tr>
+				<td>Anti-CSRF cookie manager</td>
+				<td>
+					<div>$!{AntiCsrfCookieManagerType.FullName}</div>
+				</td>
+			</tr>
+			<tr>
+				<td>Anti-CSRF nonce validator</td>
+				<td>
+					<div>$!{AntiCsrfNonceValidatorType.FullName}</div>
+				</td>
+			</tr>
+			<tr>
+				<td>Anti-CSRF response generator</td>
+				<td>
+					<div>$!{AntiCsrfResponseGeneratorType.FullName}</div>
+				</td>
+			</tr>
 		</tbody>
 	</table>
 </div>

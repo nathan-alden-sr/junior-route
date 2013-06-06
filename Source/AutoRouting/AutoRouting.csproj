@@ -90,6 +90,7 @@
     <Compile Include="ResolvedRelativeUrlMappers\ResolvedRelativeUrlResult.cs" />
     <Compile Include="ResolvedRelativeUrlMappers\ResolvedRelativeUrlResultType.cs" />
     <Compile Include="RestrictionMappers\Attributes\CookieAttribute.cs" />
+    <Compile Include="RestrictionMappers\Attributes\FormContentTypeAttribute.cs" />
     <Compile Include="RestrictionMappers\IgnoreRestrictionMapperTypeAttribute.cs" />
     <Compile Include="RestrictionMappers\Attributes\UrlAuthorityAttribute.cs" />
     <Compile Include="RestrictionMappers\Attributes\UrlFragmentAttribute.cs" />

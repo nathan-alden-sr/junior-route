@@ -154,14 +154,14 @@ namespace Junior.Route.Routing.Responses
 			}
 		}
 
-		public async Task<byte[]> GetContentAsync()
+		public Task<byte[]> GetContentAsync()
 		{
 			if (_binaryContent == null && _stringContent == null)
 			{
-				return new byte[0];
+				return new byte[0].AsCompletedTask();
 			}
 
-			return await Task.Run(() => _binaryContent != null ? _binaryContent() : _contentEncoding.GetBytes(_stringContent()));
+			return Task.Run(() => _binaryContent != null ? _binaryContent() : _contentEncoding.GetBytes(_stringContent()));
 		}
 
 		public Response ContentType(string contentType)

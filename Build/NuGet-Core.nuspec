@@ -12,10 +12,12 @@
 		<dependencies>
 			<group>
 				<dependency id="JuniorCommon" version="3.6.0"/>
+				<dependency id="Microsoft.Tpl.Dataflow" version="4.5.9"/>
 				<dependency id="Newtonsoft.Json" version="5.0.6"/>
 			</group>
 		</dependencies>
 		<references>
+			<reference file="ALinq.dll"/>
 			<reference file="Junior.Route.Common.dll"/>
 			<reference file="Junior.Route.Http.dll"/>
 			<reference file="Junior.Route.Routing.dll"/>

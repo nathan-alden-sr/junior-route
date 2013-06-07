@@ -1006,11 +1006,11 @@ namespace Junior.Route.Routing
 				       : AuthenticateResult.AuthenticationFailed(await _authenticationProvider.GetFailedAuthenticationResponseAsync(request));
 		}
 
-		public async Task<IResponse> ProcessResponseAsync(HttpContextBase context)
+		public Task<IResponse> ProcessResponseAsync(HttpContextBase context)
 		{
 			context.ThrowIfNull("context");
 
-			return await _responseDelegate(context);
+			return _responseDelegate(context);
 		}
 	}
 }

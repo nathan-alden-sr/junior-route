@@ -187,8 +187,9 @@
     <Compile Include="Responses\XmlNodeExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="ALinq">
-      <HintPath>..\ALinq.dll</HintPath>
+    <Reference Include="ALinq, Version=0.1.4906.23567, Culture=neutral, PublicKeyToken=7e22a2e7cfe603b8, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ALinq.0.1.4906.23567\lib\net45\ALinq.dll</HintPath>
     </Reference>
     <Reference Include="Junior.Common, Version=3.6.0.0, Culture=neutral, PublicKeyToken=998713eb9a0cce30, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

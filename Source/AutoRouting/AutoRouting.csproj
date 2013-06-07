@@ -150,9 +150,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="ALinq, Version=0.1.4620.32636, Culture=neutral, PublicKeyToken=39d86c91cf0eeeae, processorArchitecture=MSIL">
+    <Reference Include="ALinq, Version=0.1.4906.23567, Culture=neutral, PublicKeyToken=7e22a2e7cfe603b8, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\ALinq.dll</HintPath>
+      <HintPath>..\packages\ALinq.0.1.4906.23567\lib\net45\ALinq.dll</HintPath>
     </Reference>
     <Reference Include="Junior.Common, Version=3.6.0.0, Culture=neutral, PublicKeyToken=998713eb9a0cce30, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

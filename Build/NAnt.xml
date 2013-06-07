@@ -95,7 +95,6 @@
 					<include name="Junior.Route.*"/>
 				</fileset>
 			</copy>
-			<copy file="${path::combine(SourceDirectory, 'ALinq.dll')}" todir="${NuGetStagingBinDirectory}"/>
 		</if>
 		<if test="${SubProject == 'Assets'}">
 			<property name="AssemblyInfoPath" value="${path::combine(SourceDirectory, 'Assets\Properties\AssemblyInfo.cs')}"/>
@@ -120,7 +119,6 @@
 					<include name="Junior.Route.AspNetIntegration.*"/>
 				</fileset>
 			</copy>
-			<copy file="${path::combine(SourceDirectory, 'ALinq.dll')}" todir="${NuGetStagingBinDirectory}"/>
 		</if>
 		<if test="${SubProject == 'Diagnostics'}">
 			<property name="AssemblyInfoPath" value="${path::combine(SourceDirectory, 'Diagnostics\Properties\AssemblyInfo.cs')}"/>
@@ -153,7 +151,6 @@
 					<include name="Junior.Route.AutoRouting.*"/>
 				</fileset>
 			</copy>
-			<copy file="${path::combine(SourceDirectory, 'ALinq.dll')}" todir="${NuGetStagingBinDirectory}"/>
 		</if>
 		<if test="${SubProject == 'ViewEngines-Razor'}">
 			<property name="AssemblyInfoPath" value="${path::combine(SourceDirectory, 'ViewEngines.Razor\Properties\AssemblyInfo.cs')}"/>

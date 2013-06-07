@@ -32,7 +32,7 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseGenerators
 			[Test]
 			public async void Must_use_response_of_route_with_most_matching_restrictions()
 			{
-				ResponseResult result = await _generator.GetResponse(_context, Enumerable.Empty<RouteMatchResult>());
+				ResponseResult result = await _generator.GetResponseAsync(_context, Enumerable.Empty<RouteMatchResult>());
 
 				Assert.That(result.ResultType, Is.EqualTo(ResponseResultType.ResponseNotGenerated));
 			}
@@ -81,7 +81,7 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseGenerators
 			[Test]
 			public async void Must_use_response_of_route_with_most_matching_restrictions()
 			{
-				ResponseResult result = await _generator.GetResponse(_context, _routeMatchResults);
+				ResponseResult result = await _generator.GetResponseAsync(_context, _routeMatchResults);
 
 				Assert.That(result.CacheKey, Is.EqualTo(_route2.Id.ToString()));
 				Assert.That(result.ResultType, Is.EqualTo(ResponseResultType.ResponseGenerated));
@@ -128,7 +128,7 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseGenerators
 			[Test]
 			public async void Must_generate_multiple_choices_response()
 			{
-				ResponseResult result = await _generator.GetResponse(_context, _routeMatchResults);
+				ResponseResult result = await _generator.GetResponseAsync(_context, _routeMatchResults);
 
 				Assert.That(result.CacheKey, Is.Null);
 				Assert.That(result.ResultType, Is.EqualTo(ResponseResultType.ResponseGenerated));

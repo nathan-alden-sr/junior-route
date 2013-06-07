@@ -21,7 +21,7 @@ namespace Junior.Route.Routing.AntiCsrf.CookieManagers
 			_guidFactory = guidFactory;
 		}
 
-		public Task ConfigureCookie(HttpRequestBase request, HttpResponseBase response)
+		public Task ConfigureCookieAsync(HttpRequestBase request, HttpResponseBase response)
 		{
 			request.ThrowIfNull("request");
 			response.ThrowIfNull("response");
@@ -40,7 +40,7 @@ namespace Junior.Route.Routing.AntiCsrf.CookieManagers
 			return Task.Factory.Empty();
 		}
 
-		public Task<Guid?> GetSessionId(HttpResponseBase response)
+		public Task<Guid?> GetSessionIdAsync(HttpResponseBase response)
 		{
 			response.ThrowIfNull("response");
 

@@ -43,7 +43,7 @@ namespace Junior.Route.UnitTests.AutoRouting.ResponseMappers
 #warning Update to use async Assert.That(..., Throws.InstanceOf<>) when NUnit 2.6.3 becomes available
 			public async void Must_throw_exception()
 			{
-				await _retriever.GetParameterValues(_context, typeof(Endpoint), typeof(Endpoint).GetMethod("Method"));
+				await _retriever.GetParameterValuesAsync(_context, typeof(Endpoint), typeof(Endpoint).GetMethod("Method"));
 			}
 		}
 
@@ -65,7 +65,7 @@ namespace Junior.Route.UnitTests.AutoRouting.ResponseMappers
 				_mapper3.Stub(arg => arg.CanMapTypeAsync(Arg<HttpContextBase>.Is.Anything, Arg<Type>.Is.Anything)).Return(false.AsCompletedTask());
 				_retriever = new ParameterValueRetriever(new[] { _mapper1, _mapper2, _mapper3 });
 				_context = MockRepository.GenerateMock<HttpContextBase>();
-				_values = _retriever.GetParameterValues(_context, typeof(Endpoint), typeof(Endpoint).GetMethod("Method")).Result;
+				_values = _retriever.GetParameterValuesAsync(_context, typeof(Endpoint), typeof(Endpoint).GetMethod("Method")).Result;
 			}
 
 			private IParameterMapper _mapper1;

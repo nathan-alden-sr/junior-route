@@ -6,8 +6,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 
-using ALinq;
-
 using Junior.Common;
 using Junior.Route.Http.RequestHeaders;
 using Junior.Route.Routing.AuthenticationProviders;
@@ -984,9 +982,17 @@ namespace Junior.Route.Routing
 			request.ThrowIfNull("request");
 
 			IRestriction[] restrictions = GetRestrictions().ToArray();
-			IRestriction[] matchingRestrictions = await restrictions.ToAsync().Where(async arg => await arg.MatchesRequestAsync(request)).ToArray();
+			var matchingRestrictions = new List<IRestriction>();
 
-			return restrictions.Length == matchingRestrictions.Length ? MatchResult.RouteMatched(matchingRestrictions, _id.ToString()) : MatchResult.RouteNotMatched(matchingRestrictions, restrictions.Except(matchingRestrictions));
+			foreach (IRestriction restriction in restrictions)
+			{
+				if (await restriction.MatchesRequestAsync(request))
+				{
+					matchingRestrictions.Add(restriction);
+				}
+			}
+
+			return restrictions.Length == matchingRestrictions.Count ? MatchResult.RouteMatched(matchingRestrictions, _id.ToString()) : MatchResult.RouteNotMatched(matchingRestrictions, restrictions.Except(matchingRestrictions));
 		}
 
 		public async Task<AuthenticateResult> AuthenticateAsync(HttpRequestBase request, HttpResponseBase response)

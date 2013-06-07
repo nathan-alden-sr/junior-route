@@ -43,7 +43,7 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.CookieManagers
 			[Test]
 			public void Must_add_cookie_to_response()
 			{
-				_manager.ConfigureCookie(_request, _response);
+				_manager.ConfigureCookieAsync(_request, _response);
 
 				Assert.That(_response.Cookies.AllKeys.Contains("name"));
 			}
@@ -54,7 +54,7 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.CookieManagers
 				Guid sessionId = Guid.Parse("7c5ec674-f3cb-442a-a72e-877bdb66f777");
 
 				_guidFactory.Stub(arg => arg.Random()).Return(sessionId);
-				_manager.ConfigureCookie(_request, _response);
+				_manager.ConfigureCookieAsync(_request, _response);
 
 				Assert.That(_response.Cookies["name"].Value, Is.EqualTo(sessionId.ToString("N")));
 			}
@@ -62,7 +62,7 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.CookieManagers
 			[Test]
 			public void Must_set_http_only_flag()
 			{
-				_manager.ConfigureCookie(_request, _response);
+				_manager.ConfigureCookieAsync(_request, _response);
 
 				Assert.That(_response.Cookies["name"].HttpOnly, Is.True);
 			}
@@ -82,7 +82,7 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.CookieManagers
 				_response = MockRepository.GenerateMock<HttpResponseBase>();
 				_response.Stub(arg => arg.Cookies).Return(new HttpCookieCollection());
 				_cookieManager = new DefaultManager(_configuration, _guidFactory);
-				_cookieManager.ConfigureCookie(_request, _response);
+				_cookieManager.ConfigureCookieAsync(_request, _response);
 				_sessionId = Guid.Parse("6a9ef3cd-eb3f-49b6-90ba-0dfda4cb183d");
 			}
 
@@ -130,7 +130,7 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.CookieManagers
 			[Test]
 			public void Must_return_null()
 			{
-				Assert.That(_cookieManager.GetSessionId(_response), Is.Null);
+				Assert.That(_cookieManager.GetSessionIdAsync(_response), Is.Null);
 			}
 		}
 
@@ -158,7 +158,7 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.CookieManagers
 			[Test]
 			public async void Must_return_session_id_from_response_cookie()
 			{
-				Assert.That(await _cookieManager.GetSessionId(_response), Is.EqualTo(_sessionId));
+				Assert.That(await _cookieManager.GetSessionIdAsync(_response), Is.EqualTo(_sessionId));
 			}
 		}
 	}

@@ -78,7 +78,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 #warning Update to use async Assert.That(..., Throws.Nothing) when NUnit 2.6.3 becomes available
 			public async void Must_not_throw_exception()
 			{
-				await _autoRouteCollection.GenerateRouteCollection();
+				await _autoRouteCollection.GenerateRouteCollectionAsync();
 			}
 		}
 
@@ -112,7 +112,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 					.IdMappers(_idMapper)
 					.ResolvedRelativeUrlMappers(_resolvedRelativeUrlMapper)
 					.Authenticate(_authenticationProvider, _authenticationStrategy);
-				_routes = _autoRouteCollection.GenerateRouteCollection().Result.ToArray();
+				_routes = _autoRouteCollection.GenerateRouteCollectionAsync().Result.ToArray();
 			}
 
 			private AutoRouteCollection _autoRouteCollection;
@@ -194,7 +194,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 #warning Update to use async Assert.That(..., Throws.InstanceOf<>) when NUnit 2.6.3 becomes available
 			public async void Must_throw_exception()
 			{
-				await _autoRouteCollection.GenerateRouteCollection();
+				await _autoRouteCollection.GenerateRouteCollectionAsync();
 			}
 		}
 
@@ -248,7 +248,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 #warning Update to use async Assert.That(..., Throws.Nothing) when NUnit 2.6.3 becomes available
 			public async void Must_throw_exception()
 			{
-				await _autoRouteCollection.GenerateRouteCollection();
+				await _autoRouteCollection.GenerateRouteCollectionAsync();
 			}
 		}
 
@@ -280,7 +280,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 					.IdMappers(_idMapper)
 					.ResolvedRelativeUrlMappers(_resolvedRelativeUrlMapper)
 					.ResponseMapper(_responseMapper);
-				_routes = _autoRouteCollection.GenerateRouteCollection().Result.ToArray();
+				_routes = _autoRouteCollection.GenerateRouteCollectionAsync().Result.ToArray();
 			}
 
 			public class IncludedEndpoint
@@ -358,7 +358,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 					.IdMappers(_idMapper)
 					.ResolvedRelativeUrlMappers(_resolvedRelativeUrlMapper)
 					.ResponseMapper(_responseMapper);
-				_routes = _autoRouteCollection.GenerateRouteCollection().Result.ToArray();
+				_routes = _autoRouteCollection.GenerateRouteCollectionAsync().Result.ToArray();
 			}
 
 			public class Endpoint
@@ -429,7 +429,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 					.ResolvedRelativeUrlUsingAttribute()
 					.ResponseMapper(_responseMapper)
 					.RestrictionContainer(new DefaultRestrictionContainer(_httpRuntime));
-				_routes = _autoRouteCollection.GenerateRouteCollection().Result.ToArray();
+				_routes = _autoRouteCollection.GenerateRouteCollectionAsync().Result.ToArray();
 			}
 
 			private AutoRouteCollection _autoRouteCollection;
@@ -488,7 +488,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 					.RestrictRelativePathsToRelativeClassNamespaceAndClassName("")
 					.ResponseMapper(_responseMapper)
 					.RestrictionContainer(new DefaultRestrictionContainer(_httpRuntime));
-				_routes = _autoRouteCollection.GenerateRouteCollection().Result.ToArray();
+				_routes = _autoRouteCollection.GenerateRouteCollectionAsync().Result.ToArray();
 			}
 
 			private AutoRouteCollection _autoRouteCollection;
@@ -554,7 +554,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 					.IdMappers(_idMapper1)
 					.ResolvedRelativeUrlMappers(_resolvedRelativeUrlMapper)
 					.ResponseMapper(_responseMapper);
-				_routes = _autoRouteCollection.GenerateRouteCollection().Result.ToArray();
+				_routes = _autoRouteCollection.GenerateRouteCollectionAsync().Result.ToArray();
 			}
 
 			private AutoRouteCollection _autoRouteCollection;
@@ -617,7 +617,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 					.IdMappers(_idMapper)
 					.ResolvedRelativeUrlMappers(_resolvedRelativeUrlMapper)
 					.ResponseMapper(_responseMapper);
-				_routes = _autoRouteCollection.GenerateRouteCollection().Result.ToArray();
+				_routes = _autoRouteCollection.GenerateRouteCollectionAsync().Result.ToArray();
 			}
 
 			private AutoRouteCollection _autoRouteCollection;
@@ -680,7 +680,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 					.IdMappers(_idMapper)
 					.ResolvedRelativeUrlMappers(_resolvedRelativeUrlMapper1)
 					.ResponseMapper(_responseMapper);
-				_routes = _autoRouteCollection.GenerateRouteCollection().Result.ToArray();
+				_routes = _autoRouteCollection.GenerateRouteCollectionAsync().Result.ToArray();
 			}
 
 			private AutoRouteCollection _autoRouteCollection;
@@ -760,7 +760,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 			[Test]
 			public async void Must_map_using_mapper()
 			{
-				await _autoRouteCollection.GenerateRouteCollection();
+				await _autoRouteCollection.GenerateRouteCollectionAsync();
 
 				_responseMapper.AssertWasCalled(arg => arg.MapAsync(Arg<Func<IContainer>>.Is.Anything, Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything, Arg<Route.Routing.Route>.Is.Anything));
 			}
@@ -830,7 +830,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 				var container = MockRepository.GenerateMock<IContainer>();
 
 				_autoRouteCollection.RestrictionContainer(container);
-				_routes = (await _autoRouteCollection.GenerateRouteCollection()).ToArray();
+				_routes = (await _autoRouteCollection.GenerateRouteCollectionAsync()).ToArray();
 
 				MethodRestriction[] methodRestrictions = _routes[0].GetRestrictions<MethodRestriction>().ToArray();
 
@@ -843,7 +843,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 				var container = MockRepository.GenerateMock<IContainer>();
 
 				_autoRouteCollection.RestrictionContainer(container);
-				await _autoRouteCollection.GenerateRouteCollection();
+				await _autoRouteCollection.GenerateRouteCollectionAsync();
 
 				_restrictionMapper1.AssertWasCalled(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything, Arg<Route.Routing.Route>.Is.Anything, Arg<IContainer>.Is.Anything));
 				_restrictionMapper1.AssertWasCalled(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything, Arg<Route.Routing.Route>.Is.Anything, Arg<IContainer>.Is.Anything));
@@ -854,7 +854,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 #warning Update to use async Assert.That(..., Throws.Nothing) when NUnit 2.6.3 becomes available
 			public async void Must_require_restriction_container()
 			{
-				await _autoRouteCollection.GenerateRouteCollection();
+				await _autoRouteCollection.GenerateRouteCollectionAsync();
 			}
 		}
 	}

@@ -5,6 +5,6 @@ namespace Junior.Route.AspNetIntegration.RequestFilters
 {
 	public interface IRequestFilter
 	{
-		Task<FilterResult> Filter(HttpContextBase context);
+		Task<FilterResult> FilterAsync(HttpContextBase context);
 	}
 }

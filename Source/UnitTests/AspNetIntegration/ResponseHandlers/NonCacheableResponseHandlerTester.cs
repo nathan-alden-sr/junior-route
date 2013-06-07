@@ -41,7 +41,7 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseHandlers
 				_response.Stub(arg => arg.Headers).Return(Enumerable.Empty<Header>());
 				_response.Stub(arg => arg.StatusCode).Return(new StatusAndSubStatusCode(HttpStatusCode.OK));
 				_cache = MockRepository.GenerateMock<ICache>();
-				_result = _handler.HandleResponse(_httpContext, _response, _cache, "key").Result;
+				_result = _handler.HandleResponseAsync(_httpContext, _response, _cache, "key").Result;
 			}
 
 			private NonCacheableResponseHandler _handler;

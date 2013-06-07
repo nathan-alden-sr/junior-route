@@ -26,8 +26,6 @@ using Junior.Route.Routing.AuthenticationProviders;
 
 using DelegateFilter = Junior.Route.AutoRouting.ClassFilters.DelegateFilter;
 
-using ALinq;
-
 namespace Junior.Route.AutoRouting
 {
 	public class AutoRouteCollection
@@ -122,7 +120,7 @@ namespace Junior.Route.AutoRouting
 			return this;
 		}
 
-		public async Task<IRouteCollection> GenerateRouteCollection()
+		public async Task<IRouteCollection> GenerateRouteCollectionAsync()
 		{
 			if (!_assemblies.Any())
 			{
@@ -146,56 +144,33 @@ namespace Junior.Route.AutoRouting
 			}
 
 			var routes = new RouteCollection(_duplicateRouteNamesAllowed);
-			Type[] matchingTypes = await _assemblies
-				.SelectMany(arg => arg.GetTypes())
-				.ToAsync()
-				.Where(async type => type.Namespace != null && (type.IsPublic || type.IsNestedPublic) && !type.IsAbstract && !type.IsValueType && await _classFilters.ToAsync().All(async filter => await filter.MatchesAsync(type)))
-				.ToArray();
+			IEnumerable<Type> matchingTypes = await GetMatchingTypesAsync();
 
 			foreach (Type matchingType in matchingTypes)
 			{
-				MethodInfo[] matchingMethods = await matchingType
-					.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)
-					.ToAsync()
-					.Where(async method => !method.IsSpecialName && await _methodFilters.ToAsync().All(async filter => await filter.MatchesAsync(method)))
-					.ToArray();
+				IEnumerable<MethodInfo> matchingMethods = await GetMatchingMethodsAsync(matchingType);
 
 				foreach (MethodInfo matchingMethod in matchingMethods)
 				{
-					Type closureMatchingType = matchingType;
-					MethodInfo closureMatchingMethod = matchingMethod;
-					string name =
-						(await _nameMappers
-							       .Select(async arg => new { Mapper = arg, Result = await arg.MapAsync(closureMatchingType, closureMatchingMethod) })
-							       .ToAsync()
-							       .FirstOrDefault(arg => (arg.Result.ResultType == NameResultType.NameMapped).AsCompletedTask()))
-							.IfNotNull(arg => arg.Result.Name);
+					string name = await GetNameAsync(matchingType, matchingMethod);
 
 					if (name == null)
 					{
 						throw new ApplicationException(String.Format("Unable to determine a route name for '{0}.{1}'.", matchingType.FullName, matchingMethod.Name));
 					}
 
-					Guid? id =
-						(await _idMappers
-							       .Select(async arg => new { Mapper = arg, Result = await arg.MapAsync(closureMatchingType, closureMatchingMethod) })
-							       .ToAsync()
-							       .FirstOrDefault(arg => (arg.Result.ResultType == IdResultType.IdMapped).AsCompletedTask()))
-							.IfNotNull(arg => arg.Result.Id);
+					Guid? id = await GetIdAsync(matchingType, matchingMethod);
 
 					if (id == null)
 					{
 						throw new ApplicationException(String.Format("Unable to determine a route ID for '{0}.{1}'.", matchingType.FullName, matchingMethod.Name));
 					}
 
-					IEnumerable<Type> ignoredResolvedRelativeUrlMapperTypes = matchingMethod.GetCustomAttributes<IgnoreResolvedRelativeUrlMapperTypeAttribute>().SelectMany(arg => arg.IgnoredTypes);
-					string resolvedRelativeUrl =
-						(await _resolvedRelativeUrlMappers
-							       .Where(arg => !ignoredResolvedRelativeUrlMapperTypes.Contains(arg.GetType()))
-							       .Select(async arg => new { Mapper = arg, Result = await arg.MapAsync(closureMatchingType, closureMatchingMethod) })
-							       .ToAsync()
-							       .FirstOrDefault(arg => (arg.Result.ResultType == ResolvedRelativeUrlResultType.ResolvedRelativeUrlMapped).AsCompletedTask()))
-							.IfNotNull(arg => arg.Result.ResolvedRelativeUrl);
+					Type[] ignoredResolvedRelativeUrlMapperTypes = matchingMethod
+						.GetCustomAttributes<IgnoreResolvedRelativeUrlMapperTypeAttribute>()
+						.SelectMany(arg => arg.IgnoredTypes)
+						.ToArray();
+					string resolvedRelativeUrl = await GetResolvedRelativeUrlAsync(ignoredResolvedRelativeUrlMapperTypes, matchingType, matchingMethod);
 
 					if (resolvedRelativeUrl == null)
 					{
@@ -203,7 +178,10 @@ namespace Junior.Route.AutoRouting
 					}
 
 					var route = new Routing.Route(name, id.Value, resolvedRelativeUrl);
-					IEnumerable<Type> ignoredRestrictionMapperTypes = matchingMethod.GetCustomAttributes<IgnoreRestrictionMapperTypeAttribute>().SelectMany(arg => arg.IgnoredTypes);
+					Type[] ignoredRestrictionMapperTypes = matchingMethod
+						.GetCustomAttributes<IgnoreRestrictionMapperTypeAttribute>()
+						.SelectMany(arg => arg.IgnoredTypes)
+						.ToArray();
 
 					foreach (IRestrictionMapper restrictionMapper in _restrictionMappers.Where(arg => !ignoredRestrictionMapperTypes.Contains(arg.GetType())))
 					{
@@ -212,9 +190,22 @@ namespace Junior.Route.AutoRouting
 
 					await _responseMapper.MapAsync(() => _endpointContainer, matchingType, matchingMethod, route);
 
-					if (_authenticationProvider != null && await _authenticationStrategies.ToAsync().Any(async arg => await arg.MustAuthenticateAsync(closureMatchingType, closureMatchingMethod)))
+					if (_authenticationProvider != null)
 					{
-						route.AuthenticationProvider(_authenticationProvider);
+						bool result = false;
+
+						foreach (IAuthenticationStrategy authenticationStrategy in _authenticationStrategies)
+						{
+							if (await authenticationStrategy.MustAuthenticateAsync(matchingType, matchingMethod))
+							{
+								result = true;
+								break;
+							}
+						}
+						if (result)
+						{
+							route.AuthenticationProvider(_authenticationProvider);
+						}
 					}
 
 					routes.Add(route);
@@ -226,6 +217,101 @@ namespace Junior.Route.AutoRouting
 			}
 
 			return routes;
+		}
+
+		private async Task<string> GetResolvedRelativeUrlAsync(IEnumerable<Type> ignoredResolvedRelativeUrlMapperTypes, Type matchingType, MethodInfo matchingMethod)
+		{
+			foreach (IResolvedRelativeUrlMapper resolvedRelativeUrlMapper in _resolvedRelativeUrlMappers.Where(arg => !ignoredResolvedRelativeUrlMapperTypes.Contains(arg.GetType())))
+			{
+				ResolvedRelativeUrlResult result = await resolvedRelativeUrlMapper.MapAsync(matchingType, matchingMethod);
+
+				if (result.ResultType == ResolvedRelativeUrlResultType.ResolvedRelativeUrlMapped)
+				{
+					return result.ResolvedRelativeUrl;
+				}
+			}
+
+			return null;
+		}
+
+		private async Task<IEnumerable<Type>> GetMatchingTypesAsync()
+		{
+			var matchingTypes = new List<Type>();
+
+			foreach (Type type in _assemblies.SelectMany(arg => arg.GetTypes()).Where(arg => arg.Namespace != null && (arg.IsPublic || arg.IsNestedPublic) && !arg.IsAbstract && !arg.IsValueType))
+			{
+				bool matches = true;
+
+				foreach (IClassFilter classFilter in _classFilters)
+				{
+					if (!await classFilter.MatchesAsync(type))
+					{
+						matches = false;
+						break;
+					}
+				}
+				if (matches)
+				{
+					matchingTypes.Add(type);
+				}
+			}
+
+			return matchingTypes;
+		}
+
+		private async Task<IEnumerable<MethodInfo>> GetMatchingMethodsAsync(IReflect matchingType)
+		{
+			var matchingMethods = new List<MethodInfo>();
+
+			foreach (MethodInfo method in matchingType.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).Where(arg => !arg.IsSpecialName))
+			{
+				bool matches = true;
+
+				foreach (IMethodFilter methodFilter in _methodFilters)
+				{
+					if (!await methodFilter.MatchesAsync(method))
+					{
+						matches = false;
+						break;
+					}
+				}
+				if (matches)
+				{
+					matchingMethods.Add(method);
+				}
+			}
+
+			return matchingMethods;
+		}
+
+		private async Task<string> GetNameAsync(Type matchingType, MethodInfo matchingMethod)
+		{
+			foreach (INameMapper nameMapper in _nameMappers)
+			{
+				NameResult result = (await nameMapper.MapAsync(matchingType, matchingMethod));
+
+				if (result.ResultType == NameResultType.NameMapped)
+				{
+					return result.Name;
+				}
+			}
+
+			return null;
+		}
+
+		private async Task<Guid?> GetIdAsync(Type matchingType, MethodInfo matchingMethod)
+		{
+			foreach (IIdMapper idMapper in _idMappers)
+			{
+				IdResult result = await idMapper.MapAsync(matchingType, matchingMethod);
+
+				if (result.ResultType == IdResultType.IdMapped)
+				{
+					return result.Id;
+				}
+			}
+
+			return null;
 		}
 
 		private void ThrowIfNoBundleDependencyContainer()

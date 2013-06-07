@@ -78,7 +78,7 @@ namespace Junior.Route.AutoRouting.ResponseMappers
 							}
 
 							var parameterValueRetriever = new ParameterValueRetriever(_parameterMappers);
-							object[] parameterValues = (await parameterValueRetriever.GetParameterValues(context, type, method)).ToArray();
+							object[] parameterValues = (await parameterValueRetriever.GetParameterValuesAsync(context, type, method)).ToArray();
 
 							return @delegate(instance, parameterValues);
 						},
@@ -125,7 +125,7 @@ namespace Junior.Route.AutoRouting.ResponseMappers
 							}
 
 							var parameterValueRetriever = new ParameterValueRetriever(_parameterMappers);
-							object[] parameterValues = (await parameterValueRetriever.GetParameterValues(context, type, method)).ToArray();
+							object[] parameterValues = (await parameterValueRetriever.GetParameterValuesAsync(context, type, method)).ToArray();
 
 							return await @delegate(instance, parameterValues);
 						},
@@ -164,7 +164,7 @@ namespace Junior.Route.AutoRouting.ResponseMappers
 							}
 
 							var parameterValueRetriever = new ParameterValueRetriever(_parameterMappers);
-							object[] parameterValues = (await parameterValueRetriever.GetParameterValues(context, type, method)).ToArray();
+							object[] parameterValues = (await parameterValueRetriever.GetParameterValuesAsync(context, type, method)).ToArray();
 
 							@delegate(instance, parameterValues);
 						});

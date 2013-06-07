@@ -9,16 +9,14 @@ namespace Junior.Route.AspNetIntegration.ResponseHandlers
 {
 	public class NonCacheableResponseHandler : IResponseHandler
 	{
-		public Task<ResponseHandlerResult> HandleResponse(HttpContextBase context, IResponse suggestedResponse, ICache cache, string cacheKey)
+		public async Task<ResponseHandlerResult> HandleResponseAsync(HttpContextBase context, IResponse suggestedResponse, ICache cache, string cacheKey)
 		{
 			context.ThrowIfNull("context");
 			suggestedResponse.ThrowIfNull("suggestedResponse");
 
-			var cacheResponse = new CacheResponse(suggestedResponse);
+			await new CacheResponse(suggestedResponse).WriteResponseAsync(context.Response);
 
-			cacheResponse.WriteResponse(context.Response);
-
-			return ResponseHandlerResult.ResponseWritten().AsCompletedTask();
+			return ResponseHandlerResult.ResponseWritten();
 		}
 	}
 }

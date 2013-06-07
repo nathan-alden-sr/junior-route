@@ -56,7 +56,7 @@ namespace Junior.Route.UnitTests.AutoRouting.AntiCsrf.HtmlGenerators
 				_configuration = MockRepository.GenerateMock<IAntiCsrfConfiguration>();
 				_configuration.Stub(arg => arg.Enabled).Return(true);
 				_cookieManager = MockRepository.GenerateMock<IAntiCsrfCookieManager>();
-				_cookieManager.Stub(arg => arg.GetSessionId(Arg<HttpResponseBase>.Is.Anything)).Return(Task<Guid?>.Factory.Empty());
+				_cookieManager.Stub(arg => arg.GetSessionIdAsync(Arg<HttpResponseBase>.Is.Anything)).Return(Task<Guid?>.Factory.Empty());
 				_nonceRepository = MockRepository.GenerateMock<IAntiCsrfNonceRepository>();
 				_guidFactory = MockRepository.GenerateMock<IGuidFactory>();
 				_systemClock = MockRepository.GenerateMock<ISystemClock>();
@@ -91,7 +91,7 @@ namespace Junior.Route.UnitTests.AutoRouting.AntiCsrf.HtmlGenerators
 				_configuration.Stub(arg => arg.FormFieldName).Return("name");
 				_cookieManager = MockRepository.GenerateMock<IAntiCsrfCookieManager>();
 				_sessionId = Guid.Parse("3ff1a1d6-1604-462e-b347-1314e962ac29");
-				_cookieManager.Stub(arg => arg.GetSessionId(Arg<HttpResponseBase>.Is.Anything)).Return(((Guid?)_sessionId).AsCompletedTask());
+				_cookieManager.Stub(arg => arg.GetSessionIdAsync(Arg<HttpResponseBase>.Is.Anything)).Return(((Guid?)_sessionId).AsCompletedTask());
 				_nonceRepository = MockRepository.GenerateMock<IAntiCsrfNonceRepository>();
 				_nonceRepository.Stub(arg => arg.AddAsync(Arg<Guid>.Is.Anything, Arg<Guid>.Is.Anything, Arg<DateTime>.Is.Anything, Arg<DateTime>.Is.Anything)).Return(Task.Factory.Empty());
 				_guidFactory = MockRepository.GenerateMock<IGuidFactory>();

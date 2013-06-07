@@ -49,7 +49,7 @@ namespace Junior.Route.AspNetIntegration.ResponseHandlers
 		{
 		}
 
-		public Task<ResponseHandlerResult> HandleResponse(HttpContextBase context, IResponse suggestedResponse, ICache cache, string cacheKey)
+		public async Task<ResponseHandlerResult> HandleResponseAsync(HttpContextBase context, IResponse suggestedResponse, ICache cache, string cacheKey)
 		{
 			context.ThrowIfNull("context");
 			suggestedResponse.ThrowIfNull("suggestedResponse");
@@ -58,14 +58,14 @@ namespace Junior.Route.AspNetIntegration.ResponseHandlers
 
 			if (!_statusCodes.Contains(statusCode))
 			{
-				return ResponseHandlerResult.ResponseNotHandled().AsCompletedTask();
+				return ResponseHandlerResult.ResponseNotHandled();
 			}
 
 			AcceptHeader[] acceptHeaders = AcceptHeader.ParseMany(context.Request.Headers["Accept"]).ToArray();
 
 			if (acceptHeaders.Any() && !acceptHeaders.Any(arg => arg.MediaTypeMatches("text/plain")))
 			{
-				return ResponseHandlerResult.ResponseNotHandled().AsCompletedTask();
+				return ResponseHandlerResult.ResponseNotHandled();
 			}
 
 			string content = String.Format(
@@ -79,11 +79,11 @@ namespace Junior.Route.AspNetIntegration.ResponseHandlers
 
 			response.CachePolicy.NoClientCaching();
 
-			new CacheResponse(response).WriteResponse(context.Response);
+			await new CacheResponse(response).WriteResponseAsync(context.Response);
 
 			context.Response.TrySkipIisCustomErrors = true;
 
-			return ResponseHandlerResult.ResponseWritten().AsCompletedTask();
+			return ResponseHandlerResult.ResponseWritten();
 		}
 	}
 }

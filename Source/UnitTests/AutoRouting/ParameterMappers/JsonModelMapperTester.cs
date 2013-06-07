@@ -170,7 +170,7 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers
 				_context = MockRepository.GenerateMock<HttpContextBase>();
 				_context.Stub(arg => arg.Request).Return(_request);
 				_mapper = new JsonModelMapper(type => _executed = true);
-				_mapper.CanMapTypeAsync(_context, typeof(object));
+				_mapper.CanMapTypeAsync(_context, typeof(object)).Wait();
 			}
 
 			private bool _executed;

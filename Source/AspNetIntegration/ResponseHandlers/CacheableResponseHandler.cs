@@ -32,7 +32,7 @@ namespace Junior.Route.AspNetIntegration.ResponseHandlers
 			_systemClock = systemClock;
 		}
 
-		public async Task<ResponseHandlerResult> HandleResponse(HttpContextBase context, IResponse suggestedResponse, ICache cache, string cacheKey)
+		public async Task<ResponseHandlerResult> HandleResponseAsync(HttpContextBase context, IResponse suggestedResponse, ICache cache, string cacheKey)
 		{
 			context.ThrowIfNull("context");
 			suggestedResponse.ThrowIfNull("suggestedResponse");
@@ -57,7 +57,7 @@ namespace Junior.Route.AspNetIntegration.ResponseHandlers
 				if (ifMatchHeaders.All(arg => arg.EntityTag.Value != responseETag) ||
 				    (responseETag == null && ifMatchHeaders.Any(arg => arg.EntityTag.Value == "*")))
 				{
-					return WriteResponse(context.Response, new Response().PreconditionFailed());
+					return await WriteResponseAsync(context.Response, new Response().PreconditionFailed());
 				}
 			}
 
@@ -86,10 +86,10 @@ namespace Junior.Route.AspNetIntegration.ResponseHandlers
 							suggestedResponse.CachePolicy.Apply(context.Response.Cache);
 						}
 
-						return WriteResponse(context.Response, new Response().NotModified());
+						return await WriteResponseAsync(context.Response, new Response().NotModified());
 					}
 
-					return WriteResponse(context.Response, new Response().PreconditionFailed());
+					return await WriteResponseAsync(context.Response, new Response().PreconditionFailed());
 				}
 			}
 
@@ -106,7 +106,7 @@ namespace Junior.Route.AspNetIntegration.ResponseHandlers
 				// Return 304 if the response was cached before the HTTP-date
 				if (cacheItem != null && cacheItem.CachedUtcTimestamp < ifModifiedSinceHeader.HttpDate)
 				{
-					return WriteResponse(context.Response, new Response().NotModified());
+					return await WriteResponseAsync(context.Response, new Response().NotModified());
 				}
 			}
 
@@ -123,7 +123,7 @@ namespace Junior.Route.AspNetIntegration.ResponseHandlers
 				// Return 412 if the previous response was removed from the cache or was cached again at a later time
 				if (cacheItem == null || cacheItem.CachedUtcTimestamp >= ifUnmodifiedSinceHeader.HttpDate)
 				{
-					return WriteResponse(context.Response, new Response().PreconditionFailed());
+					return await WriteResponseAsync(context.Response, new Response().PreconditionFailed());
 				}
 			}
 
@@ -134,7 +134,7 @@ namespace Junior.Route.AspNetIntegration.ResponseHandlers
 			// Do not cache the response when the response sends a non-cacheable status code, or when an Authorization header is present
 			if (!_cacheableStatusCodes.Contains(suggestedResponse.StatusCode) || context.Request.Headers["Authorization"] != null)
 			{
-				return WriteResponse(context.Response, suggestedResponse);
+				return await WriteResponseAsync(context.Response, suggestedResponse);
 			}
 
 			CacheControlHeader cacheControlHeader = CacheControlHeader.Parse(context.Request.Headers["Cache-Control"]);
@@ -142,7 +142,7 @@ namespace Junior.Route.AspNetIntegration.ResponseHandlers
 			// Do not cache the response if a "Cache-Control: no-cache" or "Cache-Control: no-store" header is present
 			if (cacheControlHeader != null && (cacheControlHeader.NoCache || cacheControlHeader.NoStore))
 			{
-				return WriteResponse(context.Response, suggestedResponse);
+				return await WriteResponseAsync(context.Response, suggestedResponse);
 			}
 
 			IEnumerable<PragmaHeader> pragmaHeader = PragmaHeader.ParseMany(context.Request.Headers["Pragma"]);
@@ -150,7 +150,7 @@ namespace Junior.Route.AspNetIntegration.ResponseHandlers
 			// Do not cache the response if a "Pragma: no-cache" header is present
 			if (pragmaHeader.Any(arg => String.Equals(arg.Name, "no-cache", StringComparison.OrdinalIgnoreCase)))
 			{
-				return WriteResponse(context.Response, suggestedResponse);
+				return await WriteResponseAsync(context.Response, suggestedResponse);
 			}
 
 			#endregion
@@ -158,7 +158,7 @@ namespace Junior.Route.AspNetIntegration.ResponseHandlers
 			// Return 504 if the response has not been cached but the client is requesting to receive only a cached response
 			if (cacheItem == null && cacheControlHeader != null && cacheControlHeader.OnlyIfCached)
 			{
-				return WriteResponse(context.Response, new Response().GatewayTimeout());
+				return await WriteResponseAsync(context.Response, new Response().GatewayTimeout());
 			}
 
 			if (cacheItem != null)
@@ -174,7 +174,7 @@ namespace Junior.Route.AspNetIntegration.ResponseHandlers
 				    _systemClock.UtcDateTime - cacheItem.ExpiresUtcTimestamp.Value <= cacheControlHeader.MaxStale ||
 				    cacheItem.ExpiresUtcTimestamp.Value - _systemClock.UtcDateTime < cacheControlHeader.MinFresh)
 				{
-					return WriteResponseInCache(context.Response, cacheItem);
+					return await WriteResponseInCacheAsync(context.Response, cacheItem);
 				}
 			}
 
@@ -190,24 +190,24 @@ namespace Junior.Route.AspNetIntegration.ResponseHandlers
 				await cache.AddAsync(cacheKey, cacheResponse, expirationUtcTimestamp);
 			}
 
-			return WriteResponse(context.Response, cacheResponse);
+			return await WriteResponseAsync(context.Response, cacheResponse);
 		}
 
-		private static ResponseHandlerResult WriteResponse(HttpResponseBase httpResponse, IResponse response)
+		private static Task<ResponseHandlerResult> WriteResponseAsync(HttpResponseBase httpResponse, IResponse response)
 		{
-			return WriteResponse(httpResponse, new CacheResponse(response));
+			return WriteResponseAsync(httpResponse, new CacheResponse(response));
 		}
 
-		private static ResponseHandlerResult WriteResponse(HttpResponseBase httpResponse, CacheResponse cacheResponse)
+		private static async Task<ResponseHandlerResult> WriteResponseAsync(HttpResponseBase httpResponse, CacheResponse cacheResponse)
 		{
-			cacheResponse.WriteResponse(httpResponse);
+			await cacheResponse.WriteResponseAsync(httpResponse);
 
 			return ResponseHandlerResult.ResponseWritten();
 		}
 
-		private static ResponseHandlerResult WriteResponseInCache(HttpResponseBase httpResponse, CacheItem cacheItem)
+		private static async Task<ResponseHandlerResult> WriteResponseInCacheAsync(HttpResponseBase httpResponse, CacheItem cacheItem)
 		{
-			cacheItem.Response.WriteResponse(httpResponse);
+			await cacheItem.Response.WriteResponseAsync(httpResponse);
 
 			httpResponse.Headers.Set("Last-Modified", cacheItem.CachedUtcTimestamp.ToHttpDate());
 

@@ -14,7 +14,7 @@ namespace Junior.Route.AspNetIntegration.ResponseGenerators
 {
 	public class UnmatchedRestrictionsGenerator : IResponseGenerator
 	{
-		public Task<ResponseResult> GetResponse(HttpContextBase context, IEnumerable<RouteMatchResult> routeMatchResults)
+		public Task<ResponseResult> GetResponseAsync(HttpContextBase context, IEnumerable<RouteMatchResult> routeMatchResults)
 		{
 			context.ThrowIfNull("context");
 			routeMatchResults.ThrowIfNull("routeMatchResults");

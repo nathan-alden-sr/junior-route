@@ -8,6 +8,6 @@ namespace Junior.Route.AspNetIntegration.ResponseHandlers
 {
 	public interface IResponseHandler
 	{
-		Task<ResponseHandlerResult> HandleResponse(HttpContextBase context, IResponse suggestedResponse, ICache cache, string cacheKey);
+		Task<ResponseHandlerResult> HandleResponseAsync(HttpContextBase context, IResponse suggestedResponse, ICache cache, string cacheKey);
 	}
 }

@@ -121,7 +121,7 @@ namespace Junior.Route.Routing.Caching
 			}
 		}
 
-		public async Task WriteResponse(HttpResponseBase response)
+		public async Task WriteResponseAsync(HttpResponseBase response)
 		{
 			response.ThrowIfNull("response");
 

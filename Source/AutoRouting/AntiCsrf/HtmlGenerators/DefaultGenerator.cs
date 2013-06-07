@@ -40,7 +40,7 @@ namespace Junior.Route.AutoRouting.AntiCsrf.HtmlGenerators
 				return "";
 			}
 
-			Guid? sessionId = await _cookieManager.GetSessionId(response);
+			Guid? sessionId = await _cookieManager.GetSessionIdAsync(response);
 
 			if (sessionId == null)
 			{

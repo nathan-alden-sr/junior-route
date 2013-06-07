@@ -8,8 +8,6 @@ using System.Web;
 using Junior.Common;
 using Junior.Route.AutoRouting.ParameterMappers;
 
-using ALinq;
-
 namespace Junior.Route.AutoRouting.ResponseMappers
 {
 	public class ParameterValueRetriever
@@ -28,7 +26,7 @@ namespace Junior.Route.AutoRouting.ResponseMappers
 			}
 		}
 
-		public async Task<IEnumerable<object>> GetParameterValues(HttpContextBase context, Type type, MethodInfo method)
+		public async Task<IEnumerable<object>> GetParameterValuesAsync(HttpContextBase context, Type type, MethodInfo method)
 		{
 			context.ThrowIfNull("context");
 			type.ThrowIfNull("type");
@@ -47,13 +45,12 @@ namespace Junior.Route.AutoRouting.ResponseMappers
 				{
 					bool mapped = false;
 
-					IParameterMapper[] parameterMappers = await _parameterMappers
-						.ToAsync()
-						.Where(async arg => await arg.CanMapTypeAsync(context, parameterType))
-						.ToArray();
-
-					foreach (IParameterMapper parameterMapper in parameterMappers)
+					foreach (IParameterMapper parameterMapper in _parameterMappers)
 					{
+						if (!await parameterMapper.CanMapTypeAsync(context, parameterType))
+						{
+							continue;
+						}
 						MapResult mapResult = await parameterMapper.MapAsync(context, type, method, parameterInfo);
 
 						if (mapResult.ResultType == MapResultType.ValueNotMapped)

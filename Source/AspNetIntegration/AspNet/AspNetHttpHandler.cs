@@ -5,8 +5,6 @@ using System.Net.Mime;
 using System.Threading.Tasks;
 using System.Web;
 
-using ALinq;
-
 using Junior.Common;
 using Junior.Route.AspNetIntegration.ResponseGenerators;
 using Junior.Route.AspNetIntegration.ResponseHandlers;
@@ -101,7 +99,7 @@ namespace Junior.Route.AspNetIntegration.AspNet
 
 							if (responseResult.ResultType == ResponseResultType.ResponseGenerated)
 							{
-								await ProcessResponse(context, responseResult.Response, null);
+								await ProcessResponseAsync(context, responseResult.Response, null);
 								return;
 							}
 						}
@@ -111,11 +109,11 @@ namespace Junior.Route.AspNetIntegration.AspNet
 					}
 				}
 
-				await _antiCsrfCookieManager.ConfigureCookie(request, response);
+				await _antiCsrfCookieManager.ConfigureCookieAsync(request, response);
 			}
 			{
-				RouteMatchResult[] routeMatchResults = await _routes.Select(async arg => new RouteMatchResult(arg, await arg.MatchesRequestAsync(request))).ToAsync().ToArray();
-				IEnumerable<Task<ResponseGenerators.ResponseResult>> responseResultTasks = _responseGenerators.Select(arg => arg.GetResponse(new HttpContextWrapper(context), routeMatchResults));
+				IEnumerable<RouteMatchResult> routeMatchResults = await GetRouteMatchResultsAsync(request);
+				IEnumerable<Task<ResponseGenerators.ResponseResult>> responseResultTasks = _responseGenerators.Select(arg => arg.GetResponseAsync(new HttpContextWrapper(context), routeMatchResults));
 
 				foreach (Task<ResponseGenerators.ResponseResult> responseResultTask in responseResultTasks)
 				{
@@ -123,18 +121,35 @@ namespace Junior.Route.AspNetIntegration.AspNet
 
 					if (responseResult.ResultType == ResponseGenerators.ResponseResultType.ResponseGenerated)
 					{
-						await ProcessResponse(context, await responseResult.Response, responseResult.CacheKey);
+						await ProcessResponseAsync(context, await responseResult.Response, responseResult.CacheKey);
 						return;
 					}
 				}
 			}
 		}
 
-		private async Task ProcessResponse(HttpContext context, IResponse response, string cacheKey)
+		private async Task<IEnumerable<RouteMatchResult>> GetRouteMatchResultsAsync(HttpRequestBase request)
+		{
+			var routeMatchResults = new List<RouteMatchResult>();
+
+			foreach (Routing.Route route in _routes)
+			{
+				MatchResult result = await route.MatchesRequestAsync(request);
+
+				if (result.ResultType == MatchResultType.RouteMatched)
+				{
+					routeMatchResults.Add(new RouteMatchResult(route, result));
+				}
+			}
+
+			return routeMatchResults;
+		}
+
+		private async Task ProcessResponseAsync(HttpContext context, IResponse response, string cacheKey)
 		{
 			foreach (IResponseHandler handler in _responseHandlers)
 			{
-				ResponseHandlerResult handlerResult = await handler.HandleResponse(new HttpContextWrapper(context), response, _cache, cacheKey);
+				ResponseHandlerResult handlerResult = await handler.HandleResponseAsync(new HttpContextWrapper(context), response, _cache, cacheKey);
 
 				switch (handlerResult.ResultType)
 				{

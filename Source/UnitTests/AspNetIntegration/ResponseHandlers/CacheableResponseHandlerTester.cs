@@ -65,7 +65,7 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseHandlers
 				_cachePolicy.Stub(arg => arg.ServerCacheExpirationUtcTimestamp).Return(DateTime.UtcNow);
 				_response.CachePolicy.Stub(arg => arg.HasPolicy).Return(true);
 
-				await _handler.HandleResponse(_httpContext, _response, _cache, "key");
+				await _handler.HandleResponseAsync(_httpContext, _response, _cache, "key");
 
 				_cache.AssertWasCalled(arg => arg.AddAsync(Arg<string>.Is.Equal("key"), Arg<CacheResponse>.Is.Anything, Arg<DateTime>.Is.Anything));
 			}
@@ -75,7 +75,7 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseHandlers
 			{
 				_response.CachePolicy.Stub(arg => arg.HasPolicy).Return(true);
 
-				ResponseHandlerResult result = await _handler.HandleResponse(_httpContext, _response, null, null);
+				ResponseHandlerResult result = await _handler.HandleResponseAsync(_httpContext, _response, null, null);
 
 				Assert.That(result.ResultType, Is.EqualTo(ResponseHandlerResultType.ResponseNotHandled));
 			}
@@ -85,7 +85,7 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseHandlers
 			{
 				_response.CachePolicy.Stub(arg => arg.HasPolicy).Return(false);
 
-				ResponseHandlerResult result = await _handler.HandleResponse(_httpContext, _response, _cache, "key");
+				ResponseHandlerResult result = await _handler.HandleResponseAsync(_httpContext, _response, _cache, "key");
 
 				Assert.That(result.ResultType, Is.EqualTo(ResponseHandlerResultType.ResponseNotHandled));
 			}

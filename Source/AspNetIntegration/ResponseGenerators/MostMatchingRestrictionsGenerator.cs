@@ -11,7 +11,7 @@ namespace Junior.Route.AspNetIntegration.ResponseGenerators
 {
 	public class MostMatchingRestrictionsGenerator : IResponseGenerator
 	{
-		public async Task<ResponseResult> GetResponse(HttpContextBase context, IEnumerable<RouteMatchResult> routeMatchResults)
+		public async Task<ResponseResult> GetResponseAsync(HttpContextBase context, IEnumerable<RouteMatchResult> routeMatchResults)
 		{
 			context.ThrowIfNull("context");
 			routeMatchResults.ThrowIfNull("routeMatchResults");

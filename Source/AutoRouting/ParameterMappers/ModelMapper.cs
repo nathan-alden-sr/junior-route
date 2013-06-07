@@ -5,8 +5,6 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Web;
 
-using ALinq;
-
 using Junior.Common;
 using Junior.Route.AutoRouting.Containers;
 using Junior.Route.AutoRouting.ParameterMappers.ModelPropertyMappers;
@@ -90,22 +88,34 @@ namespace Junior.Route.AutoRouting.ParameterMappers
 
 			foreach (PropertyInfo property in modelType.GetProperties(BindingFlags.Public | BindingFlags.Instance))
 			{
-				PropertyInfo closureProperty = property;
-				var mappedValue =
-					await _modelPropertyMappers
-						      .Select(async arg => new { Mapper = arg, MapResult = await arg.MapAsync(context.Request, modelType, closureProperty) })
-						      .ToAsync()
-						      .FirstOrDefault(arg => (arg.MapResult.ResultType == MapResultType.ValueMapped).AsCompletedTask());
+				object mappedValue = await GetMappedValueAsync(context, modelType, property);
 
 				if (mappedValue == null)
 				{
 					throw new ApplicationException(String.Format("Unable to map property '{0} {1}' of type '{2}'.", property.PropertyType.FullName, property.Name, modelType.FullName));
 				}
 
-				property.SetValue(model, mappedValue.MapResult.Value, null);
+				property.SetValue(model, mappedValue, null);
 			}
 
 			return MapResult.ValueMapped(model);
+		}
+
+		private async Task<object> GetMappedValueAsync(HttpContextBase context, Type modelType, PropertyInfo property)
+		{
+			object mappedValue = null;
+
+			foreach (IModelPropertyMapper modelPropertyMapper in _modelPropertyMappers)
+			{
+				MapResult result = await modelPropertyMapper.MapAsync(context.Request, modelType, property);
+
+				if (result.ResultType == MapResultType.ValueMapped)
+				{
+					mappedValue = result.Value;
+					break;
+				}
+			}
+			return mappedValue;
 		}
 	}
 }

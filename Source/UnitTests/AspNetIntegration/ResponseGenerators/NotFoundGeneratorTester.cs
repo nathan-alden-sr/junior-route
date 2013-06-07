@@ -28,7 +28,7 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseGenerators
 			[Test]
 			public async void Must_generate_not_found_response()
 			{
-				ResponseResult result = await _generator.GetResponse(_context, Enumerable.Empty<RouteMatchResult>());
+				ResponseResult result = await _generator.GetResponseAsync(_context, Enumerable.Empty<RouteMatchResult>());
 
 				Assert.That(result.CacheKey, Is.Null);
 				Assert.That((await result.Response).StatusCode.ParsedStatusCode, Is.EqualTo(HttpStatusCode.NotFound));

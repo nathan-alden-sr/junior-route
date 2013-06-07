@@ -51,7 +51,7 @@ namespace Junior.Route.AspNetIntegration
 
 			foreach (IRequestFilter requestFilter in _configuration.RequestFilters)
 			{
-				if ((await requestFilter.Filter(context)).ResultType == FilterResultType.UseJuniorRouteHandler)
+				if ((await requestFilter.FilterAsync(context)).ResultType == FilterResultType.UseJuniorRouteHandler)
 				{
 					context.RemapHandler(_configuration.HttpHandler);
 					return;
@@ -66,7 +66,7 @@ namespace Junior.Route.AspNetIntegration
 
 			foreach (IErrorHandler errorHandler in _configuration.ErrorHandlers)
 			{
-				if ((await errorHandler.Handle(context)).ResultType == HandleResultType.Handled)
+				if ((await errorHandler.HandleAsync(context)).ResultType == HandleResultType.Handled)
 				{
 					return;
 				}

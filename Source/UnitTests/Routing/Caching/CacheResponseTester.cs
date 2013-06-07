@@ -80,7 +80,7 @@ namespace Junior.Route.UnitTests.Routing.Caching
 				response.CachePolicy.NoClientCaching();
 
 				_cacheResponse = new CacheResponse(response);
-				_cacheResponse.WriteResponse(_httpResponseBase);
+				_cacheResponse.WriteResponseAsync(_httpResponseBase).Wait();
 			}
 
 			private HttpResponseBase _httpResponseBase;

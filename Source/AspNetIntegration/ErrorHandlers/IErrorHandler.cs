@@ -5,6 +5,6 @@ namespace Junior.Route.AspNetIntegration.ErrorHandlers
 {
 	public interface IErrorHandler
 	{
-		Task<HandleResult> Handle(HttpContextBase context);
+		Task<HandleResult> HandleAsync(HttpContextBase context);
 	}
 }

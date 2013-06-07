@@ -6,6 +6,6 @@ namespace Junior.Route.AspNetIntegration.ResponseGenerators
 {
 	public interface IResponseGenerator
 	{
-		Task<ResponseResult> GetResponse(HttpContextBase context, IEnumerable<RouteMatchResult> routeMatchResults);
+		Task<ResponseResult> GetResponseAsync(HttpContextBase context, IEnumerable<RouteMatchResult> routeMatchResults);
 	}
 }

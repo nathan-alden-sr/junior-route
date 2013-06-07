@@ -1,4 +1,5 @@
-﻿using System.Web;
+﻿using System.Threading.Tasks;
+using System.Web;
 
 using Junior.Common;
 using Junior.Route.Routing.Caching;
@@ -8,7 +9,7 @@ namespace Junior.Route.AspNetIntegration.ResponseHandlers
 {
 	public class NonCacheableResponseHandler : IResponseHandler
 	{
-		public ResponseHandlerResult HandleResponse(HttpContextBase context, IResponse suggestedResponse, ICache cache, string cacheKey)
+		public Task<ResponseHandlerResult> HandleResponse(HttpContextBase context, IResponse suggestedResponse, ICache cache, string cacheKey)
 		{
 			context.ThrowIfNull("context");
 			suggestedResponse.ThrowIfNull("suggestedResponse");
@@ -17,7 +18,7 @@ namespace Junior.Route.AspNetIntegration.ResponseHandlers
 
 			cacheResponse.WriteResponse(context.Response);
 
-			return ResponseHandlerResult.ResponseWritten();
+			return ResponseHandlerResult.ResponseWritten().AsCompletedTask();
 		}
 	}
 }

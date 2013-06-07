@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 
+using Junior.Common;
 using Junior.Route.AutoRouting;
 
 using NUnit.Framework;
@@ -14,7 +15,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 			[SetUp]
 			public void SetUp()
 			{
-				_task = Task.FromResult("test");
+				_task = "test".AsCompletedTask();
 			}
 
 			private Task<string> _task;

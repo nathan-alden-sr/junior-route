@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 
 using Junior.Common;
@@ -86,14 +87,14 @@ namespace Junior.Route.Routing.Restrictions
 			return String.Equals(_field, other._field) && Equals(_fieldComparer, other._fieldComparer) && String.Equals(_value, other._value) && Equals(_valueComparer, other._valueComparer);
 		}
 
-		public bool MatchesRequest(HttpRequestBase request)
+		public Task<bool> MatchesRequestAsync(HttpRequestBase request)
 		{
 			request.ThrowIfNull("request");
 
 			NameValueCollection queryString = HttpUtility.ParseQueryString(request.Url.Query);
 			IEnumerable<string> matchingKeys = queryString.AllKeys.Where(arg => _fieldComparer.Matches(_field, arg));
 
-			return matchingKeys.Any(arg => _valueComparer.Matches(_value, queryString[arg]));
+			return matchingKeys.Any(arg => _valueComparer.Matches(_value, queryString[arg])).AsCompletedTask();
 		}
 
 		public override bool Equals(object obj)

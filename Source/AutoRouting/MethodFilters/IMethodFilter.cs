@@ -1,9 +1,10 @@
 ﻿using System.Reflection;
+using System.Threading.Tasks;
 
 namespace Junior.Route.AutoRouting.MethodFilters
 {
 	public interface IMethodFilter
 	{
-		bool Matches(MethodInfo method);
+		Task<bool> MatchesAsync(MethodInfo method);
 	}
 }

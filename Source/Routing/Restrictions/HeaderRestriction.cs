@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 
 using Junior.Common;
@@ -74,11 +75,11 @@ namespace Junior.Route.Routing.Restrictions
 			return String.Equals(_field, other._field) && String.Equals(_value, other._value) && Equals(_valueComparer, other._valueComparer);
 		}
 
-		public bool MatchesRequest(HttpRequestBase request)
+		public Task<bool> MatchesRequestAsync(HttpRequestBase request)
 		{
 			request.ThrowIfNull("request");
 
-			return request.Headers.AllKeys.Any(header => String.Equals(_field, header, StringComparison.OrdinalIgnoreCase) && _valueComparer.Matches(_value, request.Headers[header]));
+			return request.Headers.AllKeys.Any(header => String.Equals(_field, header, StringComparison.OrdinalIgnoreCase) && _valueComparer.Matches(_value, request.Headers[header])).AsCompletedTask();
 		}
 
 		public override bool Equals(object obj)
@@ -153,16 +154,11 @@ namespace Junior.Route.Routing.Restrictions
 			}
 		}
 
-		public bool MatchesRequest(HttpRequestBase request)
+		public Task<bool> MatchesRequestAsync(HttpRequestBase request)
 		{
 			request.ThrowIfNull("request");
 
-			if (!request.Headers.AllKeys.Any(header => String.Equals(_field, header, StringComparison.OrdinalIgnoreCase)))
-			{
-				return false;
-			}
-
-			return _parseDelegate(request.Headers[_field]).Any(_matchDelegate);
+			return (request.Headers.AllKeys.Any(header => String.Equals(_field, header, StringComparison.OrdinalIgnoreCase)) && _parseDelegate(request.Headers[_field]).Any(_matchDelegate)).AsCompletedTask();
 		}
 	}
 }

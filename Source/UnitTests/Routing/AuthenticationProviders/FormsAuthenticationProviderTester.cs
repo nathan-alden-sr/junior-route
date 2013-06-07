@@ -24,7 +24,7 @@ namespace Junior.Route.UnitTests.Routing.AuthenticationProviders
 				_helper = MockRepository.GenerateMock<IFormsAuthenticationHelper>();
 				_provider = FormsAuthenticationProvider.CreateWithNoRedirectOnFailedAuthentication(_helper);
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
-				_response = _provider.GetFailedAuthenticationResponse(_request);
+				_response = _provider.GetFailedAuthenticationResponseAsync(_request).Result;
 			}
 
 			private FormsAuthenticationProvider _provider;
@@ -51,7 +51,7 @@ namespace Junior.Route.UnitTests.Routing.AuthenticationProviders
 				_provider = FormsAuthenticationProvider.CreateWithRelativeUrlRedirectOnFailedAuthentication(_helper, _urlResolver, "relative", null);
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 				_request.Stub(arg => arg.HttpMethod).Return("GET");
-				_response = _provider.GetFailedAuthenticationResponse(_request);
+				_response = _provider.GetFailedAuthenticationResponseAsync(_request).Result;
 			}
 
 			private FormsAuthenticationProvider _provider;
@@ -80,7 +80,7 @@ namespace Junior.Route.UnitTests.Routing.AuthenticationProviders
 				_provider = FormsAuthenticationProvider.CreateWithRelativeUrlRedirectOnFailedAuthentication(_helper, _urlResolver, "relative", null);
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 				_request.Stub(arg => arg.HttpMethod).Return("POST");
-				_response = _provider.GetFailedAuthenticationResponse(_request);
+				_response = _provider.GetFailedAuthenticationResponseAsync(_request).Result;
 			}
 
 			private FormsAuthenticationProvider _provider;
@@ -109,7 +109,7 @@ namespace Junior.Route.UnitTests.Routing.AuthenticationProviders
 				_provider = FormsAuthenticationProvider.CreateWithRelativeUrlRedirectOnFailedAuthentication(_helper, _urlResolver, "relative");
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 				_request.Stub(arg => arg.RawUrl).Return("/return");
-				_response = _provider.GetFailedAuthenticationResponse(_request);
+				_response = _provider.GetFailedAuthenticationResponseAsync(_request).Result;
 			}
 
 			private FormsAuthenticationProvider _provider;
@@ -137,7 +137,7 @@ namespace Junior.Route.UnitTests.Routing.AuthenticationProviders
 				_provider = FormsAuthenticationProvider.CreateWithRouteRedirectOnFailedAuthentication(_helper, _urlResolver, "route", null);
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 				_request.Stub(arg => arg.HttpMethod).Return("GET");
-				_response = _provider.GetFailedAuthenticationResponse(_request);
+				_response = _provider.GetFailedAuthenticationResponseAsync(_request).Result;
 			}
 
 			private FormsAuthenticationProvider _provider;
@@ -166,7 +166,7 @@ namespace Junior.Route.UnitTests.Routing.AuthenticationProviders
 				_provider = FormsAuthenticationProvider.CreateWithRouteRedirectOnFailedAuthentication(_helper, _urlResolver, "route", null);
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 				_request.Stub(arg => arg.HttpMethod).Return("POST");
-				_response = _provider.GetFailedAuthenticationResponse(_request);
+				_response = _provider.GetFailedAuthenticationResponseAsync(_request).Result;
 			}
 
 			private FormsAuthenticationProvider _provider;
@@ -195,7 +195,7 @@ namespace Junior.Route.UnitTests.Routing.AuthenticationProviders
 				_provider = FormsAuthenticationProvider.CreateWithRouteRedirectOnFailedAuthentication(_helper, _urlResolver, "route");
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 				_request.Stub(arg => arg.RawUrl).Return("/return");
-				_response = _provider.GetFailedAuthenticationResponse(_request);
+				_response = _provider.GetFailedAuthenticationResponseAsync(_request).Result;
 			}
 
 			private FormsAuthenticationProvider _provider;

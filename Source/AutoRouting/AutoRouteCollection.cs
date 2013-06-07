@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 using Junior.Common;
 using Junior.Route.Assets.FileSystem;
@@ -24,6 +25,8 @@ using Junior.Route.Routing;
 using Junior.Route.Routing.AuthenticationProviders;
 
 using DelegateFilter = Junior.Route.AutoRouting.ClassFilters.DelegateFilter;
+
+using ALinq;
 
 namespace Junior.Route.AutoRouting
 {
@@ -119,7 +122,7 @@ namespace Junior.Route.AutoRouting
 			return this;
 		}
 
-		public IRouteCollection GenerateRouteCollection()
+		public async Task<IRouteCollection> GenerateRouteCollection()
 		{
 			if (!_assemblies.Any())
 			{
@@ -143,36 +146,42 @@ namespace Junior.Route.AutoRouting
 			}
 
 			var routes = new RouteCollection(_duplicateRouteNamesAllowed);
-
-			IEnumerable<Type> matchingTypes = _assemblies
+			Type[] matchingTypes = await _assemblies
 				.SelectMany(arg => arg.GetTypes())
-				.Where(type => type.Namespace != null && (type.IsPublic || type.IsNestedPublic) && !type.IsAbstract && !type.IsValueType && _classFilters.All(filter => filter.Matches(type)))
+				.ToAsync()
+				.Where(async type => type.Namespace != null && (type.IsPublic || type.IsNestedPublic) && !type.IsAbstract && !type.IsValueType && await _classFilters.ToAsync().All(async filter => await filter.MatchesAsync(type)))
 				.ToArray();
 
 			foreach (Type matchingType in matchingTypes)
 			{
-				IEnumerable<MethodInfo> matchingMethods = matchingType
+				MethodInfo[] matchingMethods = await matchingType
 					.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)
-					.Where(method => !method.IsSpecialName && _methodFilters.All(filter => filter.Matches(method)));
+					.ToAsync()
+					.Where(async method => !method.IsSpecialName && await _methodFilters.ToAsync().All(async filter => await filter.MatchesAsync(method)))
+					.ToArray();
 
 				foreach (MethodInfo matchingMethod in matchingMethods)
 				{
 					Type closureMatchingType = matchingType;
 					MethodInfo closureMatchingMethod = matchingMethod;
-					string name = _nameMappers
-						.Select(arg => new { Mapper = arg, Result = arg.Map(closureMatchingType, closureMatchingMethod) })
-						.FirstOrDefault(arg => arg.Result.ResultType == NameResultType.NameMapped)
-						.IfNotNull(arg => arg.Result.Name);
+					string name =
+						(await _nameMappers
+							       .Select(async arg => new { Mapper = arg, Result = await arg.MapAsync(closureMatchingType, closureMatchingMethod) })
+							       .ToAsync()
+							       .FirstOrDefault(arg => (arg.Result.ResultType == NameResultType.NameMapped).AsCompletedTask()))
+							.IfNotNull(arg => arg.Result.Name);
 
 					if (name == null)
 					{
 						throw new ApplicationException(String.Format("Unable to determine a route name for '{0}.{1}'.", matchingType.FullName, matchingMethod.Name));
 					}
 
-					Guid? id = _idMappers
-						.Select(arg => new { Mapper = arg, Result = arg.Map(closureMatchingType, closureMatchingMethod) })
-						.FirstOrDefault(arg => arg.Result.ResultType == IdResultType.IdMapped)
-						.IfNotNull(arg => arg.Result.Id);
+					Guid? id =
+						(await _idMappers
+							       .Select(async arg => new { Mapper = arg, Result = await arg.MapAsync(closureMatchingType, closureMatchingMethod) })
+							       .ToAsync()
+							       .FirstOrDefault(arg => (arg.Result.ResultType == IdResultType.IdMapped).AsCompletedTask()))
+							.IfNotNull(arg => arg.Result.Id);
 
 					if (id == null)
 					{
@@ -180,11 +189,13 @@ namespace Junior.Route.AutoRouting
 					}
 
 					IEnumerable<Type> ignoredResolvedRelativeUrlMapperTypes = matchingMethod.GetCustomAttributes<IgnoreResolvedRelativeUrlMapperTypeAttribute>().SelectMany(arg => arg.IgnoredTypes);
-					string resolvedRelativeUrl = _resolvedRelativeUrlMappers
-						.Where(arg => !ignoredResolvedRelativeUrlMapperTypes.Contains(arg.GetType()))
-						.Select(arg => new { Mapper = arg, Result = arg.Map(closureMatchingType, closureMatchingMethod) })
-						.FirstOrDefault(arg => arg.Result.ResultType == ResolvedRelativeUrlResultType.ResolvedRelativeUrlMapped)
-						.IfNotNull(arg => arg.Result.ResolvedRelativeUrl);
+					string resolvedRelativeUrl =
+						(await _resolvedRelativeUrlMappers
+							       .Where(arg => !ignoredResolvedRelativeUrlMapperTypes.Contains(arg.GetType()))
+							       .Select(async arg => new { Mapper = arg, Result = await arg.MapAsync(closureMatchingType, closureMatchingMethod) })
+							       .ToAsync()
+							       .FirstOrDefault(arg => (arg.Result.ResultType == ResolvedRelativeUrlResultType.ResolvedRelativeUrlMapped).AsCompletedTask()))
+							.IfNotNull(arg => arg.Result.ResolvedRelativeUrl);
 
 					if (resolvedRelativeUrl == null)
 					{
@@ -196,12 +207,12 @@ namespace Junior.Route.AutoRouting
 
 					foreach (IRestrictionMapper restrictionMapper in _restrictionMappers.Where(arg => !ignoredRestrictionMapperTypes.Contains(arg.GetType())))
 					{
-						restrictionMapper.Map(matchingType, matchingMethod, route, _restrictionContainer);
+						await restrictionMapper.MapAsync(matchingType, matchingMethod, route, _restrictionContainer);
 					}
 
-					_responseMapper.Map(() => _endpointContainer, matchingType, matchingMethod, route);
+					await _responseMapper.MapAsync(() => _endpointContainer, matchingType, matchingMethod, route);
 
-					if (_authenticationProvider != null && _authenticationStrategies.Any(arg => arg.MustAuthenticate(closureMatchingType, closureMatchingMethod)))
+					if (_authenticationProvider != null && await _authenticationStrategies.ToAsync().Any(async arg => await arg.MustAuthenticateAsync(closureMatchingType, closureMatchingMethod)))
 					{
 						route.AuthenticationProvider(_authenticationProvider);
 					}

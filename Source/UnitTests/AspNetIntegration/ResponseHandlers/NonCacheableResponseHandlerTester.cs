@@ -2,6 +2,7 @@
 using System.Net;
 using System.Web;
 
+using Junior.Common;
 using Junior.Route.AspNetIntegration.ResponseHandlers;
 using Junior.Route.Routing.Caching;
 using Junior.Route.Routing.Responses;
@@ -36,11 +37,11 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseHandlers
 				_response = MockRepository.GenerateMock<IResponse>();
 				_response.Stub(arg => arg.CachePolicy).Return(_cachePolicy);
 				_response.Stub(arg => arg.Cookies).Return(Enumerable.Empty<Cookie>());
-				_response.Stub(arg => arg.GetContent()).Return(new byte[0]);
+				_response.Stub(arg => arg.GetContentAsync()).Return(new byte[0].AsCompletedTask());
 				_response.Stub(arg => arg.Headers).Return(Enumerable.Empty<Header>());
 				_response.Stub(arg => arg.StatusCode).Return(new StatusAndSubStatusCode(HttpStatusCode.OK));
 				_cache = MockRepository.GenerateMock<ICache>();
-				_result = _handler.HandleResponse(_httpContext, _response, _cache, "key");
+				_result = _handler.HandleResponse(_httpContext, _response, _cache, "key").Result;
 			}
 
 			private NonCacheableResponseHandler _handler;

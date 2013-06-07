@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 using Junior.Common;
 using Junior.Route.AutoRouting.Containers;
@@ -33,7 +34,7 @@ namespace Junior.Route.AutoRouting.RestrictionMappers
 			_wordRegexPattern = wordRegexPattern;
 		}
 
-		public void Map(Type type, MethodInfo method, Routing.Route route, IContainer container)
+		public Task MapAsync(Type type, MethodInfo method, Routing.Route route, IContainer container)
 		{
 			type.ThrowIfNull("type");
 			method.ThrowIfNull("method");
@@ -42,7 +43,7 @@ namespace Junior.Route.AutoRouting.RestrictionMappers
 
 			if (!type.NamespaceStartsWith(_rootNamespace))
 			{
-				return;
+				return Task.Factory.Empty();
 			}
 
 			var pathParts = new List<string>();
@@ -54,6 +55,8 @@ namespace Junior.Route.AutoRouting.RestrictionMappers
 			var httpRuntime = container.GetInstance<IHttpRuntime>();
 
 			route.RestrictByUrlRelativePath(relativePath, _caseSensitive ? (IRequestValueComparer)CaseSensitivePlainComparer.Instance : CaseInsensitivePlainComparer.Instance, httpRuntime);
+
+			return Task.Factory.Empty();
 		}
 
 		private IEnumerable<string> ParseWords(string value)

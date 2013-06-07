@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Specialized;
-using System.Threading.Tasks;
 using System.Web;
 
 using Junior.Common;
@@ -42,7 +41,7 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.NonceValidators
 				_configuration.Stub(arg => arg.Enabled).Return(true);
 				_configuration.Stub(arg => arg.ValidateHttpDelete).Return(false);
 
-				Assert.That(await _validator.Validate(_request), Is.EqualTo(ValidationResult.ValidationSkipped));
+				Assert.That(await _validator.ValidateAsync(_request), Is.EqualTo(ValidationResult.ValidationSkipped));
 			}
 		}
 
@@ -73,7 +72,7 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.NonceValidators
 				_configuration.Stub(arg => arg.Enabled).Return(true);
 				_configuration.Stub(arg => arg.ValidateHttpDelete).Return(true);
 
-				Assert.That(await _validator.Validate(_request), Is.Not.EqualTo(ValidationResult.ValidationSkipped));
+				Assert.That(await _validator.ValidateAsync(_request), Is.Not.EqualTo(ValidationResult.ValidationSkipped));
 			}
 		}
 
@@ -103,7 +102,7 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.NonceValidators
 				_configuration.Stub(arg => arg.Enabled).Return(true);
 				_configuration.Stub(arg => arg.ValidateHttpPost).Return(false);
 
-				Assert.That(await _validator.Validate(_request), Is.EqualTo(ValidationResult.ValidationSkipped));
+				Assert.That(await _validator.ValidateAsync(_request), Is.EqualTo(ValidationResult.ValidationSkipped));
 			}
 		}
 
@@ -134,7 +133,7 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.NonceValidators
 				_configuration.Stub(arg => arg.Enabled).Return(true);
 				_configuration.Stub(arg => arg.ValidateHttpPost).Return(true);
 
-				Assert.That(await _validator.Validate(_request), Is.Not.EqualTo(ValidationResult.ValidationSkipped));
+				Assert.That(await _validator.ValidateAsync(_request), Is.Not.EqualTo(ValidationResult.ValidationSkipped));
 			}
 		}
 
@@ -164,7 +163,7 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.NonceValidators
 				_configuration.Stub(arg => arg.Enabled).Return(true);
 				_configuration.Stub(arg => arg.ValidateHttpPut).Return(false);
 
-				Assert.That(await _validator.Validate(_request), Is.EqualTo(ValidationResult.ValidationSkipped));
+				Assert.That(await _validator.ValidateAsync(_request), Is.EqualTo(ValidationResult.ValidationSkipped));
 			}
 		}
 
@@ -195,7 +194,7 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.NonceValidators
 				_configuration.Stub(arg => arg.Enabled).Return(true);
 				_configuration.Stub(arg => arg.ValidateHttpPut).Return(true);
 
-				Assert.That(await _validator.Validate(_request), Is.Not.EqualTo(ValidationResult.ValidationSkipped));
+				Assert.That(await _validator.ValidateAsync(_request), Is.Not.EqualTo(ValidationResult.ValidationSkipped));
 			}
 		}
 
@@ -223,7 +222,7 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.NonceValidators
 			{
 				_configuration.Stub(arg => arg.Enabled).Return(false);
 
-				Assert.That(await _validator.Validate(_request), Is.EqualTo(ValidationResult.ValidationDisabled));
+				Assert.That(await _validator.ValidateAsync(_request), Is.EqualTo(ValidationResult.ValidationDisabled));
 			}
 		}
 
@@ -257,7 +256,7 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.NonceValidators
 				_configuration.Stub(arg => arg.FormFieldName).Return("name");
 				_configuration.Stub(arg => arg.CookieName).Return("name");
 
-				Assert.That(await _validator.Validate(_request), Is.EqualTo(ValidationResult.CookieMissing));
+				Assert.That(await _validator.ValidateAsync(_request), Is.EqualTo(ValidationResult.CookieMissing));
 			}
 		}
 
@@ -291,7 +290,7 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.NonceValidators
 				_configuration.Stub(arg => arg.FormFieldName).Return("name");
 				_configuration.Stub(arg => arg.CookieName).Return("name");
 
-				Assert.That(await _validator.Validate(_request), Is.EqualTo(ValidationResult.CookieInvalid));
+				Assert.That(await _validator.ValidateAsync(_request), Is.EqualTo(ValidationResult.CookieInvalid));
 			}
 		}
 
@@ -323,7 +322,7 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.NonceValidators
 				_configuration.Stub(arg => arg.ValidateHttpPost).Return(true);
 				_configuration.Stub(arg => arg.FormFieldName).Return("name");
 
-				Assert.That(await _validator.Validate(_request), Is.EqualTo(ValidationResult.FormFieldMissing));
+				Assert.That(await _validator.ValidateAsync(_request), Is.EqualTo(ValidationResult.FormFieldMissing));
 			}
 		}
 
@@ -357,7 +356,7 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.NonceValidators
 				_configuration.Stub(arg => arg.FormFieldName).Return("name");
 				_configuration.Stub(arg => arg.CookieName).Return("name");
 
-				Assert.That(await _validator.Validate(_request), Is.EqualTo(ValidationResult.FormFieldInvalid));
+				Assert.That(await _validator.ValidateAsync(_request), Is.EqualTo(ValidationResult.FormFieldInvalid));
 			}
 		}
 
@@ -390,9 +389,9 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.NonceValidators
 				_configuration.Stub(arg => arg.ValidateHttpPost).Return(true);
 				_configuration.Stub(arg => arg.FormFieldName).Return("name");
 				_configuration.Stub(arg => arg.CookieName).Return("name");
-				_nonceRepository.Stub(arg => arg.Exists(Arg<Guid>.Is.Anything, Arg<Guid>.Is.Anything, Arg<DateTime>.Is.Anything)).Return(Task.FromResult(true));
+				_nonceRepository.Stub(arg => arg.ExistsAsync(Arg<Guid>.Is.Anything, Arg<Guid>.Is.Anything, Arg<DateTime>.Is.Anything)).Return(true.AsCompletedTask());
 
-				Assert.That(await _validator.Validate(_request), Is.EqualTo(ValidationResult.NonceValid));
+				Assert.That(await _validator.ValidateAsync(_request), Is.EqualTo(ValidationResult.NonceValid));
 			}
 		}
 
@@ -425,9 +424,9 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.NonceValidators
 				_configuration.Stub(arg => arg.ValidateHttpPost).Return(true);
 				_configuration.Stub(arg => arg.FormFieldName).Return("name");
 				_configuration.Stub(arg => arg.CookieName).Return("name");
-				_nonceRepository.Stub(arg => arg.Exists(Arg<Guid>.Is.Anything, Arg<Guid>.Is.Anything, Arg<DateTime>.Is.Anything)).Return(Task.FromResult(false));
+				_nonceRepository.Stub(arg => arg.ExistsAsync(Arg<Guid>.Is.Anything, Arg<Guid>.Is.Anything, Arg<DateTime>.Is.Anything)).Return(false.AsCompletedTask());
 
-				Assert.That(await _validator.Validate(_request), Is.EqualTo(ValidationResult.NonceInvalid));
+				Assert.That(await _validator.ValidateAsync(_request), Is.EqualTo(ValidationResult.NonceInvalid));
 			}
 		}
 	}

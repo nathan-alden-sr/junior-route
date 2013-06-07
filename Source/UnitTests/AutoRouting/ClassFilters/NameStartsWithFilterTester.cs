@@ -24,17 +24,17 @@ namespace Junior.Route.UnitTests.AutoRouting.ClassFilters
 			[Test]
 			[TestCase(typeof(HttpRequestBase))]
 			[TestCase(typeof(HttpResponseBase))]
-			public void Must_match_types_with_names_ending_with_namespace(Type type)
+			public async void Must_match_types_with_names_ending_with_namespace(Type type)
 			{
-				Assert.That(_filter.Matches(type), Is.True);
+				Assert.That(await _filter.MatchesAsync(type), Is.True);
 			}
 
 			[Test]
 			[TestCase(typeof(Cache))]
 			[TestCase(typeof(string))]
-			public void Must_not_match_types_with_names_not_ending_with_namespace(Type type)
+			public async void Must_not_match_types_with_names_not_ending_with_namespace(Type type)
 			{
-				Assert.That(_filter.Matches(type), Is.False);
+				Assert.That(await _filter.MatchesAsync(type), Is.False);
 			}
 		}
 	}

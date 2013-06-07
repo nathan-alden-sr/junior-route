@@ -116,7 +116,9 @@ namespace Junior.Route.ViewEngines.Razor
 					throw new ArgumentException(String.Format("No section named '{0}' is defined.", name), "name");
 				}
 
-				return new TemplateWriter(writer => { });
+				return new TemplateWriter(writer =>
+					{
+					});
 			}
 
 			return new TemplateWriter(writer => writeDelegate());

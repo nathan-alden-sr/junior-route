@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 
+using Junior.Common;
 using Junior.Route.AutoRouting.Containers;
 using Junior.Route.AutoRouting.ParameterMappers;
 using Junior.Route.AutoRouting.ResponseMappers;
@@ -22,16 +23,16 @@ namespace Junior.Route.UnitTests.AutoRouting.ResponseMappers
 		public class When_mapping_async_response_with_return_type
 		{
 			[SetUp]
-			public async void SetUp()
+			public void SetUp()
 			{
 				_parameterMapper = MockRepository.GenerateMock<IParameterMapper>();
 				_responseMethodReturnTypeMapper = new ResponseMethodReturnTypeMapper(_parameterMapper);
 				_container = MockRepository.GenerateMock<IContainer>();
 				_container.Stub(arg => arg.GetInstance(typeof(Endpoint))).Return(new Endpoint());
 				_route = new Route.Routing.Route("name", Guid.NewGuid(), "relative");
-				_responseMethodReturnTypeMapper.Map(() => _container, typeof(Endpoint), typeof(Endpoint).GetMethod("Method"), _route);
+				_responseMethodReturnTypeMapper.MapAsync(() => _container, typeof(Endpoint), typeof(Endpoint).GetMethod("Method"), _route);
 				_context = MockRepository.GenerateMock<HttpContextBase>();
-				_response = await _route.ProcessResponse(_context);
+				_response = _route.ProcessResponseAsync(_context).Result;
 			}
 
 			private ResponseMethodReturnTypeMapper _responseMethodReturnTypeMapper;
@@ -43,18 +44,18 @@ namespace Junior.Route.UnitTests.AutoRouting.ResponseMappers
 
 			public class Endpoint
 			{
-				public async Task<PlainResponse> Method()
+				public Task<PlainResponse> Method()
 				{
-					return await Task.FromResult(new PlainResponse("ABC", Encoding.ASCII));
+					return new PlainResponse("ABC", Encoding.ASCII).AsCompletedTask();
 				}
 			}
 
 			[Test]
-			public void Must_call_method()
+			public async void Must_call_method()
 			{
 				Assert.That(_response.ContentType, Is.EqualTo("text/plain"));
 				Assert.That(_response.StatusCode.ParsedStatusCode, Is.EqualTo(HttpStatusCode.OK));
-				Assert.That(_response.GetContent(), Is.EquivalentTo(Encoding.ASCII.GetBytes("ABC")));
+				Assert.That(await _response.GetContentAsync(), Is.EquivalentTo(Encoding.ASCII.GetBytes("ABC")));
 			}
 
 			[Test]
@@ -68,16 +69,16 @@ namespace Junior.Route.UnitTests.AutoRouting.ResponseMappers
 		public class When_mapping_response_with_return_type
 		{
 			[SetUp]
-			public async void SetUp()
+			public void SetUp()
 			{
 				_parameterMapper = MockRepository.GenerateMock<IParameterMapper>();
 				_responseMethodReturnTypeMapper = new ResponseMethodReturnTypeMapper(_parameterMapper);
 				_container = MockRepository.GenerateMock<IContainer>();
 				_container.Stub(arg => arg.GetInstance(typeof(Endpoint))).Return(new Endpoint());
 				_route = new Route.Routing.Route("name", Guid.NewGuid(), "relative");
-				_responseMethodReturnTypeMapper.Map(() => _container, typeof(Endpoint), typeof(Endpoint).GetMethod("Method"), _route);
+				_responseMethodReturnTypeMapper.MapAsync(() => _container, typeof(Endpoint), typeof(Endpoint).GetMethod("Method"), _route);
 				_context = MockRepository.GenerateMock<HttpContextBase>();
-				_response = await _route.ProcessResponse(_context);
+				_response = _route.ProcessResponseAsync(_context).Result;
 			}
 
 			private ResponseMethodReturnTypeMapper _responseMethodReturnTypeMapper;
@@ -96,11 +97,11 @@ namespace Junior.Route.UnitTests.AutoRouting.ResponseMappers
 			}
 
 			[Test]
-			public void Must_call_method()
+			public async void Must_call_method()
 			{
 				Assert.That(_response.ContentType, Is.EqualTo("text/plain"));
 				Assert.That(_response.StatusCode.ParsedStatusCode, Is.EqualTo(HttpStatusCode.OK));
-				Assert.That(_response.GetContent(), Is.EquivalentTo(Encoding.ASCII.GetBytes("ABC")));
+				Assert.That(await _response.GetContentAsync(), Is.EquivalentTo(Encoding.ASCII.GetBytes("ABC")));
 			}
 
 			[Test]
@@ -114,7 +115,7 @@ namespace Junior.Route.UnitTests.AutoRouting.ResponseMappers
 		public class When_mapping_response_with_void_return_type
 		{
 			[SetUp]
-			public async void SetUp()
+			public void SetUp()
 			{
 				_parameterMapper = MockRepository.GenerateMock<IParameterMapper>();
 				_responseMethodReturnTypeMapper = new ResponseMethodReturnTypeMapper(_parameterMapper);
@@ -122,9 +123,9 @@ namespace Junior.Route.UnitTests.AutoRouting.ResponseMappers
 				_container = MockRepository.GenerateMock<IContainer>();
 				_container.Stub(arg => arg.GetInstance(typeof(Endpoint))).Return(_endpoint);
 				_route = new Route.Routing.Route("name", Guid.NewGuid(), "relative");
-				_responseMethodReturnTypeMapper.Map(() => _container, typeof(Endpoint), typeof(Endpoint).GetMethod("Method"), _route);
+				_responseMethodReturnTypeMapper.MapAsync(() => _container, typeof(Endpoint), typeof(Endpoint).GetMethod("Method"), _route);
 				_context = MockRepository.GenerateMock<HttpContextBase>();
-				_response = await _route.ProcessResponse(_context);
+				_response = _route.ProcessResponseAsync(_context).Result;
 			}
 
 			private ResponseMethodReturnTypeMapper _responseMethodReturnTypeMapper;

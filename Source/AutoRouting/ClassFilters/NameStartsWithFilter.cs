@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 using Junior.Common;
 
@@ -17,11 +18,11 @@ namespace Junior.Route.AutoRouting.ClassFilters
 			_comparison = comparison;
 		}
 
-		public bool Matches(Type type)
+		public Task<bool> MatchesAsync(Type type)
 		{
 			type.ThrowIfNull("type");
 
-			return type.Name.StartsWith(_value, _comparison);
+			return type.Name.StartsWith(_value, _comparison).AsCompletedTask();
 		}
 	}
 }

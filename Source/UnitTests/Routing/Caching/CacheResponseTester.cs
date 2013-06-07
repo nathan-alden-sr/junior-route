@@ -38,11 +38,11 @@ namespace Junior.Route.UnitTests.Routing.Caching
 			private CacheResponse _cacheResponse;
 
 			[Test]
-			public void Must_set_properties()
+			public async void Must_set_properties()
 			{
 				Assert.That(_cacheResponse.CachePolicy.ETag, Is.EqualTo("etag"));
 				Assert.That(_cacheResponse.Charset, Is.EqualTo("utf-8"));
-				Assert.That(_cacheResponse.Content, Is.EqualTo(Encoding.ASCII.GetBytes("content")));
+				Assert.That(await _cacheResponse.Content, Is.EqualTo(Encoding.ASCII.GetBytes("content")));
 				Assert.That(_cacheResponse.ContentEncoding, Is.SameAs(Encoding.ASCII));
 				Assert.That(_cacheResponse.ContentType, Is.EqualTo("application/json"));
 				Assert.That(_cacheResponse.Cookies.Count(), Is.EqualTo(1));

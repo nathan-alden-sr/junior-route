@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 using Junior.Common;
 
@@ -15,11 +16,11 @@ namespace Junior.Route.AutoRouting.ClassFilters
 			}
 		}
 
-		public bool Matches(Type type)
+		public Task<bool> MatchesAsync(Type type)
 		{
 			type.ThrowIfNull("type");
 
-			return typeof(TInterface).IsInterface && type.ImplementsInterface<TInterface>();
+			return (typeof(TInterface).IsInterface && type.ImplementsInterface<TInterface>()).AsCompletedTask();
 		}
 	}
 
@@ -39,11 +40,11 @@ namespace Junior.Route.AutoRouting.ClassFilters
 			_interfaceType = interfaceType;
 		}
 
-		public bool Matches(Type type)
+		public Task<bool> MatchesAsync(Type type)
 		{
 			type.ThrowIfNull("type");
 
-			return type.ImplementsInterface(_interfaceType);
+			return type.ImplementsInterface(_interfaceType).AsCompletedTask();
 		}
 	}
 }

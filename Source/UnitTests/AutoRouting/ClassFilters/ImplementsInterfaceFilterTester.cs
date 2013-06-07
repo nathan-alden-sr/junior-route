@@ -29,16 +29,16 @@ namespace Junior.Route.UnitTests.AutoRouting.ClassFilters
 
 			[Test]
 			[TestCase(typeof(Endpoint))]
-			public void Must_match_types_that_implement_interface(Type type)
+			public async void Must_match_types_that_implement_interface(Type type)
 			{
-				Assert.That(_filter.Matches(type), Is.True);
+				Assert.That(await _filter.MatchesAsync(type), Is.True);
 			}
 
 			[Test]
 			[TestCase(typeof(string))]
-			public void Must_not_match_types_that_do_not_match_interface(Type type)
+			public async void Must_not_match_types_that_do_not_match_interface(Type type)
 			{
-				Assert.That(_filter.Matches(type), Is.False);
+				Assert.That(await _filter.MatchesAsync(type), Is.False);
 			}
 		}
 
@@ -63,16 +63,16 @@ namespace Junior.Route.UnitTests.AutoRouting.ClassFilters
 
 			[Test]
 			[TestCase(typeof(Endpoint))]
-			public void Must_match_types_that_implement_interface(Type type)
+			public async void Must_match_types_that_implement_interface(Type type)
 			{
-				Assert.That(_filter.Matches(type), Is.True);
+				Assert.That(await _filter.MatchesAsync(type), Is.True);
 			}
 
 			[Test]
 			[TestCase(typeof(string))]
-			public void Must_not_match_types_that_do_not_match_interface(Type type)
+			public async void Must_not_match_types_that_do_not_match_interface(Type type)
 			{
-				Assert.That(_filter.Matches(type), Is.False);
+				Assert.That(await _filter.MatchesAsync(type), Is.False);
 			}
 		}
 	}

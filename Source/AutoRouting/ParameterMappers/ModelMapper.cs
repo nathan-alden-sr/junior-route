@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Web;
+
+using ALinq;
 
 using Junior.Common;
 using Junior.Route.AutoRouting.Containers;
@@ -66,15 +69,15 @@ namespace Junior.Route.AutoRouting.ParameterMappers
 		{
 		}
 
-		public bool CanMapType(HttpContextBase context, Type parameterType)
+		public async Task<bool> CanMapTypeAsync(HttpContextBase context, Type parameterType)
 		{
 			context.ThrowIfNull("context");
 			parameterType.ThrowIfNull("parameterType");
 
-			return _parameterTypeMatchDelegate(parameterType);
+			return await Task.Run(() => _parameterTypeMatchDelegate(parameterType));
 		}
 
-		public MapResult Map(HttpContextBase context, Type type, MethodInfo method, ParameterInfo parameter)
+		public async Task<MapResult> MapAsync(HttpContextBase context, Type type, MethodInfo method, ParameterInfo parameter)
 		{
 			context.ThrowIfNull("context");
 			type.ThrowIfNull("type");
@@ -88,9 +91,11 @@ namespace Junior.Route.AutoRouting.ParameterMappers
 			foreach (PropertyInfo property in modelType.GetProperties(BindingFlags.Public | BindingFlags.Instance))
 			{
 				PropertyInfo closureProperty = property;
-				var mappedValue = _modelPropertyMappers
-					.Select(arg => new { Mapper = arg, MapResult = arg.Map(context.Request, modelType, closureProperty) })
-					.FirstOrDefault(arg => arg.MapResult.ResultType == MapResultType.ValueMapped);
+				var mappedValue =
+					await _modelPropertyMappers
+						      .Select(async arg => new { Mapper = arg, MapResult = await arg.MapAsync(context.Request, modelType, closureProperty) })
+						      .ToAsync()
+						      .FirstOrDefault(arg => (arg.MapResult.ResultType == MapResultType.ValueMapped).AsCompletedTask());
 
 				if (mappedValue == null)
 				{

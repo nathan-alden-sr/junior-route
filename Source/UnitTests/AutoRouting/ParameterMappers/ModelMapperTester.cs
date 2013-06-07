@@ -11,6 +11,8 @@ using NUnit.Framework;
 
 using Rhino.Mocks;
 
+using Junior.Common;
+
 namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers
 {
 	public static class ModelMapperTester
@@ -44,12 +46,12 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers
 
 			[Test]
 			[TestCase(typeof(Endpoint), "Method", "model")]
-			public void Must_use_container_to_get_instance(Type type, string methodName, string parameterName)
+			public async void Must_use_container_to_get_instance(Type type, string methodName, string parameterName)
 			{
 				MethodInfo methodInfo = type.GetMethod(methodName);
 				ParameterInfo parameterInfo = methodInfo.GetParameters().Single(arg => arg.Name == parameterName);
 
-				_mapper.Map(_context, type, methodInfo, parameterInfo);
+				await _mapper.MapAsync(_context, type, methodInfo, parameterInfo);
 
 				_container.AssertWasCalled(arg => arg.GetInstance(parameterInfo.ParameterType));
 			}
@@ -64,16 +66,16 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers
 				_context = MockRepository.GenerateMock<HttpContextBase>();
 				_modelPropertyMapper1 = MockRepository.GenerateMock<IModelPropertyMapper>();
 				_modelPropertyMapper1
-					.Stub(arg => arg.CanMapType(Arg<Type>.Is.Anything))
-					.WhenCalled(arg => arg.ReturnValue = ((Type)arg.Arguments.First()) == typeof(string))
-					.Return(false);
-				_modelPropertyMapper1.Stub(arg => arg.Map(Arg<HttpRequestBase>.Is.Anything, Arg<Type>.Is.Anything, Arg<PropertyInfo>.Is.Anything)).Return(MapResult.ValueMapped("value"));
+					.Stub(arg => arg.CanMapTypeAsync(Arg<Type>.Is.Anything))
+					.WhenCalled(arg => arg.ReturnValue = (((Type)arg.Arguments.First()) == typeof(string)).AsCompletedTask())
+					.Return(false.AsCompletedTask());
+				_modelPropertyMapper1.Stub(arg => arg.MapAsync(Arg<HttpRequestBase>.Is.Anything, Arg<Type>.Is.Anything, Arg<PropertyInfo>.Is.Anything)).Return(MapResult.ValueMapped("value").AsCompletedTask());
 				_modelPropertyMapper2 = MockRepository.GenerateMock<IModelPropertyMapper>();
 				_modelPropertyMapper2
-					.Stub(arg => arg.CanMapType(Arg<Type>.Is.Anything))
-					.WhenCalled(arg => arg.ReturnValue = ((Type)arg.Arguments.First()) == typeof(string))
-					.Return(false);
-				_modelPropertyMapper2.Stub(arg => arg.Map(Arg<HttpRequestBase>.Is.Anything, Arg<Type>.Is.Anything, Arg<PropertyInfo>.Is.Anything)).Return(MapResult.ValueMapped("value"));
+					.Stub(arg => arg.CanMapTypeAsync(Arg<Type>.Is.Anything))
+					.WhenCalled(arg => arg.ReturnValue = (((Type)arg.Arguments.First()) == typeof(string)).AsCompletedTask())
+					.Return(false.AsCompletedTask());
+				_modelPropertyMapper2.Stub(arg => arg.MapAsync(Arg<HttpRequestBase>.Is.Anything, Arg<Type>.Is.Anything, Arg<PropertyInfo>.Is.Anything)).Return(MapResult.ValueMapped("value").AsCompletedTask());
 				_modelMapper = new ModelMapper(_modelPropertyMapper1, _modelPropertyMapper2);
 			}
 
@@ -113,20 +115,20 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers
 				MethodInfo methodInfo = type.GetMethod(methodName);
 				ParameterInfo parameterInfo = methodInfo.GetParameters().Single(arg => arg.Name == parameterName);
 
-				Assert.That(() => _modelMapper.Map(_context, type, methodInfo, parameterInfo), Throws.Nothing);
+				Assert.That(() => _modelMapper.MapAsync(_context, type, methodInfo, parameterInfo), Throws.Nothing);
 			}
 
 			[Test]
 			[TestCase(typeof(Endpoint), "Method", "model")]
-			public void Must_use_first_matching_parameter_mapper(Type type, string methodName, string parameterName)
+			public async void Must_use_first_matching_parameter_mapper(Type type, string methodName, string parameterName)
 			{
 				MethodInfo methodInfo = type.GetMethod(methodName);
 				ParameterInfo parameterInfo = methodInfo.GetParameters().Single(arg => arg.Name == parameterName);
 
-				_modelMapper.Map(_context, type, methodInfo, parameterInfo);
+				await _modelMapper.MapAsync(_context, type, methodInfo, parameterInfo);
 
-				_modelPropertyMapper1.AssertWasCalled(arg => arg.Map(Arg<HttpRequestBase>.Is.Anything, Arg<Type>.Is.Anything, Arg<PropertyInfo>.Is.Anything));
-				_modelPropertyMapper2.AssertWasNotCalled(arg => arg.Map(Arg<HttpRequestBase>.Is.Anything, Arg<Type>.Is.Anything, Arg<PropertyInfo>.Is.Anything));
+				_modelPropertyMapper1.AssertWasCalled(arg => arg.MapAsync(Arg<HttpRequestBase>.Is.Anything, Arg<Type>.Is.Anything, Arg<PropertyInfo>.Is.Anything));
+				_modelPropertyMapper2.AssertWasNotCalled(arg => arg.MapAsync(Arg<HttpRequestBase>.Is.Anything, Arg<Type>.Is.Anything, Arg<PropertyInfo>.Is.Anything));
 			}
 		}
 
@@ -161,9 +163,9 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers
 			private bool _executed;
 
 			[Test]
-			public void Must_use_container_to_get_instance()
+			public async void Must_use_container_to_get_instance()
 			{
-				_mapper.CanMapType(_context, typeof(object));
+				await _mapper.CanMapTypeAsync(_context, typeof(object));
 
 				Assert.That(_executed, Is.True);
 			}
@@ -204,17 +206,17 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers
 			[Test]
 			[TestCase(typeof(Model))]
 			[TestCase(typeof(AnotherModel))]
-			public void Must_map_types_ending_in_model(Type type)
+			public async void Must_map_types_ending_in_model(Type type)
 			{
-				Assert.That(_mapper.CanMapType(_context, type), Is.True);
+				Assert.That(await _mapper.CanMapTypeAsync(_context, type), Is.True);
 			}
 
 			[Test]
 			[TestCase(typeof(Model2))]
 			[TestCase(typeof(object))]
-			public void Must_not_map_types_not_ending_in_model(Type type)
+			public async void Must_not_map_types_not_ending_in_model(Type type)
 			{
-				Assert.That(_mapper.CanMapType(_context, type), Is.False);
+				Assert.That(await _mapper.CanMapTypeAsync(_context, type), Is.False);
 			}
 		}
 	}

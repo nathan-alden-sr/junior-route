@@ -27,9 +27,9 @@ namespace Junior.Route.UnitTests.AutoRouting.ResolvedRelativeUrlMappers
 			}
 
 			[Test]
-			public void Must_use_name_from_attribute()
+			public async void Must_use_name_from_attribute()
 			{
-				ResolvedRelativeUrlResult result = _mapper.Map(typeof(Endpoint), typeof(Endpoint).GetMethod("Method"));
+				ResolvedRelativeUrlResult result = await _mapper.MapAsync(typeof(Endpoint), typeof(Endpoint).GetMethod("Method"));
 
 				Assert.That(result.ResolvedRelativeUrl, Is.EqualTo("relative"));
 				Assert.That(result.ResultType, Is.EqualTo(ResolvedRelativeUrlResultType.ResolvedRelativeUrlMapped));

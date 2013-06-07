@@ -5,7 +5,7 @@ namespace Junior.Route.Routing.AntiCsrf.NonceRepositories
 {
 	public interface IAntiCsrfNonceRepository
 	{
-		Task Add(Guid sessionId, Guid nonce, DateTime createdUtcTimestamp, DateTime expiresUtcTimestamp);
-		Task<bool> Exists(Guid sessionId, Guid nonce, DateTime currentUtcTimestamp);
+		Task AddAsync(Guid sessionId, Guid nonce, DateTime createdUtcTimestamp, DateTime expiresUtcTimestamp);
+		Task<bool> ExistsAsync(Guid sessionId, Guid nonce, DateTime currentUtcTimestamp);
 	}
 }

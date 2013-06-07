@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Web;
 
 using Junior.Common;
@@ -15,7 +16,7 @@ namespace Junior.Route.Routing.Caching
 		private static readonly Encoding _defaultHeaderEncoding = Encoding.UTF8;
 		private readonly ICachePolicy _cachePolicy;
 		private readonly string _charset;
-		private readonly byte[] _content;
+		private readonly AsyncLazy<byte[]> _content;
 		private readonly Encoding _contentEncoding;
 		private readonly string _contentType;
 		private readonly Cookie[] _cookies;
@@ -37,7 +38,7 @@ namespace Junior.Route.Routing.Caching
 			_cookies = response.Cookies.Select(arg => arg.Clone()).ToArray();
 			_cachePolicy = response.CachePolicy.Clone();
 			_skipIisCustomErrors = response.SkipIisCustomErrors;
-			_content = response.GetContent();
+			_content = new AsyncLazy<byte[]>(() => response.GetContentAsync());
 		}
 
 		public StatusAndSubStatusCode StatusCode
@@ -112,15 +113,15 @@ namespace Junior.Route.Routing.Caching
 			}
 		}
 
-		public byte[] Content
+		public Task<byte[]> Content
 		{
 			get
 			{
-				return _content;
+				return _content.Value;
 			}
 		}
 
-		public void WriteResponse(HttpResponseBase response)
+		public async Task WriteResponse(HttpResponseBase response)
 		{
 			response.ThrowIfNull("response");
 
@@ -141,7 +142,7 @@ namespace Junior.Route.Routing.Caching
 			_cachePolicy.Apply(response.Cache);
 			response.TrySkipIisCustomErrors = _skipIisCustomErrors;
 
-			response.BinaryWrite(_content);
+			response.BinaryWrite(await _content.Value);
 		}
 	}
 }

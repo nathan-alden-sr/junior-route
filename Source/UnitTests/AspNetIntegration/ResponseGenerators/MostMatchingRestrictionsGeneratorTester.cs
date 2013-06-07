@@ -30,9 +30,9 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseGenerators
 			private HttpContextBase _context;
 
 			[Test]
-			public void Must_use_response_of_route_with_most_matching_restrictions()
+			public async void Must_use_response_of_route_with_most_matching_restrictions()
 			{
-				ResponseResult result = _generator.GetResponse(_context, Enumerable.Empty<RouteMatchResult>());
+				ResponseResult result = await _generator.GetResponse(_context, Enumerable.Empty<RouteMatchResult>());
 
 				Assert.That(result.ResultType, Is.EqualTo(ResponseResultType.ResponseNotGenerated));
 			}
@@ -63,8 +63,8 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseGenerators
 				_route2.RespondWith(_route2Response);
 				_routeMatchResults = new[]
 					{
-						new RouteMatchResult(_route1, _route1.MatchesRequest(_request)),
-						new RouteMatchResult(_route2, _route2.MatchesRequest(_request))
+						new RouteMatchResult(_route1, _route1.MatchesRequestAsync(_request).Result),
+						new RouteMatchResult(_route2, _route2.MatchesRequestAsync(_request).Result)
 					};
 			}
 
@@ -81,7 +81,7 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseGenerators
 			[Test]
 			public async void Must_use_response_of_route_with_most_matching_restrictions()
 			{
-				ResponseResult result = _generator.GetResponse(_context, _routeMatchResults);
+				ResponseResult result = await _generator.GetResponse(_context, _routeMatchResults);
 
 				Assert.That(result.CacheKey, Is.EqualTo(_route2.Id.ToString()));
 				Assert.That(result.ResultType, Is.EqualTo(ResponseResultType.ResponseGenerated));
@@ -111,8 +111,8 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseGenerators
 				_route2.RespondWith(_route2Response);
 				_routeMatchResults = new List<RouteMatchResult>
 					{
-						new RouteMatchResult(_route1, _route1.MatchesRequest(_request)),
-						new RouteMatchResult(_route2, _route2.MatchesRequest(_request))
+						new RouteMatchResult(_route1, _route1.MatchesRequestAsync(_request).Result),
+						new RouteMatchResult(_route2, _route2.MatchesRequestAsync(_request).Result)
 					};
 			}
 
@@ -128,7 +128,7 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseGenerators
 			[Test]
 			public async void Must_generate_multiple_choices_response()
 			{
-				ResponseResult result = _generator.GetResponse(_context, _routeMatchResults);
+				ResponseResult result = await _generator.GetResponse(_context, _routeMatchResults);
 
 				Assert.That(result.CacheKey, Is.Null);
 				Assert.That(result.ResultType, Is.EqualTo(ResponseResultType.ResponseGenerated));

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Web;
 
 using Junior.Common;
@@ -40,15 +41,15 @@ namespace Junior.Route.AutoRouting.ParameterMappers
 		{
 		}
 
-		public bool CanMapType(HttpContextBase context, Type parameterType)
+		public async Task<bool> CanMapTypeAsync(HttpContextBase context, Type parameterType)
 		{
 			context.ThrowIfNull("context");
 			parameterType.ThrowIfNull("parameterType");
 
-			return context.Request.ContentType == "application/json" && _parameterTypeMatchDelegate(parameterType);
+			return context.Request.ContentType == "application/json" && await Task.Run(() => _parameterTypeMatchDelegate(parameterType));
 		}
 
-		public MapResult Map(HttpContextBase context, Type type, MethodInfo method, ParameterInfo parameter)
+		public Task<MapResult> MapAsync(HttpContextBase context, Type type, MethodInfo method, ParameterInfo parameter)
 		{
 			context.ThrowIfNull("request");
 			type.ThrowIfNull("type");
@@ -73,7 +74,7 @@ namespace Junior.Route.AutoRouting.ParameterMappers
 				jsonModel = parameterType.GetDefaultValue();
 			}
 
-			return MapResult.ValueMapped(jsonModel);
+			return MapResult.ValueMapped(jsonModel).AsCompletedTask();
 		}
 	}
 }

@@ -27,9 +27,9 @@ namespace Junior.Route.UnitTests.AutoRouting.NameMappers
 			}
 
 			[Test]
-			public void Must_use_name_from_attribute()
+			public async void Must_use_name_from_attribute()
 			{
-				NameResult result = _mapper.Map(typeof(Endpoint), typeof(Endpoint).GetMethod("Method"));
+				NameResult result = await _mapper.MapAsync(typeof(Endpoint), typeof(Endpoint).GetMethod("Method"));
 
 				Assert.That(result.Name, Is.EqualTo("name"));
 				Assert.That(result.ResultType, Is.EqualTo(NameResultType.NameMapped));

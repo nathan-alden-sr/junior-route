@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Globalization;
+using System.Threading.Tasks;
 using System.Web;
 
 using Junior.Common;
@@ -48,11 +49,11 @@ namespace Junior.Route.Routing.Restrictions
 			return _port == other._port;
 		}
 
-		public bool MatchesRequest(HttpRequestBase request)
+		public Task<bool> MatchesRequestAsync(HttpRequestBase request)
 		{
 			request.ThrowIfNull("request");
 
-			return _port == request.UrlReferrer.Port;
+			return (_port == request.UrlReferrer.Port).AsCompletedTask();
 		}
 
 		public override bool Equals(object obj)

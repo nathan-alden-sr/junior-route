@@ -46,7 +46,7 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers.ModelPropertyMappe
 			[TestCase(typeof(Model), "I")]
 			public void Must_throw_exception(Type type, string propertyName)
 			{
-				Assert.That(() => _mapper.Map(_request, type, type.GetProperty(propertyName)), Throws.InstanceOf<ApplicationException>());
+				Assert.That(() => _mapper.MapAsync(_request, type, type.GetProperty(propertyName)), Throws.InstanceOf<ApplicationException>());
 			}
 		}
 
@@ -80,9 +80,9 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers.ModelPropertyMappe
 
 			[Test]
 			[TestCase(typeof(Model), "I", 0)]
-			public void Must_map_default_value(Type type, string propertyName, object expectedValue)
+			public async void Must_map_default_value(Type type, string propertyName, object expectedValue)
 			{
-				MapResult result = _mapper.Map(_request, type, type.GetProperty(propertyName));
+				MapResult result = await _mapper.MapAsync(_request, type, type.GetProperty(propertyName));
 
 				Assert.That(result.ResultType, Is.EqualTo(MapResultType.ValueMapped));
 				Assert.That(result.Value, Is.EqualTo(expectedValue));
@@ -119,9 +119,9 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers.ModelPropertyMappe
 
 			[Test]
 			[TestCase(typeof(Model), "d", 1.2)]
-			public void Must_map_to_properties_whose_return_values_implement_iconvertible(Type type, string propertyName, object expectedValue)
+			public async void Must_map_to_properties_whose_return_values_implement_iconvertible(Type type, string propertyName, object expectedValue)
 			{
-				MapResult result = _mapper.Map(_request, type, type.GetProperty(propertyName));
+				MapResult result = await _mapper.MapAsync(_request, type, type.GetProperty(propertyName));
 
 				Assert.That(result.ResultType, Is.EqualTo(MapResultType.ValueMapped));
 				Assert.That(result.Value, Is.EqualTo(expectedValue));
@@ -181,9 +181,9 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers.ModelPropertyMappe
 			[Test]
 			[TestCase(typeof(Model1), "S", "value")]
 			[TestCase(typeof(Model1), "I", 0)]
-			public void Must_map_to_properties_whose_return_values_implement_iconvertible(Type type, string propertyName, object expectedValue)
+			public async void Must_map_to_properties_whose_return_values_implement_iconvertible(Type type, string propertyName, object expectedValue)
 			{
-				MapResult result = _mapper.Map(_request, type, type.GetProperty(propertyName));
+				MapResult result = await _mapper.MapAsync(_request, type, type.GetProperty(propertyName));
 
 				Assert.That(result.ResultType, Is.EqualTo(MapResultType.ValueMapped));
 				Assert.That(result.Value, Is.EqualTo(expectedValue));
@@ -204,9 +204,9 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers.ModelPropertyMappe
 			[Test]
 			[TestCase(typeof(string))]
 			[TestCase(typeof(int))]
-			public void Must_map_types_implementing_iconvertible(Type propertyType)
+			public async void Must_map_types_implementing_iconvertible(Type propertyType)
 			{
-				Assert.That(_mapper.CanMapType(propertyType), Is.True);
+				Assert.That(await _mapper.CanMapTypeAsync(propertyType), Is.True);
 			}
 		}
 
@@ -224,9 +224,9 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers.ModelPropertyMappe
 			[Test]
 			[TestCase(typeof(object))]
 			[TestCase(typeof(HttpRequestBase))]
-			public void Must_not_map_types_not_implementing_iconvertible(Type propertyType)
+			public async void Must_not_map_types_not_implementing_iconvertible(Type propertyType)
 			{
-				Assert.That(_mapper.CanMapType(propertyType), Is.False);
+				Assert.That(await _mapper.CanMapTypeAsync(propertyType), Is.False);
 			}
 		}
 	}

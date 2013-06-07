@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 using Junior.Common;
 
@@ -28,14 +29,14 @@ namespace Junior.Route.AutoRouting.NameMappers
 			_wordRegexPattern = wordRegexPattern;
 		}
 
-		public NameResult Map(Type type, MethodInfo method)
+		public Task<NameResult> MapAsync(Type type, MethodInfo method)
 		{
 			type.ThrowIfNull("type");
 			method.ThrowIfNull("method");
 
 			if (!type.NamespaceStartsWith(_rootNamespace))
 			{
-				return NameResult.NameNotMapped();
+				return NameResult.NameNotMapped().AsCompletedTask();
 			}
 
 			var pathParts = new List<string>();
@@ -46,7 +47,7 @@ namespace Junior.Route.AutoRouting.NameMappers
 			pathParts.AddRange(ParseWords(method.Name));
 			string name = String.Join(_wordSeparator, pathParts);
 
-			return NameResult.NameMapped(name);
+			return NameResult.NameMapped(name).AsCompletedTask();
 		}
 
 		private IEnumerable<string> ParseWords(string value)

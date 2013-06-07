@@ -38,24 +38,38 @@ namespace Junior.Route.AspNetIntegration
 			application.Error += ApplicationOnError;
 		}
 
-		private static void OnApplicationOnPostAuthenticateRequest(object sender, EventArgs e)
+		private static async void OnApplicationOnPostAuthenticateRequest(object sender, EventArgs e)
 		{
-			HttpContext context = HttpContext.Current;
+			var context = new HttpContextWrapper(HttpContext.Current);
+			IRequestFilter[] requestFilters = _configuration.RequestFilters.ToArray();
 
-			if (!_configuration.RequestFilters.Any() || _configuration.RequestFilters.Any(arg => arg.Filter(new HttpContextWrapper(context)).ResultType == FilterResultType.UseJuniorRouteHandler))
+			if (!requestFilters.Any())
 			{
 				context.RemapHandler(_configuration.HttpHandler);
+				return;
+			}
+
+			foreach (IRequestFilter requestFilter in _configuration.RequestFilters)
+			{
+				if ((await requestFilter.Filter(context)).ResultType == FilterResultType.UseJuniorRouteHandler)
+				{
+					context.RemapHandler(_configuration.HttpHandler);
+					return;
+				}
 			}
 		}
 
-		private static void ApplicationOnError(object sender, EventArgs e)
+		private static async void ApplicationOnError(object sender, EventArgs e)
 		{
 			var application = (HttpApplication)sender;
 			var context = new HttpContextWrapper(application.Context);
 
-			if (_configuration.ErrorHandlers.All(arg => arg.Handle(context).ResultType != HandleResultType.Handled))
+			foreach (IErrorHandler errorHandler in _configuration.ErrorHandlers)
 			{
-				return;
+				if ((await errorHandler.Handle(context)).ResultType == HandleResultType.Handled)
+				{
+					return;
+				}
 			}
 
 			application.Response.TrySkipIisCustomErrors = true;

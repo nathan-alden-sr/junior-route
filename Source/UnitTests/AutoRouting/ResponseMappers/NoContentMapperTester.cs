@@ -17,13 +17,13 @@ namespace Junior.Route.UnitTests.AutoRouting.ResponseMappers
 		public class When_mapping_response
 		{
 			[SetUp]
-			public async void SetUp()
+			public void SetUp()
 			{
 				_mapper = new NoContentMapper();
 				_route = new Route.Routing.Route("name", Guid.NewGuid(), "relative");
 				_context = MockRepository.GenerateMock<HttpContextBase>();
-				_mapper.Map(() => null, typeof(string), typeof(string).GetMethod("Trim", Type.EmptyTypes), _route);
-				_response = await _route.ProcessResponse(_context);
+				_mapper.MapAsync(() => null, typeof(string), typeof(string).GetMethod("Trim", Type.EmptyTypes), _route);
+				_response = _route.ProcessResponseAsync(_context).Result;
 			}
 
 			private NoContentMapper _mapper;

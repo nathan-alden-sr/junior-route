@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 
 using Junior.Common;
@@ -13,7 +14,7 @@ namespace Junior.Route.AspNetIntegration.ResponseGenerators
 {
 	public class UnmatchedRestrictionsGenerator : IResponseGenerator
 	{
-		public ResponseResult GetResponse(HttpContextBase context, IEnumerable<RouteMatchResult> routeMatchResults)
+		public Task<ResponseResult> GetResponse(HttpContextBase context, IEnumerable<RouteMatchResult> routeMatchResults)
 		{
 			context.ThrowIfNull("context");
 			routeMatchResults.ThrowIfNull("routeMatchResults");
@@ -39,40 +40,40 @@ namespace Junior.Route.AspNetIntegration.ResponseGenerators
 							.Distinct(StringComparer.OrdinalIgnoreCase)
 							.OrderBy(arg => arg);
 
-						return ResponseResult.ResponseGenerated(new Response().MethodNotAllowed().Header("Allow", String.Join(", ", methods)));
+						return ResponseResult.ResponseGenerated(new Response().MethodNotAllowed().Header("Allow", String.Join(", ", methods))).AsCompletedTask();
 					}
 
 					IEnumerable<HeaderRestriction<AcceptHeader>> acceptHeaderRestrictions = unmatchedRestrictions.OfType<HeaderRestriction<AcceptHeader>>();
 
 					if (acceptHeaderRestrictions.Any())
 					{
-						return ResponseResult.ResponseGenerated(new Response().NotAcceptable());
+						return ResponseResult.ResponseGenerated(new Response().NotAcceptable()).AsCompletedTask();
 					}
 
 					IEnumerable<HeaderRestriction<AcceptCharsetHeader>> acceptCharsetHeaderRestrictions = unmatchedRestrictions.OfType<HeaderRestriction<AcceptCharsetHeader>>();
 
 					if (acceptCharsetHeaderRestrictions.Any())
 					{
-						return ResponseResult.ResponseGenerated(new Response().NotAcceptable());
+						return ResponseResult.ResponseGenerated(new Response().NotAcceptable()).AsCompletedTask();
 					}
 
 					IEnumerable<HeaderRestriction<AcceptEncodingHeader>> acceptEncodingHeaderRestrictions = unmatchedRestrictions.OfType<HeaderRestriction<AcceptEncodingHeader>>();
 
 					if (acceptEncodingHeaderRestrictions.Any())
 					{
-						return ResponseResult.ResponseGenerated(new Response().NotAcceptable());
+						return ResponseResult.ResponseGenerated(new Response().NotAcceptable()).AsCompletedTask();
 					}
 
 					IEnumerable<HeaderRestriction<ContentEncodingHeader>> contentEncodingHeaderRestrictions = unmatchedRestrictions.OfType<HeaderRestriction<ContentEncodingHeader>>();
 
 					if (contentEncodingHeaderRestrictions.Any())
 					{
-						return ResponseResult.ResponseGenerated(new Response().UnsupportedMediaType());
+						return ResponseResult.ResponseGenerated(new Response().UnsupportedMediaType()).AsCompletedTask();
 					}
 				}
 			}
 
-			return ResponseResult.ResponseNotGenerated();
+			return ResponseResult.ResponseNotGenerated().AsCompletedTask();
 		}
 
 		private static bool RouteMatchedUrlRelativePath(MatchResult matchResult)

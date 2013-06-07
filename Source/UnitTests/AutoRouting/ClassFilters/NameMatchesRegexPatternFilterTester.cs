@@ -22,16 +22,16 @@ namespace Junior.Route.UnitTests.AutoRouting.ClassFilters
 
 			[Test]
 			[TestCase(typeof(HttpRequestBase))]
-			public void Must_match_types_with_names_matching_pattern(Type type)
+			public async void Must_match_types_with_names_matching_pattern(Type type)
 			{
-				Assert.That(_filter.Matches(type), Is.True);
+				Assert.That(await _filter.MatchesAsync(type), Is.True);
 			}
 
 			[Test]
 			[TestCase(typeof(HttpResponseBase))]
-			public void Must_not_match_types_with_names_not_matching_pattern(Type type)
+			public async void Must_not_match_types_with_names_not_matching_pattern(Type type)
 			{
-				Assert.That(_filter.Matches(type), Is.False);
+				Assert.That(await _filter.MatchesAsync(type), Is.False);
 			}
 		}
 	}

@@ -15,10 +15,10 @@ namespace Junior.Route.UnitTests.AutoRouting.ResolvedRelativeUrlMappers
 			[TestCase(true, "_", "web/http_request_base")]
 			[TestCase(false, "_", "Web/Http_Request_Base")]
 			[TestCase(false, "-", "Web/Http-Request-Base")]
-			public void Must_generate_correct_resolved_relative_url(bool makeLowercase, string wordSeparator, string expectedName)
+			public async void Must_generate_correct_resolved_relative_url(bool makeLowercase, string wordSeparator, string expectedName)
 			{
 				var mapper = new ResolvedRelativeUrlFromRelativeClassNamespaceAndClassNameMapper("System", makeLowercase, wordSeparator);
-				ResolvedRelativeUrlResult result = mapper.Map(typeof(HttpRequestBase), typeof(HttpRequestBase).GetMethod("Abort"));
+				ResolvedRelativeUrlResult result = await mapper.MapAsync(typeof(HttpRequestBase), typeof(HttpRequestBase).GetMethod("Abort"));
 
 				Assert.That(result.ResolvedRelativeUrl, Is.EqualTo(expectedName));
 				Assert.That(result.ResultType, Is.EqualTo(ResolvedRelativeUrlResultType.ResolvedRelativeUrlMapped));

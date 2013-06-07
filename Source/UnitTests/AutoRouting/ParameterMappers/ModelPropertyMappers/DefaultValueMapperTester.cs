@@ -47,17 +47,17 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers.ModelPropertyMappe
 			[TestCase(typeof(string))]
 			[TestCase(typeof(int))]
 			[TestCase(typeof(object))]
-			public void Must_map_all_types(Type propertyType)
+			public async void Must_map_all_types(Type propertyType)
 			{
-				Assert.That(_mapper.CanMapType(propertyType), Is.True);
+				Assert.That(await _mapper.CanMapTypeAsync(propertyType), Is.True);
 			}
 
 			[Test]
 			[TestCase(typeof(Model), "S", null)]
-			public void Must_map_to_default_value_of_property_type(Type type, string propertyName, object expectedValue)
+			public async void Must_map_to_default_value_of_property_type(Type type, string propertyName, object expectedValue)
 			{
 				PropertyInfo propertyInfo = type.GetProperty(propertyName);
-				MapResult result = _mapper.Map(_request, type, propertyInfo);
+				MapResult result = await _mapper.MapAsync(_request, type, propertyInfo);
 
 				Assert.That(result.ResultType, Is.EqualTo(MapResultType.ValueMapped));
 				Assert.That(result.Value, Is.EqualTo(propertyInfo.PropertyType.GetDefaultValue()));

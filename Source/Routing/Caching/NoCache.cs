@@ -1,20 +1,25 @@
 ﻿using System;
+using System.Threading.Tasks;
+
+using Junior.Common;
 
 namespace Junior.Route.Routing.Caching
 {
 	public class NoCache : ICache
 	{
-		public void Add(string key, CacheResponse response, DateTime expirationUtcTimestamp)
+		public Task AddAsync(string key, CacheResponse response, DateTime expirationUtcTimestamp)
 		{
+			return Task.Factory.Empty();
 		}
 
-		public void Remove(string key)
+		public Task RemoveAsync(string key)
 		{
+			return Task.Factory.Empty();
 		}
 
-		public CacheItem Get(string key)
+		public Task<CacheItem> GetAsync(string key)
 		{
-			return null;
+			return Task<CacheItem>.Factory.Empty();
 		}
 	}
 }

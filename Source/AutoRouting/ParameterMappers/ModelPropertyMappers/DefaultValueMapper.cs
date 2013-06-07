@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Web;
 
 using Junior.Common;
@@ -8,20 +9,20 @@ namespace Junior.Route.AutoRouting.ParameterMappers.ModelPropertyMappers
 {
 	public class DefaultValueMapper : IModelPropertyMapper
 	{
-		public bool CanMapType(Type propertyType)
+		public Task<bool> CanMapTypeAsync(Type propertyType)
 		{
 			propertyType.ThrowIfNull("propertyType");
 
-			return true;
+			return true.AsCompletedTask();
 		}
 
-		public MapResult Map(HttpRequestBase request, Type modelType, PropertyInfo property)
+		public Task<MapResult> MapAsync(HttpRequestBase request, Type modelType, PropertyInfo property)
 		{
 			request.ThrowIfNull("request");
 			modelType.ThrowIfNull("modelType");
 			property.ThrowIfNull("property");
 
-			return MapResult.ValueMapped(property.PropertyType.GetDefaultValue());
+			return MapResult.ValueMapped(property.PropertyType.GetDefaultValue()).AsCompletedTask();
 		}
 	}
 }

@@ -5,6 +5,6 @@ namespace Junior.Route.Routing.AntiCsrf.NonceValidators
 {
 	public interface IAntiCsrfNonceValidator
 	{
-		Task<ValidationResult> Validate(HttpRequestBase request);
+		Task<ValidationResult> ValidateAsync(HttpRequestBase request);
 	}
 }

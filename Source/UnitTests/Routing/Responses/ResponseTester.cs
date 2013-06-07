@@ -328,9 +328,9 @@ namespace Junior.Route.UnitTests.Routing.Responses
 			private Response _response;
 
 			[Test]
-			public void Must_return_content()
+			public async void Must_return_content()
 			{
-				Assert.That(_response.GetContent(), Is.EquivalentTo(new byte[] { 0, 1, 2, 3 }));
+				Assert.That(await _response.GetContentAsync(), Is.EquivalentTo(new byte[] { 0, 1, 2, 3 }));
 			}
 		}
 
@@ -347,9 +347,9 @@ namespace Junior.Route.UnitTests.Routing.Responses
 			private Response _response;
 
 			[Test]
-			public void Must_return_content()
+			public async void Must_return_content()
 			{
-				Assert.That(_response.GetContent(), Is.EquivalentTo(new byte[] { 0, 1, 2, 3 }));
+				Assert.That(await _response.GetContentAsync(), Is.EquivalentTo(new byte[] { 0, 1, 2, 3 }));
 			}
 		}
 
@@ -366,9 +366,9 @@ namespace Junior.Route.UnitTests.Routing.Responses
 			private Response _response;
 
 			[Test]
-			public void Must_return_content()
+			public async void Must_return_content()
 			{
-				Assert.That(_response.GetContent(), Is.EqualTo(Encoding.ASCII.GetBytes("content")));
+				Assert.That(await _response.GetContentAsync(), Is.EqualTo(Encoding.ASCII.GetBytes("content")));
 			}
 		}
 
@@ -385,9 +385,9 @@ namespace Junior.Route.UnitTests.Routing.Responses
 			private Response _response;
 
 			[Test]
-			public void Must_return_content()
+			public async void Must_return_content()
 			{
-				Assert.That(_response.GetContent(), Is.EqualTo(Encoding.ASCII.GetBytes("content")));
+				Assert.That(await _response.GetContentAsync(), Is.EqualTo(Encoding.ASCII.GetBytes("content")));
 			}
 		}
 

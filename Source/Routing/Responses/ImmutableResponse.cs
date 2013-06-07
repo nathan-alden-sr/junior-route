@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 using Junior.Common;
 using Junior.Route.Routing.Caching;
@@ -94,9 +95,9 @@ namespace Junior.Route.Routing.Responses
 			}
 		}
 
-		public byte[] GetContent()
+		public Task<byte[]> GetContentAsync()
 		{
-			return _response.GetContent();
+			return _response.GetContentAsync();
 		}
 	}
 }

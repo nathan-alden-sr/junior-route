@@ -29,9 +29,9 @@ namespace Junior.Route.UnitTests.AutoRouting.IdMappers
 			}
 
 			[Test]
-			public void Must_use_id_from_attribute()
+			public async void Must_use_id_from_attribute()
 			{
-				IdResult result = _mapper.Map(typeof(Endpoint), typeof(Endpoint).GetMethod("Method"));
+				IdResult result = await _mapper.MapAsync(typeof(Endpoint), typeof(Endpoint).GetMethod("Method"));
 
 				Assert.That(result.Id, Is.EqualTo(Guid.Parse("617658c6-4ea6-442c-8504-add11dde02ff")));
 				Assert.That(result.ResultType, Is.EqualTo(IdResultType.IdMapped));

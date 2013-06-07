@@ -49,9 +49,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Iesi.Collections.3.2.0.4000\lib\Net35\Iesi.Collections.dll</HintPath>
     </Reference>
-    <Reference Include="Junior.Common, Version=3.3.0.0, Culture=neutral, PublicKeyToken=998713eb9a0cce30, processorArchitecture=MSIL">
+    <Reference Include="Junior.Common, Version=3.6.0.0, Culture=neutral, PublicKeyToken=998713eb9a0cce30, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\JuniorCommon.3.3.1\lib\net45\Junior.Common.dll</HintPath>
+      <HintPath>..\packages\JuniorCommon.3.6.0\lib\net45\Junior.Common.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="Yahoo.Yui.Compressor, Version=2.2.0.0, Culture=neutral, processorArchitecture=MSIL">

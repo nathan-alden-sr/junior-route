@@ -11,7 +11,7 @@ namespace Junior.Route.AspNetIntegration.ResponseGenerators
 {
 	public class MostMatchingRestrictionsGenerator : IResponseGenerator
 	{
-		public ResponseResult GetResponse(HttpContextBase context, IEnumerable<RouteMatchResult> routeMatchResults)
+		public async Task<ResponseResult> GetResponse(HttpContextBase context, IEnumerable<RouteMatchResult> routeMatchResults)
 		{
 			context.ThrowIfNull("context");
 			routeMatchResults.ThrowIfNull("routeMatchResults");
@@ -32,14 +32,14 @@ namespace Junior.Route.AspNetIntegration.ResponseGenerators
 				if (bestMatches.Length == 1)
 				{
 					RouteMatchResult bestMatch = bestMatches[0];
-					AuthenticateResult authenticateResult = bestMatch.Route.Authenticate(context.Request, context.Response);
+					AuthenticateResult authenticateResult = await bestMatch.Route.AuthenticateAsync(context.Request, context.Response);
 
 					if (authenticateResult.ResultType == AuthenticateResultType.AuthenticationFailed)
 					{
 						return ResponseResult.ResponseGenerated(authenticateResult.FailedResponse ?? new Response().Unauthorized());
 					}
 
-					Task<IResponse> responseTask = bestMatch.Route.ProcessResponse(context);
+					Task<IResponse> responseTask = bestMatch.Route.ProcessResponseAsync(context);
 
 					return ResponseResult.ResponseGenerated(responseTask, bestMatch.MatchResult.CacheKey);
 				}

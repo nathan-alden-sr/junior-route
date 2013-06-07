@@ -27,9 +27,9 @@ namespace Junior.Route.UnitTests.AutoRouting.AuthenticationStrategies
 			}
 
 			[Test]
-			public void Must_return_true()
+			public async void Must_return_true()
 			{
-				Assert.That(_strategy.MustAuthenticate(typeof(Endpoint), typeof(Endpoint).GetMethod("Method")), Is.True);
+				Assert.That(await _strategy.MustAuthenticateAsync(typeof(Endpoint), typeof(Endpoint).GetMethod("Method")), Is.True);
 			}
 		}
 	}

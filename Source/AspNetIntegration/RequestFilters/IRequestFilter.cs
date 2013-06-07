@@ -1,9 +1,10 @@
-﻿using System.Web;
+﻿using System.Threading.Tasks;
+using System.Web;
 
 namespace Junior.Route.AspNetIntegration.RequestFilters
 {
 	public interface IRequestFilter
 	{
-		FilterResult Filter(HttpContextBase context);
+		Task<FilterResult> Filter(HttpContextBase context);
 	}
 }

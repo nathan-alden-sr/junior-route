@@ -6,6 +6,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 
+using ALinq;
+
 using Junior.Common;
 using Junior.Route.Http.RequestHeaders;
 using Junior.Route.Routing.AuthenticationProviders;
@@ -19,12 +21,11 @@ namespace Junior.Route.Routing
 	public class Route
 	{
 		private readonly Guid _id;
-		private readonly object _lockObject = new object();
 		private readonly string _name;
 		private readonly Dictionary<Type, HashSet<IRestriction>> _restrictionsByRestrictionType = new Dictionary<Type, HashSet<IRestriction>>();
 		private IAuthenticationProvider _authenticationProvider;
 		private string _resolvedRelativeUrl;
-		private Func<HttpContextBase, Task<IResponse>> _responseDelegate = async context => await Task.FromResult(new Response().NoContent());
+		private Func<HttpContextBase, Task<IResponse>> _responseDelegate = context => new Response().NoContent().AsCompletedTask<IResponse>();
 
 		public Route(string name, IGuidFactory guidFactory, string resolvedRelativeUrl)
 		{
@@ -770,21 +771,18 @@ namespace Junior.Route.Routing
 		{
 			restrictions.ThrowIfNull("restrictions");
 
-			lock (_lockObject)
+			foreach (IRestriction restriction in restrictions)
 			{
-				foreach (IRestriction restriction in restrictions)
+				Type restrictionType = restriction.GetType();
+				HashSet<IRestriction> restrictionHashSet;
+
+				if (!_restrictionsByRestrictionType.TryGetValue(restrictionType, out restrictionHashSet))
 				{
-					Type restrictionType = restriction.GetType();
-					HashSet<IRestriction> restrictionHashSet;
-
-					if (!_restrictionsByRestrictionType.TryGetValue(restrictionType, out restrictionHashSet))
-					{
-						restrictionHashSet = new HashSet<IRestriction>();
-						_restrictionsByRestrictionType.Add(restrictionType, restrictionHashSet);
-					}
-
-					restrictionHashSet.Add(restriction);
+					restrictionHashSet = new HashSet<IRestriction>();
+					_restrictionsByRestrictionType.Add(restrictionType, restrictionHashSet);
 				}
+
+				restrictionHashSet.Add(restriction);
 			}
 
 			return this;
@@ -798,89 +796,62 @@ namespace Junior.Route.Routing
 		public bool HasRestrictions<T>()
 			where T : IRestriction
 		{
-			lock (_lockObject)
-			{
-				return _restrictionsByRestrictionType.ContainsKey(typeof(T));
-			}
+			return _restrictionsByRestrictionType.ContainsKey(typeof(T));
 		}
 
 		public bool HasRestrictions(Type restrictionType)
 		{
 			restrictionType.ThrowIfNull("restrictionType");
 
-			lock (_lockObject)
-			{
-				return _restrictionsByRestrictionType.ContainsKey(restrictionType);
-			}
+			return _restrictionsByRestrictionType.ContainsKey(restrictionType);
 		}
 
 		public bool HasGenericRestrictions(Type restrictionGenericTypeDefinition)
 		{
 			restrictionGenericTypeDefinition.ThrowIfNull("restrictionGenericTypeDefinition");
 
-			lock (_lockObject)
-			{
-				return _restrictionsByRestrictionType.Keys.Any(arg => arg.IsGenericType && arg.GetGenericTypeDefinition() == restrictionGenericTypeDefinition);
-			}
+			return _restrictionsByRestrictionType.Keys.Any(arg => arg.IsGenericType && arg.GetGenericTypeDefinition() == restrictionGenericTypeDefinition);
 		}
 
 		public IEnumerable<IRestriction> GetRestrictions()
 		{
-			lock (_lockObject)
-			{
-				return _restrictionsByRestrictionType.Values.SelectMany(arg => arg);
-			}
+			return _restrictionsByRestrictionType.Values.SelectMany(arg => arg);
 		}
 
 		public IEnumerable<T> GetRestrictions<T>()
 			where T : IRestriction
 		{
-			lock (_lockObject)
-			{
-				HashSet<IRestriction> restrictions;
+			HashSet<IRestriction> restrictions;
 
-				return _restrictionsByRestrictionType.TryGetValue(typeof(T), out restrictions) ? restrictions.Cast<T>() : Enumerable.Empty<T>();
-			}
+			return _restrictionsByRestrictionType.TryGetValue(typeof(T), out restrictions) ? restrictions.Cast<T>() : Enumerable.Empty<T>();
 		}
 
 		public IEnumerable GetRestrictions(Type restrictionType)
 		{
 			restrictionType.ThrowIfNull("restrictionType");
 
-			lock (_lockObject)
-			{
-				HashSet<IRestriction> restrictions;
+			HashSet<IRestriction> restrictions;
 
-				return _restrictionsByRestrictionType.TryGetValue(restrictionType, out restrictions) ? restrictions : Enumerable.Empty<IRestriction>();
-			}
+			return _restrictionsByRestrictionType.TryGetValue(restrictionType, out restrictions) ? restrictions : Enumerable.Empty<IRestriction>();
 		}
 
 		public IEnumerable GetGenericRestrictions(Type restrictionGenericTypeDefinition)
 		{
 			restrictionGenericTypeDefinition.ThrowIfNull("restrictionGenericTypeDefinition");
 
-			lock (_lockObject)
-			{
-				return _restrictionsByRestrictionType.Keys
-					.Where(arg => arg.IsGenericType && arg.GetGenericTypeDefinition() == restrictionGenericTypeDefinition)
-					.SelectMany(arg => _restrictionsByRestrictionType[arg]);
-			}
+			return _restrictionsByRestrictionType.Keys
+				.Where(arg => arg.IsGenericType && arg.GetGenericTypeDefinition() == restrictionGenericTypeDefinition)
+				.SelectMany(arg => _restrictionsByRestrictionType[arg]);
 		}
 
 		public IEnumerable<Type> GetRestrictionTypes()
 		{
-			lock (_lockObject)
-			{
-				return _restrictionsByRestrictionType.Keys;
-			}
+			return _restrictionsByRestrictionType.Keys;
 		}
 
 		public void ClearRestrictions()
 		{
-			lock (_lockObject)
-			{
-				_restrictionsByRestrictionType.Clear();
-			}
+			_restrictionsByRestrictionType.Clear();
 		}
 
 		#endregion
@@ -910,22 +881,19 @@ namespace Junior.Route.Routing
 		public Route RespondWith<T>(Func<HttpContextBase, T> responseDelegate, Type returnType)
 			where T : class, IResponse
 		{
-			lock (_lockObject)
+			Type delegateType = typeof(T);
+
+			if (returnType != delegateType && delegateType.IsInterface && !returnType.ImplementsInterface<T>())
 			{
-				Type delegateType = typeof(T);
-
-				if (returnType != delegateType && delegateType.IsInterface && !returnType.ImplementsInterface<T>())
-				{
-					throw new ArgumentException(String.Format("Return type must implement {0}.", delegateType.FullName), "returnType");
-				}
-				if (returnType != delegateType && !delegateType.IsInterface && !returnType.IsSubclassOf(delegateType))
-				{
-					throw new ArgumentException(String.Format("Return type must derive {0}.", delegateType.FullName), "returnType");
-				}
-
-				_responseDelegate = async context => await Task.FromResult(responseDelegate(context));
-				ResponseType = returnType;
+				throw new ArgumentException(String.Format("Return type must implement {0}.", delegateType.FullName), "returnType");
 			}
+			if (returnType != delegateType && !delegateType.IsInterface && !returnType.IsSubclassOf(delegateType))
+			{
+				throw new ArgumentException(String.Format("Return type must derive {0}.", delegateType.FullName), "returnType");
+			}
+
+			_responseDelegate = context => responseDelegate(context).AsCompletedTask<IResponse>();
+			ResponseType = returnType;
 
 			return this;
 		}
@@ -951,22 +919,19 @@ namespace Junior.Route.Routing
 		public Route RespondWith<T>(Func<HttpContextBase, Task<T>> responseDelegate, Type returnType)
 			where T : class, IResponse
 		{
-			lock (_lockObject)
+			Type delegateType = typeof(T);
+
+			if (returnType != delegateType && delegateType.IsInterface && !returnType.ImplementsInterface<T>())
 			{
-				Type delegateType = typeof(T);
-
-				if (returnType != delegateType && delegateType.IsInterface && !returnType.ImplementsInterface<T>())
-				{
-					throw new ArgumentException(String.Format("Return type must implement {0}.", delegateType.FullName), "returnType");
-				}
-				if (returnType != delegateType && !delegateType.IsInterface && !returnType.IsSubclassOf(delegateType))
-				{
-					throw new ArgumentException(String.Format("Return type must derive {0}.", delegateType.FullName), "returnType");
-				}
-
-				_responseDelegate = async context => await responseDelegate(context);
-				ResponseType = returnType;
+				throw new ArgumentException(String.Format("Return type must implement {0}.", delegateType.FullName), "returnType");
 			}
+			if (returnType != delegateType && !delegateType.IsInterface && !returnType.IsSubclassOf(delegateType))
+			{
+				throw new ArgumentException(String.Format("Return type must derive {0}.", delegateType.FullName), "returnType");
+			}
+
+			_responseDelegate = async context => await responseDelegate(context);
+			ResponseType = returnType;
 
 			return this;
 		}
@@ -993,49 +958,38 @@ namespace Junior.Route.Routing
 		{
 			@delegate.ThrowIfNull("delegate");
 
-			lock (_lockObject)
-			{
-				_responseDelegate = async context =>
-					                          {
-						                          @delegate(context);
+			_responseDelegate = context =>
+				{
+					@delegate(context);
 
-						                          return await Task.FromResult(new Response().NoContent());
-					                          };
-				ResponseType = null;
-			}
+					return new Response().NoContent().AsCompletedTask<IResponse>();
+				};
+			ResponseType = null;
 
 			return this;
 		}
 
 		public Route RespondWithNoContent()
 		{
-			lock (_lockObject)
-			{
-				_responseDelegate = async context => await Task.FromResult(new Response().NoContent());
-				ResponseType = null;
-			}
+			_responseDelegate = context => new Response().NoContent().AsCompletedTask<IResponse>();
+			ResponseType = null;
 
 			return this;
 		}
 
 		#endregion
 
-		public MatchResult MatchesRequest(HttpRequestBase request)
+		public async Task<MatchResult> MatchesRequestAsync(HttpRequestBase request)
 		{
 			request.ThrowIfNull("request");
 
-			lock (_lockObject)
-			{
-				IRestriction[] restrictions = GetRestrictions().ToArray();
-				// ReSharper disable ImplicitlyCapturedClosure
-				IRestriction[] matchingRestrictions = restrictions.Where(arg => arg.MatchesRequest(request)).ToArray();
-				// ReSharper restore ImplicitlyCapturedClosure
+			IRestriction[] restrictions = GetRestrictions().ToArray();
+			IRestriction[] matchingRestrictions = await restrictions.ToAsync().Where(async arg => await arg.MatchesRequestAsync(request)).ToArray();
 
-				return restrictions.Length == matchingRestrictions.Length ? MatchResult.RouteMatched(matchingRestrictions, _id.ToString()) : MatchResult.RouteNotMatched(matchingRestrictions, restrictions.Except(matchingRestrictions));
-			}
+			return restrictions.Length == matchingRestrictions.Length ? MatchResult.RouteMatched(matchingRestrictions, _id.ToString()) : MatchResult.RouteNotMatched(matchingRestrictions, restrictions.Except(matchingRestrictions));
 		}
 
-		public AuthenticateResult Authenticate(HttpRequestBase request, HttpResponseBase response)
+		public async Task<AuthenticateResult> AuthenticateAsync(HttpRequestBase request, HttpResponseBase response)
 		{
 			request.ThrowIfNull("request");
 			response.ThrowIfNull("response");
@@ -1045,14 +999,14 @@ namespace Junior.Route.Routing
 				return AuthenticateResult.NoAuthenticationPerformed();
 			}
 
-			AuthenticationResult result = _authenticationProvider.Authenticate(request, response, this);
+			AuthenticationResult result = await _authenticationProvider.AuthenticateAsync(request, response, this);
 
 			return result == AuthenticationResult.AuthenticationSucceeded
 				       ? AuthenticateResult.AuthenticationSucceeded()
-				       : AuthenticateResult.AuthenticationFailed(_authenticationProvider.GetFailedAuthenticationResponse(request));
+				       : AuthenticateResult.AuthenticationFailed(await _authenticationProvider.GetFailedAuthenticationResponseAsync(request));
 		}
 
-		public async Task<IResponse> ProcessResponse(HttpContextBase context)
+		public async Task<IResponse> ProcessResponseAsync(HttpContextBase context)
 		{
 			context.ThrowIfNull("context");
 

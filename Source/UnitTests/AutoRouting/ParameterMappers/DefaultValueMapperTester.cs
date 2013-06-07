@@ -38,18 +38,18 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers
 			[TestCase(typeof(string))]
 			[TestCase(typeof(int))]
 			[TestCase(typeof(object))]
-			public void Must_map_all_types(Type propertyType)
+			public async void Must_map_all_types(Type propertyType)
 			{
-				Assert.That(_mapper.CanMapType(_context, propertyType), Is.True);
+				Assert.That(await _mapper.CanMapTypeAsync(_context, propertyType), Is.True);
 			}
 
 			[Test]
 			[TestCase(typeof(Model), "Method", "s", null)]
-			public void Must_map_to_default_value_of_property_type(Type type, string methodName, string parameterName, object expectedValue)
+			public async void Must_map_to_default_value_of_property_type(Type type, string methodName, string parameterName, object expectedValue)
 			{
 				MethodInfo methodInfo = type.GetMethod(methodName);
 				ParameterInfo parameterInfo = methodInfo.GetParameters().Single(arg => arg.Name == parameterName);
-				MapResult result = _mapper.Map(_context, type, methodInfo, parameterInfo);
+				MapResult result = await _mapper.MapAsync(_context, type, methodInfo, parameterInfo);
 
 				Assert.That(result.ResultType, Is.EqualTo(MapResultType.ValueMapped));
 				Assert.That(result.Value, Is.EqualTo(parameterInfo.ParameterType.GetDefaultValue()));

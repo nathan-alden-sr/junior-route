@@ -5,6 +5,6 @@ namespace Junior.Route.Routing.AntiCsrf.HtmlGenerators
 {
 	public interface IAntiCsrfHtmlGenerator
 	{
-		Task<string> GenerateHiddenInputHtml(HttpResponseBase response);
+		Task<string> GenerateHiddenInputHtmlAsync(HttpResponseBase response);
 	}
 }

@@ -5,6 +5,8 @@ using System.Net.Mime;
 using System.Threading.Tasks;
 using System.Web;
 
+using ALinq;
+
 using Junior.Common;
 using Junior.Route.AspNetIntegration.ResponseGenerators;
 using Junior.Route.AspNetIntegration.ResponseHandlers;
@@ -94,12 +96,12 @@ namespace Junior.Route.AspNetIntegration.AspNet
 
 						if (String.Equals(contentType.MediaType, "application/x-www-form-urlencoded", StringComparison.OrdinalIgnoreCase) || String.Equals(contentType.MediaType, "multipart/form-data", StringComparison.OrdinalIgnoreCase))
 						{
-							ValidationResult validationResult = await _antiCsrfNonceValidator.Validate(request);
-							ResponseResult responseResult = _antiCsrfResponseGenerator.GetResponse(validationResult);
+							ValidationResult validationResult = await _antiCsrfNonceValidator.ValidateAsync(request);
+							ResponseResult responseResult = await _antiCsrfResponseGenerator.GetResponseAsync(validationResult);
 
 							if (responseResult.ResultType == ResponseResultType.ResponseGenerated)
 							{
-								ProcessResponse(context, responseResult.Response, null);
+								await ProcessResponse(context, responseResult.Response, null);
 								return;
 							}
 						}
@@ -109,28 +111,30 @@ namespace Junior.Route.AspNetIntegration.AspNet
 					}
 				}
 
-				_antiCsrfCookieManager.ConfigureCookie(request, response);
+				await _antiCsrfCookieManager.ConfigureCookie(request, response);
 			}
 			{
-				RouteMatchResult[] routeMatchResults = _routes.Select(arg => new RouteMatchResult(arg, arg.MatchesRequest(request))).ToArray();
-				ResponseGenerators.ResponseResult responseResult = _responseGenerators
-					.Select(arg => arg.GetResponse(new HttpContextWrapper(context), routeMatchResults))
-					.FirstOrDefault(arg => arg.ResultType != ResponseGenerators.ResponseResultType.ResponseNotGenerated);
+				RouteMatchResult[] routeMatchResults = await _routes.Select(async arg => new RouteMatchResult(arg, await arg.MatchesRequestAsync(request))).ToAsync().ToArray();
+				IEnumerable<Task<ResponseGenerators.ResponseResult>> responseResultTasks = _responseGenerators.Select(arg => arg.GetResponse(new HttpContextWrapper(context), routeMatchResults));
 
-				if (responseResult == null)
+				foreach (Task<ResponseGenerators.ResponseResult> responseResultTask in responseResultTasks)
 				{
-					throw new ApplicationException("No response was generated.");
-				}
+					ResponseGenerators.ResponseResult responseResult = await responseResultTask;
 
-				ProcessResponse(context, await responseResult.Response, responseResult.CacheKey);
+					if (responseResult.ResultType == ResponseGenerators.ResponseResultType.ResponseGenerated)
+					{
+						await ProcessResponse(context, await responseResult.Response, responseResult.CacheKey);
+						return;
+					}
+				}
 			}
 		}
 
-		private void ProcessResponse(HttpContext context, IResponse response, string cacheKey)
+		private async Task ProcessResponse(HttpContext context, IResponse response, string cacheKey)
 		{
 			foreach (IResponseHandler handler in _responseHandlers)
 			{
-				ResponseHandlerResult handlerResult = handler.HandleResponse(new HttpContextWrapper(context), response, _cache, cacheKey);
+				ResponseHandlerResult handlerResult = await handler.HandleResponse(new HttpContextWrapper(context), response, _cache, cacheKey);
 
 				switch (handlerResult.ResultType)
 				{

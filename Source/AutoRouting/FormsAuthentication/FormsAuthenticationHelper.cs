@@ -28,12 +28,12 @@ namespace Junior.Route.AutoRouting.FormsAuthentication
 			var ticket = new FormsAuthenticationTicket(1, _configuration.CookieName, _systemClock.LocalDateTime, expiration, _configuration.Persistent, jsonUserData ?? "{}", _configuration.CookiePath);
 			string encryptedTicket = System.Web.Security.FormsAuthentication.Encrypt(ticket);
 			var cookie = new HttpCookie(_configuration.CookieName, encryptedTicket)
-				             {
-					             HttpOnly = true,
-					             Path = _configuration.CookiePath,
-					             Secure = _configuration.RequireSsl,
-					             Shareable = false
-				             };
+				{
+					HttpOnly = true,
+					Path = _configuration.CookiePath,
+					Secure = _configuration.RequireSsl,
+					Shareable = false
+				};
 
 			if (_configuration.CookieDomain != null)
 			{
@@ -120,13 +120,13 @@ namespace Junior.Route.AutoRouting.FormsAuthentication
 			response.ThrowIfNull("response");
 
 			var cookie = new HttpCookie(_configuration.CookieName, "")
-				             {
-					             Expires = new DateTime(2000, 01, 01),
-					             HttpOnly = true,
-					             Path = _configuration.CookiePath,
-					             Secure = _configuration.RequireSsl,
-					             Shareable = false
-				             };
+				{
+					Expires = new DateTime(2000, 01, 01),
+					HttpOnly = true,
+					Path = _configuration.CookiePath,
+					Secure = _configuration.RequireSsl,
+					Shareable = false
+				};
 
 			if (_configuration.CookieDomain != null)
 			{

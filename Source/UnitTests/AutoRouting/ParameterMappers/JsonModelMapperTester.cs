@@ -53,7 +53,7 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers
 				MethodInfo methodInfo = type.GetMethod(methodName);
 				ParameterInfo parameterInfo = methodInfo.GetParameters().Single(arg => arg.Name == parameterName);
 
-				Assert.That(() => _mapper.Map(_context, type, methodInfo, parameterInfo), Throws.InstanceOf<ApplicationException>());
+				Assert.That(() => _mapper.MapAsync(_context, type, methodInfo, parameterInfo), Throws.InstanceOf<ApplicationException>());
 			}
 		}
 
@@ -89,11 +89,11 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers
 
 			[Test]
 			[TestCase(typeof(Endpoint), "Method", "model")]
-			public void Must_use_default_value(Type type, string methodName, string parameterName)
+			public async void Must_use_default_value(Type type, string methodName, string parameterName)
 			{
 				MethodInfo methodInfo = type.GetMethod(methodName);
 				ParameterInfo parameterInfo = methodInfo.GetParameters().Single(arg => arg.Name == parameterName);
-				MapResult result = _mapper.Map(_context, type, methodInfo, parameterInfo);
+				MapResult result = await _mapper.MapAsync(_context, type, methodInfo, parameterInfo);
 
 				Assert.That(result.ResultType, Is.EqualTo(MapResultType.ValueMapped));
 				Assert.That(result.Value, Is.EqualTo(parameterInfo.ParameterType.GetDefaultValue()));
@@ -143,11 +143,11 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers
 
 			[Test]
 			[TestCase(typeof(Endpoint), "Method", "model")]
-			public void Must_deserialize_model(Type type, string methodName, string parameterName)
+			public async void Must_deserialize_model(Type type, string methodName, string parameterName)
 			{
 				MethodInfo methodInfo = type.GetMethod(methodName);
 				ParameterInfo parameterInfo = methodInfo.GetParameters().Single(arg => arg.Name == parameterName);
-				MapResult result = _mapper.Map(_context, type, methodInfo, parameterInfo);
+				MapResult result = await _mapper.MapAsync(_context, type, methodInfo, parameterInfo);
 
 				Assert.That(result.ResultType, Is.EqualTo(MapResultType.ValueMapped));
 				Assert.That(result.Value, Is.TypeOf<Model>());
@@ -170,7 +170,7 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers
 				_context = MockRepository.GenerateMock<HttpContextBase>();
 				_context.Stub(arg => arg.Request).Return(_request);
 				_mapper = new JsonModelMapper(type => _executed = true);
-				_mapper.CanMapType(_context, typeof(object));
+				_mapper.CanMapTypeAsync(_context, typeof(object));
 			}
 
 			private bool _executed;
@@ -217,17 +217,17 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers
 			[Test]
 			[TestCase(typeof(Model))]
 			[TestCase(typeof(JsonModel))]
-			public void Must_map_types_ending_in_model(Type type)
+			public async void Must_map_types_ending_in_model(Type type)
 			{
-				Assert.That(_mapper.CanMapType(_context, type), Is.True);
+				Assert.That(await _mapper.CanMapTypeAsync(_context, type), Is.True);
 			}
 
 			[Test]
 			[TestCase(typeof(Model2))]
 			[TestCase(typeof(object))]
-			public void Must_not_map_types_not_ending_in_model(Type type)
+			public async void Must_not_map_types_not_ending_in_model(Type type)
 			{
-				Assert.That(_mapper.CanMapType(_context, type), Is.False);
+				Assert.That(await _mapper.CanMapTypeAsync(_context, type), Is.False);
 			}
 		}
 	}

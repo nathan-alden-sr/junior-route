@@ -60,7 +60,7 @@ namespace Junior.Route.AspNetIntegration.Diagnostics
 				guidFactory,
 				diagnosticsRelativeUrl + "/asp_net",
 				ResponseResources.AspNet,
-				Enumerable.Empty<string>(), 
+				Enumerable.Empty<string>(),
 				httpRuntime,
 				view =>
 					{

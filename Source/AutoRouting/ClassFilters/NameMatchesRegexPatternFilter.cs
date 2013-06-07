@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 using Junior.Common;
 
@@ -18,11 +19,11 @@ namespace Junior.Route.AutoRouting.ClassFilters
 			_options = options;
 		}
 
-		public bool Matches(Type type)
+		public Task<bool> MatchesAsync(Type type)
 		{
 			type.ThrowIfNull("type");
 
-			return Regex.IsMatch(type.Name, _pattern, _options);
+			return Regex.IsMatch(type.Name, _pattern, _options).AsCompletedTask();
 		}
 	}
 }

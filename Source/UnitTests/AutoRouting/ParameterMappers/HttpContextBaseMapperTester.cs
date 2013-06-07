@@ -25,7 +25,7 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers
 				MethodInfo methodInfo = type.GetMethod("Method", BindingFlags.NonPublic | BindingFlags.Instance);
 				ParameterInfo parameterInfo = methodInfo.GetParameters()[0];
 
-				_result = _mapper.Map(_context, type, methodInfo, parameterInfo);
+				_result = _mapper.MapAsync(_context, type, methodInfo, parameterInfo).Result;
 			}
 
 			// ReSharper disable UnusedMember.Local
@@ -60,9 +60,9 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers
 			private HttpContextBase _context;
 
 			[Test]
-			public void Must_map_httpcontextbase_type()
+			public async void Must_map_httpcontextbase_type()
 			{
-				Assert.That(_mapper.CanMapType(_context, typeof(HttpContextBase)), Is.True);
+				Assert.That(await _mapper.CanMapTypeAsync(_context, typeof(HttpContextBase)), Is.True);
 			}
 		}
 	}

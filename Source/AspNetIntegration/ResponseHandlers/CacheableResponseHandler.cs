@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using System.Web;
 
 using Junior.Common;
@@ -31,7 +32,7 @@ namespace Junior.Route.AspNetIntegration.ResponseHandlers
 			_systemClock = systemClock;
 		}
 
-		public ResponseHandlerResult HandleResponse(HttpContextBase context, IResponse suggestedResponse, ICache cache, string cacheKey)
+		public async Task<ResponseHandlerResult> HandleResponse(HttpContextBase context, IResponse suggestedResponse, ICache cache, string cacheKey)
 		{
 			context.ThrowIfNull("context");
 			suggestedResponse.ThrowIfNull("suggestedResponse");
@@ -41,7 +42,7 @@ namespace Junior.Route.AspNetIntegration.ResponseHandlers
 				return ResponseHandlerResult.ResponseNotHandled();
 			}
 
-			CacheItem cacheItem = cache.Get(cacheKey);
+			CacheItem cacheItem = await cache.GetAsync(cacheKey);
 			string responseETag = suggestedResponse.CachePolicy.ETag;
 
 			#region If-Match precondition header
@@ -186,7 +187,7 @@ namespace Junior.Route.AspNetIntegration.ResponseHandlers
 					                                  ? suggestedResponse.CachePolicy.ServerCacheExpirationUtcTimestamp.Value
 					                                  : _systemClock.UtcDateTime + suggestedResponse.CachePolicy.ServerCacheMaxAge.Value;
 
-				cache.Add(cacheKey, cacheResponse, expirationUtcTimestamp);
+				await cache.AddAsync(cacheKey, cacheResponse, expirationUtcTimestamp);
 			}
 
 			return WriteResponse(context.Response, cacheResponse);

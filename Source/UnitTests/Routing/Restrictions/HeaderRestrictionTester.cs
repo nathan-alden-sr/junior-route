@@ -87,9 +87,9 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			private HttpRequestBase _request;
 
 			[Test]
-			public void Must_match()
+			public async void Must_match()
 			{
-				Assert.That(_restriction.MatchesRequest(_request), Is.True);
+				Assert.That(await _restriction.MatchesRequestAsync(_request), Is.True);
 			}
 		}
 
@@ -108,9 +108,9 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			private HttpRequestBase _request;
 
 			[Test]
-			public void Must_not_match()
+			public async void Must_not_match()
 			{
-				Assert.That(_restriction.MatchesRequest(_request), Is.False);
+				Assert.That(await _restriction.MatchesRequestAsync(_request), Is.False);
 			}
 		}
 	}

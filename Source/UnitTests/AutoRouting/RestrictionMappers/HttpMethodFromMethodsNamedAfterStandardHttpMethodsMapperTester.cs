@@ -49,7 +49,7 @@ namespace Junior.Route.UnitTests.AutoRouting.RestrictionMappers
 			{
 				MethodInfo methodInfo = type.GetMethod(methodName);
 
-				_mapper.Map(type, methodInfo, _route, _container);
+				_mapper.MapAsync(type, methodInfo, _route, _container);
 
 				MethodRestriction[] restrictions = _route.GetRestrictions<MethodRestriction>().ToArray();
 
@@ -87,7 +87,7 @@ namespace Junior.Route.UnitTests.AutoRouting.RestrictionMappers
 			{
 				MethodInfo methodInfo = type.GetMethod(methodName);
 
-				_mapper.Map(type, methodInfo, _route, _container);
+				_mapper.MapAsync(type, methodInfo, _route, _container);
 
 				IEnumerable<MethodRestriction> restrictions = _route.GetRestrictions<MethodRestriction>();
 

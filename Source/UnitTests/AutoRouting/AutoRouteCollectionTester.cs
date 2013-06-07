@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Web;
 
+using Junior.Common;
 using Junior.Route.AutoRouting;
 using Junior.Route.AutoRouting.AuthenticationStrategies;
 using Junior.Route.AutoRouting.ClassFilters;
@@ -35,18 +37,18 @@ namespace Junior.Route.UnitTests.AutoRouting
 			{
 				_classFilter = MockRepository.GenerateMock<IClassFilter>();
 				_classFilter
-					.Stub(arg => arg.Matches(Arg<Type>.Is.Anything))
-					.WhenCalled(arg => arg.ReturnValue = (Type)arg.Arguments.First() == typeof(Endpoint))
-					.Return(false);
+					.Stub(arg => arg.MatchesAsync(Arg<Type>.Is.Anything))
+					.WhenCalled(arg => arg.ReturnValue = ((Type)arg.Arguments.First() == typeof(Endpoint)).AsCompletedTask())
+					.Return(false.AsCompletedTask());
 				_idMapper = MockRepository.GenerateMock<IIdMapper>();
 				_idMapper
-					.Stub(arg => arg.Map(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything))
-					.WhenCalled(arg => arg.ReturnValue = IdResult.IdMapped(Guid.NewGuid()))
+					.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything))
+					.WhenCalled(arg => arg.ReturnValue = IdResult.IdMapped(Guid.NewGuid()).AsCompletedTask())
 					.Return(null);
 				_nameMapper = MockRepository.GenerateMock<INameMapper>();
-				_nameMapper.Stub(arg => arg.Map(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(NameResult.NameMapped("name"));
+				_nameMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(NameResult.NameMapped("name").AsCompletedTask());
 				_resolvedRelativeUrlMapper = MockRepository.GenerateMock<IResolvedRelativeUrlMapper>();
-				_resolvedRelativeUrlMapper.Stub(arg => arg.Map(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(ResolvedRelativeUrlResult.ResolvedRelativeUrlMapped("relative"));
+				_resolvedRelativeUrlMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(ResolvedRelativeUrlResult.ResolvedRelativeUrlMapped("relative").AsCompletedTask());
 				_autoRouteCollection = new AutoRouteCollection(true)
 					.Assemblies(Assembly.GetExecutingAssembly())
 					.ClassFilters(_classFilter)
@@ -73,9 +75,10 @@ namespace Junior.Route.UnitTests.AutoRouting
 			}
 
 			[Test]
-			public void Must_not_throw_exception()
+#warning Update to use async Assert.That(..., Throws.Nothing) when NUnit 2.6.3 becomes available
+			public async void Must_not_throw_exception()
 			{
-				Assert.That(() => _autoRouteCollection.GenerateRouteCollection(), Throws.Nothing);
+				await _autoRouteCollection.GenerateRouteCollection();
 			}
 		}
 
@@ -87,18 +90,21 @@ namespace Junior.Route.UnitTests.AutoRouting
 			{
 				_classFilter = MockRepository.GenerateMock<IClassFilter>();
 				_classFilter
-					.Stub(arg => arg.Matches(Arg<Type>.Is.Anything))
-					.WhenCalled(arg => arg.ReturnValue = (Type)arg.Arguments.First() == typeof(Endpoint))
-					.Return(false);
+					.Stub(arg => arg.MatchesAsync(Arg<Type>.Is.Anything))
+					.WhenCalled(arg => arg.ReturnValue = ((Type)arg.Arguments.First() == typeof(Endpoint)).AsCompletedTask())
+					.Return(false.AsCompletedTask());
 				_idMapper = MockRepository.GenerateMock<IIdMapper>();
-				_idMapper.Stub(arg => arg.Map(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(IdResult.IdMapped(Guid.NewGuid()));
+				_idMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(IdResult.IdMapped(Guid.NewGuid()).AsCompletedTask());
 				_nameMapper = MockRepository.GenerateMock<INameMapper>();
-				_nameMapper.Stub(arg => arg.Map(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(NameResult.NameMapped("name"));
+				_nameMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(NameResult.NameMapped("name").AsCompletedTask());
 				_resolvedRelativeUrlMapper = MockRepository.GenerateMock<IResolvedRelativeUrlMapper>();
-				_resolvedRelativeUrlMapper.Stub(arg => arg.Map(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(ResolvedRelativeUrlResult.ResolvedRelativeUrlMapped("relative"));
+				_resolvedRelativeUrlMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(ResolvedRelativeUrlResult.ResolvedRelativeUrlMapped("relative").AsCompletedTask());
 				_authenticationProvider = MockRepository.GenerateMock<IAuthenticationProvider>();
+				_authenticationProvider
+					.Stub(arg => arg.AuthenticateAsync(Arg<HttpRequestBase>.Is.Anything, Arg<HttpResponseBase>.Is.Anything, Arg<Route.Routing.Route>.Is.Anything))
+					.Return(AuthenticationResult.AuthenticationSucceeded.AsCompletedTask());
 				_authenticationStrategy = MockRepository.GenerateMock<IAuthenticationStrategy>();
-				_authenticationStrategy.Stub(arg => arg.MustAuthenticate(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(true);
+				_authenticationStrategy.Stub(arg => arg.MustAuthenticateAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(true.AsCompletedTask());
 				_autoRouteCollection = new AutoRouteCollection()
 					.Assemblies(Assembly.GetExecutingAssembly())
 					.ClassFilters(_classFilter)
@@ -106,7 +112,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 					.IdMappers(_idMapper)
 					.ResolvedRelativeUrlMappers(_resolvedRelativeUrlMapper)
 					.Authenticate(_authenticationProvider, _authenticationStrategy);
-				_routes = _autoRouteCollection.GenerateRouteCollection().ToArray();
+				_routes = _autoRouteCollection.GenerateRouteCollection().Result.ToArray();
 			}
 
 			private AutoRouteCollection _autoRouteCollection;
@@ -126,15 +132,15 @@ namespace Junior.Route.UnitTests.AutoRouting
 			}
 
 			[Test]
-			public void Must_use_strategy_to_assign_provider()
+			public async void Must_use_strategy_to_assign_provider()
 			{
 				var request = MockRepository.GenerateMock<HttpRequestBase>();
 				var response = MockRepository.GenerateMock<HttpResponseBase>();
 
-				_routes[0].Authenticate(request, response);
+				await _routes[0].AuthenticateAsync(request, response);
 
-				_authenticationStrategy.AssertWasCalled(arg => arg.MustAuthenticate(typeof(Endpoint), typeof(Endpoint).GetMethod("Method")));
-				_authenticationProvider.AssertWasCalled(arg => arg.Authenticate(request, response, _routes[0]));
+				_authenticationStrategy.AssertWasCalled(arg => arg.MustAuthenticateAsync(typeof(Endpoint), typeof(Endpoint).GetMethod("Method")));
+				_authenticationProvider.AssertWasCalled(arg => arg.AuthenticateAsync(request, response, _routes[0]));
 			}
 		}
 
@@ -146,18 +152,18 @@ namespace Junior.Route.UnitTests.AutoRouting
 			{
 				_classFilter = MockRepository.GenerateMock<IClassFilter>();
 				_classFilter
-					.Stub(arg => arg.Matches(Arg<Type>.Is.Anything))
-					.WhenCalled(arg => arg.ReturnValue = (Type)arg.Arguments.First() == typeof(Endpoint))
-					.Return(false);
+					.Stub(arg => arg.MatchesAsync(Arg<Type>.Is.Anything))
+					.WhenCalled(arg => arg.ReturnValue = ((Type)arg.Arguments.First() == typeof(Endpoint)).AsCompletedTask())
+					.Return(false.AsCompletedTask());
 				_idMapper = MockRepository.GenerateMock<IIdMapper>();
-				_idMapper.Stub(arg => arg.Map(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(IdResult.IdMapped(Guid.NewGuid()));
+				_idMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(IdResult.IdMapped(Guid.NewGuid()).AsCompletedTask());
 				_nameMapper = MockRepository.GenerateMock<INameMapper>();
 				_nameMapper
-					.Stub(arg => arg.Map(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything))
-					.WhenCalled(arg => arg.ReturnValue = NameResult.NameMapped(Guid.NewGuid().ToString()))
+					.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything))
+					.WhenCalled(arg => arg.ReturnValue = (NameResult.NameMapped(Guid.NewGuid().ToString())).AsCompletedTask())
 					.Return(null);
 				_resolvedRelativeUrlMapper = MockRepository.GenerateMock<IResolvedRelativeUrlMapper>();
-				_resolvedRelativeUrlMapper.Stub(arg => arg.Map(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(ResolvedRelativeUrlResult.ResolvedRelativeUrlMapped("relative"));
+				_resolvedRelativeUrlMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(ResolvedRelativeUrlResult.ResolvedRelativeUrlMapped("relative").AsCompletedTask());
 				_autoRouteCollection = new AutoRouteCollection()
 					.Assemblies(Assembly.GetExecutingAssembly())
 					.ClassFilters(_classFilter)
@@ -184,9 +190,11 @@ namespace Junior.Route.UnitTests.AutoRouting
 			}
 
 			[Test]
-			public void Must_throw_exception()
+			[ExpectedException(typeof(ArgumentException))]
+#warning Update to use async Assert.That(..., Throws.InstanceOf<>) when NUnit 2.6.3 becomes available
+			public async void Must_throw_exception()
 			{
-				Assert.That(() => _autoRouteCollection.GenerateRouteCollection(), Throws.InstanceOf<ArgumentException>());
+				await _autoRouteCollection.GenerateRouteCollection();
 			}
 		}
 
@@ -198,18 +206,18 @@ namespace Junior.Route.UnitTests.AutoRouting
 			{
 				_classFilter = MockRepository.GenerateMock<IClassFilter>();
 				_classFilter
-					.Stub(arg => arg.Matches(Arg<Type>.Is.Anything))
-					.WhenCalled(arg => arg.ReturnValue = (Type)arg.Arguments.First() == typeof(Endpoint))
-					.Return(false);
+					.Stub(arg => arg.MatchesAsync(Arg<Type>.Is.Anything))
+					.WhenCalled(arg => arg.ReturnValue = ((Type)arg.Arguments.First() == typeof(Endpoint)).AsCompletedTask())
+					.Return(false.AsCompletedTask());
 				_idMapper = MockRepository.GenerateMock<IIdMapper>();
 				_idMapper
-					.Stub(arg => arg.Map(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything))
-					.WhenCalled(arg => arg.ReturnValue = IdResult.IdMapped(Guid.NewGuid()))
+					.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything))
+					.WhenCalled(arg => arg.ReturnValue = (IdResult.IdMapped(Guid.NewGuid())).AsCompletedTask())
 					.Return(null);
 				_nameMapper = MockRepository.GenerateMock<INameMapper>();
-				_nameMapper.Stub(arg => arg.Map(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(NameResult.NameMapped("name"));
+				_nameMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(NameResult.NameMapped("name").AsCompletedTask());
 				_resolvedRelativeUrlMapper = MockRepository.GenerateMock<IResolvedRelativeUrlMapper>();
-				_resolvedRelativeUrlMapper.Stub(arg => arg.Map(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(ResolvedRelativeUrlResult.ResolvedRelativeUrlMapped("relative"));
+				_resolvedRelativeUrlMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(ResolvedRelativeUrlResult.ResolvedRelativeUrlMapped("relative").AsCompletedTask());
 				_autoRouteCollection = new AutoRouteCollection()
 					.Assemblies(Assembly.GetExecutingAssembly())
 					.ClassFilters(_classFilter)
@@ -236,9 +244,11 @@ namespace Junior.Route.UnitTests.AutoRouting
 			}
 
 			[Test]
-			public void Must_throw_exception()
+			[ExpectedException(typeof(ArgumentException))]
+#warning Update to use async Assert.That(..., Throws.Nothing) when NUnit 2.6.3 becomes available
+			public async void Must_throw_exception()
 			{
-				Assert.That(() => _autoRouteCollection.GenerateRouteCollection(), Throws.InstanceOf<ArgumentException>());
+				await _autoRouteCollection.GenerateRouteCollection();
 			}
 		}
 
@@ -250,16 +260,19 @@ namespace Junior.Route.UnitTests.AutoRouting
 			{
 				_classFilter = MockRepository.GenerateMock<IClassFilter>();
 				_classFilter
-					.Stub(arg => arg.Matches(Arg<Type>.Is.Anything))
-					.WhenCalled(arg => arg.ReturnValue = (Type)arg.Arguments.First() == typeof(IncludedEndpoint))
-					.Return(false);
+					.Stub(arg => arg.MatchesAsync(Arg<Type>.Is.Anything))
+					.WhenCalled(arg => arg.ReturnValue = ((Type)arg.Arguments.First() == typeof(IncludedEndpoint)).AsCompletedTask())
+					.Return(false.AsCompletedTask());
 				_idMapper = MockRepository.GenerateMock<IIdMapper>();
-				_idMapper.Stub(arg => arg.Map(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(IdResult.IdMapped(Guid.NewGuid()));
+				_idMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(IdResult.IdMapped(Guid.NewGuid()).AsCompletedTask());
 				_nameMapper = MockRepository.GenerateMock<INameMapper>();
-				_nameMapper.Stub(arg => arg.Map(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(NameResult.NameMapped("name"));
+				_nameMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(NameResult.NameMapped("name").AsCompletedTask());
 				_resolvedRelativeUrlMapper = MockRepository.GenerateMock<IResolvedRelativeUrlMapper>();
-				_resolvedRelativeUrlMapper.Stub(arg => arg.Map(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(ResolvedRelativeUrlResult.ResolvedRelativeUrlMapped("relative"));
+				_resolvedRelativeUrlMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(ResolvedRelativeUrlResult.ResolvedRelativeUrlMapped("relative").AsCompletedTask());
 				_responseMapper = MockRepository.GenerateMock<IResponseMapper>();
+				_responseMapper
+					.Stub(arg => arg.MapAsync(Arg<Func<IContainer>>.Is.Anything, Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything, Arg<Route.Routing.Route>.Is.Anything))
+					.Return(Task.Factory.Empty());
 				_autoRouteCollection = new AutoRouteCollection()
 					.Assemblies(Assembly.GetExecutingAssembly())
 					.ClassFilters(_classFilter)
@@ -267,7 +280,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 					.IdMappers(_idMapper)
 					.ResolvedRelativeUrlMappers(_resolvedRelativeUrlMapper)
 					.ResponseMapper(_responseMapper);
-				_routes = _autoRouteCollection.GenerateRouteCollection().ToArray();
+				_routes = _autoRouteCollection.GenerateRouteCollection().Result.ToArray();
 			}
 
 			public class IncludedEndpoint
@@ -297,13 +310,13 @@ namespace Junior.Route.UnitTests.AutoRouting
 			{
 				Assert.That(_routes, Has.Length.EqualTo(1));
 				_responseMapper.AssertWasCalled(
-					arg => arg.Map(
+					arg => arg.MapAsync(
 						Arg<Func<IContainer>>.Is.Anything,
 						Arg<Type>.Is.Equal(typeof(IncludedEndpoint)),
 						Arg<MethodInfo>.Is.Equal(typeof(IncludedEndpoint).GetMethod("Method")),
 						Arg<Route.Routing.Route>.Is.Anything));
 				_responseMapper.AssertWasNotCalled(
-					arg => arg.Map(
+					arg => arg.MapAsync(
 						Arg<Func<IContainer>>.Is.Anything,
 						Arg<Type>.Is.Equal(typeof(ExcludedEndpoint)),
 						Arg<MethodInfo>.Is.Anything,
@@ -319,21 +332,24 @@ namespace Junior.Route.UnitTests.AutoRouting
 			{
 				_classFilter = MockRepository.GenerateMock<IClassFilter>();
 				_classFilter
-					.Stub(arg => arg.Matches(Arg<Type>.Is.Anything))
-					.WhenCalled(arg => arg.ReturnValue = (Type)arg.Arguments.First() == typeof(Endpoint))
-					.Return(false);
+					.Stub(arg => arg.MatchesAsync(Arg<Type>.Is.Anything))
+					.WhenCalled(arg => arg.ReturnValue = ((Type)arg.Arguments.First() == typeof(Endpoint)).AsCompletedTask())
+					.Return(false.AsCompletedTask());
 				_methodFilter = MockRepository.GenerateMock<IMethodFilter>();
 				_methodFilter
-					.Stub(arg => arg.Matches(Arg<MethodInfo>.Is.Anything))
-					.WhenCalled(arg => arg.ReturnValue = ((MethodInfo)arg.Arguments.First()).Name == "IncludedMethod")
-					.Return(false);
+					.Stub(arg => arg.MatchesAsync(Arg<MethodInfo>.Is.Anything))
+					.WhenCalled(arg => arg.ReturnValue = (((MethodInfo)arg.Arguments.First()).Name == "IncludedMethod").AsCompletedTask())
+					.Return(false.AsCompletedTask());
 				_idMapper = MockRepository.GenerateMock<IIdMapper>();
-				_idMapper.Stub(arg => arg.Map(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(IdResult.IdMapped(Guid.NewGuid()));
+				_idMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(IdResult.IdMapped(Guid.NewGuid()).AsCompletedTask());
 				_nameMapper = MockRepository.GenerateMock<INameMapper>();
-				_nameMapper.Stub(arg => arg.Map(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(NameResult.NameMapped("name"));
+				_nameMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(NameResult.NameMapped("name").AsCompletedTask());
 				_resolvedRelativeUrlMapper = MockRepository.GenerateMock<IResolvedRelativeUrlMapper>();
-				_resolvedRelativeUrlMapper.Stub(arg => arg.Map(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(ResolvedRelativeUrlResult.ResolvedRelativeUrlMapped("relative"));
+				_resolvedRelativeUrlMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(ResolvedRelativeUrlResult.ResolvedRelativeUrlMapped("relative").AsCompletedTask());
 				_responseMapper = MockRepository.GenerateMock<IResponseMapper>();
+				_responseMapper
+					.Stub(arg => arg.MapAsync(Arg<Func<IContainer>>.Is.Anything, Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything, Arg<Route.Routing.Route>.Is.Anything))
+					.Return(Task.Factory.Empty());
 				_autoRouteCollection = new AutoRouteCollection()
 					.Assemblies(Assembly.GetExecutingAssembly())
 					.ClassFilters(_classFilter)
@@ -342,7 +358,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 					.IdMappers(_idMapper)
 					.ResolvedRelativeUrlMappers(_resolvedRelativeUrlMapper)
 					.ResponseMapper(_responseMapper);
-				_routes = _autoRouteCollection.GenerateRouteCollection().ToArray();
+				_routes = _autoRouteCollection.GenerateRouteCollection().Result.ToArray();
 			}
 
 			public class Endpoint
@@ -370,13 +386,13 @@ namespace Junior.Route.UnitTests.AutoRouting
 			{
 				Assert.That(_routes, Has.Length.EqualTo(1));
 				_responseMapper.AssertWasCalled(
-					arg => arg.Map(
+					arg => arg.MapAsync(
 						Arg<Func<IContainer>>.Is.Anything,
 						Arg<Type>.Is.Equal(typeof(Endpoint)),
 						Arg<MethodInfo>.Is.Equal(typeof(Endpoint).GetMethod("IncludedMethod")),
 						Arg<Route.Routing.Route>.Is.Anything));
 				_responseMapper.AssertWasNotCalled(
-					arg => arg.Map(
+					arg => arg.MapAsync(
 						Arg<Func<IContainer>>.Is.Anything,
 						Arg<Type>.Is.Anything,
 						Arg<MethodInfo>.Is.Equal("ExcludedMethod"),
@@ -392,14 +408,17 @@ namespace Junior.Route.UnitTests.AutoRouting
 			{
 				_classFilter = MockRepository.GenerateMock<IClassFilter>();
 				_classFilter
-					.Stub(arg => arg.Matches(typeof(Endpoint)))
-					.WhenCalled(arg => arg.ReturnValue = (Type)arg.Arguments.First() == typeof(Endpoint))
-					.Return(false);
+					.Stub(arg => arg.MatchesAsync(Arg<Type>.Is.Anything))
+					.WhenCalled(arg => arg.ReturnValue = ((Type)arg.Arguments.First() == typeof(Endpoint)).AsCompletedTask())
+					.Return(false.AsCompletedTask());
 				_idMapper = MockRepository.GenerateMock<IIdMapper>();
-				_idMapper.Stub(arg => arg.Map(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(IdResult.IdMapped(Guid.NewGuid()));
+				_idMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(IdResult.IdMapped(Guid.NewGuid()).AsCompletedTask());
 				_nameMapper = MockRepository.GenerateMock<INameMapper>();
-				_nameMapper.Stub(arg => arg.Map(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(NameResult.NameMapped(Guid.NewGuid().ToString()));
+				_nameMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(NameResult.NameMapped(Guid.NewGuid().ToString()).AsCompletedTask());
 				_responseMapper = MockRepository.GenerateMock<IResponseMapper>();
+				_responseMapper
+					.Stub(arg => arg.MapAsync(Arg<Func<IContainer>>.Is.Anything, Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything, Arg<Route.Routing.Route>.Is.Anything))
+					.Return(Task.Factory.Empty());
 				_httpRuntime = MockRepository.GenerateMock<IHttpRuntime>();
 				_autoRouteCollection = new AutoRouteCollection()
 					.Assemblies(typeof(Endpoint).Assembly)
@@ -410,7 +429,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 					.ResolvedRelativeUrlUsingAttribute()
 					.ResponseMapper(_responseMapper)
 					.RestrictionContainer(new DefaultRestrictionContainer(_httpRuntime));
-				_routes = _autoRouteCollection.GenerateRouteCollection().ToArray();
+				_routes = _autoRouteCollection.GenerateRouteCollection().Result.ToArray();
 			}
 
 			private AutoRouteCollection _autoRouteCollection;
@@ -445,16 +464,19 @@ namespace Junior.Route.UnitTests.AutoRouting
 			{
 				_classFilter = MockRepository.GenerateMock<IClassFilter>();
 				_classFilter
-					.Stub(arg => arg.Matches(typeof(Endpoint)))
-					.WhenCalled(arg => arg.ReturnValue = (Type)arg.Arguments.First() == typeof(Endpoint))
-					.Return(false);
+					.Stub(arg => arg.MatchesAsync(Arg<Type>.Is.Anything))
+					.WhenCalled(arg => arg.ReturnValue = ((Type)arg.Arguments.First() == typeof(Endpoint)).AsCompletedTask())
+					.Return(false.AsCompletedTask());
 				_idMapper = MockRepository.GenerateMock<IIdMapper>();
-				_idMapper.Stub(arg => arg.Map(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(IdResult.IdMapped(Guid.NewGuid()));
+				_idMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(IdResult.IdMapped(Guid.NewGuid()).AsCompletedTask());
 				_nameMapper = MockRepository.GenerateMock<INameMapper>();
-				_nameMapper.Stub(arg => arg.Map(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(NameResult.NameMapped(Guid.NewGuid().ToString()));
+				_nameMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(NameResult.NameMapped(Guid.NewGuid().ToString()).AsCompletedTask());
 				_resolvedRelativeUrlMapper = MockRepository.GenerateMock<IResolvedRelativeUrlMapper>();
-				_resolvedRelativeUrlMapper.Stub(arg => arg.Map(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(ResolvedRelativeUrlResult.ResolvedRelativeUrlMapped("relative"));
+				_resolvedRelativeUrlMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(ResolvedRelativeUrlResult.ResolvedRelativeUrlMapped("relative").AsCompletedTask());
 				_responseMapper = MockRepository.GenerateMock<IResponseMapper>();
+				_responseMapper
+					.Stub(arg => arg.MapAsync(Arg<Func<IContainer>>.Is.Anything, Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything, Arg<Route.Routing.Route>.Is.Anything))
+					.Return(Task.Factory.Empty());
 				_httpRuntime = MockRepository.GenerateMock<IHttpRuntime>();
 				_autoRouteCollection = new AutoRouteCollection()
 					.Assemblies(typeof(Endpoint).Assembly)
@@ -466,7 +488,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 					.RestrictRelativePathsToRelativeClassNamespaceAndClassName("")
 					.ResponseMapper(_responseMapper)
 					.RestrictionContainer(new DefaultRestrictionContainer(_httpRuntime));
-				_routes = _autoRouteCollection.GenerateRouteCollection().ToArray();
+				_routes = _autoRouteCollection.GenerateRouteCollection().Result.ToArray();
 			}
 
 			private AutoRouteCollection _autoRouteCollection;
@@ -488,7 +510,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 			}
 
 			[Test]
-			public void Must_ignore_restriction_mapper_types_specified_in_ignorerestrictionmappertypeattribute()
+			public async void Must_ignore_restriction_mapper_types_specified_in_ignorerestrictionmappertypeattribute()
 			{
 				_httpRuntime.Stub(arg => arg.AppDomainAppVirtualPath).Return("/");
 
@@ -496,7 +518,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 
 				request.Stub(arg => arg.Url).Return(new Uri("http://localhost"));
 
-				MatchResult matchResult = _routes[0].MatchesRequest(request);
+				MatchResult matchResult = await _routes[0].MatchesRequestAsync(request);
 
 				Assert.That(matchResult.ResultType, Is.EqualTo(MatchResultType.RouteMatched));
 			}
@@ -510,18 +532,21 @@ namespace Junior.Route.UnitTests.AutoRouting
 			{
 				_classFilter = MockRepository.GenerateMock<IClassFilter>();
 				_classFilter
-					.Stub(arg => arg.Matches(Arg<Type>.Is.Anything))
-					.WhenCalled(arg => arg.ReturnValue = (Type)arg.Arguments.First() == typeof(Endpoint))
-					.Return(false);
+					.Stub(arg => arg.MatchesAsync(Arg<Type>.Is.Anything))
+					.WhenCalled(arg => arg.ReturnValue = ((Type)arg.Arguments.First() == typeof(Endpoint)).AsCompletedTask())
+					.Return(false.AsCompletedTask());
 				_idMapper1 = MockRepository.GenerateMock<IIdMapper>();
-				_idMapper1.Stub(arg => arg.Map(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(IdResult.IdMapped(Guid.Parse("1dffe3ee-1ade-4aa2-835a-9cb91b7e31c4")));
+				_idMapper1.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(IdResult.IdMapped(Guid.Parse("1dffe3ee-1ade-4aa2-835a-9cb91b7e31c4")).AsCompletedTask());
 				_idMapper2 = MockRepository.GenerateMock<IIdMapper>();
-				_idMapper2.Stub(arg => arg.Map(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(IdResult.IdMapped(Guid.Parse("493e725c-cbc1-4ea4-b6d1-350018d4542d")));
+				_idMapper2.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(IdResult.IdMapped(Guid.Parse("493e725c-cbc1-4ea4-b6d1-350018d4542d")).AsCompletedTask());
 				_nameMapper = MockRepository.GenerateMock<INameMapper>();
-				_nameMapper.Stub(arg => arg.Map(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(NameResult.NameMapped("name"));
+				_nameMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(NameResult.NameMapped("name").AsCompletedTask());
 				_resolvedRelativeUrlMapper = MockRepository.GenerateMock<IResolvedRelativeUrlMapper>();
-				_resolvedRelativeUrlMapper.Stub(arg => arg.Map(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(ResolvedRelativeUrlResult.ResolvedRelativeUrlMapped("relative"));
+				_resolvedRelativeUrlMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(ResolvedRelativeUrlResult.ResolvedRelativeUrlMapped("relative").AsCompletedTask());
 				_responseMapper = MockRepository.GenerateMock<IResponseMapper>();
+				_responseMapper
+					.Stub(arg => arg.MapAsync(Arg<Func<IContainer>>.Is.Anything, Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything, Arg<Route.Routing.Route>.Is.Anything))
+					.Return(Task.Factory.Empty());
 				_autoRouteCollection = new AutoRouteCollection()
 					.Assemblies(Assembly.GetExecutingAssembly())
 					.ClassFilters(_classFilter)
@@ -529,7 +554,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 					.IdMappers(_idMapper1)
 					.ResolvedRelativeUrlMappers(_resolvedRelativeUrlMapper)
 					.ResponseMapper(_responseMapper);
-				_routes = _autoRouteCollection.GenerateRouteCollection().ToArray();
+				_routes = _autoRouteCollection.GenerateRouteCollection().Result.ToArray();
 			}
 
 			private AutoRouteCollection _autoRouteCollection;
@@ -557,8 +582,8 @@ namespace Junior.Route.UnitTests.AutoRouting
 			[Test]
 			public void Must_map_using_first_matching_mapper()
 			{
-				_idMapper1.AssertWasCalled(arg => arg.Map(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything));
-				_idMapper2.AssertWasNotCalled(arg => arg.Map(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything));
+				_idMapper1.AssertWasCalled(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything));
+				_idMapper2.AssertWasNotCalled(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything));
 			}
 		}
 
@@ -570,18 +595,21 @@ namespace Junior.Route.UnitTests.AutoRouting
 			{
 				_classFilter = MockRepository.GenerateMock<IClassFilter>();
 				_classFilter
-					.Stub(arg => arg.Matches(Arg<Type>.Is.Anything))
-					.WhenCalled(arg => arg.ReturnValue = (Type)arg.Arguments.First() == typeof(Endpoint))
-					.Return(false);
+					.Stub(arg => arg.MatchesAsync(Arg<Type>.Is.Anything))
+					.WhenCalled(arg => arg.ReturnValue = ((Type)arg.Arguments.First() == typeof(Endpoint)).AsCompletedTask())
+					.Return(false.AsCompletedTask());
 				_idMapper = MockRepository.GenerateMock<IIdMapper>();
-				_idMapper.Stub(arg => arg.Map(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(IdResult.IdMapped(Guid.NewGuid()));
+				_idMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(IdResult.IdMapped(Guid.NewGuid()).AsCompletedTask());
 				_nameMapper1 = MockRepository.GenerateMock<INameMapper>();
-				_nameMapper1.Stub(arg => arg.Map(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(NameResult.NameMapped("name1"));
+				_nameMapper1.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(NameResult.NameMapped("name1").AsCompletedTask());
 				_nameMapper2 = MockRepository.GenerateMock<INameMapper>();
-				_nameMapper2.Stub(arg => arg.Map(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(NameResult.NameMapped("name2"));
+				_nameMapper2.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(NameResult.NameMapped("name2").AsCompletedTask());
 				_resolvedRelativeUrlMapper = MockRepository.GenerateMock<IResolvedRelativeUrlMapper>();
-				_resolvedRelativeUrlMapper.Stub(arg => arg.Map(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(ResolvedRelativeUrlResult.ResolvedRelativeUrlMapped("relative"));
+				_resolvedRelativeUrlMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(ResolvedRelativeUrlResult.ResolvedRelativeUrlMapped("relative").AsCompletedTask());
 				_responseMapper = MockRepository.GenerateMock<IResponseMapper>();
+				_responseMapper
+					.Stub(arg => arg.MapAsync(Arg<Func<IContainer>>.Is.Anything, Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything, Arg<Route.Routing.Route>.Is.Anything))
+					.Return(Task.Factory.Empty());
 				_autoRouteCollection = new AutoRouteCollection()
 					.Assemblies(Assembly.GetExecutingAssembly())
 					.ClassFilters(_classFilter)
@@ -589,7 +617,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 					.IdMappers(_idMapper)
 					.ResolvedRelativeUrlMappers(_resolvedRelativeUrlMapper)
 					.ResponseMapper(_responseMapper);
-				_routes = _autoRouteCollection.GenerateRouteCollection().ToArray();
+				_routes = _autoRouteCollection.GenerateRouteCollection().Result.ToArray();
 			}
 
 			private AutoRouteCollection _autoRouteCollection;
@@ -617,8 +645,8 @@ namespace Junior.Route.UnitTests.AutoRouting
 			[Test]
 			public void Must_map_using_first_matching_mapper()
 			{
-				_nameMapper1.AssertWasCalled(arg => arg.Map(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything));
-				_nameMapper2.AssertWasNotCalled(arg => arg.Map(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything));
+				_nameMapper1.AssertWasCalled(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything));
+				_nameMapper2.AssertWasNotCalled(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything));
 			}
 		}
 
@@ -630,18 +658,21 @@ namespace Junior.Route.UnitTests.AutoRouting
 			{
 				_classFilter = MockRepository.GenerateMock<IClassFilter>();
 				_classFilter
-					.Stub(arg => arg.Matches(Arg<Type>.Is.Anything))
-					.WhenCalled(arg => arg.ReturnValue = (Type)arg.Arguments.First() == typeof(Endpoint))
-					.Return(false);
+					.Stub(arg => arg.MatchesAsync(Arg<Type>.Is.Anything))
+					.WhenCalled(arg => arg.ReturnValue = ((Type)arg.Arguments.First() == typeof(Endpoint)).AsCompletedTask())
+					.Return(false.AsCompletedTask());
 				_idMapper = MockRepository.GenerateMock<IIdMapper>();
-				_idMapper.Stub(arg => arg.Map(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(IdResult.IdMapped(Guid.NewGuid()));
+				_idMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(IdResult.IdMapped(Guid.NewGuid()).AsCompletedTask());
 				_nameMapper = MockRepository.GenerateMock<INameMapper>();
-				_nameMapper.Stub(arg => arg.Map(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(NameResult.NameMapped("name"));
+				_nameMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(NameResult.NameMapped("name").AsCompletedTask());
 				_resolvedRelativeUrlMapper1 = MockRepository.GenerateMock<IResolvedRelativeUrlMapper>();
-				_resolvedRelativeUrlMapper1.Stub(arg => arg.Map(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(ResolvedRelativeUrlResult.ResolvedRelativeUrlMapped("relative1"));
+				_resolvedRelativeUrlMapper1.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(ResolvedRelativeUrlResult.ResolvedRelativeUrlMapped("relative1").AsCompletedTask());
 				_resolvedRelativeUrlMapper2 = MockRepository.GenerateMock<IResolvedRelativeUrlMapper>();
-				_resolvedRelativeUrlMapper2.Stub(arg => arg.Map(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(ResolvedRelativeUrlResult.ResolvedRelativeUrlMapped("relative2"));
+				_resolvedRelativeUrlMapper2.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(ResolvedRelativeUrlResult.ResolvedRelativeUrlMapped("relative2").AsCompletedTask());
 				_responseMapper = MockRepository.GenerateMock<IResponseMapper>();
+				_responseMapper
+					.Stub(arg => arg.MapAsync(Arg<Func<IContainer>>.Is.Anything, Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything, Arg<Route.Routing.Route>.Is.Anything))
+					.Return(Task.Factory.Empty());
 				_autoRouteCollection = new AutoRouteCollection()
 					.Assemblies(Assembly.GetExecutingAssembly())
 					.ClassFilters(_classFilter)
@@ -649,7 +680,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 					.IdMappers(_idMapper)
 					.ResolvedRelativeUrlMappers(_resolvedRelativeUrlMapper1)
 					.ResponseMapper(_responseMapper);
-				_routes = _autoRouteCollection.GenerateRouteCollection().ToArray();
+				_routes = _autoRouteCollection.GenerateRouteCollection().Result.ToArray();
 			}
 
 			private AutoRouteCollection _autoRouteCollection;
@@ -677,8 +708,8 @@ namespace Junior.Route.UnitTests.AutoRouting
 			[Test]
 			public void Must_map_using_first_matching_mapper()
 			{
-				_resolvedRelativeUrlMapper1.AssertWasCalled(arg => arg.Map(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything));
-				_resolvedRelativeUrlMapper2.AssertWasNotCalled(arg => arg.Map(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything));
+				_resolvedRelativeUrlMapper1.AssertWasCalled(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything));
+				_resolvedRelativeUrlMapper2.AssertWasNotCalled(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything));
 			}
 		}
 
@@ -690,17 +721,19 @@ namespace Junior.Route.UnitTests.AutoRouting
 			{
 				_classFilter = MockRepository.GenerateMock<IClassFilter>();
 				_classFilter
-					.Stub(arg => arg.Matches(Arg<Type>.Is.Anything))
-					.WhenCalled(arg => arg.ReturnValue = (Type)arg.Arguments.First() == typeof(Endpoint))
-					.Return(false);
+					.Stub(arg => arg.MatchesAsync(Arg<Type>.Is.Anything))
+					.WhenCalled(arg => arg.ReturnValue = ((Type)arg.Arguments.First() == typeof(Endpoint)).AsCompletedTask())
+					.Return(false.AsCompletedTask());
 				_idMapper = MockRepository.GenerateMock<IIdMapper>();
-				_idMapper.Stub(arg => arg.Map(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(IdResult.IdMapped(Guid.NewGuid()));
+				_idMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(IdResult.IdMapped(Guid.NewGuid()).AsCompletedTask());
 				_nameMapper = MockRepository.GenerateMock<INameMapper>();
-				_nameMapper.Stub(arg => arg.Map(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(NameResult.NameMapped("name"));
+				_nameMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(NameResult.NameMapped("name").AsCompletedTask());
 				_resolvedRelativeUrlMapper = MockRepository.GenerateMock<IResolvedRelativeUrlMapper>();
-				_resolvedRelativeUrlMapper.Stub(arg => arg.Map(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(ResolvedRelativeUrlResult.ResolvedRelativeUrlMapped("relative"));
+				_resolvedRelativeUrlMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(ResolvedRelativeUrlResult.ResolvedRelativeUrlMapped("relative").AsCompletedTask());
 				_responseMapper = MockRepository.GenerateMock<IResponseMapper>();
-				_responseMapper.Stub(arg => arg.Map(Arg<Func<IContainer>>.Is.Anything, Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything, Arg<Route.Routing.Route>.Is.Anything));
+				_responseMapper
+					.Stub(arg => arg.MapAsync(Arg<Func<IContainer>>.Is.Anything, Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything, Arg<Route.Routing.Route>.Is.Anything))
+					.Return(Task.Factory.Empty());
 				_autoRouteCollection = new AutoRouteCollection()
 					.Assemblies(Assembly.GetExecutingAssembly())
 					.ClassFilters(_classFilter)
@@ -725,11 +758,11 @@ namespace Junior.Route.UnitTests.AutoRouting
 			}
 
 			[Test]
-			public void Must_map_using_mapper()
+			public async void Must_map_using_mapper()
 			{
-				_autoRouteCollection.GenerateRouteCollection();
+				await _autoRouteCollection.GenerateRouteCollection();
 
-				_responseMapper.AssertWasCalled(arg => arg.Map(Arg<Func<IContainer>>.Is.Anything, Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything, Arg<Route.Routing.Route>.Is.Anything));
+				_responseMapper.AssertWasCalled(arg => arg.MapAsync(Arg<Func<IContainer>>.Is.Anything, Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything, Arg<Route.Routing.Route>.Is.Anything));
 			}
 		}
 
@@ -741,24 +774,29 @@ namespace Junior.Route.UnitTests.AutoRouting
 			{
 				_classFilter = MockRepository.GenerateMock<IClassFilter>();
 				_classFilter
-					.Stub(arg => arg.Matches(Arg<Type>.Is.Anything))
-					.WhenCalled(arg => arg.ReturnValue = (Type)arg.Arguments.First() == typeof(Endpoint))
-					.Return(false);
+					.Stub(arg => arg.MatchesAsync(Arg<Type>.Is.Anything))
+					.WhenCalled(arg => arg.ReturnValue = ((Type)arg.Arguments.First() == typeof(Endpoint)).AsCompletedTask())
+					.Return(false.AsCompletedTask());
 				_idMapper = MockRepository.GenerateMock<IIdMapper>();
-				_idMapper.Stub(arg => arg.Map(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(IdResult.IdMapped(Guid.NewGuid()));
+				_idMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(IdResult.IdMapped(Guid.NewGuid()).AsCompletedTask());
 				_nameMapper = MockRepository.GenerateMock<INameMapper>();
-				_nameMapper.Stub(arg => arg.Map(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(NameResult.NameMapped("name"));
+				_nameMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(NameResult.NameMapped("name").AsCompletedTask());
 				_resolvedRelativeUrlMapper = MockRepository.GenerateMock<IResolvedRelativeUrlMapper>();
-				_resolvedRelativeUrlMapper.Stub(arg => arg.Map(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(ResolvedRelativeUrlResult.ResolvedRelativeUrlMapped("relative"));
+				_resolvedRelativeUrlMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(ResolvedRelativeUrlResult.ResolvedRelativeUrlMapped("relative").AsCompletedTask());
 				_responseMapper = MockRepository.GenerateMock<IResponseMapper>();
+				_responseMapper
+					.Stub(arg => arg.MapAsync(Arg<Func<IContainer>>.Is.Anything, Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything, Arg<Route.Routing.Route>.Is.Anything))
+					.Return(Task.Factory.Empty());
 				_restrictionMapper1 = MockRepository.GenerateMock<IRestrictionMapper>();
 				_restrictionMapper1
-					.Stub(arg => arg.Map(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything, Arg<Route.Routing.Route>.Is.Anything, Arg<IContainer>.Is.Anything))
-					.WhenCalled(arg => ((Route.Routing.Route)arg.Arguments.Skip(2).First()).RestrictByMethods("GET"));
+					.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything, Arg<Route.Routing.Route>.Is.Anything, Arg<IContainer>.Is.Anything))
+					.WhenCalled(arg => ((Route.Routing.Route)arg.Arguments.Skip(2).First()).RestrictByMethods("GET").AsCompletedTask())
+					.Return(Task.Factory.Empty());
 				_restrictionMapper2 = MockRepository.GenerateMock<IRestrictionMapper>();
 				_restrictionMapper2
-					.Stub(arg => arg.Map(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything, Arg<Route.Routing.Route>.Is.Anything, Arg<IContainer>.Is.Anything))
-					.WhenCalled(arg => ((Route.Routing.Route)arg.Arguments.Skip(2).First()).RestrictByMethods("POST"));
+					.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything, Arg<Route.Routing.Route>.Is.Anything, Arg<IContainer>.Is.Anything))
+					.WhenCalled(arg => ((Route.Routing.Route)arg.Arguments.Skip(2).First()).RestrictByMethods("POST").AsCompletedTask())
+					.Return(Task.Factory.Empty());
 				_autoRouteCollection = new AutoRouteCollection()
 					.Assemblies(Assembly.GetExecutingAssembly())
 					.ClassFilters(_classFilter)
@@ -787,12 +825,12 @@ namespace Junior.Route.UnitTests.AutoRouting
 			}
 
 			[Test]
-			public void Must_assign_mapped_restrictions()
+			public async void Must_assign_mapped_restrictions()
 			{
 				var container = MockRepository.GenerateMock<IContainer>();
 
 				_autoRouteCollection.RestrictionContainer(container);
-				_routes = _autoRouteCollection.GenerateRouteCollection().ToArray();
+				_routes = (await _autoRouteCollection.GenerateRouteCollection()).ToArray();
 
 				MethodRestriction[] methodRestrictions = _routes[0].GetRestrictions<MethodRestriction>().ToArray();
 
@@ -800,21 +838,23 @@ namespace Junior.Route.UnitTests.AutoRouting
 			}
 
 			[Test]
-			public void Must_map_using_all_mappers()
+			public async void Must_map_using_all_mappers()
 			{
 				var container = MockRepository.GenerateMock<IContainer>();
 
 				_autoRouteCollection.RestrictionContainer(container);
-				_autoRouteCollection.GenerateRouteCollection();
+				await _autoRouteCollection.GenerateRouteCollection();
 
-				_restrictionMapper1.AssertWasCalled(arg => arg.Map(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything, Arg<Route.Routing.Route>.Is.Anything, Arg<IContainer>.Is.Anything));
-				_restrictionMapper1.AssertWasCalled(arg => arg.Map(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything, Arg<Route.Routing.Route>.Is.Anything, Arg<IContainer>.Is.Anything));
+				_restrictionMapper1.AssertWasCalled(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything, Arg<Route.Routing.Route>.Is.Anything, Arg<IContainer>.Is.Anything));
+				_restrictionMapper1.AssertWasCalled(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything, Arg<Route.Routing.Route>.Is.Anything, Arg<IContainer>.Is.Anything));
 			}
 
 			[Test]
-			public void Must_require_restriction_container()
+			[ExpectedException(typeof(InvalidOperationException))]
+#warning Update to use async Assert.That(..., Throws.Nothing) when NUnit 2.6.3 becomes available
+			public async void Must_require_restriction_container()
 			{
-				Assert.That(() => _autoRouteCollection.GenerateRouteCollection(), Throws.InstanceOf<InvalidOperationException>());
+				await _autoRouteCollection.GenerateRouteCollection();
 			}
 		}
 	}

@@ -1,9 +1,10 @@
-﻿using System.Web;
+﻿using System.Threading.Tasks;
+using System.Web;
 
 namespace Junior.Route.Routing.Restrictions
 {
 	public interface IRestriction
 	{
-		bool MatchesRequest(HttpRequestBase request);
+		Task<bool> MatchesRequestAsync(HttpRequestBase request);
 	}
 }

@@ -26,9 +26,9 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.ResponseGenerators
 			[TestCase(ValidationResult.FormFieldMissing)]
 			[TestCase(ValidationResult.FormFieldInvalid)]
 			[TestCase(ValidationResult.NonceInvalid)]
-			public void Must_generate_unauthorized_response(ValidationResult validationResult)
+			public async void Must_generate_unauthorized_response(ValidationResult validationResult)
 			{
-				ResponseResult responseResult = _generator.GetResponse(validationResult);
+				ResponseResult responseResult = await _generator.GetResponseAsync(validationResult);
 
 				Assert.That(responseResult.Response.StatusCode.ParsedStatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
 			}
@@ -49,9 +49,9 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.ResponseGenerators
 			[TestCase(ValidationResult.NonceValid)]
 			[TestCase(ValidationResult.ValidationDisabled)]
 			[TestCase(ValidationResult.ValidationSkipped)]
-			public void Must_not_generate_response(ValidationResult result)
+			public async void Must_not_generate_response(ValidationResult result)
 			{
-				Assert.That(_generator.GetResponse(result).ResultType, Is.EqualTo(ResponseResultType.ResponseNotGenerated));
+				Assert.That((await _generator.GetResponseAsync(result)).ResultType, Is.EqualTo(ResponseResultType.ResponseNotGenerated));
 			}
 		}
 	}

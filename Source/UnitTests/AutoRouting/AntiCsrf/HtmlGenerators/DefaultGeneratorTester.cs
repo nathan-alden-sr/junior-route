@@ -43,7 +43,7 @@ namespace Junior.Route.UnitTests.AutoRouting.AntiCsrf.HtmlGenerators
 			[Test]
 			public async void Must_generate_empty_string()
 			{
-				Assert.That(await _generator.GenerateHiddenInputHtml(_response), Is.EqualTo(""));
+				Assert.That(await _generator.GenerateHiddenInputHtmlAsync(_response), Is.EqualTo(""));
 			}
 		}
 
@@ -56,7 +56,7 @@ namespace Junior.Route.UnitTests.AutoRouting.AntiCsrf.HtmlGenerators
 				_configuration = MockRepository.GenerateMock<IAntiCsrfConfiguration>();
 				_configuration.Stub(arg => arg.Enabled).Return(true);
 				_cookieManager = MockRepository.GenerateMock<IAntiCsrfCookieManager>();
-				_cookieManager.Stub(arg => arg.GetSessionId(Arg<HttpResponseBase>.Is.Anything)).Return(null);
+				_cookieManager.Stub(arg => arg.GetSessionId(Arg<HttpResponseBase>.Is.Anything)).Return(Task<Guid?>.Factory.Empty());
 				_nonceRepository = MockRepository.GenerateMock<IAntiCsrfNonceRepository>();
 				_guidFactory = MockRepository.GenerateMock<IGuidFactory>();
 				_systemClock = MockRepository.GenerateMock<ISystemClock>();
@@ -75,7 +75,7 @@ namespace Junior.Route.UnitTests.AutoRouting.AntiCsrf.HtmlGenerators
 			[Test]
 			public async void Must_generate_empty_string()
 			{
-				Assert.That(await _generator.GenerateHiddenInputHtml(_response), Is.EqualTo(""));
+				Assert.That(await _generator.GenerateHiddenInputHtmlAsync(_response), Is.EqualTo(""));
 			}
 		}
 
@@ -83,7 +83,7 @@ namespace Junior.Route.UnitTests.AutoRouting.AntiCsrf.HtmlGenerators
 		public class When_generating_hidden_input_html_and_session_id_is_present
 		{
 			[SetUp]
-			public async void SetUp()
+			public void SetUp()
 			{
 				_configuration = MockRepository.GenerateMock<IAntiCsrfConfiguration>();
 				_configuration.Stub(arg => arg.Enabled).Return(true);
@@ -91,9 +91,9 @@ namespace Junior.Route.UnitTests.AutoRouting.AntiCsrf.HtmlGenerators
 				_configuration.Stub(arg => arg.FormFieldName).Return("name");
 				_cookieManager = MockRepository.GenerateMock<IAntiCsrfCookieManager>();
 				_sessionId = Guid.Parse("3ff1a1d6-1604-462e-b347-1314e962ac29");
-				_cookieManager.Stub(arg => arg.GetSessionId(Arg<HttpResponseBase>.Is.Anything)).Return(_sessionId);
+				_cookieManager.Stub(arg => arg.GetSessionId(Arg<HttpResponseBase>.Is.Anything)).Return(((Guid?)_sessionId).AsCompletedTask());
 				_nonceRepository = MockRepository.GenerateMock<IAntiCsrfNonceRepository>();
-				_nonceRepository.Stub(arg => arg.Add(Arg<Guid>.Is.Anything, Arg<Guid>.Is.Anything, Arg<DateTime>.Is.Anything, Arg<DateTime>.Is.Anything)).Return(Task.FromResult((object)null));
+				_nonceRepository.Stub(arg => arg.AddAsync(Arg<Guid>.Is.Anything, Arg<Guid>.Is.Anything, Arg<DateTime>.Is.Anything, Arg<DateTime>.Is.Anything)).Return(Task.Factory.Empty());
 				_guidFactory = MockRepository.GenerateMock<IGuidFactory>();
 				_nonce = Guid.Parse("4dc041ab-7259-466a-b9a7-846dd9595f4e");
 				_guidFactory.Stub(arg => arg.Random()).Return(_nonce);
@@ -102,7 +102,7 @@ namespace Junior.Route.UnitTests.AutoRouting.AntiCsrf.HtmlGenerators
 				_systemClock.Stub(arg => arg.UtcDateTime).Return(_currentUtcTimestamp);
 				_response = MockRepository.GenerateMock<HttpResponseBase>();
 				_generator = new DefaultGenerator(_configuration, _cookieManager, _nonceRepository, _guidFactory, _systemClock);
-				_hiddenInputHtml = await _generator.GenerateHiddenInputHtml(_response);
+				_hiddenInputHtml = _generator.GenerateHiddenInputHtmlAsync(_response).Result;
 			}
 
 			private IAntiCsrfConfiguration _configuration;
@@ -120,7 +120,7 @@ namespace Junior.Route.UnitTests.AutoRouting.AntiCsrf.HtmlGenerators
 			[Test]
 			public void Must_add_new_nonce_to_repository()
 			{
-				_nonceRepository.AssertWasCalled(arg => arg.Add(_sessionId, _nonce, _currentUtcTimestamp, _currentUtcTimestamp.AddMinutes(1)));
+				_nonceRepository.AssertWasCalled(arg => arg.AddAsync(_sessionId, _nonce, _currentUtcTimestamp, _currentUtcTimestamp.AddMinutes(1)));
 			}
 
 			[Test]

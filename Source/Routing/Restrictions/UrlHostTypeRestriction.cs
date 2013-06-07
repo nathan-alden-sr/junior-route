@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using System.Web;
 
 using Junior.Common;
@@ -47,11 +48,11 @@ namespace Junior.Route.Routing.Restrictions
 			return _type.Equals(other._type);
 		}
 
-		public bool MatchesRequest(HttpRequestBase request)
+		public Task<bool> MatchesRequestAsync(HttpRequestBase request)
 		{
 			request.ThrowIfNull("request");
 
-			return _type == request.Url.HostNameType;
+			return (_type == request.Url.HostNameType).AsCompletedTask();
 		}
 
 		public override bool Equals(object obj)

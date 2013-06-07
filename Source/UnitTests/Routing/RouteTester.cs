@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Threading.Tasks;
 using System.Web;
 
 using Junior.Common;
@@ -313,7 +312,7 @@ namespace Junior.Route.UnitTests.Routing
 			[Test]
 			public async void Must_return_nocontentresponse()
 			{
-				IResponse processedResponse = await _route.ProcessResponse(_context);
+				IResponse processedResponse = await _route.ProcessResponseAsync(_context);
 
 				Assert.That(processedResponse.StatusCode.ParsedStatusCode, Is.EqualTo(HttpStatusCode.NoContent));
 			}
@@ -337,7 +336,7 @@ namespace Junior.Route.UnitTests.Routing
 			[Test]
 			public async void Must_call_delegate()
 			{
-				await _route.ProcessResponse(_context);
+				await _route.ProcessResponseAsync(_context);
 
 				Assert.That(_delegateCalled, Is.True);
 			}
@@ -351,7 +350,7 @@ namespace Junior.Route.UnitTests.Routing
 			[Test]
 			public async void Must_return_nocontentresponse()
 			{
-				IResponse processedResponse = await _route.ProcessResponse(_context);
+				IResponse processedResponse = await _route.ProcessResponseAsync(_context);
 
 				Assert.That(processedResponse.StatusCode.ParsedStatusCode, Is.EqualTo(HttpStatusCode.NoContent));
 			}
@@ -385,7 +384,7 @@ namespace Junior.Route.UnitTests.Routing
 
 				_route.RespondWith(response);
 
-				IResponse processedResponse = await _route.ProcessResponse(_context);
+				IResponse processedResponse = await _route.ProcessResponseAsync(_context);
 
 				Assert.That(processedResponse, Is.EqualTo(response));
 			}
@@ -419,7 +418,7 @@ namespace Junior.Route.UnitTests.Routing
 
 				_route.RespondWith(response, typeof(CssResponse));
 
-				IResponse processedResponse = await _route.ProcessResponse(_context);
+				IResponse processedResponse = await _route.ProcessResponseAsync(_context);
 
 				Assert.That(processedResponse, Is.EqualTo(response));
 			}
@@ -450,7 +449,7 @@ namespace Junior.Route.UnitTests.Routing
 							return (IResponse)new Response().NoContent();
 						});
 
-				await _route.ProcessResponse(_context);
+				await _route.ProcessResponseAsync(_context);
 
 				Assert.That(executed, Is.True);
 			}
@@ -490,7 +489,7 @@ namespace Junior.Route.UnitTests.Routing
 						},
 					typeof(CssResponse));
 
-				await _route.ProcessResponse(_context);
+				await _route.ProcessResponseAsync(_context);
 
 				Assert.That(executed, Is.True);
 			}
@@ -520,7 +519,7 @@ namespace Junior.Route.UnitTests.Routing
 			[Test]
 			public void Must_indicate_correct_return_type()
 			{
-				_route.RespondWith(request => Task.FromResult(new Response().NoContent()));
+				_route.RespondWith(request => new Response().NoContent().AsCompletedTask());
 
 				Assert.That(_route.ResponseType, Is.EqualTo(typeof(Response)));
 			}
@@ -530,9 +529,9 @@ namespace Junior.Route.UnitTests.Routing
 			{
 				IResponse response = new Response().NoContent();
 
-				_route.RespondWith(Task.FromResult(response));
+				_route.RespondWith(response.AsCompletedTask());
 
-				IResponse processedResponse = await _route.ProcessResponse(_context);
+				IResponse processedResponse = await _route.ProcessResponseAsync(_context);
 
 				Assert.That(processedResponse, Is.EqualTo(response));
 			}
@@ -554,7 +553,7 @@ namespace Junior.Route.UnitTests.Routing
 			[Test]
 			public void Must_indicate_correct_return_type()
 			{
-				_route.RespondWith(request => Task.FromResult(new CssResponse("")), typeof(CssResponse));
+				_route.RespondWith(request => new CssResponse("").AsCompletedTask(), typeof(CssResponse));
 
 				Assert.That(_route.ResponseType, Is.EqualTo(typeof(CssResponse)));
 			}
@@ -564,9 +563,9 @@ namespace Junior.Route.UnitTests.Routing
 			{
 				IResponse response = new Response().NoContent();
 
-				_route.RespondWith(Task.FromResult(response), typeof(CssResponse));
+				_route.RespondWith(response.AsCompletedTask(), typeof(CssResponse));
 
-				IResponse processedResponse = await _route.ProcessResponse(_context);
+				IResponse processedResponse = await _route.ProcessResponseAsync(_context);
 
 				Assert.That(processedResponse, Is.EqualTo(response));
 			}
@@ -594,10 +593,10 @@ namespace Junior.Route.UnitTests.Routing
 					request =>
 						{
 							executed = true;
-							return Task.FromResult(new Response().NoContent());
+							return new Response().NoContent().AsCompletedTask();
 						});
 
-				await _route.ProcessResponse(_context);
+				await _route.ProcessResponseAsync(_context);
 
 				Assert.That(executed, Is.True);
 			}
@@ -605,7 +604,7 @@ namespace Junior.Route.UnitTests.Routing
 			[Test]
 			public void Must_indicate_correct_return_type()
 			{
-				_route.RespondWith(request => Task.FromResult(new Response().NoContent()));
+				_route.RespondWith(request => new Response().NoContent().AsCompletedTask());
 
 				Assert.That(_route.ResponseType, Is.EqualTo(typeof(Response)));
 			}
@@ -633,11 +632,11 @@ namespace Junior.Route.UnitTests.Routing
 					request =>
 						{
 							executed = true;
-							return Task.FromResult(new CssResponse(""));
+							return new CssResponse("").AsCompletedTask();
 						},
 					typeof(CssResponse));
 
-				await _route.ProcessResponse(_context);
+				await _route.ProcessResponseAsync(_context);
 
 				Assert.That(executed, Is.True);
 			}
@@ -645,7 +644,7 @@ namespace Junior.Route.UnitTests.Routing
 			[Test]
 			public void Must_indicate_correct_return_type()
 			{
-				_route.RespondWith(request => Task.FromResult(new CssResponse("")), typeof(CssResponse));
+				_route.RespondWith(request => new CssResponse("").AsCompletedTask(), typeof(CssResponse));
 
 				Assert.That(_route.ResponseType, Is.EqualTo(typeof(CssResponse)));
 			}
@@ -2047,7 +2046,7 @@ namespace Junior.Route.UnitTests.Routing
 				_route.AddRestrictions(new UrlHostRestriction("host", CaseInsensitivePlainComparer.Instance), new UrlPortRestriction(80));
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 				_request.Stub(arg => arg.Url).Return(new Uri("http://host:80"));
-				_matchResult = _route.MatchesRequest(_request);
+				_matchResult = _route.MatchesRequestAsync(_request).Result;
 			}
 
 			private Route.Routing.Route _route;
@@ -2071,7 +2070,7 @@ namespace Junior.Route.UnitTests.Routing
 				_route.AddRestrictions(new UrlHostRestriction("host", CaseInsensitivePlainComparer.Instance), new UrlPortRestriction(80));
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 				_request.Stub(arg => arg.Url).Return(new Uri("http://host1:81"));
-				_matchResult = _route.MatchesRequest(_request);
+				_matchResult = _route.MatchesRequestAsync(_request).Result;
 			}
 
 			private Route.Routing.Route _route;
@@ -2095,7 +2094,7 @@ namespace Junior.Route.UnitTests.Routing
 				_route.AddRestrictions(new UrlHostRestriction("host", CaseInsensitivePlainComparer.Instance), new UrlPortRestriction(80));
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 				_request.Stub(arg => arg.Url).Return(new Uri("http://host:81"));
-				_matchResult = _route.MatchesRequest(_request);
+				_matchResult = _route.MatchesRequestAsync(_request).Result;
 			}
 
 			private Route.Routing.Route _route;

@@ -156,9 +156,9 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.CookieManagers
 			private Guid _sessionId;
 
 			[Test]
-			public void Must_return_session_id_from_response_cookie()
+			public async void Must_return_session_id_from_response_cookie()
 			{
-				Assert.That(_cookieManager.GetSessionId(_response), Is.EqualTo(_sessionId));
+				Assert.That(await _cookieManager.GetSessionId(_response), Is.EqualTo(_sessionId));
 			}
 		}
 	}

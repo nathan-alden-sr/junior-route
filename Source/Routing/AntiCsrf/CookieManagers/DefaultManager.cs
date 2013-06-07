@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 
 using Junior.Common;
@@ -20,7 +21,7 @@ namespace Junior.Route.Routing.AntiCsrf.CookieManagers
 			_guidFactory = guidFactory;
 		}
 
-		public void ConfigureCookie(HttpRequestBase request, HttpResponseBase response)
+		public Task ConfigureCookie(HttpRequestBase request, HttpResponseBase response)
 		{
 			request.ThrowIfNull("request");
 			response.ThrowIfNull("response");
@@ -28,16 +29,18 @@ namespace Junior.Route.Routing.AntiCsrf.CookieManagers
 			if (request.Cookies.AllKeys.Contains(_configuration.CookieName))
 			{
 				response.Cookies.Set(request.Cookies[_configuration.CookieName]);
-				return;
+				return Task.Factory.Empty();
 			}
 
 			string sessionId = _guidFactory.Random().ToString("N");
 			var cookie = new HttpCookie(_configuration.CookieName, sessionId) { HttpOnly = true };
 
 			response.Cookies.Add(cookie);
+
+			return Task.Factory.Empty();
 		}
 
-		public Guid? GetSessionId(HttpResponseBase response)
+		public Task<Guid?> GetSessionId(HttpResponseBase response)
 		{
 			response.ThrowIfNull("response");
 
@@ -48,7 +51,7 @@ namespace Junior.Route.Routing.AntiCsrf.CookieManagers
 
 			Guid sessionId;
 
-			return Guid.TryParse(response.Cookies[_configuration.CookieName].Value, out sessionId) ? sessionId : (Guid?)null;
+			return (Guid.TryParse(response.Cookies[_configuration.CookieName].Value, out sessionId) ? sessionId : (Guid?)null).AsCompletedTask();
 		}
 	}
 }

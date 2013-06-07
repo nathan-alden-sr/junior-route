@@ -90,7 +90,7 @@ namespace Junior.Route.UnitTests.Assets.FileSystem
 		public class When_retrieving_css_bundle_response
 		{
 			[SetUp]
-			public async void SetUp()
+			public void SetUp()
 			{
 				_path = Path.GetTempFileName();
 				File.WriteAllText(_path, ".css { text-align: right; }");
@@ -118,7 +118,7 @@ namespace Junior.Route.UnitTests.Assets.FileSystem
 				_context = MockRepository.GenerateMock<HttpContextBase>();
 				_routeId = Guid.NewGuid();
 				_watcherRoute = new CssBundleWatcherRoute("route", _routeId, "relative", _watcher, _httpRuntime, _systemClock);
-				_response = await _watcherRoute.ProcessResponse(_context);
+				_response = _watcherRoute.ProcessResponseAsync(_context).Result;
 			}
 
 			[TearDown]

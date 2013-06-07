@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Web;
 
 using Junior.Common;
@@ -19,14 +20,14 @@ namespace Junior.Route.AutoRouting.ParameterMappers.ModelPropertyMappers
 			_errorHandling = errorHandling;
 		}
 
-		public bool CanMapType(Type propertyType)
+		public Task<bool> CanMapTypeAsync(Type propertyType)
 		{
 			propertyType.ThrowIfNull("propertyType");
 
-			return propertyType.ImplementsInterface<IConvertible>();
+			return propertyType.ImplementsInterface<IConvertible>().AsCompletedTask();
 		}
 
-		public MapResult Map(HttpRequestBase request, Type modelType, PropertyInfo property)
+		public Task<MapResult> MapAsync(HttpRequestBase request, Type modelType, PropertyInfo property)
 		{
 			request.ThrowIfNull("request");
 			modelType.ThrowIfNull("modelType");
@@ -38,7 +39,7 @@ namespace Junior.Route.AutoRouting.ParameterMappers.ModelPropertyMappers
 
 			if (field == null)
 			{
-				return MapResult.ValueNotMapped();
+				return MapResult.ValueNotMapped().AsCompletedTask();
 			}
 
 			IConvertible value = request.QueryString[field];
@@ -64,7 +65,7 @@ namespace Junior.Route.AutoRouting.ParameterMappers.ModelPropertyMappers
 				convertedValue = propertyType.GetDefaultValue();
 			}
 
-			return MapResult.ValueMapped(convertedValue);
+			return MapResult.ValueMapped(convertedValue).AsCompletedTask();
 		}
 	}
 }

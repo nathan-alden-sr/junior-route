@@ -33,14 +33,14 @@ namespace Junior.Route.AutoRouting.AntiCsrf.HtmlGenerators
 			_systemClock = systemClock;
 		}
 
-		public async Task<string> GenerateHiddenInputHtml(HttpResponseBase response)
+		public async Task<string> GenerateHiddenInputHtmlAsync(HttpResponseBase response)
 		{
 			if (!_configuration.Enabled)
 			{
 				return "";
 			}
 
-			Guid? sessionId = _cookieManager.GetSessionId(response);
+			Guid? sessionId = await _cookieManager.GetSessionId(response);
 
 			if (sessionId == null)
 			{
@@ -50,7 +50,7 @@ namespace Junior.Route.AutoRouting.AntiCsrf.HtmlGenerators
 			Guid nonce = _guidFactory.Random();
 			DateTime currentTimestamp = _systemClock.UtcDateTime;
 
-			await _nonceRepository.Add(sessionId.Value, nonce, currentTimestamp, currentTimestamp + _configuration.NonceDuration);
+			await _nonceRepository.AddAsync(sessionId.Value, nonce, currentTimestamp, currentTimestamp + _configuration.NonceDuration);
 
 			return String.Format(@"<input type=""hidden"" name=""{0}"" value=""{1}""/>", _configuration.FormFieldName, nonce.ToString("N"));
 		}

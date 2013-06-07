@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace Junior.Route.AutoRouting.AuthenticationStrategies
 {
 	public interface IAuthenticationStrategy
 	{
-		bool MustAuthenticate(Type type, MethodInfo method);
+		Task<bool> MustAuthenticateAsync(Type type, MethodInfo method);
 	}
 }

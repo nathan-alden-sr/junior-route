@@ -48,7 +48,7 @@ namespace Junior.Route.UnitTests.AutoRouting.RestrictionMappers
 				MethodInfo methodInfo = type.GetMethod(methodName);
 				var mapper = new UrlRelativePathFromRelativeClassNamespaceAndClassNameMapper("Junior.Route.UnitTests", true, makeLowercase, wordSeparator);
 
-				mapper.Map(type, methodInfo, _route, _container);
+				mapper.MapAsync(type, methodInfo, _route, _container);
 
 				UrlRelativePathRestriction[] restrictions = _route.GetRestrictions<UrlRelativePathRestriction>().ToArray();
 

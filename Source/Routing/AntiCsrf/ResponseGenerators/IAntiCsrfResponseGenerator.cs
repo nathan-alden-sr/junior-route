@@ -1,9 +1,11 @@
-﻿using Junior.Route.Routing.AntiCsrf.NonceValidators;
+﻿using System.Threading.Tasks;
+
+using Junior.Route.Routing.AntiCsrf.NonceValidators;
 
 namespace Junior.Route.Routing.AntiCsrf.ResponseGenerators
 {
 	public interface IAntiCsrfResponseGenerator
 	{
-		ResponseResult GetResponse(ValidationResult result);
+		Task<ResponseResult> GetResponseAsync(ValidationResult result);
 	}
 }

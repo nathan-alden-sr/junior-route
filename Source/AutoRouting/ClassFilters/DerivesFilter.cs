@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 using Junior.Common;
 
@@ -7,11 +8,11 @@ namespace Junior.Route.AutoRouting.ClassFilters
 	public class DerivesFilter<TBase> : IClassFilter
 		where TBase : class
 	{
-		public bool Matches(Type type)
+		public Task<bool> MatchesAsync(Type type)
 		{
 			type.ThrowIfNull("type");
 
-			return type.IsSubclassOf(typeof(TBase));
+			return type.IsSubclassOf(typeof(TBase)).AsCompletedTask();
 		}
 	}
 
@@ -31,11 +32,11 @@ namespace Junior.Route.AutoRouting.ClassFilters
 			_baseType = baseType;
 		}
 
-		public bool Matches(Type type)
+		public Task<bool> MatchesAsync(Type type)
 		{
 			type.ThrowIfNull("type");
 
-			return type.IsSubclassOf(_baseType);
+			return type.IsSubclassOf(_baseType).AsCompletedTask();
 		}
 	}
 }

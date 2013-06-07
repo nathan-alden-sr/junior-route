@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using System.Threading.Tasks;
 
 using Junior.Common;
 
@@ -16,12 +17,12 @@ namespace Junior.Route.AutoRouting.IdMappers
 			_guidFactory = guidFactory;
 		}
 
-		public IdResult Map(Type type, MethodInfo method)
+		public Task<IdResult> MapAsync(Type type, MethodInfo method)
 		{
 			type.ThrowIfNull("type");
 			method.ThrowIfNull("method");
 
-			return IdResult.IdMapped(_guidFactory.Random());
+			return IdResult.IdMapped(_guidFactory.Random()).AsCompletedTask();
 		}
 	}
 }

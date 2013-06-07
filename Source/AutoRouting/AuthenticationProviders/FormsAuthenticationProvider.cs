@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Web;
 
 using Junior.Common;
@@ -22,7 +23,7 @@ namespace Junior.Route.AutoRouting.AuthenticationProviders
 			_returnUrlQueryStringField = returnUrlQueryStringField;
 		}
 
-		public AuthenticationResult Authenticate(HttpRequestBase request, HttpResponseBase response, Routing.Route route)
+		public Task<AuthenticationResult> AuthenticateAsync(HttpRequestBase request, HttpResponseBase response, Routing.Route route)
 		{
 			request.ThrowIfNull("request");
 			response.ThrowIfNull("response");
@@ -30,7 +31,7 @@ namespace Junior.Route.AutoRouting.AuthenticationProviders
 
 			if (!_helper.IsTicketValid(request))
 			{
-				return AuthenticationResult.AuthenticationFailed;
+				return AuthenticationResult.AuthenticationFailed.AsCompletedTask();
 			}
 
 			Cookie cookie = _helper.RenewTicket(request);
@@ -38,16 +39,16 @@ namespace Junior.Route.AutoRouting.AuthenticationProviders
 			response.Cookies.Remove(cookie.Name);
 			response.Cookies.Add(cookie.GetHttpCookie());
 
-			return AuthenticationResult.AuthenticationSucceeded;
+			return AuthenticationResult.AuthenticationSucceeded.AsCompletedTask();
 		}
 
-		public IResponse GetFailedAuthenticationResponse(HttpRequestBase request)
+		public Task<IResponse> GetFailedAuthenticationResponseAsync(HttpRequestBase request)
 		{
 			request.ThrowIfNull("request");
 
 			if (_failedAuthenticationRedirectAbsoluteUrlDelegate == null)
 			{
-				return new Response().Unauthorized();
+				return new Response().Unauthorized().AsCompletedTask<IResponse>();
 			}
 
 			string absoluteUrl = _failedAuthenticationRedirectAbsoluteUrlDelegate();
@@ -65,7 +66,7 @@ namespace Junior.Route.AutoRouting.AuthenticationProviders
 				absoluteUrl += (absoluteUrl.IndexOf('?') > -1 ? "&" : "?") + returnUrlQueryString;
 			}
 
-			return String.Equals(request.HttpMethod, "GET", StringComparison.OrdinalIgnoreCase) ? new Response().Found(absoluteUrl) : new Response().SeeOther(absoluteUrl);
+			return (String.Equals(request.HttpMethod, "GET", StringComparison.OrdinalIgnoreCase) ? new Response().Found(absoluteUrl) : new Response().SeeOther(absoluteUrl)).AsCompletedTask<IResponse>();
 		}
 
 		public static FormsAuthenticationProvider CreateWithNoRedirectOnFailedAuthentication(IFormsAuthenticationHelper helper)

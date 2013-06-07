@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
 using System.Text;
+using System.Threading.Tasks;
 using System.Web;
 
 using Junior.Common;
@@ -153,14 +154,14 @@ namespace Junior.Route.Routing.Responses
 			}
 		}
 
-		public byte[] GetContent()
+		public async Task<byte[]> GetContentAsync()
 		{
 			if (_binaryContent == null && _stringContent == null)
 			{
 				return new byte[0];
 			}
 
-			return _binaryContent != null ? _binaryContent() : _contentEncoding.GetBytes(_stringContent());
+			return await Task.Run(() => _binaryContent != null ? _binaryContent() : _contentEncoding.GetBytes(_stringContent()));
 		}
 
 		public Response ContentType(string contentType)

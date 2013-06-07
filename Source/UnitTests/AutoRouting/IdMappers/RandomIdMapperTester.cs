@@ -38,10 +38,10 @@ namespace Junior.Route.UnitTests.AutoRouting.IdMappers
 			}
 
 			[Test]
-			public void Must_map_ids_from_guidfactory_instance()
+			public async void Must_map_ids_from_guidfactory_instance()
 			{
-				IdResult result1 = _mapper.Map(typeof(Endpoint), typeof(Endpoint).GetMethod("Method1"));
-				IdResult result2 = _mapper.Map(typeof(Endpoint), typeof(Endpoint).GetMethod("Method2"));
+				IdResult result1 = await _mapper.MapAsync(typeof(Endpoint), typeof(Endpoint).GetMethod("Method1"));
+				IdResult result2 = await _mapper.MapAsync(typeof(Endpoint), typeof(Endpoint).GetMethod("Method2"));
 
 				Assert.That(result1.Id, Is.EqualTo(Guid.Parse("78d15a5e-723b-4b2f-974e-58f6852b6584")));
 				Assert.That(result1.ResultType, Is.EqualTo(IdResultType.IdMapped));

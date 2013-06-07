@@ -44,7 +44,7 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseGenerators
 			[Test]
 			public async void Must_generate_not_acceptable_response()
 			{
-				ResponseResult result = _generator.GetResponse(_context, _routeMatchResults);
+				ResponseResult result = await _generator.GetResponse(_context, _routeMatchResults);
 
 				Assert.That(result.CacheKey, Is.Null);
 				Assert.That((await result.Response).StatusCode.ParsedStatusCode, Is.EqualTo(HttpStatusCode.NotAcceptable));
@@ -77,7 +77,7 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseGenerators
 			[Test]
 			public async void Must_generate_not_acceptable_response()
 			{
-				ResponseResult result = _generator.GetResponse(_context, _routeMatchResults);
+				ResponseResult result = await _generator.GetResponse(_context, _routeMatchResults);
 
 				Assert.That(result.CacheKey, Is.Null);
 				Assert.That((await result.Response).StatusCode.ParsedStatusCode, Is.EqualTo(HttpStatusCode.NotAcceptable));
@@ -110,7 +110,7 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseGenerators
 			[Test]
 			public async void Must_generate_unsupported_media_type_response()
 			{
-				ResponseResult result = _generator.GetResponse(_context, _routeMatchResults);
+				ResponseResult result = await _generator.GetResponse(_context, _routeMatchResults);
 
 				Assert.That(result.CacheKey, Is.Null);
 				Assert.That((await result.Response).StatusCode.ParsedStatusCode, Is.EqualTo(HttpStatusCode.UnsupportedMediaType));
@@ -143,7 +143,7 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseGenerators
 			[Test]
 			public async void Must_generate_method_not_allowed_response()
 			{
-				ResponseResult result = _generator.GetResponse(_context, _routeMatchResults);
+				ResponseResult result = await _generator.GetResponse(_context, _routeMatchResults);
 
 				Assert.That(result.CacheKey, Is.Null);
 				Assert.That((await result.Response).StatusCode.ParsedStatusCode, Is.EqualTo(HttpStatusCode.MethodNotAllowed));

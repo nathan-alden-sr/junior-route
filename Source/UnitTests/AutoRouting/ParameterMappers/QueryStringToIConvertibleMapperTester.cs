@@ -45,7 +45,7 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers
 				MethodInfo methodInfo = type.GetMethod(methodName);
 				ParameterInfo parameterInfo = methodInfo.GetParameters().Single(arg => arg.Name == parameterName);
 
-				Assert.That(() => _mapper.Map(_context, type, methodInfo, parameterInfo), Throws.InstanceOf<ApplicationException>());
+				Assert.That(() => _mapper.MapAsync(_context, type, methodInfo, parameterInfo), Throws.InstanceOf<ApplicationException>());
 			}
 		}
 
@@ -75,11 +75,11 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers
 
 			[Test]
 			[TestCase(typeof(Endpoint), "Method", "i", 0)]
-			public void Must_map_default_value(Type type, string methodName, string parameterName, object expectedValue)
+			public async void Must_map_default_value(Type type, string methodName, string parameterName, object expectedValue)
 			{
 				MethodInfo methodInfo = type.GetMethod(methodName);
 				ParameterInfo parameterInfo = methodInfo.GetParameters().Single(arg => arg.Name == parameterName);
-				MapResult result = _mapper.Map(_context, type, methodInfo, parameterInfo);
+				MapResult result = await _mapper.MapAsync(_context, type, methodInfo, parameterInfo);
 
 				Assert.That(result.ResultType, Is.EqualTo(MapResultType.ValueMapped));
 				Assert.That(result.Value, Is.EqualTo(expectedValue));
@@ -112,11 +112,11 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers
 
 			[Test]
 			[TestCase(typeof(Endpoint), "Method", "d", 1.2)]
-			public void Must_map_to_properties_whose_return_values_implement_iconvertible(Type type, string methodName, string parameterName, object expectedValue)
+			public async void Must_map_to_properties_whose_return_values_implement_iconvertible(Type type, string methodName, string parameterName, object expectedValue)
 			{
 				MethodInfo methodInfo = type.GetMethod(methodName);
 				ParameterInfo parameterInfo = methodInfo.GetParameters().Single(arg => arg.Name == parameterName);
-				MapResult result = _mapper.Map(_context, type, methodInfo, parameterInfo);
+				MapResult result = await _mapper.MapAsync(_context, type, methodInfo, parameterInfo);
 
 				Assert.That(result.ResultType, Is.EqualTo(MapResultType.ValueMapped));
 				Assert.That(result.Value, Is.EqualTo(expectedValue));
@@ -157,11 +157,11 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers
 			[Test]
 			[TestCase(typeof(Endpoint1), "Method", "S", "value")]
 			[TestCase(typeof(Endpoint1), "Method", "I", 0)]
-			public void Must_map_to_properties_whose_return_values_implement_iconvertible(Type type, string methodName, string parameterName, object expectedValue)
+			public async void Must_map_to_properties_whose_return_values_implement_iconvertible(Type type, string methodName, string parameterName, object expectedValue)
 			{
 				MethodInfo methodInfo = type.GetMethod(methodName);
 				ParameterInfo parameterInfo = methodInfo.GetParameters().Single(arg => arg.Name == parameterName);
-				MapResult result = _mapper.Map(_context, type, methodInfo, parameterInfo);
+				MapResult result = await _mapper.MapAsync(_context, type, methodInfo, parameterInfo);
 
 				Assert.That(result.ResultType, Is.EqualTo(MapResultType.ValueMapped));
 				Assert.That(result.Value, Is.EqualTo(expectedValue));
@@ -184,9 +184,9 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers
 			[Test]
 			[TestCase(typeof(string))]
 			[TestCase(typeof(int))]
-			public void Must_map_types_implementing_iconvertible(Type parameterType)
+			public async void Must_map_types_implementing_iconvertible(Type parameterType)
 			{
-				Assert.That(_mapper.CanMapType(_context, parameterType), Is.True);
+				Assert.That(await _mapper.CanMapTypeAsync(_context, parameterType), Is.True);
 			}
 		}
 
@@ -206,9 +206,9 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers
 			[Test]
 			[TestCase(typeof(object))]
 			[TestCase(typeof(HttpRequestBase))]
-			public void Must_not_map_types_not_implementing_iconvertible(Type propertyType)
+			public async void Must_not_map_types_not_implementing_iconvertible(Type propertyType)
 			{
-				Assert.That(_mapper.CanMapType(_context, propertyType), Is.False);
+				Assert.That(await _mapper.CanMapTypeAsync(_context, propertyType), Is.False);
 			}
 		}
 	}

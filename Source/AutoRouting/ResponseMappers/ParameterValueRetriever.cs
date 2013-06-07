@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Web;
 
 using Junior.Common;
 using Junior.Route.AutoRouting.ParameterMappers;
+
+using ALinq;
 
 namespace Junior.Route.AutoRouting.ResponseMappers
 {
@@ -25,7 +28,7 @@ namespace Junior.Route.AutoRouting.ResponseMappers
 			}
 		}
 
-		public IEnumerable<object> GetParameterValues(HttpContextBase context, Type type, MethodInfo method)
+		public async Task<IEnumerable<object>> GetParameterValues(HttpContextBase context, Type type, MethodInfo method)
 		{
 			context.ThrowIfNull("context");
 			type.ThrowIfNull("type");
@@ -44,9 +47,14 @@ namespace Junior.Route.AutoRouting.ResponseMappers
 				{
 					bool mapped = false;
 
-					foreach (IParameterMapper parameterMapper in _parameterMappers.Where(arg => arg.CanMapType(context, parameterType)))
+					IParameterMapper[] parameterMappers = await _parameterMappers
+						.ToAsync()
+						.Where(async arg => await arg.CanMapTypeAsync(context, parameterType))
+						.ToArray();
+
+					foreach (IParameterMapper parameterMapper in parameterMappers)
 					{
-						MapResult mapResult = parameterMapper.Map(context, type, method, parameterInfo);
+						MapResult mapResult = await parameterMapper.MapAsync(context, type, method, parameterInfo);
 
 						if (mapResult.ResultType == MapResultType.ValueNotMapped)
 						{

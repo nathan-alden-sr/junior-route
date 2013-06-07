@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace Junior.Route.AutoRouting.IdMappers
 {
 	public interface IIdMapper
 	{
-		IdResult Map(Type type, MethodInfo method);
+		Task<IdResult> MapAsync(Type type, MethodInfo method);
 	}
 }

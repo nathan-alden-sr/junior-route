@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace Junior.Route.AutoRouting.ClassFilters
 {
 	public interface IClassFilter
 	{
-		bool Matches(Type type);
+		Task<bool> MatchesAsync(Type type);
 	}
 }

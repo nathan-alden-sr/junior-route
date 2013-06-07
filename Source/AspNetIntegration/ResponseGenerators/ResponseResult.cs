@@ -2,6 +2,8 @@
 
 using Junior.Route.Routing.Responses;
 
+using Junior.Common;
+
 namespace Junior.Route.AspNetIntegration.ResponseGenerators
 {
 	public class ResponseResult
@@ -48,7 +50,7 @@ namespace Junior.Route.AspNetIntegration.ResponseGenerators
 
 		public static ResponseResult ResponseGenerated(IResponse response, string cacheKey = null)
 		{
-			return ResponseGenerated(Task.FromResult(response), cacheKey);
+			return ResponseGenerated(response.AsCompletedTask(), cacheKey);
 		}
 
 		public static ResponseResult ResponseNotGenerated()

@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace Junior.Route.AutoRouting.NameMappers
 {
 	public interface INameMapper
 	{
-		NameResult Map(Type type, MethodInfo method);
+		Task<NameResult> MapAsync(Type type, MethodInfo method);
 	}
 }

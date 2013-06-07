@@ -17,7 +17,7 @@ namespace Junior.Route.Routing.AntiCsrf.NonceRepositories
 			_nonceCache = new MemoryCache(configuration.MemoryCacheName);
 		}
 
-		public async Task Add(Guid sessionId, Guid nonce, DateTime createdUtcTimestamp, DateTime expiresUtcTimestamp)
+		public Task AddAsync(Guid sessionId, Guid nonce, DateTime createdUtcTimestamp, DateTime expiresUtcTimestamp)
 		{
 			if (createdUtcTimestamp.Kind != DateTimeKind.Utc)
 			{
@@ -32,10 +32,10 @@ namespace Junior.Route.Routing.AntiCsrf.NonceRepositories
 
 			_nonceCache.Set(new CacheItem(cacheKey, expiresUtcTimestamp), new CacheItemPolicy { AbsoluteExpiration = expiresUtcTimestamp });
 
-			await Task.FromResult((object)null);
+			return Task.Factory.Empty();
 		}
 
-		public async Task<bool> Exists(Guid sessionId, Guid nonce, DateTime currentUtcTimestamp)
+		public Task<bool> ExistsAsync(Guid sessionId, Guid nonce, DateTime currentUtcTimestamp)
 		{
 			if (currentUtcTimestamp.Kind != DateTimeKind.Utc)
 			{
@@ -45,7 +45,7 @@ namespace Junior.Route.Routing.AntiCsrf.NonceRepositories
 			string cacheKey = GetCacheKey(sessionId, nonce);
 			var expiresUtcTimestamp = (DateTime?)_nonceCache.Get(cacheKey);
 
-			return await Task.FromResult(expiresUtcTimestamp > currentUtcTimestamp);
+			return (expiresUtcTimestamp > currentUtcTimestamp).AsCompletedTask();
 		}
 
 		private static string GetCacheKey(Guid sessionId, Guid nonce)

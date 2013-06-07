@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 using Junior.Common;
 
@@ -15,11 +16,11 @@ namespace Junior.Route.AutoRouting.ClassFilters
 			_namespace = @namespace;
 		}
 
-		public bool Matches(Type type)
+		public Task<bool> MatchesAsync(Type type)
 		{
 			type.ThrowIfNull("type");
 
-			return type.Namespace == _namespace;
+			return (type.Namespace == _namespace).AsCompletedTask();
 		}
 	}
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 
 using Junior.Common;
@@ -85,13 +86,13 @@ namespace Junior.Route.Routing.Restrictions
 			return Equals(_nameComparer, other._nameComparer) && String.Equals(_name, other._name) && String.Equals(_value, other._value) && Equals(_valueComparer, other._valueComparer);
 		}
 
-		public bool MatchesRequest(HttpRequestBase request)
+		public Task<bool> MatchesRequestAsync(HttpRequestBase request)
 		{
 			request.ThrowIfNull("request");
 
 			IEnumerable<string> matchingKeys = request.Cookies.AllKeys.Where(arg => _nameComparer.Matches(_name, arg));
 
-			return matchingKeys.Any(arg => _valueComparer.Matches(_value, request.Cookies[arg].Value));
+			return matchingKeys.Any(arg => _valueComparer.Matches(_value, request.Cookies[arg].Value)).AsCompletedTask();
 		}
 
 		public override bool Equals(object obj)

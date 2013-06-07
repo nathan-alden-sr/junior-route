@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using System.Web;
 
 using Junior.Common;
@@ -48,7 +49,7 @@ namespace Junior.Route.AspNetIntegration.ResponseHandlers
 		{
 		}
 
-		public ResponseHandlerResult HandleResponse(HttpContextBase context, IResponse suggestedResponse, ICache cache, string cacheKey)
+		public Task<ResponseHandlerResult> HandleResponse(HttpContextBase context, IResponse suggestedResponse, ICache cache, string cacheKey)
 		{
 			context.ThrowIfNull("context");
 			suggestedResponse.ThrowIfNull("suggestedResponse");
@@ -57,14 +58,14 @@ namespace Junior.Route.AspNetIntegration.ResponseHandlers
 
 			if (!_statusCodes.Contains(statusCode))
 			{
-				return ResponseHandlerResult.ResponseNotHandled();
+				return ResponseHandlerResult.ResponseNotHandled().AsCompletedTask();
 			}
 
 			AcceptHeader[] acceptHeaders = AcceptHeader.ParseMany(context.Request.Headers["Accept"]).ToArray();
 
 			if (acceptHeaders.Any() && !acceptHeaders.Any(arg => arg.MediaTypeMatches("text/plain")))
 			{
-				return ResponseHandlerResult.ResponseNotHandled();
+				return ResponseHandlerResult.ResponseNotHandled().AsCompletedTask();
 			}
 
 			string content = String.Format(
@@ -82,7 +83,7 @@ namespace Junior.Route.AspNetIntegration.ResponseHandlers
 
 			context.Response.TrySkipIisCustomErrors = true;
 
-			return ResponseHandlerResult.ResponseWritten();
+			return ResponseHandlerResult.ResponseWritten().AsCompletedTask();
 		}
 	}
 }

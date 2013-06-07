@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 using Junior.Common;
 
@@ -27,14 +28,14 @@ namespace Junior.Route.AutoRouting.ResolvedRelativeUrlMappers
 			_wordRegexPattern = wordRegexPattern;
 		}
 
-		public ResolvedRelativeUrlResult Map(Type type, MethodInfo method)
+		public Task<ResolvedRelativeUrlResult> MapAsync(Type type, MethodInfo method)
 		{
 			type.ThrowIfNull("type");
 			method.ThrowIfNull("method");
 
 			if (!type.NamespaceStartsWith(_rootNamespace))
 			{
-				return ResolvedRelativeUrlResult.ResolvedRelativeUrlNotMapped();
+				return ResolvedRelativeUrlResult.ResolvedRelativeUrlNotMapped().AsCompletedTask();
 			}
 
 			var pathParts = new List<string>();
@@ -44,7 +45,7 @@ namespace Junior.Route.AutoRouting.ResolvedRelativeUrlMappers
 			pathParts.AddRange(ParseWords(type.Name));
 			string resolvedRelativeUrl = String.Join("/", pathParts);
 
-			return ResolvedRelativeUrlResult.ResolvedRelativeUrlMapped(resolvedRelativeUrl);
+			return ResolvedRelativeUrlResult.ResolvedRelativeUrlMapped(resolvedRelativeUrl).AsCompletedTask();
 		}
 
 		private IEnumerable<string> ParseWords(string value)

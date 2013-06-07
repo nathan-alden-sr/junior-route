@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using System.Threading.Tasks;
 
 using Junior.Common;
 using Junior.Route.AutoRouting.Containers;
@@ -8,7 +9,7 @@ namespace Junior.Route.AutoRouting.ResponseMappers
 {
 	public class NoContentMapper : IResponseMapper
 	{
-		public void Map(Func<IContainer> container, Type type, MethodInfo method, Routing.Route route)
+		public Task MapAsync(Func<IContainer> container, Type type, MethodInfo method, Routing.Route route)
 		{
 			container.ThrowIfNull("container");
 			type.ThrowIfNull("type");
@@ -16,6 +17,8 @@ namespace Junior.Route.AutoRouting.ResponseMappers
 			route.ThrowIfNull("route");
 
 			route.RespondWithNoContent();
+
+			return Task.Factory.Empty();
 		}
 	}
 }

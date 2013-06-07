@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Web;
 
+using Junior.Common;
 using Junior.Route.AutoRouting.ParameterMappers;
 using Junior.Route.AutoRouting.ResponseMappers;
 
@@ -21,7 +22,7 @@ namespace Junior.Route.UnitTests.AutoRouting.ResponseMappers
 			public void SetUp()
 			{
 				_mapper = MockRepository.GenerateMock<IParameterMapper>();
-				_mapper.Stub(arg => arg.CanMapType(Arg<HttpContextBase>.Is.Anything, Arg<Type>.Is.Anything)).Return(false);
+				_mapper.Stub(arg => arg.CanMapTypeAsync(Arg<HttpContextBase>.Is.Anything, Arg<Type>.Is.Anything)).Return(false.AsCompletedTask());
 				_retriever = new ParameterValueRetriever(new[] { _mapper });
 				_context = MockRepository.GenerateMock<HttpContextBase>();
 			}
@@ -38,9 +39,11 @@ namespace Junior.Route.UnitTests.AutoRouting.ResponseMappers
 			}
 
 			[Test]
-			public void Must_throw_exception()
+			[ExpectedException(typeof(ApplicationException))]
+#warning Update to use async Assert.That(..., Throws.InstanceOf<>) when NUnit 2.6.3 becomes available
+			public async void Must_throw_exception()
 			{
-				Assert.That(() => _retriever.GetParameterValues(_context, typeof(Endpoint), typeof(Endpoint).GetMethod("Method")), Throws.InstanceOf<ApplicationException>());
+				await _retriever.GetParameterValues(_context, typeof(Endpoint), typeof(Endpoint).GetMethod("Method"));
 			}
 		}
 
@@ -51,18 +54,18 @@ namespace Junior.Route.UnitTests.AutoRouting.ResponseMappers
 			public void SetUp()
 			{
 				_mapper1 = MockRepository.GenerateMock<IParameterMapper>();
-				_mapper1.Stub(arg => arg.CanMapType(Arg<HttpContextBase>.Is.Anything, Arg<Type>.Is.Anything)).Return(false);
+				_mapper1.Stub(arg => arg.CanMapTypeAsync(Arg<HttpContextBase>.Is.Anything, Arg<Type>.Is.Anything)).Return(false.AsCompletedTask());
 				_mapper2 = MockRepository.GenerateMock<IParameterMapper>();
-				_mapper2.Stub(arg => arg.CanMapType(Arg<HttpContextBase>.Is.Anything, Arg<Type>.Is.Anything)).Return(true);
+				_mapper2.Stub(arg => arg.CanMapTypeAsync(Arg<HttpContextBase>.Is.Anything, Arg<Type>.Is.Anything)).Return(true.AsCompletedTask());
 				_mapper2
-					.Stub(arg => arg.Map(Arg<HttpContextBase>.Is.Anything, Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything, Arg<ParameterInfo>.Is.Anything))
-					.WhenCalled(arg => arg.ReturnValue = MapResult.ValueMapped(100))
+					.Stub(arg => arg.MapAsync(Arg<HttpContextBase>.Is.Anything, Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything, Arg<ParameterInfo>.Is.Anything))
+					.WhenCalled(arg => arg.ReturnValue = (MapResult.ValueMapped(100)).AsCompletedTask())
 					.Return(null);
 				_mapper3 = MockRepository.GenerateMock<IParameterMapper>();
-				_mapper3.Stub(arg => arg.CanMapType(Arg<HttpContextBase>.Is.Anything, Arg<Type>.Is.Anything)).Return(false);
+				_mapper3.Stub(arg => arg.CanMapTypeAsync(Arg<HttpContextBase>.Is.Anything, Arg<Type>.Is.Anything)).Return(false.AsCompletedTask());
 				_retriever = new ParameterValueRetriever(new[] { _mapper1, _mapper2, _mapper3 });
 				_context = MockRepository.GenerateMock<HttpContextBase>();
-				_values = _retriever.GetParameterValues(_context, typeof(Endpoint), typeof(Endpoint).GetMethod("Method"));
+				_values = _retriever.GetParameterValues(_context, typeof(Endpoint), typeof(Endpoint).GetMethod("Method")).Result;
 			}
 
 			private IParameterMapper _mapper1;
@@ -82,9 +85,9 @@ namespace Junior.Route.UnitTests.AutoRouting.ResponseMappers
 			[Test]
 			public void Must_use_first_mapper_that_maps_successfully()
 			{
-				_mapper1.AssertWasNotCalled(arg => arg.Map(Arg<HttpContextBase>.Is.Anything, Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything, Arg<ParameterInfo>.Is.Anything));
-				_mapper2.AssertWasCalled(arg => arg.Map(Arg<HttpContextBase>.Is.Anything, Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything, Arg<ParameterInfo>.Is.Anything));
-				_mapper3.AssertWasNotCalled(arg => arg.Map(Arg<HttpContextBase>.Is.Anything, Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything, Arg<ParameterInfo>.Is.Anything));
+				_mapper1.AssertWasNotCalled(arg => arg.MapAsync(Arg<HttpContextBase>.Is.Anything, Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything, Arg<ParameterInfo>.Is.Anything));
+				_mapper2.AssertWasCalled(arg => arg.MapAsync(Arg<HttpContextBase>.Is.Anything, Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything, Arg<ParameterInfo>.Is.Anything));
+				_mapper3.AssertWasNotCalled(arg => arg.MapAsync(Arg<HttpContextBase>.Is.Anything, Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything, Arg<ParameterInfo>.Is.Anything));
 				Assert.That(_values, Is.EquivalentTo(new[] { 100 }));
 			}
 		}

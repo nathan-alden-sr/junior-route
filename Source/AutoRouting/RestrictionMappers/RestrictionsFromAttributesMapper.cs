@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 
 using Junior.Common;
 using Junior.Route.AutoRouting.Containers;
@@ -34,7 +35,7 @@ namespace Junior.Route.AutoRouting.RestrictionMappers
 			_attributeType = attributeType;
 		}
 
-		public void Map(Type type, MethodInfo method, Routing.Route route, IContainer container)
+		public Task MapAsync(Type type, MethodInfo method, Routing.Route route, IContainer container)
 		{
 			type.ThrowIfNull("type");
 			method.ThrowIfNull("method");
@@ -46,6 +47,8 @@ namespace Junior.Route.AutoRouting.RestrictionMappers
 			{
 				restrictionAttribute.Map(route, container);
 			}
+
+			return Task.Factory.Empty();
 		}
 	}
 }

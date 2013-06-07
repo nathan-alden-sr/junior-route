@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 
+using Junior.Common;
 using Junior.Route.AspNetIntegration.ResponseGenerators;
 using Junior.Route.Routing.Responses;
 
@@ -39,7 +40,7 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseGenerators
 			[SetUp]
 			public void SetUp()
 			{
-				_response = Task.FromResult((IResponse)null);
+				_response = Task<IResponse>.Factory.Empty();
 				_result = ResponseResult.ResponseGenerated(_response, "key");
 			}
 

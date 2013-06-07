@@ -18,7 +18,7 @@ namespace Junior.Route.UnitTests.AutoRouting.ClassFilters
 							_executed = true;
 							return true;
 						});
-				_filter.Matches(typeof(object));
+				_filter.MatchesAsync(typeof(object));
 			}
 
 			private DelegateFilter _filter;

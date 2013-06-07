@@ -20,7 +20,7 @@ namespace Junior.Route.UnitTests.AutoRouting.MethodFilters
 							_executed = true;
 							return true;
 						});
-				_filter.Matches(new DynamicMethod("test", typeof(void), null));
+				_filter.MatchesAsync(new DynamicMethod("test", typeof(void), null));
 			}
 
 			private DelegateFilter _filter;

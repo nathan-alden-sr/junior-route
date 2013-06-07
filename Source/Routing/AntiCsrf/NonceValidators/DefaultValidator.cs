@@ -25,7 +25,7 @@ namespace Junior.Route.Routing.AntiCsrf.NonceValidators
 			_systemClock = systemClock;
 		}
 
-		public async Task<ValidationResult> Validate(HttpRequestBase request)
+		public async Task<ValidationResult> ValidateAsync(HttpRequestBase request)
 		{
 			request.ThrowIfNull("request");
 
@@ -65,7 +65,7 @@ namespace Junior.Route.Routing.AntiCsrf.NonceValidators
 				return ValidationResult.CookieInvalid;
 			}
 
-			return await _nonceRepository.Exists(sessionId, nonce, _systemClock.UtcDateTime) ? ValidationResult.NonceValid : ValidationResult.NonceInvalid;
+			return await _nonceRepository.ExistsAsync(sessionId, nonce, _systemClock.UtcDateTime) ? ValidationResult.NonceValid : ValidationResult.NonceInvalid;
 		}
 	}
 }

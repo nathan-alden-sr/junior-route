@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace Junior.Route.AutoRouting.ResolvedRelativeUrlMappers
 {
 	public interface IResolvedRelativeUrlMapper
 	{
-		ResolvedRelativeUrlResult Map(Type type, MethodInfo method);
+		Task<ResolvedRelativeUrlResult> MapAsync(Type type, MethodInfo method);
 	}
 }

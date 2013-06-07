@@ -1,11 +1,14 @@
-﻿using Junior.Route.Routing.AntiCsrf.NonceValidators;
+﻿using System.Threading.Tasks;
+
+using Junior.Common;
+using Junior.Route.Routing.AntiCsrf.NonceValidators;
 using Junior.Route.Routing.Responses;
 
 namespace Junior.Route.Routing.AntiCsrf.ResponseGenerators
 {
 	public class DefaultGenerator : IAntiCsrfResponseGenerator
 	{
-		public ResponseResult GetResponse(ValidationResult result)
+		public Task<ResponseResult> GetResponseAsync(ValidationResult result)
 		{
 			switch (result)
 			{
@@ -16,9 +19,9 @@ namespace Junior.Route.Routing.AntiCsrf.ResponseGenerators
 				case ValidationResult.NonceInvalid:
 					Response response = new Response().Unauthorized().TextPlain().Content("Anti-CSRF validation failed.");
 
-					return ResponseResult.ResponseGenerated(response);
+					return ResponseResult.ResponseGenerated(response).AsCompletedTask();
 				default:
-					return ResponseResult.ResponseNotGenerated();
+					return ResponseResult.ResponseNotGenerated().AsCompletedTask();
 			}
 		}
 	}

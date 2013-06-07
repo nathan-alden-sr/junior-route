@@ -18,8 +18,9 @@ namespace Junior.Route.AutoRouting.RestrictionMappers
 			container.ThrowIfNull("container");
 
 			HttpMethod httpMethod;
+			string methodName = method.Name.TrimEnd("Async");
 
-			if (Enum<HttpMethod>.TryParse(method.Name, true, out httpMethod))
+			if (Enum<HttpMethod>.TryParse(methodName, true, out httpMethod))
 			{
 				route.RestrictByMethods(httpMethod);
 			}

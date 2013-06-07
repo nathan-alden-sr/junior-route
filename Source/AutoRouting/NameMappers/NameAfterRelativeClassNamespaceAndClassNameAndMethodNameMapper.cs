@@ -44,7 +44,7 @@ namespace Junior.Route.AutoRouting.NameMappers
 
 			pathParts.AddRange(ParseWords(relativeNamespace));
 			pathParts.AddRange(ParseWords(type.Name));
-			pathParts.AddRange(ParseWords(method.Name));
+			pathParts.AddRange(ParseWords(method.Name.TrimEnd("Async")));
 			string name = String.Join(_wordSeparator, pathParts);
 
 			return NameResult.NameMapped(name).AsCompletedTask();

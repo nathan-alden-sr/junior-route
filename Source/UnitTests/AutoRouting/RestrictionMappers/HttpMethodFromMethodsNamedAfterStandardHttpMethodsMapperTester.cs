@@ -37,15 +37,25 @@ namespace Junior.Route.UnitTests.AutoRouting.RestrictionMappers
 				{
 				}
 
+				public void GetAsync()
+				{
+				}
+
 				public void POST()
+				{
+				}
+
+				public void POSTAsync()
 				{
 				}
 			}
 
 			[Test]
-			[TestCase(typeof(Endpoint), "Get")]
-			[TestCase(typeof(Endpoint), "POST")]
-			public void Must_add_restrictions(Type type, string methodName)
+			[TestCase(typeof(Endpoint), "Get", "Get")]
+			[TestCase(typeof(Endpoint), "GetAsync", "Get")]
+			[TestCase(typeof(Endpoint), "POST", "POST")]
+			[TestCase(typeof(Endpoint), "POSTAsync", "POST")]
+			public void Must_add_restrictions(Type type, string methodName, string expectedMethod)
 			{
 				MethodInfo methodInfo = type.GetMethod(methodName);
 
@@ -55,7 +65,7 @@ namespace Junior.Route.UnitTests.AutoRouting.RestrictionMappers
 
 				Assert.That(restrictions, Has.Length.EqualTo(1));
 
-				Assert.That(restrictions[0].Method, Is.EqualTo(methodName).Using((IComparer)StringComparer.OrdinalIgnoreCase));
+				Assert.That(restrictions[0].Method, Is.EqualTo(expectedMethod).Using((IComparer)StringComparer.OrdinalIgnoreCase));
 			}
 		}
 

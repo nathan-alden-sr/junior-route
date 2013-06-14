@@ -66,14 +66,14 @@ namespace Junior.Route.AspNetIntegration
 
 			foreach (IErrorHandler errorHandler in _configuration.ErrorHandlers)
 			{
-				if ((await errorHandler.HandleAsync(context)).ResultType == HandleResultType.Handled)
+				if ((await errorHandler.HandleAsync(context)).ResultType != HandleResultType.Handled)
 				{
-					return;
+					continue;
 				}
-			}
 
-			application.Response.TrySkipIisCustomErrors = true;
-			application.Server.ClearError();
+				application.Server.ClearError();
+				return;
+			}
 		}
 	}
 }

@@ -11,8 +11,8 @@
 		<iconUrl>https://docs.google.com/uc?export=download&amp;id=0B8a4O6RATfaXQ2YxekpxbXRfUjQ</iconUrl>
 		<dependencies>
 			<group>
-				<dependency id="JuniorCommon" version="3.7.0"/>
-				<dependency id="JuniorRoute.Core" version="11.1.0"/>
+				<dependency id="JuniorCommon" version="3.8.0"/>
+				<dependency id="JuniorRoute.Core" version="11.2.0"/>
 				<dependency id="Spark" version="1.7.5.1"/>
 			</group>
 		</dependencies>

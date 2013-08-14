@@ -107,7 +107,7 @@ namespace Junior.Route.AutoRouting.ParameterMappers
 
 			foreach (IModelPropertyMapper modelPropertyMapper in _modelPropertyMappers)
 			{
-				MapResult result = await modelPropertyMapper.MapAsync(context.Request, modelType, property);
+				MapResult result = await modelPropertyMapper.MapAsync(context, modelType, property);
 
 				if (result.ResultType == MapResultType.ValueMapped)
 				{

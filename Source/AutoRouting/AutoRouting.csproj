@@ -70,6 +70,12 @@
     <Compile Include="NameMappers\NameAttributeMapper.cs" />
     <Compile Include="NameMappers\NameResult.cs" />
     <Compile Include="NameMappers\NameResultType.cs" />
+    <Compile Include="ParameterMappers\ModelPropertyMappers\Request\ConvertibleMapper.cs" />
+    <Compile Include="ParameterMappers\ModelPropertyMappers\Request\GuidMapper.cs" />
+    <Compile Include="ParameterMappers\Request\ConvertibleMapper.cs" />
+    <Compile Include="ParameterMappers\NameValueCollectionSource.cs" />
+    <Compile Include="ParameterMappers\Request\RequestMapper.cs" />
+    <Compile Include="ParameterMappers\Request\GuidMapper.cs" />
     <Compile Include="ParameterMappers\HttpApplicationStateBaseMapper.cs" />
     <Compile Include="ParameterMappers\HttpContextBaseMapper.cs" />
     <Compile Include="ParameterMappers\HttpRequestBaseMapper.cs" />
@@ -79,8 +85,7 @@
     <Compile Include="ParameterMappers\JsonModelMapper.cs" />
     <Compile Include="ParameterMappers\ModelMapper.cs" />
     <Compile Include="ParameterMappers\ModelPropertyMappers\DefaultValueMapper.cs" />
-    <Compile Include="ParameterMappers\ModelPropertyMappers\QueryStringToIConvertibleMapper.cs" />
-    <Compile Include="ParameterMappers\ModelPropertyMappers\FormToIConvertibleMapper.cs" />
+    <Compile Include="ParameterMappers\ModelPropertyMappers\Request\RequestMapper.cs" />
     <Compile Include="ParameterMappers\ModelPropertyMappers\IModelPropertyMapper.cs" />
     <Compile Include="ResolvedRelativeUrlMappers\Attributes\ResolvedRelativeUrlAttribute.cs" />
     <Compile Include="ResolvedRelativeUrlMappers\IgnoreResolvedRelativeUrlMapperTypeAttribute.cs" />
@@ -130,9 +135,7 @@
     <Compile Include="Containers\NewInstancePerRouteEndpointContainer.cs" />
     <Compile Include="Containers\IContainer.cs" />
     <Compile Include="Containers\SingleInstancePerRouteEndpointContainer.cs" />
-    <Compile Include="ParameterMappers\QueryStringToIConvertibleMapper.cs" />
     <Compile Include="ParameterMappers\DataConversionErrorHandling.cs" />
-    <Compile Include="ParameterMappers\FormToIConvertibleMapper.cs" />
     <Compile Include="ParameterMappers\DefaultValueMapper.cs" />
     <Compile Include="ParameterMappers\IParameterMapper.cs" />
     <Compile Include="ParameterMappers\MapResult.cs" />
@@ -150,9 +153,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Junior.Common, Version=3.7.0.0, Culture=neutral, PublicKeyToken=998713eb9a0cce30, processorArchitecture=MSIL">
+    <Reference Include="Junior.Common, Version=3.8.0.0, Culture=neutral, PublicKeyToken=998713eb9a0cce30, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\JuniorCommon.3.7.0\lib\net45\Junior.Common.dll</HintPath>
+      <HintPath>..\packages\JuniorCommon.3.8.0\lib\net45\Junior.Common.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">

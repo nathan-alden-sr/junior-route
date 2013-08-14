@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection;
 using System.Web;
 
+using Junior.Common;
 using Junior.Route.AutoRouting.Containers;
 using Junior.Route.AutoRouting.ParameterMappers;
 using Junior.Route.AutoRouting.ParameterMappers.ModelPropertyMappers;
@@ -10,8 +11,6 @@ using Junior.Route.AutoRouting.ParameterMappers.ModelPropertyMappers;
 using NUnit.Framework;
 
 using Rhino.Mocks;
-
-using Junior.Common;
 
 namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers
 {
@@ -66,16 +65,16 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers
 				_context = MockRepository.GenerateMock<HttpContextBase>();
 				_modelPropertyMapper1 = MockRepository.GenerateMock<IModelPropertyMapper>();
 				_modelPropertyMapper1
-					.Stub(arg => arg.CanMapTypeAsync(Arg<Type>.Is.Anything))
+					.Stub(arg => arg.CanMapTypeAsync(Arg<HttpContextBase>.Is.Anything, Arg<Type>.Is.Anything))
 					.WhenCalled(arg => arg.ReturnValue = (((Type)arg.Arguments.First()) == typeof(string)).AsCompletedTask())
 					.Return(false.AsCompletedTask());
-				_modelPropertyMapper1.Stub(arg => arg.MapAsync(Arg<HttpRequestBase>.Is.Anything, Arg<Type>.Is.Anything, Arg<PropertyInfo>.Is.Anything)).Return(MapResult.ValueMapped("value").AsCompletedTask());
+				_modelPropertyMapper1.Stub(arg => arg.MapAsync(Arg<HttpContextBase>.Is.Anything, Arg<Type>.Is.Anything, Arg<PropertyInfo>.Is.Anything)).Return(MapResult.ValueMapped("value").AsCompletedTask());
 				_modelPropertyMapper2 = MockRepository.GenerateMock<IModelPropertyMapper>();
 				_modelPropertyMapper2
-					.Stub(arg => arg.CanMapTypeAsync(Arg<Type>.Is.Anything))
+					.Stub(arg => arg.CanMapTypeAsync(Arg<HttpContextBase>.Is.Anything, Arg<Type>.Is.Anything))
 					.WhenCalled(arg => arg.ReturnValue = (((Type)arg.Arguments.First()) == typeof(string)).AsCompletedTask())
 					.Return(false.AsCompletedTask());
-				_modelPropertyMapper2.Stub(arg => arg.MapAsync(Arg<HttpRequestBase>.Is.Anything, Arg<Type>.Is.Anything, Arg<PropertyInfo>.Is.Anything)).Return(MapResult.ValueMapped("value").AsCompletedTask());
+				_modelPropertyMapper2.Stub(arg => arg.MapAsync(Arg<HttpContextBase>.Is.Anything, Arg<Type>.Is.Anything, Arg<PropertyInfo>.Is.Anything)).Return(MapResult.ValueMapped("value").AsCompletedTask());
 				_modelMapper = new ModelMapper(_modelPropertyMapper1, _modelPropertyMapper2);
 			}
 
@@ -127,8 +126,8 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers
 
 				await _modelMapper.MapAsync(_context, type, methodInfo, parameterInfo);
 
-				_modelPropertyMapper1.AssertWasCalled(arg => arg.MapAsync(Arg<HttpRequestBase>.Is.Anything, Arg<Type>.Is.Anything, Arg<PropertyInfo>.Is.Anything));
-				_modelPropertyMapper2.AssertWasNotCalled(arg => arg.MapAsync(Arg<HttpRequestBase>.Is.Anything, Arg<Type>.Is.Anything, Arg<PropertyInfo>.Is.Anything));
+				_modelPropertyMapper1.AssertWasCalled(arg => arg.MapAsync(Arg<HttpContextBase>.Is.Anything, Arg<Type>.Is.Anything, Arg<PropertyInfo>.Is.Anything));
+				_modelPropertyMapper2.AssertWasNotCalled(arg => arg.MapAsync(Arg<HttpContextBase>.Is.Anything, Arg<Type>.Is.Anything, Arg<PropertyInfo>.Is.Anything));
 			}
 		}
 
@@ -141,10 +140,10 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers
 				_context = MockRepository.GenerateMock<HttpContextBase>();
 				_mapper = new ModelMapper(
 					type =>
-						{
-							_executed = true;
-							return true;
-						});
+					{
+						_executed = true;
+						return true;
+					});
 			}
 
 			public class Endpoint

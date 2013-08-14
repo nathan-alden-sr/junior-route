@@ -7,7 +7,7 @@ namespace Junior.Route.AutoRouting.ParameterMappers.ModelPropertyMappers
 {
 	public interface IModelPropertyMapper
 	{
-		Task<bool> CanMapTypeAsync(Type propertyType);
-		Task<MapResult> MapAsync(HttpRequestBase request, Type modelType, PropertyInfo property);
+		Task<bool> CanMapTypeAsync(HttpContextBase context, Type propertyType);
+		Task<MapResult> MapAsync(HttpContextBase context, Type modelType, PropertyInfo property);
 	}
 }

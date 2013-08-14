@@ -9,16 +9,17 @@ namespace Junior.Route.AutoRouting.ParameterMappers.ModelPropertyMappers
 {
 	public class DefaultValueMapper : IModelPropertyMapper
 	{
-		public Task<bool> CanMapTypeAsync(Type propertyType)
+		public Task<bool> CanMapTypeAsync(HttpContextBase context, Type propertyType)
 		{
+			context.ThrowIfNull("context");
 			propertyType.ThrowIfNull("propertyType");
 
 			return true.AsCompletedTask();
 		}
 
-		public Task<MapResult> MapAsync(HttpRequestBase request, Type modelType, PropertyInfo property)
+		public Task<MapResult> MapAsync(HttpContextBase context, Type modelType, PropertyInfo property)
 		{
-			request.ThrowIfNull("request");
+			context.ThrowIfNull("context");
 			modelType.ThrowIfNull("modelType");
 			property.ThrowIfNull("property");
 

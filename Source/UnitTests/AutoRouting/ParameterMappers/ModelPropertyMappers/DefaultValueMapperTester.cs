@@ -22,11 +22,11 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers.ModelPropertyMappe
 			public void SetUp()
 			{
 				_mapper = new DefaultValueMapper();
-				_request = MockRepository.GenerateMock<HttpRequestBase>();
+				_context = MockRepository.GenerateMock<HttpContextBase>();
 			}
 
 			private DefaultValueMapper _mapper;
-			private HttpRequestBase _request;
+			private HttpContextBase _context;
 
 			public class Model
 			{
@@ -49,7 +49,7 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers.ModelPropertyMappe
 			[TestCase(typeof(object))]
 			public async void Must_map_all_types(Type propertyType)
 			{
-				Assert.That(await _mapper.CanMapTypeAsync(propertyType), Is.True);
+				Assert.That(await _mapper.CanMapTypeAsync(_context, propertyType), Is.True);
 			}
 
 			[Test]
@@ -57,7 +57,7 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers.ModelPropertyMappe
 			public async void Must_map_to_default_value_of_property_type(Type type, string propertyName, object expectedValue)
 			{
 				PropertyInfo propertyInfo = type.GetProperty(propertyName);
-				MapResult result = await _mapper.MapAsync(_request, type, propertyInfo);
+				MapResult result = await _mapper.MapAsync(_context, type, propertyInfo);
 
 				Assert.That(result.ResultType, Is.EqualTo(MapResultType.ValueMapped));
 				Assert.That(result.Value, Is.EqualTo(propertyInfo.PropertyType.GetDefaultValue()));

@@ -30,16 +30,16 @@ namespace Junior.Route.AspNetIntegration
 			_httpRuntime = httpRuntime;
 		}
 
-		public string Absolute(string relativeUrl)
+		public string Absolute(string relativeUrl, params object[] args)
 		{
 			relativeUrl.ThrowIfNull("relativeUrl");
 
 			string rootUrl = _httpRuntime.AppDomainAppVirtualPath.TrimStart('/');
 
-			return String.Format("{0}/{1}", rootUrl.Length > 0 ? "/" + rootUrl : "", relativeUrl.TrimStart('/'));
+			return String.Format("{0}/{1}", rootUrl.Length > 0 ? "/" + rootUrl : "", String.Format(relativeUrl.TrimStart('/'), args));
 		}
 
-		public string Route(string routeName)
+		public string Route(string routeName, params object[] args)
 		{
 			routeName.ThrowIfNull("routeName");
 
@@ -54,10 +54,10 @@ namespace Junior.Route.AspNetIntegration
 				throw new ArgumentException(String.Format("Route with name '{0}' was not found.", routeName), "routeName");
 			}
 
-			return Absolute(routes[0].ResolvedRelativeUrl);
+			return Absolute(routes[0].ResolvedRelativeUrl, args);
 		}
 
-		public string Route(Guid routeId)
+		public string Route(Guid routeId, params object[] args)
 		{
 			Routing.Route route = _routes.Value.GetRoute(routeId);
 
@@ -66,7 +66,7 @@ namespace Junior.Route.AspNetIntegration
 				throw new ArgumentException(String.Format("Route with ID '{0}' was not found.", routeId), "routeId");
 			}
 
-			return Absolute(route.ResolvedRelativeUrl);
+			return Absolute(route.ResolvedRelativeUrl, args);
 		}
 	}
 }

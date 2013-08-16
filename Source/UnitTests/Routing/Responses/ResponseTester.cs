@@ -99,9 +99,9 @@ namespace Junior.Route.UnitTests.Routing.Responses
 					new Response().SeeOtherRelativeUrl,
 					new Response().TemporaryRedirectToRelativeUrl);
 				_urlResolver = MockRepository.GenerateMock<IUrlResolver>();
-				_urlResolver.Stub(arg => arg.Absolute(Arg<string>.Is.Anything)).WhenCalled(arg => arg.ReturnValue = "http://" + arg.Arguments.First()).Return(null);
-				_urlResolver.Stub(arg => arg.Route(Arg<string>.Is.Anything)).WhenCalled(arg => arg.ReturnValue = "http://" + arg.Arguments.First()).Return(null);
-				_urlResolver.Stub(arg => arg.Route(Arg<Guid>.Is.Anything)).WhenCalled(arg => arg.ReturnValue = "http://" + arg.Arguments.First()).Return(null);
+				_urlResolver.Stub(arg => arg.Absolute(Arg<string>.Is.Anything, Arg<object[]>.Is.Anything)).WhenCalled(arg => arg.ReturnValue = "http://" + arg.Arguments.First()).Return(null);
+				_urlResolver.Stub(arg => arg.Route(Arg<string>.Is.Anything, Arg<object[]>.Is.Anything)).WhenCalled(arg => arg.ReturnValue = "http://" + arg.Arguments.First()).Return(null);
+				_urlResolver.Stub(arg => arg.Route(Arg<Guid>.Is.Anything, Arg<object[]>.Is.Anything)).WhenCalled(arg => arg.ReturnValue = "http://" + arg.Arguments.First()).Return(null);
 			}
 
 			private readonly HashSet<Func<string, Response>> _responseLocationDelegates = new HashSet<Func<string, Response>>();

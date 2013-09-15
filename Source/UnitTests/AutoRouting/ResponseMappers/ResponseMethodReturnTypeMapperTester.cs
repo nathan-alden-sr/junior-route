@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
@@ -26,7 +28,7 @@ namespace Junior.Route.UnitTests.AutoRouting.ResponseMappers
 			public void SetUp()
 			{
 				_parameterMapper = MockRepository.GenerateMock<IParameterMapper>();
-				_responseMethodReturnTypeMapper = new ResponseMethodReturnTypeMapper(_parameterMapper);
+				_responseMethodReturnTypeMapper = new ResponseMethodReturnTypeMapper(_parameterMapper.ToEnumerable(), Enumerable.Empty<IMappedDelegateContextFactory>());
 				_container = MockRepository.GenerateMock<IContainer>();
 				_container.Stub(arg => arg.GetInstance(typeof(Endpoint))).Return(new Endpoint());
 				_route = new Route.Routing.Route("name", Guid.NewGuid(), "relative");
@@ -66,13 +68,103 @@ namespace Junior.Route.UnitTests.AutoRouting.ResponseMappers
 		}
 
 		[TestFixture]
+		public class When_mapping_response_with_a_non_null_delegate_context
+		{
+			[SetUp]
+			public void SetUp()
+			{
+				_parameterMapper = MockRepository.GenerateMock<IParameterMapper>();
+				_delegateContext = MockRepository.GenerateMock<IDisposable>();
+				_mappedDelegateContextFactory = MockRepository.GenerateMock<IMappedDelegateContextFactory>();
+				_mappedDelegateContextFactory.Stub(arg => arg.CreateContext(Arg<HttpContextBase>.Is.Anything, Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(_delegateContext);
+				_responseMethodReturnTypeMapper = new ResponseMethodReturnTypeMapper(_parameterMapper.ToEnumerable(), new[] { _mappedDelegateContextFactory });
+				_endpoint = new Endpoint();
+				_container = MockRepository.GenerateMock<IContainer>();
+				_container.Stub(arg => arg.GetInstance(typeof(Endpoint))).Return(_endpoint);
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), "relative");
+				_responseMethodReturnTypeMapper.MapAsync(() => _container, typeof(Endpoint), typeof(Endpoint).GetMethod("Method"), _route);
+				_context = MockRepository.GenerateMock<HttpContextBase>();
+				_response = _route.ProcessResponseAsync(_context).Result;
+			}
+
+			private ResponseMethodReturnTypeMapper _responseMethodReturnTypeMapper;
+			private IContainer _container;
+			private Route.Routing.Route _route;
+			private HttpContextBase _context;
+			private IParameterMapper _parameterMapper;
+			private IMappedDelegateContextFactory _mappedDelegateContextFactory;
+			private Endpoint _endpoint;
+			private IDisposable _delegateContext;
+			private IResponse _response;
+
+			public class Endpoint
+			{
+				public void Method()
+				{
+				}
+			}
+
+			[Test]
+			public void Must_create_delegate_context()
+			{
+				_mappedDelegateContextFactory.AssertWasCalled(arg => arg.CreateContext(Arg<HttpContextBase>.Is.Anything, Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything));
+			}
+
+			[Test]
+			public void Must_dispose_delegate_context()
+			{
+				_delegateContext.AssertWasCalled(arg => arg.Dispose());
+			}
+		}
+
+		[TestFixture]
+		public class When_mapping_response_with_null_delegate_context
+		{
+			[SetUp]
+			public void SetUp()
+			{
+				_parameterMapper = MockRepository.GenerateMock<IParameterMapper>();
+				_mappedDelegateContextFactory = MockRepository.GenerateMock<IMappedDelegateContextFactory>();
+				_mappedDelegateContextFactory.Stub(arg => arg.CreateContext(Arg<HttpContextBase>.Is.Anything, Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(null);
+				_responseMethodReturnTypeMapper = new ResponseMethodReturnTypeMapper(_parameterMapper.ToEnumerable(), new[] { _mappedDelegateContextFactory });
+				_endpoint = new Endpoint();
+				_container = MockRepository.GenerateMock<IContainer>();
+				_container.Stub(arg => arg.GetInstance(typeof(Endpoint))).Return(_endpoint);
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), "relative");
+				_responseMethodReturnTypeMapper.MapAsync(() => _container, typeof(Endpoint), typeof(Endpoint).GetMethod("Method"), _route);
+				_context = MockRepository.GenerateMock<HttpContextBase>();
+			}
+
+			private ResponseMethodReturnTypeMapper _responseMethodReturnTypeMapper;
+			private IContainer _container;
+			private Route.Routing.Route _route;
+			private HttpContextBase _context;
+			private IParameterMapper _parameterMapper;
+			private IMappedDelegateContextFactory _mappedDelegateContextFactory;
+			private Endpoint _endpoint;
+
+			public class Endpoint
+			{
+				public void Method()
+				{
+				}
+			}
+
+			[Test]
+			public void Must_not_throw_exception()
+			{
+				Assert.That(() => _route.ProcessResponseAsync(_context).Result, Throws.Nothing);
+			}
+		}
+
+		[TestFixture]
 		public class When_mapping_response_with_return_type
 		{
 			[SetUp]
 			public void SetUp()
 			{
 				_parameterMapper = MockRepository.GenerateMock<IParameterMapper>();
-				_responseMethodReturnTypeMapper = new ResponseMethodReturnTypeMapper(_parameterMapper);
+				_responseMethodReturnTypeMapper = new ResponseMethodReturnTypeMapper(_parameterMapper.ToEnumerable(), Enumerable.Empty<IMappedDelegateContextFactory>());
 				_container = MockRepository.GenerateMock<IContainer>();
 				_container.Stub(arg => arg.GetInstance(typeof(Endpoint))).Return(new Endpoint());
 				_route = new Route.Routing.Route("name", Guid.NewGuid(), "relative");
@@ -118,7 +210,7 @@ namespace Junior.Route.UnitTests.AutoRouting.ResponseMappers
 			public void SetUp()
 			{
 				_parameterMapper = MockRepository.GenerateMock<IParameterMapper>();
-				_responseMethodReturnTypeMapper = new ResponseMethodReturnTypeMapper(_parameterMapper);
+				_responseMethodReturnTypeMapper = new ResponseMethodReturnTypeMapper(_parameterMapper.ToEnumerable(), Enumerable.Empty<IMappedDelegateContextFactory>());
 				_endpoint = new Endpoint();
 				_container = MockRepository.GenerateMock<IContainer>();
 				_container.Stub(arg => arg.GetInstance(typeof(Endpoint))).Return(_endpoint);

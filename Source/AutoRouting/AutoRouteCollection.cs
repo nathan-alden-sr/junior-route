@@ -624,18 +624,14 @@ namespace Junior.Route.AutoRouting
 
 		#region Response mappers
 
-		public AutoRouteCollection RespondWithMethodReturnValuesThatImplementIResponse(IEnumerable<IParameterMapper> mappers)
+		public AutoRouteCollection RespondWithMethodReturnValuesThatImplementIResponse(IEnumerable<IParameterMapper> mappers, IEnumerable<IMappedDelegateContextFactory> contexts)
 		{
 			mappers.ThrowIfNull("mappers");
+			contexts.ThrowIfNull("contexts");
 
-			_responseMapper = new ResponseMethodReturnTypeMapper(mappers);
+			_responseMapper = new ResponseMethodReturnTypeMapper(mappers, contexts);
 
 			return this;
-		}
-
-		public AutoRouteCollection RespondWithMethodReturnValuesThatImplementIResponse(params IParameterMapper[] mappers)
-		{
-			return RespondWithMethodReturnValuesThatImplementIResponse((IEnumerable<IParameterMapper>)mappers);
 		}
 
 		public AutoRouteCollection ResponseMapper(IResponseMapper mapper)

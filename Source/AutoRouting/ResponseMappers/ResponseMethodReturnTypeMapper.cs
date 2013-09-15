@@ -18,18 +18,16 @@ namespace Junior.Route.AutoRouting.ResponseMappers
 {
 	public class ResponseMethodReturnTypeMapper : IResponseMapper
 	{
+		private readonly IEnumerable<IMappedDelegateContextFactory> _contextFactories;
 		private readonly HashSet<IParameterMapper> _parameterMappers = new HashSet<IParameterMapper>();
 
-		public ResponseMethodReturnTypeMapper(IEnumerable<IParameterMapper> parameterMappers)
+		public ResponseMethodReturnTypeMapper(IEnumerable<IParameterMapper> mappers, IEnumerable<IMappedDelegateContextFactory> contextFactories)
 		{
-			parameterMappers.ThrowIfNull("parameterMappers");
+			mappers.ThrowIfNull("mappers");
+			contextFactories.ThrowIfNull("contextFactories");
 
-			_parameterMappers.AddRange(parameterMappers);
-		}
-
-		public ResponseMethodReturnTypeMapper(params IParameterMapper[] parameterMappers)
-			: this((IEnumerable<IParameterMapper>)parameterMappers)
-		{
+			_parameterMappers.AddRange(mappers);
+			_contextFactories = contextFactories;
 		}
 
 		public Task MapAsync(Func<IContainer> container, Type type, MethodInfo method, Routing.Route route)
@@ -61,27 +59,40 @@ namespace Junior.Route.AutoRouting.ResponseMappers
 
 				route.RespondWith(
 					async context =>
+					{
+						object instance;
+
+						try
 						{
-							object instance;
+							instance = container().GetInstance(type);
+						}
+						catch (Exception exception)
+						{
+							throw new ApplicationException(String.Format("Unable to resolve instance of type {0}.", type.FullName), exception);
+						}
+						if (instance == null)
+						{
+							throw new ApplicationException(String.Format("Unable to resolve instance of type {0}.", type.FullName));
+						}
 
-							try
-							{
-								instance = container().GetInstance(type);
-							}
-							catch (Exception exception)
-							{
-								throw new ApplicationException(String.Format("Unable to resolve instance of type {0}.", type.FullName), exception);
-							}
-							if (instance == null)
-							{
-								throw new ApplicationException(String.Format("Unable to resolve instance of type {0}.", type.FullName));
-							}
+						var parameterValueRetriever = new ParameterValueRetriever(_parameterMappers);
+						object[] parameterValues = (await parameterValueRetriever.GetParameterValuesAsync(context, type, method)).ToArray();
+						var disposableContexts = new List<IDisposable>();
 
-							var parameterValueRetriever = new ParameterValueRetriever(_parameterMappers);
-							object[] parameterValues = (await parameterValueRetriever.GetParameterValuesAsync(context, type, method)).ToArray();
+						try
+						{
+							disposableContexts.AddRange(_contextFactories.Select(arg => arg.CreateContext(context, type, method)).Where(arg => arg != null));
 
 							return @delegate(instance, parameterValues);
-						},
+						}
+						finally
+						{
+							foreach (IDisposable disposableContext in disposableContexts)
+							{
+								disposableContext.Dispose();
+							}
+						}
+					},
 					method.ReturnType);
 			}
 			else if (methodReturnTypeIsTaskT)
@@ -108,27 +119,40 @@ namespace Junior.Route.AutoRouting.ResponseMappers
 
 				route.RespondWith(
 					async context =>
+					{
+						object instance;
+
+						try
 						{
-							object instance;
+							instance = container().GetInstance(type);
+						}
+						catch (Exception exception)
+						{
+							throw new ApplicationException(String.Format("Unable to resolve instance of type {0}.", type.FullName), exception);
+						}
+						if (instance == null)
+						{
+							throw new ApplicationException(String.Format("Unable to resolve instance of type {0}.", type.FullName));
+						}
 
-							try
-							{
-								instance = container().GetInstance(type);
-							}
-							catch (Exception exception)
-							{
-								throw new ApplicationException(String.Format("Unable to resolve instance of type {0}.", type.FullName), exception);
-							}
-							if (instance == null)
-							{
-								throw new ApplicationException(String.Format("Unable to resolve instance of type {0}.", type.FullName));
-							}
+						var parameterValueRetriever = new ParameterValueRetriever(_parameterMappers);
+						object[] parameterValues = (await parameterValueRetriever.GetParameterValuesAsync(context, type, method)).ToArray();
+						var disposableContexts = new List<IDisposable>();
 
-							var parameterValueRetriever = new ParameterValueRetriever(_parameterMappers);
-							object[] parameterValues = (await parameterValueRetriever.GetParameterValuesAsync(context, type, method)).ToArray();
+						try
+						{
+							disposableContexts.AddRange(_contextFactories.Select(arg => arg.CreateContext(context, type, method)).Where(arg => arg != null));
 
 							return await @delegate(instance, parameterValues);
-						},
+						}
+						finally
+						{
+							foreach (IDisposable disposableContext in disposableContexts)
+							{
+								disposableContext.Dispose();
+							}
+						}
+					},
 					methodGenericArgumentType);
 			}
 			else if (methodReturnTypeIsVoid)
@@ -147,27 +171,40 @@ namespace Junior.Route.AutoRouting.ResponseMappers
 
 				route.RespondWithNoContent(
 					async context =>
+					{
+						object instance;
+
+						try
 						{
-							object instance;
+							instance = container().GetInstance(type);
+						}
+						catch (Exception exception)
+						{
+							throw new ApplicationException(String.Format("Unable to resolve instance of type {0}.", type.FullName), exception);
+						}
+						if (instance == null)
+						{
+							throw new ApplicationException(String.Format("Unable to resolve instance of type {0}.", type.FullName));
+						}
 
-							try
-							{
-								instance = container().GetInstance(type);
-							}
-							catch (Exception exception)
-							{
-								throw new ApplicationException(String.Format("Unable to resolve instance of type {0}.", type.FullName), exception);
-							}
-							if (instance == null)
-							{
-								throw new ApplicationException(String.Format("Unable to resolve instance of type {0}.", type.FullName));
-							}
+						var parameterValueRetriever = new ParameterValueRetriever(_parameterMappers);
+						object[] parameterValues = (await parameterValueRetriever.GetParameterValuesAsync(context, type, method)).ToArray();
+						var disposableContexts = new List<IDisposable>();
 
-							var parameterValueRetriever = new ParameterValueRetriever(_parameterMappers);
-							object[] parameterValues = (await parameterValueRetriever.GetParameterValuesAsync(context, type, method)).ToArray();
+						try
+						{
+							disposableContexts.AddRange(_contextFactories.Select(arg => arg.CreateContext(context, type, method)).Where(arg => arg != null));
 
 							@delegate(instance, parameterValues);
-						});
+						}
+						finally
+						{
+							foreach (IDisposable disposableContext in disposableContexts)
+							{
+								disposableContext.Dispose();
+							}
+						}
+					});
 			}
 			else
 			{

@@ -20,32 +20,34 @@ namespace Junior.Route.AspNetIntegration.ResponseGenerators
 
 			RouteMatchResult[] matchedResults = routeMatchResults.Where(arg => arg.MatchResult.ResultType == MatchResultType.RouteMatched).ToArray();
 
-			if (matchedResults.Any())
+			if (!matchedResults.Any())
 			{
-				int maximumMatchedRestrictions = matchedResults.Max(arg => arg.MatchResult.MatchedRestrictions.Count());
-				RouteMatchResult[] bestMatches = matchedResults.Where(arg => arg.MatchResult.MatchedRestrictions.CountEqual(maximumMatchedRestrictions)).ToArray();
-
-				if (bestMatches.Length > 1)
-				{
-					return ResponseResult.ResponseGenerated(new Response().MultipleChoices());
-				}
-				if (bestMatches.Length == 1)
-				{
-					RouteMatchResult bestMatch = bestMatches[0];
-					AuthenticateResult authenticateResult = await bestMatch.Route.AuthenticateAsync(context.Request, context.Response);
-
-					if (authenticateResult.ResultType == AuthenticateResultType.AuthenticationFailed)
-					{
-						return ResponseResult.ResponseGenerated(authenticateResult.FailedResponse ?? new Response().Unauthorized());
-					}
-
-					Task<IResponse> responseTask = bestMatch.Route.ProcessResponseAsync(context);
-
-					return ResponseResult.ResponseGenerated(responseTask, bestMatch.MatchResult.CacheKey);
-				}
+				return ResponseResult.ResponseNotGenerated();
 			}
 
-			return ResponseResult.ResponseNotGenerated();
+			int maximumMatchedRestrictions = matchedResults.Max(arg => arg.MatchResult.MatchedRestrictions.Count());
+			RouteMatchResult[] bestMatches = matchedResults.Where(arg => arg.MatchResult.MatchedRestrictions.CountEqual(maximumMatchedRestrictions)).ToArray();
+
+			if (bestMatches.Length > 1)
+			{
+				return ResponseResult.ResponseGenerated(new Response().MultipleChoices());
+			}
+			if (bestMatches.Length == 0)
+			{
+				return ResponseResult.ResponseNotGenerated();
+			}
+
+			RouteMatchResult bestMatch = bestMatches[0];
+			AuthenticateResult authenticateResult = await bestMatch.Route.AuthenticateAsync(context.Request, context.Response);
+
+			if (authenticateResult.ResultType == AuthenticateResultType.AuthenticationFailed)
+			{
+				return ResponseResult.ResponseGenerated(authenticateResult.FailedResponse ?? new Response().Unauthorized());
+			}
+
+			Task<IResponse> responseTask = bestMatch.Route.ProcessResponseAsync(context);
+
+			return ResponseResult.ResponseGenerated(responseTask, bestMatch.MatchResult.CacheKey);
 		}
 	}
 }

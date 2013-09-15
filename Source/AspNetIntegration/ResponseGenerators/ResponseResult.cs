@@ -1,8 +1,7 @@
 ﻿using System.Threading.Tasks;
 
-using Junior.Route.Routing.Responses;
-
 using Junior.Common;
+using Junior.Route.Routing.Responses;
 
 namespace Junior.Route.AspNetIntegration.ResponseGenerators
 {

@@ -6,6 +6,6 @@ namespace Junior.Route.AutoRouting.ResponseMappers
 {
 	public interface IMappedDelegateContextFactory
 	{
-		IDisposable CreateContext(HttpContextBase context, Type type, MethodInfo method);
+		IMappedDelegateContext CreateContext(HttpContextBase context, Type type, MethodInfo method);
 	}
 }

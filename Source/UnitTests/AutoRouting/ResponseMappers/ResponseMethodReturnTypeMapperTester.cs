@@ -68,15 +68,15 @@ namespace Junior.Route.UnitTests.AutoRouting.ResponseMappers
 		}
 
 		[TestFixture]
-		public class When_mapping_response_with_a_non_null_delegate_context
+		public class When_mapping_response_with_a_non_null_mapped_delegate_context
 		{
 			[SetUp]
 			public void SetUp()
 			{
 				_parameterMapper = MockRepository.GenerateMock<IParameterMapper>();
-				_delegateContext = MockRepository.GenerateMock<IDisposable>();
+				_mappedDelegateContext = MockRepository.GenerateMock<IMappedDelegateContext>();
 				_mappedDelegateContextFactory = MockRepository.GenerateMock<IMappedDelegateContextFactory>();
-				_mappedDelegateContextFactory.Stub(arg => arg.CreateContext(Arg<HttpContextBase>.Is.Anything, Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(_delegateContext);
+				_mappedDelegateContextFactory.Stub(arg => arg.CreateContext(Arg<HttpContextBase>.Is.Anything, Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(_mappedDelegateContext);
 				_responseMethodReturnTypeMapper = new ResponseMethodReturnTypeMapper(_parameterMapper.ToEnumerable(), new[] { _mappedDelegateContextFactory });
 				_endpoint = new Endpoint();
 				_container = MockRepository.GenerateMock<IContainer>();
@@ -84,7 +84,9 @@ namespace Junior.Route.UnitTests.AutoRouting.ResponseMappers
 				_route = new Route.Routing.Route("name", Guid.NewGuid(), "relative");
 				_responseMethodReturnTypeMapper.MapAsync(() => _container, typeof(Endpoint), typeof(Endpoint).GetMethod("Method"), _route);
 				_context = MockRepository.GenerateMock<HttpContextBase>();
-				_response = _route.ProcessResponseAsync(_context).Result;
+
+				// ReSharper disable once UnusedVariable
+				IResponse response = _route.ProcessResponseAsync(_context).Result;
 			}
 
 			private ResponseMethodReturnTypeMapper _responseMethodReturnTypeMapper;
@@ -94,8 +96,7 @@ namespace Junior.Route.UnitTests.AutoRouting.ResponseMappers
 			private IParameterMapper _parameterMapper;
 			private IMappedDelegateContextFactory _mappedDelegateContextFactory;
 			private Endpoint _endpoint;
-			private IDisposable _delegateContext;
-			private IResponse _response;
+			private IMappedDelegateContext _mappedDelegateContext;
 
 			public class Endpoint
 			{
@@ -105,20 +106,26 @@ namespace Junior.Route.UnitTests.AutoRouting.ResponseMappers
 			}
 
 			[Test]
-			public void Must_create_delegate_context()
+			public void Must_complete_context()
+			{
+				_mappedDelegateContext.AssertWasCalled(arg => arg.Complete());
+			}
+
+			[Test]
+			public void Must_create_context()
 			{
 				_mappedDelegateContextFactory.AssertWasCalled(arg => arg.CreateContext(Arg<HttpContextBase>.Is.Anything, Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything));
 			}
 
 			[Test]
-			public void Must_dispose_delegate_context()
+			public void Must_dispose_context()
 			{
-				_delegateContext.AssertWasCalled(arg => arg.Dispose());
+				_mappedDelegateContext.AssertWasCalled(arg => arg.Dispose());
 			}
 		}
 
 		[TestFixture]
-		public class When_mapping_response_with_null_delegate_context
+		public class When_mapping_response_with_null_mapped_delegate_context
 		{
 			[SetUp]
 			public void SetUp()

@@ -94,6 +94,7 @@
     <Compile Include="ResolvedRelativeUrlMappers\IResolvedRelativeUrlMapper.cs" />
     <Compile Include="ResolvedRelativeUrlMappers\ResolvedRelativeUrlResult.cs" />
     <Compile Include="ResolvedRelativeUrlMappers\ResolvedRelativeUrlResultType.cs" />
+    <Compile Include="ResponseMappers\IMappedDelegateContext.cs" />
     <Compile Include="ResponseMappers\IMappedDelegateContextFactory.cs" />
     <Compile Include="RestrictionMappers\Attributes\CookieAttribute.cs" />
     <Compile Include="RestrictionMappers\Attributes\FormContentTypeAttribute.cs" />

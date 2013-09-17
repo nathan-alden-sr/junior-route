@@ -77,19 +77,26 @@ namespace Junior.Route.AutoRouting.ResponseMappers
 
 						var parameterValueRetriever = new ParameterValueRetriever(_parameterMappers);
 						object[] parameterValues = (await parameterValueRetriever.GetParameterValuesAsync(context, type, method)).ToArray();
-						var disposableContexts = new List<IDisposable>();
+						var mappedDelegateContexts = new List<IMappedDelegateContext>();
 
 						try
 						{
-							disposableContexts.AddRange(_contextFactories.Select(arg => arg.CreateContext(context, type, method)).Where(arg => arg != null));
+							mappedDelegateContexts.AddRange(_contextFactories.Select(arg => arg.CreateContext(context, type, method)).Where(arg => arg != null));
 
-							return @delegate(instance, parameterValues);
+							IResponse response = @delegate(instance, parameterValues);
+
+							foreach (IMappedDelegateContext mappedDelegateContext in mappedDelegateContexts)
+							{
+								mappedDelegateContext.Complete();
+							}
+
+							return response;
 						}
 						finally
 						{
-							foreach (IDisposable disposableContext in disposableContexts)
+							foreach (IMappedDelegateContext mappedDelegateContext in mappedDelegateContexts)
 							{
-								disposableContext.Dispose();
+								mappedDelegateContext.Dispose();
 							}
 						}
 					},
@@ -137,19 +144,26 @@ namespace Junior.Route.AutoRouting.ResponseMappers
 
 						var parameterValueRetriever = new ParameterValueRetriever(_parameterMappers);
 						object[] parameterValues = (await parameterValueRetriever.GetParameterValuesAsync(context, type, method)).ToArray();
-						var disposableContexts = new List<IDisposable>();
+						var mappedDelegateContexts = new List<IMappedDelegateContext>();
 
 						try
 						{
-							disposableContexts.AddRange(_contextFactories.Select(arg => arg.CreateContext(context, type, method)).Where(arg => arg != null));
+							mappedDelegateContexts.AddRange(_contextFactories.Select(arg => arg.CreateContext(context, type, method)).Where(arg => arg != null));
 
-							return await @delegate(instance, parameterValues);
+							IResponse response = await @delegate(instance, parameterValues);
+
+							foreach (IMappedDelegateContext mappedDelegateContext in mappedDelegateContexts)
+							{
+								mappedDelegateContext.Complete();
+							}
+
+							return response;
 						}
 						finally
 						{
-							foreach (IDisposable disposableContext in disposableContexts)
+							foreach (IMappedDelegateContext mappedDelegateContext in mappedDelegateContexts)
 							{
-								disposableContext.Dispose();
+								mappedDelegateContext.Dispose();
 							}
 						}
 					},
@@ -189,19 +203,24 @@ namespace Junior.Route.AutoRouting.ResponseMappers
 
 						var parameterValueRetriever = new ParameterValueRetriever(_parameterMappers);
 						object[] parameterValues = (await parameterValueRetriever.GetParameterValuesAsync(context, type, method)).ToArray();
-						var disposableContexts = new List<IDisposable>();
+						var mappedDelegateContexts = new List<IMappedDelegateContext>();
 
 						try
 						{
-							disposableContexts.AddRange(_contextFactories.Select(arg => arg.CreateContext(context, type, method)).Where(arg => arg != null));
+							mappedDelegateContexts.AddRange(_contextFactories.Select(arg => arg.CreateContext(context, type, method)).Where(arg => arg != null));
 
 							@delegate(instance, parameterValues);
+
+							foreach (IMappedDelegateContext mappedDelegateContext in mappedDelegateContexts)
+							{
+								mappedDelegateContext.Complete();
+							}
 						}
 						finally
 						{
-							foreach (IDisposable disposableContext in disposableContexts)
+							foreach (IMappedDelegateContext mappedDelegateContext in mappedDelegateContexts)
 							{
-								disposableContext.Dispose();
+								mappedDelegateContext.Dispose();
 							}
 						}
 					});

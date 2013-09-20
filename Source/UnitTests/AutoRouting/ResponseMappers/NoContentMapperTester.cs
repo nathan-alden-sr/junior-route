@@ -3,6 +3,7 @@ using System.Net;
 using System.Web;
 
 using Junior.Route.AutoRouting.ResponseMappers;
+using Junior.Route.Common;
 using Junior.Route.Routing.Responses;
 
 using NUnit.Framework;
@@ -20,7 +21,7 @@ namespace Junior.Route.UnitTests.AutoRouting.ResponseMappers
 			public void SetUp()
 			{
 				_mapper = new NoContentMapper();
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "relative");
+				_route = new Route.Routing.Route((string)"name", Guid.NewGuid(), (Scheme)Scheme.NotSpecified, (string)"relative");
 				_context = MockRepository.GenerateMock<HttpContextBase>();
 				_mapper.MapAsync(() => null, typeof(string), typeof(string).GetMethod("Trim", Type.EmptyTypes), _route);
 				_response = _route.ProcessResponseAsync(_context).Result;

@@ -11,7 +11,7 @@ namespace Junior.Route.AspNetIntegration.ResponseGenerators
 		private readonly Task<IResponse> _response;
 		private readonly ResponseResultType _resultType;
 
-		private ResponseResult(ResponseResultType resultType, Task<IResponse> response, string cacheKey)
+		private ResponseResult(ResponseResultType resultType, Task<IResponse> response = null, string cacheKey = null)
 		{
 			_resultType = resultType;
 			_response = response;
@@ -54,7 +54,7 @@ namespace Junior.Route.AspNetIntegration.ResponseGenerators
 
 		public static ResponseResult ResponseNotGenerated()
 		{
-			return new ResponseResult(ResponseResultType.ResponseNotGenerated, null, null);
+			return new ResponseResult(ResponseResultType.ResponseNotGenerated);
 		}
 	}
 }

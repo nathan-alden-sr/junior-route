@@ -12,7 +12,7 @@ namespace Junior.Route.Routing
 		private readonly MatchResultType _resultType;
 		private readonly HashSet<IRestriction> _unmatchedRestrictions;
 
-		private MatchResult(MatchResultType resultType, IEnumerable<IRestriction> matchedRestrictions, IEnumerable<IRestriction> unmatchedRestrictions, string cacheKey)
+		private MatchResult(MatchResultType resultType, IEnumerable<IRestriction> matchedRestrictions, IEnumerable<IRestriction> unmatchedRestrictions = null, string cacheKey = null)
 		{
 			_resultType = resultType;
 			_matchedRestrictions = new HashSet<IRestriction>(matchedRestrictions ?? new IRestriction[0]);
@@ -65,7 +65,7 @@ namespace Junior.Route.Routing
 			matchedRestrictions.ThrowIfNull("matchedRestrictions");
 			unmatchedRestrictions.ThrowIfNull("unmatchedRestrictions");
 
-			return new MatchResult(MatchResultType.RouteNotMatched, matchedRestrictions, unmatchedRestrictions, null);
+			return new MatchResult(MatchResultType.RouteNotMatched, matchedRestrictions, unmatchedRestrictions);
 		}
 	}
 }

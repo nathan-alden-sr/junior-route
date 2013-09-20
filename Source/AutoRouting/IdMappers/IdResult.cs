@@ -7,7 +7,7 @@ namespace Junior.Route.AutoRouting.IdMappers
 		private readonly Guid? _id;
 		private readonly IdResultType _resultType;
 
-		private IdResult(IdResultType resultType, Guid? id)
+		private IdResult(IdResultType resultType, Guid? id = null)
 		{
 			_resultType = resultType;
 			_id = id;
@@ -36,7 +36,7 @@ namespace Junior.Route.AutoRouting.IdMappers
 
 		public static IdResult IdNotMapped()
 		{
-			return new IdResult(IdResultType.IdNotMapped, null);
+			return new IdResult(IdResultType.IdNotMapped);
 		}
 	}
 }

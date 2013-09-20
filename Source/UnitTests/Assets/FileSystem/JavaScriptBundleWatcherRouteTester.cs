@@ -53,7 +53,7 @@ namespace Junior.Route.UnitTests.Assets.FileSystem
 				_systemClock = MockRepository.GenerateMock<ISystemClock>();
 				_systemClock.Stub(arg => arg.UtcDateTime).Return(new DateTime(2012, 1, 1, 0, 0, 0, DateTimeKind.Utc));
 				_routeId = Guid.NewGuid();
-				_javaScriptBundleWatcherRoute = new JavaScriptBundleWatcherRoute("route", _routeId, "relative", _watcher, _httpRuntime, _systemClock);
+				_javaScriptBundleWatcherRoute = new JavaScriptBundleWatcherRoute("route", _routeId, Scheme.NotSpecified, "relative", _watcher, _httpRuntime, _systemClock);
 			}
 
 			[TearDown]
@@ -117,7 +117,7 @@ namespace Junior.Route.UnitTests.Assets.FileSystem
 				_systemClock.Stub(arg => arg.UtcDateTime).Return(new DateTime(2012, 1, 1, 0, 0, 0, DateTimeKind.Utc));
 				_context = MockRepository.GenerateMock<HttpContextBase>();
 				_routeId = Guid.NewGuid();
-				_watcherRoute = new JavaScriptBundleWatcherRoute("route", _routeId, "relative", _watcher, _httpRuntime, _systemClock);
+				_watcherRoute = new JavaScriptBundleWatcherRoute("route", _routeId, Scheme.NotSpecified, "relative", _watcher, _httpRuntime, _systemClock);
 				_response = _watcherRoute.ProcessResponseAsync(_context).Result;
 			}
 

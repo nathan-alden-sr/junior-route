@@ -8,7 +8,7 @@ namespace Junior.Route.AspNetIntegration.ResponseHandlers
 		private readonly ResponseHandlerResultType _resultType;
 		private readonly IResponse _suggestedResponse;
 
-		private ResponseHandlerResult(ResponseHandlerResultType resultType, IResponse suggestedResponse)
+		private ResponseHandlerResult(ResponseHandlerResultType resultType, IResponse suggestedResponse = null)
 		{
 			_resultType = resultType;
 			_suggestedResponse = suggestedResponse;
@@ -32,7 +32,7 @@ namespace Junior.Route.AspNetIntegration.ResponseHandlers
 
 		public static ResponseHandlerResult ResponseWritten()
 		{
-			return new ResponseHandlerResult(ResponseHandlerResultType.ResponseWritten, null);
+			return new ResponseHandlerResult(ResponseHandlerResultType.ResponseWritten);
 		}
 
 		public static ResponseHandlerResult ResponseSuggested(IResponse suggestedResponse)
@@ -44,7 +44,7 @@ namespace Junior.Route.AspNetIntegration.ResponseHandlers
 
 		public static ResponseHandlerResult ResponseNotHandled()
 		{
-			return new ResponseHandlerResult(ResponseHandlerResultType.ResponseNotHandled, null);
+			return new ResponseHandlerResult(ResponseHandlerResultType.ResponseNotHandled);
 		}
 	}
 }

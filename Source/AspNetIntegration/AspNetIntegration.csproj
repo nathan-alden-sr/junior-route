@@ -49,6 +49,7 @@
     <Compile Include="ErrorHandlers\IErrorHandler.cs" />
     <Compile Include="FileSystem.cs" />
     <Compile Include="HttpRuntimeWrapper.cs" />
+    <Compile Include="IUrlResolverConfiguration.cs" />
     <Compile Include="JuniorRouteApplication.cs" />
     <Compile Include="JuniorRouteApplicationConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -69,6 +70,7 @@
     <Compile Include="ResponseHandlers\ResponseHandlerResult.cs" />
     <Compile Include="ResponseHandlers\ResponseHandlerResultType.cs" />
     <Compile Include="ResponseHandlers\NonCacheableResponseHandler.cs" />
+    <Compile Include="UriBuilderExtensions.cs" />
     <Compile Include="UrlResolver.cs" />
   </ItemGroup>
   <ItemGroup>

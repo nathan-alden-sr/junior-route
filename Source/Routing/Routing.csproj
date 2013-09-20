@@ -86,7 +86,6 @@
     <Compile Include="Restrictions\RefererUrlAbsolutePathRestriction.cs" />
     <Compile Include="Restrictions\MissingHeaderRestriction.cs" />
     <Compile Include="Route.cs" />
-    <Compile Include="RouteCollection.cs" />
     <Compile Include="Responses\Application\AtomResponse.cs" />
     <Compile Include="Responses\Application\XopResponse.cs" />
     <Compile Include="Responses\Application\DtdResponse.cs" />
@@ -185,6 +184,7 @@
     <Compile Include="Restrictions\MethodRestriction.cs" />
     <Compile Include="Restrictions\UrlRelativePathRestriction.cs" />
     <Compile Include="Responses\XmlNodeExtensions.cs" />
+    <Compile Include="RouteCollection.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Junior.Common, Version=3.8.0.0, Culture=neutral, PublicKeyToken=998713eb9a0cce30, processorArchitecture=MSIL">

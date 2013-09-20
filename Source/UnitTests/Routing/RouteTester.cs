@@ -5,6 +5,7 @@ using System.Net;
 using System.Web;
 
 using Junior.Common;
+using Junior.Route.Common;
 using Junior.Route.Http.RequestHeaders;
 using Junior.Route.Routing;
 using Junior.Route.Routing.RequestValueComparers;
@@ -26,7 +27,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.AddRestrictions(new UrlHostRestriction("host", CaseInsensitivePlainComparer.Instance), new UrlPortRestriction(80));
 				_route.AddRestrictions(new UrlHostRestriction("host", CaseInsensitivePlainComparer.Instance), new UrlPortRestriction(80));
 			}
@@ -48,7 +49,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.AddRestrictions((IEnumerable<IRestriction>)new IRestriction[] { new MethodRestriction("GET"), new UrlPortRestriction(0) });
 				_route.AddRestrictions(new MethodRestriction("POST"), new UrlPortRestriction(1));
 			}
@@ -70,7 +71,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.AddRestrictions(
 					new HeaderRestriction<DateHeader>("Date", headerValue => DateHeader.Parse(headerValue), header => true),
 					new HeaderRestriction<AllowHeader>("Allow", headerValue => AllowHeader.ParseMany(headerValue), header => true),
@@ -90,64 +91,26 @@ namespace Junior.Route.UnitTests.Routing
 		}
 
 		[TestFixture]
-		public class When_creating_instance_with_guid_factory_and_resolved_relative_url
+		public class When_creating_instance_with_id_and_scheme_and_resolved_relative_url
 		{
 			[SetUp]
 			public void SetUp()
 			{
 				_name = "name";
 				_id = Guid.Parse("2fa8d2d3-94ca-4c43-8dd0-50717c165c1f");
-				_guidFactory = MockRepository.GenerateMock<IGuidFactory>();
-				_guidFactory.Stub(arg => arg.Random()).Return(_id);
+				_scheme = Scheme.NotSpecified;
 				_resolvedRelativeUrl = "resolved";
-				_route = new Route.Routing.Route(_name, _guidFactory, _resolvedRelativeUrl);
-			}
-
-			private string _name;
-			private Route.Routing.Route _route;
-			private IGuidFactory _guidFactory;
-			private string _resolvedRelativeUrl;
-			private Guid _id;
-
-			[Test]
-			public void Must_set_id_using_guid_factory()
-			{
-				Assert.That(_route.Id, Is.EqualTo(_id));
-				_guidFactory.AssertWasCalled(arg => arg.Random());
-			}
-
-			[Test]
-			public void Must_set_name()
-			{
-				Assert.That(_route.Name, Is.EqualTo(_name));
-			}
-
-			[Test]
-			public void Must_set_resolved_relative_url()
-			{
-				Assert.That(_route.ResolvedRelativeUrl, Is.EqualTo(_resolvedRelativeUrl));
-			}
-		}
-
-		[TestFixture]
-		public class When_creating_instance_with_id_and_resolved_relative_url
-		{
-			[SetUp]
-			public void SetUp()
-			{
-				_name = "name";
-				_id = Guid.Parse("2fa8d2d3-94ca-4c43-8dd0-50717c165c1f");
-				_resolvedRelativeUrl = "resolved";
-				_route = new Route.Routing.Route(_name, _id, _resolvedRelativeUrl);
+				_route = new Route.Routing.Route(_name, _id, _scheme, _resolvedRelativeUrl);
 			}
 
 			private string _name;
 			private Route.Routing.Route _route;
 			private string _resolvedRelativeUrl;
 			private Guid _id;
+			private Scheme _scheme;
 
 			[Test]
-			public void Must_set_id_using_guid_factory()
+			public void Must_set_id()
 			{
 				Assert.That(_route.Id, Is.EqualTo(_id));
 			}
@@ -162,6 +125,12 @@ namespace Junior.Route.UnitTests.Routing
 			public void Must_set_resolved_relative_url()
 			{
 				Assert.That(_route.ResolvedRelativeUrl, Is.EqualTo(_resolvedRelativeUrl));
+			}
+
+			[Test]
+			public void Must_set_scheme()
+			{
+				Assert.That(_route.Scheme, Is.EqualTo(_scheme));
 			}
 		}
 
@@ -171,7 +140,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.AddRestrictions(
 					new HeaderRestriction<DateHeader>("Date", headerValue => DateHeader.Parse(headerValue), header => true),
 					new HeaderRestriction<AllowHeader>("Allow", headerValue => AllowHeader.ParseMany(headerValue), header => true),
@@ -196,7 +165,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.AddRestrictions(
 					new HeaderRestriction<DateHeader>("Date", headerValue => DateHeader.Parse(headerValue), header => true),
 					new HeaderRestriction<AllowHeader>("Allow", headerValue => AllowHeader.ParseMany(headerValue), header => true),
@@ -220,7 +189,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.AddRestrictions(
 					new HeaderRestriction<DateHeader>("Date", headerValue => DateHeader.Parse(headerValue), header => true),
 					new HeaderRestriction<AllowHeader>("Allow", headerValue => AllowHeader.ParseMany(headerValue), header => true),
@@ -245,7 +214,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.AddRestrictions(
 					new HeaderRestriction<DateHeader>("Date", headerValue => DateHeader.Parse(headerValue), header => true),
 					new HeaderRestriction<AllowHeader>("Allow", headerValue => AllowHeader.ParseMany(headerValue), header => true),
@@ -270,7 +239,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.AddRestrictions(
 					new HeaderRestriction<DateHeader>("Date", headerValue => DateHeader.Parse(headerValue), header => true),
 					new HeaderRestriction<AllowHeader>("Allow", headerValue => AllowHeader.ParseMany(headerValue), header => true),
@@ -295,7 +264,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_context = MockRepository.GenerateMock<HttpContextBase>();
 				_route.RespondWithNoContent();
 			}
@@ -324,7 +293,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_context = MockRepository.GenerateMock<HttpContextBase>();
 				_route.RespondWithNoContent(context => _delegateCalled = true);
 			}
@@ -362,7 +331,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_context = MockRepository.GenerateMock<HttpContextBase>();
 			}
 
@@ -396,7 +365,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_context = MockRepository.GenerateMock<HttpContextBase>();
 			}
 
@@ -430,7 +399,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_context = MockRepository.GenerateMock<HttpContextBase>();
 			}
 
@@ -444,10 +413,10 @@ namespace Junior.Route.UnitTests.Routing
 
 				_route.RespondWith(
 					request =>
-						{
-							executed = true;
-							return (IResponse)new Response().NoContent();
-						});
+					{
+						executed = true;
+						return (IResponse)new Response().NoContent();
+					});
 
 				await _route.ProcessResponseAsync(_context);
 
@@ -469,7 +438,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_context = MockRepository.GenerateMock<HttpContextBase>();
 			}
 
@@ -483,10 +452,10 @@ namespace Junior.Route.UnitTests.Routing
 
 				_route.RespondWith(
 					request =>
-						{
-							executed = true;
-							return (IResponse)new Response().NoContent();
-						},
+					{
+						executed = true;
+						return (IResponse)new Response().NoContent();
+					},
 					typeof(CssResponse));
 
 				await _route.ProcessResponseAsync(_context);
@@ -509,7 +478,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_context = MockRepository.GenerateMock<HttpContextBase>();
 			}
 
@@ -543,7 +512,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_context = MockRepository.GenerateMock<HttpContextBase>();
 			}
 
@@ -577,7 +546,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_context = MockRepository.GenerateMock<HttpContextBase>();
 			}
 
@@ -591,10 +560,10 @@ namespace Junior.Route.UnitTests.Routing
 
 				_route.RespondWith(
 					request =>
-						{
-							executed = true;
-							return new Response().NoContent().AsCompletedTask();
-						});
+					{
+						executed = true;
+						return new Response().NoContent().AsCompletedTask();
+					});
 
 				await _route.ProcessResponseAsync(_context);
 
@@ -616,7 +585,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_context = MockRepository.GenerateMock<HttpContextBase>();
 			}
 
@@ -630,10 +599,10 @@ namespace Junior.Route.UnitTests.Routing
 
 				_route.RespondWith(
 					request =>
-						{
-							executed = true;
-							return new CssResponse("").AsCompletedTask();
-						},
+					{
+						executed = true;
+						return new CssResponse("").AsCompletedTask();
+					},
 					typeof(CssResponse));
 
 				await _route.ProcessResponseAsync(_context);
@@ -656,7 +625,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.RestrictByAcceptCharsetHeader(header => true);
 			}
 
@@ -677,7 +646,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.RestrictByAcceptEncodingHeader(header => true);
 			}
 
@@ -698,7 +667,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.RestrictByAcceptHeader(header => true);
 			}
 
@@ -719,7 +688,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.RestrictByAcceptLanguageHeader(header => true);
 			}
 
@@ -740,7 +709,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.RestrictByAllowHeader(header => true);
 			}
 
@@ -761,7 +730,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.RestrictByBasicAuthorizationHeader(header => true);
 			}
 
@@ -782,7 +751,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.RestrictByBasicProxyAuthorizationHeader(header => true);
 			}
 
@@ -803,7 +772,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.RestrictByCacheControlHeader(header => true);
 			}
 
@@ -824,7 +793,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.RestrictByConnectionHeader(header => true);
 			}
 
@@ -845,7 +814,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.RestrictByContentEncodingHeader(header => true);
 			}
 
@@ -866,7 +835,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.RestrictByContentLanguageHeader(header => true);
 			}
 
@@ -887,7 +856,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.RestrictByContentLengthHeader(header => true);
 			}
 
@@ -908,7 +877,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.RestrictByContentMd5Header(header => true);
 			}
 
@@ -929,7 +898,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.RestrictByCookie("name1", "value1");
 				_route.RestrictByCookie("name2", CaseSensitivePlainComparer.Instance, "value2", CaseSensitiveRegexComparer.Instance);
 			}
@@ -951,7 +920,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.RestrictByDateHeader(header => true);
 			}
 
@@ -972,7 +941,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.RestrictByDigestAuthorizationHeader(header => true);
 			}
 
@@ -993,7 +962,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.RestrictByDigestProxyAuthorizationHeader(header => true);
 			}
 
@@ -1014,7 +983,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.RestrictByExpectHeader(header => true);
 			}
 
@@ -1035,7 +1004,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.RestrictByFromHeader(header => true);
 			}
 
@@ -1056,7 +1025,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.RestrictByHeader("field1", "value1", CaseSensitiveRegexComparer.Instance);
 				_route.RestrictByHeader("field2", "value2");
 			}
@@ -1078,7 +1047,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.RestrictByHeaders("field1", headerValue => new[] { 0, 1 }, i => true);
 				_route.RestrictByHeader("field2", headerValue => 0, i => true);
 			}
@@ -1100,7 +1069,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.RestrictByHostHeader(header => true);
 			}
 
@@ -1121,7 +1090,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.RestrictByIfMatchHeader(header => true);
 			}
 
@@ -1142,7 +1111,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.RestrictByIfModifiedSinceHeader(header => true);
 			}
 
@@ -1163,7 +1132,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.RestrictByIfNoneMatchHeader(header => true);
 			}
 
@@ -1184,7 +1153,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.RestrictByIfRangeHeader(header => true);
 			}
 
@@ -1205,7 +1174,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.RestrictByIfUnmodifiedSinceHeader(header => true);
 			}
 
@@ -1226,7 +1195,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.RestrictByMaxForwardsHeader(header => true);
 			}
 
@@ -1247,7 +1216,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.RestrictByMethods((IEnumerable<string>)new[] { "CONNECT" });
 				_route.RestrictByMethods((IEnumerable<HttpMethod>)new[] { HttpMethod.Delete, HttpMethod.Get });
 				_route.RestrictByMethods("HEAD", "POST");
@@ -1271,7 +1240,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.RestrictByMissingHeader("header");
 			}
 
@@ -1292,7 +1261,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.RestrictByPragmaHeader(header => true);
 			}
 
@@ -1313,7 +1282,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.RestrictByRangeHeader(header => true);
 			}
 
@@ -1334,7 +1303,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.RestrictByRefererHeader(header => true);
 			}
 
@@ -1355,7 +1324,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.RestrictByRefererUrl(uri => true);
 			}
 
@@ -1376,7 +1345,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.RestrictByRefererUrlAbsolutePaths((IEnumerable<string>)new[] { "path1", "path2" });
 				_route.RestrictByRefererUrlAbsolutePaths("path3", "path4");
 				_route.RestrictByRefererUrlAbsolutePaths(new[] { "path5", "path6" }, CaseInsensitivePlainComparer.Instance);
@@ -1400,7 +1369,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.RestrictByRefererUrlAuthorities((IEnumerable<string>)new[] { "authority1", "authority2" });
 				_route.RestrictByRefererUrlAuthorities("authority1", "authority2");
 			}
@@ -1422,7 +1391,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.RestrictByRefererUrlFragment("fragment1", CaseInsensitivePlainComparer.Instance);
 				_route.RestrictByRefererUrlFragments((IEnumerable<string>)new[] { "fragment2", "fragment3" });
 				_route.RestrictByRefererUrlFragments(new[] { "fragment4", "fragment5" }, CaseInsensitivePlainComparer.Instance);
@@ -1446,7 +1415,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.RestrictByRefererUrlHostTypes(new[] { UriHostNameType.Basic, UriHostNameType.Dns });
 				_route.RestrictByRefererUrlHostTypes(UriHostNameType.IPv4, UriHostNameType.IPv6);
 			}
@@ -1468,7 +1437,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.RestrictByRefererUrlHosts(new[] { "host1", "host2" });
 				_route.RestrictByRefererUrlHosts("host3", "host4");
 			}
@@ -1490,7 +1459,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.RestrictByRefererUrlPathAndQuery("path1", CaseInsensitivePlainComparer.Instance);
 				_route.RestrictByRefererUrlPathsAndQueries((IEnumerable<string>)new[] { "path2", "path3" });
 				_route.RestrictByRefererUrlPathsAndQueries(new[] { "path4", "path5" }, CaseInsensitivePlainComparer.Instance);
@@ -1514,7 +1483,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.RestrictByRefererUrlPorts((IEnumerable<ushort>)new[] { (ushort)0, (ushort)1 });
 				_route.RestrictByRefererUrlPorts(2, 3);
 			}
@@ -1536,7 +1505,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.RestrictByRefererUrlQuery("query1", CaseInsensitivePlainComparer.Instance);
 				_route.RestrictByRefererUrlQueries((IEnumerable<string>)new[] { "query2", "query3" });
 				_route.RestrictByRefererUrlQueries(new[] { "query4", "query5" }, CaseInsensitivePlainComparer.Instance);
@@ -1560,7 +1529,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.RestrictByRefererUrlQueryString("field1", CaseInsensitivePlainComparer.Instance, "value1", CaseInsensitivePlainComparer.Instance);
 				_route.RestrictByRefererUrlQueryString("field2", "value2");
 			}
@@ -1582,7 +1551,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.RestrictByRefererUrlSchemes((IEnumerable<string>)new[] { "scheme1", "scheme2" });
 				_route.RestrictByRefererUrlSchemes("scheme3", "scheme4");
 			}
@@ -1604,7 +1573,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_httpRuntime = MockRepository.GenerateMock<IHttpRuntime>();
 				_route.RestrictByUrlRelativePath("path1", CaseInsensitivePlainComparer.Instance, _httpRuntime);
 				_route.RestrictByUrlRelativePaths(new[] { "path2", "path3" }, _httpRuntime);
@@ -1628,7 +1597,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.RestrictByTeHeader(header => true);
 			}
 
@@ -1649,7 +1618,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.RestrictByTrailerHeader(header => true);
 			}
 
@@ -1670,7 +1639,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.RestrictByTransferEncodingHeader(header => true);
 			}
 
@@ -1691,7 +1660,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.RestrictByUpgradeHeader(header => true);
 			}
 
@@ -1712,7 +1681,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.RestrictByUrl(uri => true);
 			}
 
@@ -1733,7 +1702,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.RestrictByUrlAuthorities((IEnumerable<string>)new[] { "authority1", "authority2" });
 				_route.RestrictByUrlAuthorities("authority1", "authority2");
 			}
@@ -1755,7 +1724,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.RestrictByUrlFragment("fragment1", CaseInsensitivePlainComparer.Instance);
 				_route.RestrictByUrlFragments((IEnumerable<string>)new[] { "fragment2", "fragment3" });
 				_route.RestrictByUrlFragments(new[] { "fragment4", "fragment5" }, CaseInsensitivePlainComparer.Instance);
@@ -1779,7 +1748,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.RestrictByUrlHostTypes(new[] { UriHostNameType.Basic, UriHostNameType.Dns });
 				_route.RestrictByUrlHostTypes(UriHostNameType.IPv4, UriHostNameType.IPv6);
 			}
@@ -1801,7 +1770,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.RestrictByUrlHosts(new[] { "host1", "host2" });
 				_route.RestrictByUrlHosts("host3", "host4");
 			}
@@ -1823,7 +1792,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.RestrictByUrlPorts((IEnumerable<ushort>)new[] { (ushort)0, (ushort)1 });
 				_route.RestrictByUrlPorts(2, 3);
 			}
@@ -1845,7 +1814,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.RestrictByUrlQuery("query1", CaseInsensitivePlainComparer.Instance);
 				_route.RestrictByUrlQueries((IEnumerable<string>)new[] { "query2", "query3" });
 				_route.RestrictByUrlQueries(new[] { "query4", "query5" }, CaseInsensitivePlainComparer.Instance);
@@ -1869,7 +1838,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.RestrictByUrlQueryString("field1", CaseInsensitivePlainComparer.Instance, "value1", CaseInsensitivePlainComparer.Instance);
 				_route.RestrictByUrlQueryString("field2", "value2");
 			}
@@ -1891,7 +1860,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.RestrictByUrlSchemes((IEnumerable<string>)new[] { "scheme1", "scheme2" });
 				_route.RestrictByUrlSchemes("scheme3", "scheme4");
 			}
@@ -1913,7 +1882,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.RestrictByUserAgentHeader(header => true);
 			}
 
@@ -1934,7 +1903,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.RestrictByVaryHeader(header => true);
 			}
 
@@ -1955,7 +1924,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.RestrictByViaHeader(header => true);
 			}
 
@@ -1976,7 +1945,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.RestrictByWarningHeader(header => true);
 			}
 
@@ -1997,7 +1966,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.AddRestrictions(
 					new HeaderRestriction<DateHeader>("Date", headerValue => DateHeader.Parse(headerValue), header => true),
 					new HeaderRestriction<AllowHeader>("Allow", headerValue => AllowHeader.ParseMany(headerValue), header => true));
@@ -2018,7 +1987,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.AddRestrictions(new MethodRestriction("GET"), new UrlPortRestriction(0), new MethodRestriction("POST"), new UrlPortRestriction(1));
 			}
 
@@ -2042,7 +2011,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.AddRestrictions(new UrlHostRestriction("host", CaseInsensitivePlainComparer.Instance), new UrlPortRestriction(80));
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 				_request.Stub(arg => arg.Url).Return(new Uri("http://host:80"));
@@ -2066,7 +2035,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.AddRestrictions(new UrlHostRestriction("host", CaseInsensitivePlainComparer.Instance), new UrlPortRestriction(80));
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 				_request.Stub(arg => arg.Url).Return(new Uri("http://host1:81"));
@@ -2090,7 +2059,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "route");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "route");
 				_route.AddRestrictions(new UrlHostRestriction("host", CaseInsensitivePlainComparer.Instance), new UrlPortRestriction(80));
 				_request = MockRepository.GenerateMock<HttpRequestBase>();
 				_request.Stub(arg => arg.Url).Return(new Uri("http://host:81"));

@@ -7,7 +7,7 @@ namespace Junior.Route.AutoRouting.ResolvedRelativeUrlMappers
 		private readonly string _resolvedRelativeUrl;
 		private readonly ResolvedRelativeUrlResultType _resultType;
 
-		private ResolvedRelativeUrlResult(ResolvedRelativeUrlResultType resultType, string resolvedRelativeUrl)
+		private ResolvedRelativeUrlResult(ResolvedRelativeUrlResultType resultType, string resolvedRelativeUrl = null)
 		{
 			_resultType = resultType;
 			_resolvedRelativeUrl = resolvedRelativeUrl;
@@ -38,7 +38,7 @@ namespace Junior.Route.AutoRouting.ResolvedRelativeUrlMappers
 
 		public static ResolvedRelativeUrlResult ResolvedRelativeUrlNotMapped()
 		{
-			return new ResolvedRelativeUrlResult(ResolvedRelativeUrlResultType.ResolvedRelativeUrlNotMapped, null);
+			return new ResolvedRelativeUrlResult(ResolvedRelativeUrlResultType.ResolvedRelativeUrlNotMapped);
 		}
 	}
 }

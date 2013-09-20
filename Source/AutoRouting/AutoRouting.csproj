@@ -150,6 +150,12 @@
     <Compile Include="RestrictionMappers\IRestrictionMapper.cs" />
     <Compile Include="RestrictionMappers\RestrictionsFromAttributesMapper.cs" />
     <Compile Include="RestrictionMappers\HttpMethodFromMethodsNamedAfterStandardHttpMethodsMapper.cs" />
+    <Compile Include="SchemeMappers\Attributes\SchemeAttribute.cs" />
+    <Compile Include="SchemeMappers\SchemeAttributeMapper.cs" />
+    <Compile Include="SchemeMappers\NotSpecifiedMapper.cs" />
+    <Compile Include="SchemeMappers\SchemeResult.cs" />
+    <Compile Include="SchemeMappers\ISchemeMapper.cs" />
+    <Compile Include="SchemeMappers\SchemeResultType.cs" />
     <Compile Include="TaskExtensions.cs" />
     <Compile Include="TypeExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

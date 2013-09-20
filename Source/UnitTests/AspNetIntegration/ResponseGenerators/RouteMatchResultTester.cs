@@ -2,6 +2,7 @@
 using System.Linq;
 
 using Junior.Route.AspNetIntegration.ResponseGenerators;
+using Junior.Route.Common;
 using Junior.Route.Routing;
 using Junior.Route.Routing.Restrictions;
 
@@ -17,7 +18,7 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseGenerators
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "relative");
+				_route = new Route.Routing.Route((string)"name", Guid.NewGuid(), (Scheme)Scheme.NotSpecified, (string)"relative");
 				_matchResult = MatchResult.RouteMatched(Enumerable.Empty<IRestriction>(), "key");
 				_result = new RouteMatchResult(_route, _matchResult);
 			}

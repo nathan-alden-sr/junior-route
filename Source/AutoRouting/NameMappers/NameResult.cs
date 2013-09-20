@@ -7,7 +7,7 @@ namespace Junior.Route.AutoRouting.NameMappers
 		private readonly string _name;
 		private readonly NameResultType _resultType;
 
-		private NameResult(NameResultType resultType, string name)
+		private NameResult(NameResultType resultType, string name = null)
 		{
 			_resultType = resultType;
 			_name = name;
@@ -38,7 +38,7 @@ namespace Junior.Route.AutoRouting.NameMappers
 
 		public static NameResult NameNotMapped()
 		{
-			return new NameResult(NameResultType.NameNotMapped, null);
+			return new NameResult(NameResultType.NameNotMapped);
 		}
 	}
 }

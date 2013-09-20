@@ -3,6 +3,7 @@ using System.Linq;
 
 using Junior.Route.AutoRouting.Containers;
 using Junior.Route.AutoRouting.RestrictionMappers.Attributes;
+using Junior.Route.Common;
 using Junior.Route.Routing.RequestValueComparers;
 using Junior.Route.Routing.Restrictions;
 
@@ -21,7 +22,7 @@ namespace Junior.Route.UnitTests.AutoRouting.RestrictionMappers.Attributes
 			public void SetUp()
 			{
 				_attribute = new HeaderAttribute("field", "value", RequestValueComparer.CaseInsensitiveRegex);
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "relative");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "relative");
 				_container = MockRepository.GenerateMock<IContainer>();
 			}
 
@@ -51,7 +52,7 @@ namespace Junior.Route.UnitTests.AutoRouting.RestrictionMappers.Attributes
 			public void SetUp()
 			{
 				_attribute = new HeaderAttribute("field", "value");
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "relative");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "relative");
 				_container = MockRepository.GenerateMock<IContainer>();
 			}
 

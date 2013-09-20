@@ -87,7 +87,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Web\Content\common.css" />
-    <Content Include="Web\Content\jquery-1.8.2.min.js" />
+    <Content Include="Web\Content\jquery-2.0.3.min.js" />
     <Content Include="Web\Content\reset.css" />
   </ItemGroup>
   <ItemGroup>

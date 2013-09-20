@@ -17,6 +17,8 @@ using Junior.Route.AutoRouting.ResolvedRelativeUrlMappers.Attributes;
 using Junior.Route.AutoRouting.ResponseMappers;
 using Junior.Route.AutoRouting.RestrictionMappers;
 using Junior.Route.AutoRouting.RestrictionMappers.Attributes;
+using Junior.Route.AutoRouting.SchemeMappers;
+using Junior.Route.Common;
 using Junior.Route.Routing;
 using Junior.Route.Routing.AuthenticationProviders;
 using Junior.Route.Routing.Restrictions;
@@ -47,6 +49,8 @@ namespace Junior.Route.UnitTests.AutoRouting
 					.Return(null);
 				_nameMapper = MockRepository.GenerateMock<INameMapper>();
 				_nameMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(NameResult.NameMapped("name").AsCompletedTask());
+				_schemeMapper = MockRepository.GenerateMock<ISchemeMapper>();
+				_schemeMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(SchemeResult.SchemeMapped(Scheme.NotSpecified).AsCompletedTask());
 				_resolvedRelativeUrlMapper = MockRepository.GenerateMock<IResolvedRelativeUrlMapper>();
 				_resolvedRelativeUrlMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(ResolvedRelativeUrlResult.ResolvedRelativeUrlMapped("relative").AsCompletedTask());
 				_autoRouteCollection = new AutoRouteCollection(true)
@@ -54,6 +58,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 					.ClassFilters(_classFilter)
 					.NameMappers(_nameMapper)
 					.IdMappers(_idMapper)
+					.SchemeMappers(_schemeMapper)
 					.ResolvedRelativeUrlMappers(_resolvedRelativeUrlMapper);
 			}
 
@@ -62,6 +67,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 			private IIdMapper _idMapper;
 			private INameMapper _nameMapper;
 			private IResolvedRelativeUrlMapper _resolvedRelativeUrlMapper;
+			private ISchemeMapper _schemeMapper;
 
 			public class Endpoint
 			{
@@ -97,6 +103,8 @@ namespace Junior.Route.UnitTests.AutoRouting
 				_idMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(IdResult.IdMapped(Guid.NewGuid()).AsCompletedTask());
 				_nameMapper = MockRepository.GenerateMock<INameMapper>();
 				_nameMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(NameResult.NameMapped("name").AsCompletedTask());
+				_schemeMapper = MockRepository.GenerateMock<ISchemeMapper>();
+				_schemeMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(SchemeResult.SchemeMapped(Scheme.NotSpecified).AsCompletedTask());
 				_resolvedRelativeUrlMapper = MockRepository.GenerateMock<IResolvedRelativeUrlMapper>();
 				_resolvedRelativeUrlMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(ResolvedRelativeUrlResult.ResolvedRelativeUrlMapped("relative").AsCompletedTask());
 				_authenticationProvider = MockRepository.GenerateMock<IAuthenticationProvider>();
@@ -110,6 +118,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 					.ClassFilters(_classFilter)
 					.NameMappers(_nameMapper)
 					.IdMappers(_idMapper)
+					.SchemeMappers(_schemeMapper)
 					.ResolvedRelativeUrlMappers(_resolvedRelativeUrlMapper)
 					.Authenticate(_authenticationProvider, _authenticationStrategy);
 				_routes = _autoRouteCollection.GenerateRouteCollectionAsync().Result.ToArray();
@@ -123,6 +132,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 			private IAuthenticationProvider _authenticationProvider;
 			private IAuthenticationStrategy _authenticationStrategy;
 			private Route.Routing.Route[] _routes;
+			private ISchemeMapper _schemeMapper;
 
 			public class Endpoint
 			{
@@ -162,6 +172,8 @@ namespace Junior.Route.UnitTests.AutoRouting
 					.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything))
 					.WhenCalled(arg => arg.ReturnValue = (NameResult.NameMapped(Guid.NewGuid().ToString())).AsCompletedTask())
 					.Return(null);
+				_schemeMapper = MockRepository.GenerateMock<ISchemeMapper>();
+				_schemeMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(SchemeResult.SchemeMapped(Scheme.NotSpecified).AsCompletedTask());
 				_resolvedRelativeUrlMapper = MockRepository.GenerateMock<IResolvedRelativeUrlMapper>();
 				_resolvedRelativeUrlMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(ResolvedRelativeUrlResult.ResolvedRelativeUrlMapped("relative").AsCompletedTask());
 				_autoRouteCollection = new AutoRouteCollection()
@@ -169,6 +181,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 					.ClassFilters(_classFilter)
 					.NameMappers(_nameMapper)
 					.IdMappers(_idMapper)
+					.SchemeMappers(_schemeMapper)
 					.ResolvedRelativeUrlMappers(_resolvedRelativeUrlMapper);
 			}
 
@@ -177,6 +190,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 			private IIdMapper _idMapper;
 			private INameMapper _nameMapper;
 			private IResolvedRelativeUrlMapper _resolvedRelativeUrlMapper;
+			private ISchemeMapper _schemeMapper;
 
 			public class Endpoint
 			{
@@ -216,6 +230,8 @@ namespace Junior.Route.UnitTests.AutoRouting
 					.Return(null);
 				_nameMapper = MockRepository.GenerateMock<INameMapper>();
 				_nameMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(NameResult.NameMapped("name").AsCompletedTask());
+				_schemeMapper = MockRepository.GenerateMock<ISchemeMapper>();
+				_schemeMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(SchemeResult.SchemeMapped(Scheme.NotSpecified).AsCompletedTask());
 				_resolvedRelativeUrlMapper = MockRepository.GenerateMock<IResolvedRelativeUrlMapper>();
 				_resolvedRelativeUrlMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(ResolvedRelativeUrlResult.ResolvedRelativeUrlMapped("relative").AsCompletedTask());
 				_autoRouteCollection = new AutoRouteCollection()
@@ -223,6 +239,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 					.ClassFilters(_classFilter)
 					.NameMappers(_nameMapper)
 					.IdMappers(_idMapper)
+					.SchemeMappers(_schemeMapper)
 					.ResolvedRelativeUrlMappers(_resolvedRelativeUrlMapper);
 			}
 
@@ -231,6 +248,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 			private IIdMapper _idMapper;
 			private INameMapper _nameMapper;
 			private IResolvedRelativeUrlMapper _resolvedRelativeUrlMapper;
+			private ISchemeMapper _schemeMapper;
 
 			public class Endpoint
 			{
@@ -267,6 +285,8 @@ namespace Junior.Route.UnitTests.AutoRouting
 				_idMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(IdResult.IdMapped(Guid.NewGuid()).AsCompletedTask());
 				_nameMapper = MockRepository.GenerateMock<INameMapper>();
 				_nameMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(NameResult.NameMapped("name").AsCompletedTask());
+				_schemeMapper = MockRepository.GenerateMock<ISchemeMapper>();
+				_schemeMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(SchemeResult.SchemeMapped(Scheme.NotSpecified).AsCompletedTask());
 				_resolvedRelativeUrlMapper = MockRepository.GenerateMock<IResolvedRelativeUrlMapper>();
 				_resolvedRelativeUrlMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(ResolvedRelativeUrlResult.ResolvedRelativeUrlMapped("relative").AsCompletedTask());
 				_responseMapper = MockRepository.GenerateMock<IResponseMapper>();
@@ -278,6 +298,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 					.ClassFilters(_classFilter)
 					.NameMappers(_nameMapper)
 					.IdMappers(_idMapper)
+					.SchemeMappers(_schemeMapper)
 					.ResolvedRelativeUrlMappers(_resolvedRelativeUrlMapper)
 					.ResponseMapper(_responseMapper);
 				_routes = _autoRouteCollection.GenerateRouteCollectionAsync().Result.ToArray();
@@ -304,6 +325,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 			private IResolvedRelativeUrlMapper _resolvedRelativeUrlMapper;
 			private Route.Routing.Route[] _routes;
 			private IResponseMapper _responseMapper;
+			private ISchemeMapper _schemeMapper;
 
 			[Test]
 			public void Must_consider_correct_classes()
@@ -344,6 +366,8 @@ namespace Junior.Route.UnitTests.AutoRouting
 				_idMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(IdResult.IdMapped(Guid.NewGuid()).AsCompletedTask());
 				_nameMapper = MockRepository.GenerateMock<INameMapper>();
 				_nameMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(NameResult.NameMapped("name").AsCompletedTask());
+				_schemeMapper = MockRepository.GenerateMock<ISchemeMapper>();
+				_schemeMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(SchemeResult.SchemeMapped(Scheme.NotSpecified).AsCompletedTask());
 				_resolvedRelativeUrlMapper = MockRepository.GenerateMock<IResolvedRelativeUrlMapper>();
 				_resolvedRelativeUrlMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(ResolvedRelativeUrlResult.ResolvedRelativeUrlMapped("relative").AsCompletedTask());
 				_responseMapper = MockRepository.GenerateMock<IResponseMapper>();
@@ -356,6 +380,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 					.MethodFilters(_methodFilter)
 					.NameMappers(_nameMapper)
 					.IdMappers(_idMapper)
+					.SchemeMappers(_schemeMapper)
 					.ResolvedRelativeUrlMappers(_resolvedRelativeUrlMapper)
 					.ResponseMapper(_responseMapper);
 				_routes = _autoRouteCollection.GenerateRouteCollectionAsync().Result.ToArray();
@@ -380,6 +405,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 			private Route.Routing.Route[] _routes;
 			private IResponseMapper _responseMapper;
 			private IMethodFilter _methodFilter;
+			private ISchemeMapper _schemeMapper;
 
 			[Test]
 			public void Must_consider_correct_methods()
@@ -415,6 +441,8 @@ namespace Junior.Route.UnitTests.AutoRouting
 				_idMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(IdResult.IdMapped(Guid.NewGuid()).AsCompletedTask());
 				_nameMapper = MockRepository.GenerateMock<INameMapper>();
 				_nameMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(NameResult.NameMapped(Guid.NewGuid().ToString()).AsCompletedTask());
+				_schemeMapper = MockRepository.GenerateMock<ISchemeMapper>();
+				_schemeMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(SchemeResult.SchemeMapped(Scheme.NotSpecified).AsCompletedTask());
 				_responseMapper = MockRepository.GenerateMock<IResponseMapper>();
 				_responseMapper
 					.Stub(arg => arg.MapAsync(Arg<Func<IContainer>>.Is.Anything, Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything, Arg<Route.Routing.Route>.Is.Anything))
@@ -425,6 +453,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 					.ClassFilters(_classFilter)
 					.NameMappers(_nameMapper)
 					.IdMappers(_idMapper)
+					.SchemeMappers(_schemeMapper)
 					.ResolvedRelativeUrlFromRelativeClassNamespaceAndClassName("")
 					.ResolvedRelativeUrlUsingAttribute()
 					.ResponseMapper(_responseMapper)
@@ -439,6 +468,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 			private IResponseMapper _responseMapper;
 			private Route.Routing.Route[] _routes;
 			private IHttpRuntime _httpRuntime;
+			private ISchemeMapper _schemeMapper;
 
 			public class Endpoint
 			{
@@ -471,6 +501,8 @@ namespace Junior.Route.UnitTests.AutoRouting
 				_idMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(IdResult.IdMapped(Guid.NewGuid()).AsCompletedTask());
 				_nameMapper = MockRepository.GenerateMock<INameMapper>();
 				_nameMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(NameResult.NameMapped(Guid.NewGuid().ToString()).AsCompletedTask());
+				_schemeMapper = MockRepository.GenerateMock<ISchemeMapper>();
+				_schemeMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(SchemeResult.SchemeMapped(Scheme.NotSpecified).AsCompletedTask());
 				_resolvedRelativeUrlMapper = MockRepository.GenerateMock<IResolvedRelativeUrlMapper>();
 				_resolvedRelativeUrlMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(ResolvedRelativeUrlResult.ResolvedRelativeUrlMapped("relative").AsCompletedTask());
 				_responseMapper = MockRepository.GenerateMock<IResponseMapper>();
@@ -483,6 +515,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 					.ClassFilters(_classFilter)
 					.NameMappers(_nameMapper)
 					.IdMappers(_idMapper)
+					.SchemeMappers(_schemeMapper)
 					.ResolvedRelativeUrlMappers(_resolvedRelativeUrlMapper)
 					.RestrictUsingAttributes<UrlRelativePathAttribute>()
 					.RestrictRelativePathsToRelativeClassNamespaceAndClassName("")
@@ -499,6 +532,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 			private IResponseMapper _responseMapper;
 			private Route.Routing.Route[] _routes;
 			private IHttpRuntime _httpRuntime;
+			private ISchemeMapper _schemeMapper;
 
 			public class Endpoint
 			{
@@ -541,6 +575,8 @@ namespace Junior.Route.UnitTests.AutoRouting
 				_idMapper2.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(IdResult.IdMapped(Guid.Parse("493e725c-cbc1-4ea4-b6d1-350018d4542d")).AsCompletedTask());
 				_nameMapper = MockRepository.GenerateMock<INameMapper>();
 				_nameMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(NameResult.NameMapped("name").AsCompletedTask());
+				_schemeMapper = MockRepository.GenerateMock<ISchemeMapper>();
+				_schemeMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(SchemeResult.SchemeMapped(Scheme.NotSpecified).AsCompletedTask());
 				_resolvedRelativeUrlMapper = MockRepository.GenerateMock<IResolvedRelativeUrlMapper>();
 				_resolvedRelativeUrlMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(ResolvedRelativeUrlResult.ResolvedRelativeUrlMapped("relative").AsCompletedTask());
 				_responseMapper = MockRepository.GenerateMock<IResponseMapper>();
@@ -552,6 +588,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 					.ClassFilters(_classFilter)
 					.NameMappers(_nameMapper)
 					.IdMappers(_idMapper1)
+					.SchemeMappers(_schemeMapper)
 					.ResolvedRelativeUrlMappers(_resolvedRelativeUrlMapper)
 					.ResponseMapper(_responseMapper);
 				_routes = _autoRouteCollection.GenerateRouteCollectionAsync().Result.ToArray();
@@ -565,6 +602,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 			private IResponseMapper _responseMapper;
 			private Route.Routing.Route[] _routes;
 			private IIdMapper _idMapper2;
+			private ISchemeMapper _schemeMapper;
 
 			public class Endpoint
 			{
@@ -604,6 +642,8 @@ namespace Junior.Route.UnitTests.AutoRouting
 				_nameMapper1.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(NameResult.NameMapped("name1").AsCompletedTask());
 				_nameMapper2 = MockRepository.GenerateMock<INameMapper>();
 				_nameMapper2.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(NameResult.NameMapped("name2").AsCompletedTask());
+				_schemeMapper = MockRepository.GenerateMock<ISchemeMapper>();
+				_schemeMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(SchemeResult.SchemeMapped(Scheme.NotSpecified).AsCompletedTask());
 				_resolvedRelativeUrlMapper = MockRepository.GenerateMock<IResolvedRelativeUrlMapper>();
 				_resolvedRelativeUrlMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(ResolvedRelativeUrlResult.ResolvedRelativeUrlMapped("relative").AsCompletedTask());
 				_responseMapper = MockRepository.GenerateMock<IResponseMapper>();
@@ -615,6 +655,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 					.ClassFilters(_classFilter)
 					.NameMappers(_nameMapper1, _nameMapper2)
 					.IdMappers(_idMapper)
+					.SchemeMappers(_schemeMapper)
 					.ResolvedRelativeUrlMappers(_resolvedRelativeUrlMapper)
 					.ResponseMapper(_responseMapper);
 				_routes = _autoRouteCollection.GenerateRouteCollectionAsync().Result.ToArray();
@@ -628,6 +669,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 			private IResponseMapper _responseMapper;
 			private INameMapper _nameMapper2;
 			private Route.Routing.Route[] _routes;
+			private ISchemeMapper _schemeMapper;
 
 			public class Endpoint
 			{
@@ -665,6 +707,8 @@ namespace Junior.Route.UnitTests.AutoRouting
 				_idMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(IdResult.IdMapped(Guid.NewGuid()).AsCompletedTask());
 				_nameMapper = MockRepository.GenerateMock<INameMapper>();
 				_nameMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(NameResult.NameMapped("name").AsCompletedTask());
+				_schemeMapper = MockRepository.GenerateMock<ISchemeMapper>();
+				_schemeMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(SchemeResult.SchemeMapped(Scheme.NotSpecified).AsCompletedTask());
 				_resolvedRelativeUrlMapper1 = MockRepository.GenerateMock<IResolvedRelativeUrlMapper>();
 				_resolvedRelativeUrlMapper1.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(ResolvedRelativeUrlResult.ResolvedRelativeUrlMapped("relative1").AsCompletedTask());
 				_resolvedRelativeUrlMapper2 = MockRepository.GenerateMock<IResolvedRelativeUrlMapper>();
@@ -678,6 +722,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 					.ClassFilters(_classFilter)
 					.NameMappers(_nameMapper)
 					.IdMappers(_idMapper)
+					.SchemeMappers(_schemeMapper)
 					.ResolvedRelativeUrlMappers(_resolvedRelativeUrlMapper1)
 					.ResponseMapper(_responseMapper);
 				_routes = _autoRouteCollection.GenerateRouteCollectionAsync().Result.ToArray();
@@ -691,6 +736,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 			private IResponseMapper _responseMapper;
 			private Route.Routing.Route[] _routes;
 			private IResolvedRelativeUrlMapper _resolvedRelativeUrlMapper2;
+			private ISchemeMapper _schemeMapper;
 
 			public class Endpoint
 			{
@@ -728,6 +774,8 @@ namespace Junior.Route.UnitTests.AutoRouting
 				_idMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(IdResult.IdMapped(Guid.NewGuid()).AsCompletedTask());
 				_nameMapper = MockRepository.GenerateMock<INameMapper>();
 				_nameMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(NameResult.NameMapped("name").AsCompletedTask());
+				_schemeMapper = MockRepository.GenerateMock<ISchemeMapper>();
+				_schemeMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(SchemeResult.SchemeMapped(Scheme.NotSpecified).AsCompletedTask());
 				_resolvedRelativeUrlMapper = MockRepository.GenerateMock<IResolvedRelativeUrlMapper>();
 				_resolvedRelativeUrlMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(ResolvedRelativeUrlResult.ResolvedRelativeUrlMapped("relative").AsCompletedTask());
 				_responseMapper = MockRepository.GenerateMock<IResponseMapper>();
@@ -739,6 +787,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 					.ClassFilters(_classFilter)
 					.NameMappers(_nameMapper)
 					.IdMappers(_idMapper)
+					.SchemeMappers(_schemeMapper)
 					.ResolvedRelativeUrlMappers(_resolvedRelativeUrlMapper)
 					.ResponseMapper(_responseMapper);
 			}
@@ -749,6 +798,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 			private INameMapper _nameMapper;
 			private IResolvedRelativeUrlMapper _resolvedRelativeUrlMapper;
 			private IResponseMapper _responseMapper;
+			private ISchemeMapper _schemeMapper;
 
 			public class Endpoint
 			{
@@ -781,6 +831,8 @@ namespace Junior.Route.UnitTests.AutoRouting
 				_idMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(IdResult.IdMapped(Guid.NewGuid()).AsCompletedTask());
 				_nameMapper = MockRepository.GenerateMock<INameMapper>();
 				_nameMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(NameResult.NameMapped("name").AsCompletedTask());
+				_schemeMapper = MockRepository.GenerateMock<ISchemeMapper>();
+				_schemeMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(SchemeResult.SchemeMapped(Scheme.NotSpecified).AsCompletedTask());
 				_resolvedRelativeUrlMapper = MockRepository.GenerateMock<IResolvedRelativeUrlMapper>();
 				_resolvedRelativeUrlMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(ResolvedRelativeUrlResult.ResolvedRelativeUrlMapped("relative").AsCompletedTask());
 				_responseMapper = MockRepository.GenerateMock<IResponseMapper>();
@@ -802,6 +854,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 					.ClassFilters(_classFilter)
 					.NameMappers(_nameMapper)
 					.IdMappers(_idMapper)
+					.SchemeMappers(_schemeMapper)
 					.ResolvedRelativeUrlMappers(_resolvedRelativeUrlMapper)
 					.ResponseMapper(_responseMapper)
 					.RestrictionMappers(_restrictionMapper1, _restrictionMapper2);
@@ -816,6 +869,7 @@ namespace Junior.Route.UnitTests.AutoRouting
 			private Route.Routing.Route[] _routes;
 			private IRestrictionMapper _restrictionMapper1;
 			private IRestrictionMapper _restrictionMapper2;
+			private ISchemeMapper _schemeMapper;
 
 			public class Endpoint
 			{
@@ -855,6 +909,73 @@ namespace Junior.Route.UnitTests.AutoRouting
 			public async void Must_require_restriction_container()
 			{
 				await _autoRouteCollection.GenerateRouteCollectionAsync();
+			}
+		}
+
+		[TestFixture]
+		public class When_mapping_schemes
+		{
+			[SetUp]
+			public void SetUp()
+			{
+				_classFilter = MockRepository.GenerateMock<IClassFilter>();
+				_classFilter
+					.Stub(arg => arg.MatchesAsync(Arg<Type>.Is.Anything))
+					.WhenCalled(arg => arg.ReturnValue = ((Type)arg.Arguments.First() == typeof(Endpoint)).AsCompletedTask())
+					.Return(false.AsCompletedTask());
+				_idMapper = MockRepository.GenerateMock<IIdMapper>();
+				_idMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(IdResult.IdMapped(Guid.NewGuid()).AsCompletedTask());
+				_nameMapper = MockRepository.GenerateMock<INameMapper>();
+				_nameMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(NameResult.NameMapped("name").AsCompletedTask());
+				_schemeMapper1 = MockRepository.GenerateMock<ISchemeMapper>();
+				_schemeMapper1.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(SchemeResult.SchemeMapped(Scheme.Http).AsCompletedTask());
+				_schemeMapper2 = MockRepository.GenerateMock<ISchemeMapper>();
+				_schemeMapper2.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(SchemeResult.SchemeMapped(Scheme.Https).AsCompletedTask());
+				_resolvedRelativeUrlMapper = MockRepository.GenerateMock<IResolvedRelativeUrlMapper>();
+				_resolvedRelativeUrlMapper.Stub(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything)).Return(ResolvedRelativeUrlResult.ResolvedRelativeUrlMapped("relative").AsCompletedTask());
+				_responseMapper = MockRepository.GenerateMock<IResponseMapper>();
+				_responseMapper
+					.Stub(arg => arg.MapAsync(Arg<Func<IContainer>>.Is.Anything, Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything, Arg<Route.Routing.Route>.Is.Anything))
+					.Return(Task.Factory.Empty());
+				_autoRouteCollection = new AutoRouteCollection()
+					.Assemblies(Assembly.GetExecutingAssembly())
+					.ClassFilters(_classFilter)
+					.NameMappers(_nameMapper)
+					.IdMappers(_idMapper)
+					.SchemeMappers(_schemeMapper1, _schemeMapper2)
+					.ResolvedRelativeUrlMappers(_resolvedRelativeUrlMapper)
+					.ResponseMapper(_responseMapper);
+				_routes = _autoRouteCollection.GenerateRouteCollectionAsync().Result.ToArray();
+			}
+
+			private AutoRouteCollection _autoRouteCollection;
+			private IClassFilter _classFilter;
+			private IIdMapper _idMapper;
+			private IResolvedRelativeUrlMapper _resolvedRelativeUrlMapper;
+			private IResponseMapper _responseMapper;
+			private Route.Routing.Route[] _routes;
+			private ISchemeMapper _schemeMapper1;
+			private ISchemeMapper _schemeMapper2;
+			private INameMapper _nameMapper;
+
+			public class Endpoint
+			{
+				public void Method()
+				{
+				}
+			}
+
+			[Test]
+			public void Must_assign_mapped_scheme()
+			{
+				Assert.That(_routes[0].Scheme, Is.EqualTo(Scheme.Http));
+			}
+
+			[Test]
+			public void Must_map_using_first_matching_mapper()
+			{
+				_schemeMapper1.AssertWasCalled(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything));
+				_schemeMapper2.AssertWasNotCalled(arg => arg.MapAsync(Arg<Type>.Is.Anything, Arg<MethodInfo>.Is.Anything));
 			}
 		}
 	}

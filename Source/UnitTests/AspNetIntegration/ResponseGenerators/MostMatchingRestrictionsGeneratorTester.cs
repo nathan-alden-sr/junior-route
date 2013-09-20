@@ -5,6 +5,7 @@ using System.Net;
 using System.Web;
 
 using Junior.Route.AspNetIntegration.ResponseGenerators;
+using Junior.Route.Common;
 using Junior.Route.Routing;
 using Junior.Route.Routing.Responses;
 
@@ -53,11 +54,11 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseGenerators
 				_context.Stub(arg => arg.Request).Return(_request);
 				_context.Stub(arg => arg.Response).Return(_response);
 				_route1Response = new Response(200);
-				_route1 = new Route.Routing.Route("name1", Guid.NewGuid(), "relative1");
+				_route1 = new Route.Routing.Route((string)"name1", Guid.NewGuid(), (Scheme)Scheme.NotSpecified, (string)"relative1");
 				_route1.RestrictByMethods(HttpMethod.Get);
 				_route1.RespondWith(_route1Response);
 				_route2Response = new Response(200);
-				_route2 = new Route.Routing.Route("name2", Guid.NewGuid(), "relative2");
+				_route2 = new Route.Routing.Route((string)"name2", Guid.NewGuid(), (Scheme)Scheme.NotSpecified, (string)"relative2");
 				_route2.RestrictByMethods(HttpMethod.Get);
 				_route2.RestrictByUrl(uri => true);
 				_route2.RespondWith(_route2Response);
@@ -102,11 +103,11 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseGenerators
 				_context = MockRepository.GenerateMock<HttpContextBase>();
 				_context.Stub(arg => arg.Request).Return(_request);
 				_route1Response = new Response(200);
-				_route1 = new Route.Routing.Route("name1", Guid.NewGuid(), "relative1");
+				_route1 = new Route.Routing.Route((string)"name1", Guid.NewGuid(), (Scheme)Scheme.NotSpecified, (string)"relative1");
 				_route1.RestrictByMethods(HttpMethod.Get);
 				_route1.RespondWith(_route1Response);
 				_route2Response = new Response(200);
-				_route2 = new Route.Routing.Route("name2", Guid.NewGuid(), "relative2");
+				_route2 = new Route.Routing.Route((string)"name2", Guid.NewGuid(), (Scheme)Scheme.NotSpecified, (string)"relative2");
 				_route2.RestrictByMethods(HttpMethod.Get);
 				_route2.RespondWith(_route2Response);
 				_routeMatchResults = new List<RouteMatchResult>

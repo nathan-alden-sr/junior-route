@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Web;
 
 using Junior.Common;
+using Junior.Route.Common;
 using Junior.Route.Http.RequestHeaders;
 using Junior.Route.Routing.AuthenticationProviders;
 using Junior.Route.Routing.RequestValueComparers;
@@ -21,46 +22,29 @@ namespace Junior.Route.Routing
 		private readonly Guid _id;
 		private readonly string _name;
 		private readonly Dictionary<Type, HashSet<IRestriction>> _restrictionsByRestrictionType = new Dictionary<Type, HashSet<IRestriction>>();
+		private readonly Scheme _scheme;
 		private IAuthenticationProvider _authenticationProvider;
 		private string _resolvedRelativeUrl;
 		private Func<HttpContextBase, Task<IResponse>> _responseDelegate = context => new Response().NoContent().AsCompletedTask<IResponse>();
 
-		public Route(string name, IGuidFactory guidFactory, string resolvedRelativeUrl)
-		{
-			name.ThrowIfNull("name");
-			guidFactory.ThrowIfNull("guidFactory");
-			resolvedRelativeUrl.ThrowIfNull("resolvedRelativeUrl");
-
-			_name = name;
-			_id = guidFactory.Random();
-			_resolvedRelativeUrl = resolvedRelativeUrl;
-		}
-
-		public Route(string name, Guid id, string resolvedRelativeUrl)
+		public Route(string name, Guid id, Scheme scheme, string resolvedRelativeUrl)
 		{
 			name.ThrowIfNull("name");
 			resolvedRelativeUrl.ThrowIfNull("resolvedRelativeUrl");
 
 			_name = name;
 			_id = id;
+			_scheme = scheme;
 			_resolvedRelativeUrl = resolvedRelativeUrl;
 		}
 
-		protected Route(string name, IGuidFactory guidFactory)
-		{
-			name.ThrowIfNull("name");
-			guidFactory.ThrowIfNull("guidFactory");
-
-			_name = name;
-			_id = guidFactory.Random();
-		}
-
-		protected Route(string name, Guid id)
+		protected Route(string name, Guid id, Scheme scheme)
 		{
 			name.ThrowIfNull("name");
 
 			_name = name;
 			_id = id;
+			_scheme = scheme;
 		}
 
 		public string Name
@@ -76,6 +60,14 @@ namespace Junior.Route.Routing
 			get
 			{
 				return _id;
+			}
+		}
+
+		public Scheme Scheme
+		{
+			get
+			{
+				return _scheme;
 			}
 		}
 
@@ -957,11 +949,11 @@ namespace Junior.Route.Routing
 			@delegate.ThrowIfNull("delegate");
 
 			_responseDelegate = context =>
-				{
-					@delegate(context);
+			{
+				@delegate(context);
 
-					return new Response().NoContent().AsCompletedTask<IResponse>();
-				};
+				return new Response().NoContent().AsCompletedTask<IResponse>();
+			};
 			ResponseType = null;
 
 			return this;
@@ -1008,8 +1000,8 @@ namespace Junior.Route.Routing
 			AuthenticationResult result = await _authenticationProvider.AuthenticateAsync(request, response, this);
 
 			return result == AuthenticationResult.AuthenticationSucceeded
-				       ? AuthenticateResult.AuthenticationSucceeded()
-				       : AuthenticateResult.AuthenticationFailed(await _authenticationProvider.GetFailedAuthenticationResponseAsync(request));
+				? AuthenticateResult.AuthenticationSucceeded()
+				: AuthenticateResult.AuthenticationFailed(await _authenticationProvider.GetFailedAuthenticationResponseAsync(request));
 		}
 
 		public Task<IResponse> ProcessResponseAsync(HttpContextBase context)

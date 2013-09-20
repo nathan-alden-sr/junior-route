@@ -6,6 +6,7 @@ using System.Reflection;
 
 using Junior.Route.AutoRouting.Containers;
 using Junior.Route.AutoRouting.RestrictionMappers;
+using Junior.Route.Common;
 using Junior.Route.Routing.Restrictions;
 
 using NUnit.Framework;
@@ -23,7 +24,7 @@ namespace Junior.Route.UnitTests.AutoRouting.RestrictionMappers
 			public void SetUp()
 			{
 				_mapper = new HttpMethodFromMethodsNamedAfterStandardHttpMethodsMapper();
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "relative");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "relative");
 				_container = MockRepository.GenerateMock<IContainer>();
 			}
 
@@ -76,7 +77,7 @@ namespace Junior.Route.UnitTests.AutoRouting.RestrictionMappers
 			public void SetUp()
 			{
 				_mapper = new HttpMethodFromMethodsNamedAfterStandardHttpMethodsMapper();
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "relative");
+				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "relative");
 				_container = MockRepository.GenerateMock<IContainer>();
 			}
 

@@ -8,7 +8,7 @@ namespace Junior.Route.Routing
 		private readonly IResponse _failedResponse;
 		private readonly AuthenticateResultType _resultType;
 
-		private AuthenticateResult(AuthenticateResultType resultType, IResponse failedResponse)
+		private AuthenticateResult(AuthenticateResultType resultType, IResponse failedResponse = null)
 		{
 			_resultType = resultType;
 			_failedResponse = failedResponse;
@@ -32,12 +32,12 @@ namespace Junior.Route.Routing
 
 		public static AuthenticateResult NoAuthenticationPerformed()
 		{
-			return new AuthenticateResult(AuthenticateResultType.NoAuthenticationPerformed, null);
+			return new AuthenticateResult(AuthenticateResultType.NoAuthenticationPerformed);
 		}
 
 		public static AuthenticateResult AuthenticationSucceeded()
 		{
-			return new AuthenticateResult(AuthenticateResultType.AuthenticationSucceeded, null);
+			return new AuthenticateResult(AuthenticateResultType.AuthenticationSucceeded);
 		}
 
 		public static AuthenticateResult AuthenticationFailed(IResponse failedResponse)

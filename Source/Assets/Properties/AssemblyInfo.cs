@@ -1,5 +1,5 @@
 ﻿using System.Reflection;
 
 [assembly:AssemblyTitle("Junior.Route.Assets")]
-[assembly:AssemblyVersion("7.2.0.0")]
-[assembly:AssemblyFileVersion("7.2.0.0")]
+[assembly:AssemblyVersion("8.0.0.0")]
+[assembly:AssemblyFileVersion("8.0.0.0")]

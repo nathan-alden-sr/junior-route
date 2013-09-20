@@ -11,19 +11,34 @@ namespace Junior.Route.Routing.Diagnostics
 {
 	public class RoutingDiagnosticConfiguration : IDiagnosticConfiguration
 	{
+		private readonly IGuidFactory _guidFactory;
+		private readonly IHttpRuntime _httpRuntime;
 		private readonly Lazy<IRouteCollection> _routes;
+		private readonly IUrlResolver _urlResolver;
 
-		public RoutingDiagnosticConfiguration(Func<IRouteCollection> routes)
+		public RoutingDiagnosticConfiguration(IGuidFactory guidFactory, IUrlResolver urlResolver, IHttpRuntime httpRuntime, Func<IRouteCollection> routes)
 		{
+			guidFactory.ThrowIfNull("guidFactory");
+			urlResolver.ThrowIfNull("urlResolver");
+			httpRuntime.ThrowIfNull("httpRuntime");
 			routes.ThrowIfNull("routes");
 
+			_guidFactory = guidFactory;
+			_urlResolver = urlResolver;
+			_httpRuntime = httpRuntime;
 			_routes = new Lazy<IRouteCollection>(routes);
 		}
 
-		public RoutingDiagnosticConfiguration(IRouteCollection routes)
+		public RoutingDiagnosticConfiguration(IGuidFactory guidFactory, IUrlResolver urlResolver, IHttpRuntime httpRuntime, IRouteCollection routes)
 		{
+			guidFactory.ThrowIfNull("guidFactory");
+			urlResolver.ThrowIfNull("urlResolver");
+			httpRuntime.ThrowIfNull("httpRuntime");
 			routes.ThrowIfNull("routes");
 
+			_guidFactory = guidFactory;
+			_urlResolver = urlResolver;
+			_httpRuntime = httpRuntime;
 			_routes = new Lazy<IRouteCollection>(() => routes);
 		}
 
@@ -38,21 +53,20 @@ namespace Junior.Route.Routing.Diagnostics
 			}
 		}
 
-		public IEnumerable<Route> GetRoutes(IGuidFactory guidFactory, IUrlResolver urlResolver, IHttpRuntime httpRuntime, string diagnosticsRelativeUrl)
+		public IEnumerable<Route> GetRoutes(Scheme scheme, string diagnosticsRelativeUrl)
 		{
-			guidFactory.ThrowIfNull("guidFactory");
-			urlResolver.ThrowIfNull("urlResolver");
 			diagnosticsRelativeUrl.ThrowIfNull("diagnosticsUrl");
 
 			yield return DiagnosticRouteHelper.Instance.GetViewRoute<RouteTableView>(
 				"Diagnostics Route Table View",
-				guidFactory,
+				_guidFactory.Random(),
+				scheme,
 				diagnosticsRelativeUrl + "/route_table",
 				ResponseResources.RouteTable,
 				RouteTableViewNamespaces,
-				httpRuntime,
-				view => view.Populate(urlResolver, _routes.Value, diagnosticsRelativeUrl));
-			yield return DiagnosticRouteHelper.Instance.GetStylesheetRoute("Diagnostics Route Table View CSS", guidFactory, diagnosticsRelativeUrl + "/route_table/css", ResponseResources.route_table_view, httpRuntime);
+				_httpRuntime,
+				view => view.Populate(_urlResolver, _routes.Value, diagnosticsRelativeUrl));
+			yield return DiagnosticRouteHelper.Instance.GetStylesheetRoute("Diagnostics Route Table View CSS", _guidFactory.Random(), scheme, diagnosticsRelativeUrl + "/route_table/css", ResponseResources.route_table_view, _httpRuntime);
 		}
 
 		public IEnumerable<DiagnosticViewLink> GetLinks(string diagnosticsUrl)

@@ -5,6 +5,7 @@ using System.Net;
 using System.Web;
 
 using Junior.Route.AspNetIntegration.ResponseGenerators;
+using Junior.Route.Common;
 using Junior.Route.Http.RequestHeaders;
 using Junior.Route.Routing;
 using Junior.Route.Routing.RequestValueComparers;
@@ -26,7 +27,7 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseGenerators
 			{
 				_generator = new UnmatchedRestrictionsGenerator();
 				_context = MockRepository.GenerateMock<HttpContextBase>();
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "relative");
+				_route = new Route.Routing.Route((string)"name", Guid.NewGuid(), (Scheme)Scheme.NotSpecified, (string)"relative");
 				_httpRuntime = MockRepository.GenerateMock<IHttpRuntime>();
 				_matchedRestrictions = new[] { new UrlRelativePathRestriction("", CaseInsensitivePlainComparer.Instance, _httpRuntime) };
 				_unmatchedRestrictions = new IRestriction[] { new HeaderRestriction<AcceptCharsetHeader>("Accept-Charset", (Func<string, IEnumerable<AcceptCharsetHeader>>)AcceptCharsetHeader.ParseMany, header => false) };
@@ -59,7 +60,7 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseGenerators
 			{
 				_generator = new UnmatchedRestrictionsGenerator();
 				_context = MockRepository.GenerateMock<HttpContextBase>();
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "relative");
+				_route = new Route.Routing.Route((string)"name", Guid.NewGuid(), (Scheme)Scheme.NotSpecified, (string)"relative");
 				_httpRuntime = MockRepository.GenerateMock<IHttpRuntime>();
 				_matchedRestrictions = new[] { new UrlRelativePathRestriction("", CaseInsensitivePlainComparer.Instance, _httpRuntime) };
 				_unmatchedRestrictions = new IRestriction[] { new HeaderRestriction<AcceptEncodingHeader>("Accept-Encoding", (Func<string, IEnumerable<AcceptEncodingHeader>>)AcceptEncodingHeader.ParseMany, header => false) };
@@ -92,7 +93,7 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseGenerators
 			{
 				_generator = new UnmatchedRestrictionsGenerator();
 				_context = MockRepository.GenerateMock<HttpContextBase>();
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "relative");
+				_route = new Route.Routing.Route((string)"name", Guid.NewGuid(), (Scheme)Scheme.NotSpecified, (string)"relative");
 				_httpRuntime = MockRepository.GenerateMock<IHttpRuntime>();
 				_matchedRestrictions = new[] { new UrlRelativePathRestriction("", CaseInsensitivePlainComparer.Instance, _httpRuntime) };
 				_unmatchedRestrictions = new IRestriction[] { new HeaderRestriction<ContentEncodingHeader>("Content-Encoding", (Func<string, IEnumerable<ContentEncodingHeader>>)ContentEncodingHeader.ParseMany, header => false) };
@@ -125,7 +126,7 @@ namespace Junior.Route.UnitTests.AspNetIntegration.ResponseGenerators
 			{
 				_generator = new UnmatchedRestrictionsGenerator();
 				_context = MockRepository.GenerateMock<HttpContextBase>();
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "relative");
+				_route = new Route.Routing.Route((string)"name", Guid.NewGuid(), (Scheme)Scheme.NotSpecified, (string)"relative");
 				_httpRuntime = MockRepository.GenerateMock<IHttpRuntime>();
 				_matchedRestrictions = new[] { new UrlRelativePathRestriction("", CaseInsensitivePlainComparer.Instance, _httpRuntime) };
 				_unmatchedRestrictions = new[] { new MethodRestriction("GET") };

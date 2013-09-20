@@ -23,7 +23,7 @@ namespace Junior.Route.Diagnostics
 			}
 		}
 
-		public IEnumerable<Routing.Route> GetRoutes(IGuidFactory guidFactory, IUrlResolver urlResolver, IHttpRuntime httpRuntime, string diagnosticsRelativeUrl, IEnumerable<IDiagnosticConfiguration> configurations)
+		public IEnumerable<Routing.Route> GetRoutes(IGuidFactory guidFactory, IUrlResolver urlResolver, IHttpRuntime httpRuntime, Scheme scheme, string diagnosticsRelativeUrl, IEnumerable<IDiagnosticConfiguration> configurations)
 		{
 			guidFactory.ThrowIfNull("guidFactory");
 			urlResolver.ThrowIfNull("urlResolver");
@@ -34,36 +34,37 @@ namespace Junior.Route.Diagnostics
 
 			yield return DiagnosticRouteHelper.Instance.GetViewRoute<DiagnosticsView>(
 				"Diagnostics Home View",
-				guidFactory,
+				guidFactory.Random(),
+				scheme,
 				diagnosticsRelativeUrl,
 				ResponseResources.Diagnostics,
 				DiagnosticsViewNamespaces,
 				httpRuntime,
 				view =>
-					{
-						view.UrlResolver = urlResolver;
-						AddLinks(view, diagnosticsUrl, configurations);
-					});
-			yield return DiagnosticRouteHelper.Instance.GetStylesheetRoute("Diagnostics Common CSS", guidFactory, diagnosticsRelativeUrl + "/css/common", ResponseResources.common, httpRuntime);
-			yield return DiagnosticRouteHelper.Instance.GetStylesheetRoute("Diagnostics Reset CSS", guidFactory, diagnosticsRelativeUrl + "/css/reset", ResponseResources.reset, httpRuntime);
-			yield return DiagnosticRouteHelper.Instance.GetJavaScriptRoute("Diagnostics jQuery JS", guidFactory, diagnosticsRelativeUrl + "/js/jquery", ResponseResources.jquery_1_8_2_min, httpRuntime);
+				{
+					view.UrlResolver = urlResolver;
+					AddLinks(view, diagnosticsUrl, configurations);
+				});
+			yield return DiagnosticRouteHelper.Instance.GetStylesheetRoute("Diagnostics Common CSS", guidFactory.Random(), scheme, diagnosticsRelativeUrl + "/css/common", ResponseResources.common, httpRuntime);
+			yield return DiagnosticRouteHelper.Instance.GetStylesheetRoute("Diagnostics Reset CSS", guidFactory.Random(), scheme, diagnosticsRelativeUrl + "/css/reset", ResponseResources.reset, httpRuntime);
+			yield return DiagnosticRouteHelper.Instance.GetJavaScriptRoute("Diagnostics jQuery JS", guidFactory.Random(), scheme, diagnosticsRelativeUrl + "/js/jquery", ResponseResources.jquery_2_0_3_min, httpRuntime);
 
 			foreach (IDiagnosticConfiguration arg in configurations)
 			{
-				foreach (Routing.Route route in arg.GetRoutes(guidFactory, urlResolver, httpRuntime, diagnosticsRelativeUrl))
+				foreach (Routing.Route route in arg.GetRoutes(scheme, diagnosticsRelativeUrl))
 				{
 					yield return route;
 				}
 			}
 		}
 
-		public IEnumerable<Routing.Route> GetRoutes(IGuidFactory guidFactory, IUrlResolver urlResolver, IHttpRuntime httpRuntime, string diagnosticsRelativeUrl, params IDiagnosticConfiguration[] configurations)
+		public IEnumerable<Routing.Route> GetRoutes(IGuidFactory guidFactory, IUrlResolver urlResolver, IHttpRuntime httpRuntime, Scheme scheme, string diagnosticsRelativeUrl, params IDiagnosticConfiguration[] configurations)
 		{
 			guidFactory.ThrowIfNull("guidFactory");
 			diagnosticsRelativeUrl.ThrowIfNull("diagnosticsUrl");
 			configurations.ThrowIfNull("configurations");
 
-			return GetRoutes(guidFactory, urlResolver, httpRuntime, diagnosticsRelativeUrl, (IEnumerable<IDiagnosticConfiguration>)configurations);
+			return GetRoutes(guidFactory, urlResolver, httpRuntime, scheme, diagnosticsRelativeUrl, (IEnumerable<IDiagnosticConfiguration>)configurations);
 		}
 
 		private static void AddLinks(DiagnosticsView view, string diagnosticsUrl, IEnumerable<IDiagnosticConfiguration> configurations)

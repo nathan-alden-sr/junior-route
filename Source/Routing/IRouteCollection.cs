@@ -3,11 +3,11 @@ using System.Collections.Generic;
 
 namespace Junior.Route.Routing
 {
-	public interface IRouteCollection : IEnumerable<Route>
+	public interface IRouteCollection : IEnumerable<Routing.Route>
 	{
-		Route GetRoute(Guid id);
-		Route GetRoute(string name);
-		IEnumerable<Route> GetRoutes(string name);
-		IEnumerable<Route> GetRoutes();
+		Routing.Route GetRoute(Guid id);
+		Routing.Route GetRoute(string name);
+		IEnumerable<Routing.Route> GetRoutes(string name);
+		IEnumerable<Routing.Route> GetRoutes();
 	}
 }

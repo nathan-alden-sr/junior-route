@@ -5,7 +5,7 @@
 		private readonly MapResultType _resultType;
 		private readonly object _value;
 
-		private MapResult(MapResultType resultType, object value)
+		private MapResult(MapResultType resultType, object value = null)
 		{
 			_resultType = resultType;
 			_value = value;
@@ -34,7 +34,7 @@
 
 		public static MapResult ValueNotMapped()
 		{
-			return new MapResult(MapResultType.ValueNotMapped, null);
+			return new MapResult(MapResultType.ValueNotMapped);
 		}
 	}
 }

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
 
+using Junior.Route.AutoRouting;
+using Junior.Route.Common;
 using Junior.Route.Routing;
 
 using NUnit.Framework;
@@ -16,7 +18,7 @@ namespace Junior.Route.UnitTests.Routing
 			public void SetUp()
 			{
 				_id = Guid.NewGuid();
-				_routeCollection = new RouteCollection { new Route.Routing.Route("name1", _id, "route") };
+				_routeCollection = new RouteCollection { new Route.Routing.Route((string)"name1", _id, (Scheme)Scheme.NotSpecified, (string)"route") };
 			}
 
 			private RouteCollection _routeCollection;
@@ -25,7 +27,7 @@ namespace Junior.Route.UnitTests.Routing
 			[Test]
 			public void Must_throw_exception_and_not_add_duplicates()
 			{
-				Assert.That(() => _routeCollection.Add(new Route.Routing.Route("name2", _id, "route")), Throws.InstanceOf<ArgumentException>());
+				Assert.That(() => _routeCollection.Add(new Route.Routing.Route((string)"name2", _id, (Scheme)Scheme.NotSpecified, (string)"route")), Throws.InstanceOf<ArgumentException>());
 
 				Route.Routing.Route[] routes = _routeCollection.GetRoutes().ToArray();
 
@@ -39,7 +41,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_routeCollection = new RouteCollection(true) { new Route.Routing.Route("name", Guid.NewGuid(), "route") };
+				_routeCollection = new RouteCollection(true) { new Route.Routing.Route((string)"name", Guid.NewGuid(), (Scheme)Scheme.NotSpecified, (string)"route") };
 			}
 
 			private RouteCollection _routeCollection;
@@ -47,7 +49,7 @@ namespace Junior.Route.UnitTests.Routing
 			[Test]
 			public void Must_add_duplicates()
 			{
-				Assert.That(() => _routeCollection.Add(new Route.Routing.Route("name", Guid.NewGuid(), "route")), Throws.Nothing);
+				Assert.That(() => _routeCollection.Add(new Route.Routing.Route((string)"name", Guid.NewGuid(), (Scheme)Scheme.NotSpecified, (string)"route")), Throws.Nothing);
 
 				Route.Routing.Route[] routes = _routeCollection.GetRoutes().ToArray();
 
@@ -61,7 +63,7 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_routeCollection = new RouteCollection { new Route.Routing.Route("name", Guid.NewGuid(), "route") };
+				_routeCollection = new RouteCollection { new Route.Routing.Route((string)"name", Guid.NewGuid(), (Scheme)Scheme.NotSpecified, (string)"route") };
 			}
 
 			private RouteCollection _routeCollection;
@@ -69,7 +71,7 @@ namespace Junior.Route.UnitTests.Routing
 			[Test]
 			public void Must_throw_exception_and_not_add_duplicates()
 			{
-				Assert.That(() => _routeCollection.Add(new Route.Routing.Route("name", Guid.NewGuid(), "route")), Throws.InstanceOf<ArgumentException>());
+				Assert.That(() => _routeCollection.Add(new Route.Routing.Route((string)"name", Guid.NewGuid(), (Scheme)Scheme.NotSpecified, (string)"route")), Throws.InstanceOf<ArgumentException>());
 
 				Route.Routing.Route[] routes = _routeCollection.GetRoutes().ToArray();
 
@@ -85,8 +87,8 @@ namespace Junior.Route.UnitTests.Routing
 			{
 				_routeCollection = new RouteCollection
 					{
-						new Route.Routing.Route("name1", Guid.NewGuid(), "route1"),
-						new Route.Routing.Route("name2", Guid.NewGuid(), "route2")
+						new Route.Routing.Route((string)"name1", Guid.NewGuid(), (Scheme)Scheme.NotSpecified, (string)"route1"),
+						new Route.Routing.Route((string)"name2", Guid.NewGuid(), (Scheme)Scheme.NotSpecified, (string)"route2")
 					};
 			}
 
@@ -109,8 +111,8 @@ namespace Junior.Route.UnitTests.Routing
 			{
 				_routeCollection = new RouteCollection
 					{
-						new Route.Routing.Route("name1", Guid.NewGuid(), "route1"),
-						new Route.Routing.Route("name2", Guid.NewGuid(), "route2")
+						new Route.Routing.Route((string)"name1", Guid.NewGuid(), (Scheme)Scheme.NotSpecified, (string)"route1"),
+						new Route.Routing.Route((string)"name2", Guid.NewGuid(), (Scheme)Scheme.NotSpecified, (string)"route2")
 					};
 			}
 
@@ -132,11 +134,11 @@ namespace Junior.Route.UnitTests.Routing
 			public void SetUp()
 			{
 				_routeId = Guid.Parse("f2d43d2b-1075-40bd-9403-8be9f2ad585c");
-				_route = new Route.Routing.Route("test1", _routeId, "test1");
+				_route = new Route.Routing.Route((string)"test1", _routeId, (Scheme)Scheme.NotSpecified, (string)"test1");
 				_routeCollection = new RouteCollection
 					{
 						_route,
-						new Route.Routing.Route("test2", Guid.NewGuid(), "test2")
+						new Route.Routing.Route((string)"test2", Guid.NewGuid(), (Scheme)Scheme.NotSpecified, (string)"test2")
 					};
 			}
 
@@ -175,11 +177,11 @@ namespace Junior.Route.UnitTests.Routing
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("test1", Guid.NewGuid(), "test1");
+				_route = new Route.Routing.Route((string)"test1", Guid.NewGuid(), (Scheme)Scheme.NotSpecified, (string)"test1");
 				_routeCollection = new RouteCollection
 					{
 						_route,
-						new Route.Routing.Route("test2", Guid.NewGuid(), "test2")
+						new Route.Routing.Route((string)"test2", Guid.NewGuid(), (Scheme)Scheme.NotSpecified, (string)"test2")
 					};
 			}
 

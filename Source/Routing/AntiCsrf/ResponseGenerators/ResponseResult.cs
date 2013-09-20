@@ -7,7 +7,7 @@ namespace Junior.Route.Routing.AntiCsrf.ResponseGenerators
 		private readonly IResponse _response;
 		private readonly ResponseResultType _resultType;
 
-		private ResponseResult(ResponseResultType resultType, IResponse response)
+		private ResponseResult(ResponseResultType resultType, IResponse response = null)
 		{
 			_resultType = resultType;
 			_response = response;
@@ -36,7 +36,7 @@ namespace Junior.Route.Routing.AntiCsrf.ResponseGenerators
 
 		public static ResponseResult ResponseNotGenerated()
 		{
-			return new ResponseResult(ResponseResultType.ResponseNotGenerated, null);
+			return new ResponseResult(ResponseResultType.ResponseNotGenerated);
 		}
 	}
 }

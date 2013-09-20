@@ -10,6 +10,7 @@ using Junior.Common;
 using Junior.Route.AutoRouting.Containers;
 using Junior.Route.AutoRouting.ParameterMappers;
 using Junior.Route.AutoRouting.ResponseMappers;
+using Junior.Route.Common;
 using Junior.Route.Routing.Responses;
 using Junior.Route.Routing.Responses.Text;
 
@@ -31,7 +32,7 @@ namespace Junior.Route.UnitTests.AutoRouting.ResponseMappers
 				_responseMethodReturnTypeMapper = new ResponseMethodReturnTypeMapper(_parameterMapper.ToEnumerable(), Enumerable.Empty<IMappedDelegateContextFactory>());
 				_container = MockRepository.GenerateMock<IContainer>();
 				_container.Stub(arg => arg.GetInstance(typeof(Endpoint))).Return(new Endpoint());
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "relative");
+				_route = new Route.Routing.Route((string)"name", Guid.NewGuid(), (Scheme)Scheme.NotSpecified, (string)"relative");
 				_responseMethodReturnTypeMapper.MapAsync(() => _container, typeof(Endpoint), typeof(Endpoint).GetMethod("Method"), _route);
 				_context = MockRepository.GenerateMock<HttpContextBase>();
 				_response = _route.ProcessResponseAsync(_context).Result;
@@ -81,7 +82,7 @@ namespace Junior.Route.UnitTests.AutoRouting.ResponseMappers
 				_endpoint = new Endpoint();
 				_container = MockRepository.GenerateMock<IContainer>();
 				_container.Stub(arg => arg.GetInstance(typeof(Endpoint))).Return(_endpoint);
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "relative");
+				_route = new Route.Routing.Route((string)"name", Guid.NewGuid(), (Scheme)Scheme.NotSpecified, (string)"relative");
 				_responseMethodReturnTypeMapper.MapAsync(() => _container, typeof(Endpoint), typeof(Endpoint).GetMethod("Method"), _route);
 				_context = MockRepository.GenerateMock<HttpContextBase>();
 
@@ -137,7 +138,7 @@ namespace Junior.Route.UnitTests.AutoRouting.ResponseMappers
 				_endpoint = new Endpoint();
 				_container = MockRepository.GenerateMock<IContainer>();
 				_container.Stub(arg => arg.GetInstance(typeof(Endpoint))).Return(_endpoint);
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "relative");
+				_route = new Route.Routing.Route((string)"name", Guid.NewGuid(), (Scheme)Scheme.NotSpecified, (string)"relative");
 				_responseMethodReturnTypeMapper.MapAsync(() => _container, typeof(Endpoint), typeof(Endpoint).GetMethod("Method"), _route);
 				_context = MockRepository.GenerateMock<HttpContextBase>();
 			}
@@ -174,7 +175,7 @@ namespace Junior.Route.UnitTests.AutoRouting.ResponseMappers
 				_responseMethodReturnTypeMapper = new ResponseMethodReturnTypeMapper(_parameterMapper.ToEnumerable(), Enumerable.Empty<IMappedDelegateContextFactory>());
 				_container = MockRepository.GenerateMock<IContainer>();
 				_container.Stub(arg => arg.GetInstance(typeof(Endpoint))).Return(new Endpoint());
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "relative");
+				_route = new Route.Routing.Route((string)"name", Guid.NewGuid(), (Scheme)Scheme.NotSpecified, (string)"relative");
 				_responseMethodReturnTypeMapper.MapAsync(() => _container, typeof(Endpoint), typeof(Endpoint).GetMethod("Method"), _route);
 				_context = MockRepository.GenerateMock<HttpContextBase>();
 				_response = _route.ProcessResponseAsync(_context).Result;
@@ -221,7 +222,7 @@ namespace Junior.Route.UnitTests.AutoRouting.ResponseMappers
 				_endpoint = new Endpoint();
 				_container = MockRepository.GenerateMock<IContainer>();
 				_container.Stub(arg => arg.GetInstance(typeof(Endpoint))).Return(_endpoint);
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "relative");
+				_route = new Route.Routing.Route((string)"name", Guid.NewGuid(), (Scheme)Scheme.NotSpecified, (string)"relative");
 				_responseMethodReturnTypeMapper.MapAsync(() => _container, typeof(Endpoint), typeof(Endpoint).GetMethod("Method"), _route);
 				_context = MockRepository.GenerateMock<HttpContextBase>();
 				_response = _route.ProcessResponseAsync(_context).Result;

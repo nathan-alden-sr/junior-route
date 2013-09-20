@@ -3,6 +3,7 @@ using System.Linq;
 
 using Junior.Route.AutoRouting.Containers;
 using Junior.Route.AutoRouting.RestrictionMappers.Attributes;
+using Junior.Route.Common;
 using Junior.Route.Routing.Restrictions;
 
 using NUnit.Framework;
@@ -20,7 +21,7 @@ namespace Junior.Route.UnitTests.AutoRouting.RestrictionMappers.Attributes
 			public void SetUp()
 			{
 				_attribute = new RefererUrlPortAttribute(8080, 16000);
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "relative");
+				_route = new Route.Routing.Route((string)"name", Guid.NewGuid(), (Scheme)Scheme.NotSpecified, (string)"relative");
 				_container = MockRepository.GenerateMock<IContainer>();
 			}
 

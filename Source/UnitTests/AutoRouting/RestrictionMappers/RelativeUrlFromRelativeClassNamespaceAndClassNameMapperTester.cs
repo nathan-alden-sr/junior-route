@@ -4,6 +4,7 @@ using System.Reflection;
 
 using Junior.Route.AutoRouting.Containers;
 using Junior.Route.AutoRouting.RestrictionMappers;
+using Junior.Route.Common;
 using Junior.Route.Routing;
 using Junior.Route.Routing.RequestValueComparers;
 using Junior.Route.Routing.Restrictions;
@@ -22,7 +23,7 @@ namespace Junior.Route.UnitTests.AutoRouting.RestrictionMappers
 			[SetUp]
 			public void SetUp()
 			{
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), "relative");
+				_route = new Route.Routing.Route((string)"name", Guid.NewGuid(), (Scheme)Scheme.NotSpecified, (string)"relative");
 				_httpRuntime = MockRepository.GenerateMock<IHttpRuntime>();
 				_container = MockRepository.GenerateMock<IContainer>();
 				_container.Stub(arg => arg.GetInstance<IHttpRuntime>()).Return(_httpRuntime);

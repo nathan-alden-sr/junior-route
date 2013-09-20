@@ -2,6 +2,7 @@
 using System.Web;
 
 using Junior.Common;
+using Junior.Route.Common;
 using Junior.Route.Routing;
 using Junior.Route.Routing.RequestValueComparers;
 using Junior.Route.Routing.Responses;
@@ -16,22 +17,8 @@ namespace Junior.Route.Assets.FileSystem
 		private readonly string _relativePath;
 		private readonly BundleWatcher _watcher;
 
-		protected BundleWatcherRoute(string name, IGuidFactory guidFactory, string relativePath, BundleWatcher watcher, IHttpRuntime httpRuntime)
-			: base(name, guidFactory)
-		{
-			relativePath.ThrowIfNull("relativePath");
-			watcher.ThrowIfNull("watcher");
-			httpRuntime.ThrowIfNull("httpRuntime");
-
-			_relativePath = relativePath;
-			_watcher = watcher;
-			_httpRuntime = httpRuntime;
-			_watcher.BundleChanged += WatcherBundleChanged;
-			ConfigureRoute();
-		}
-
-		protected BundleWatcherRoute(string name, Guid id, string relativePath, BundleWatcher watcher, IHttpRuntime httpRuntime)
-			: base(name, id)
+		protected BundleWatcherRoute(string name, Guid id, Scheme scheme, string relativePath, BundleWatcher watcher, IHttpRuntime httpRuntime)
+			: base(name, id, scheme)
 		{
 			relativePath.ThrowIfNull("relativePath");
 			watcher.ThrowIfNull("watcher");

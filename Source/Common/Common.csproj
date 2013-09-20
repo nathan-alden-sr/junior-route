@@ -45,6 +45,7 @@
     <Compile Include="..\Core AssemblyInfo.cs">
       <Link>Properties\Core AssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Scheme.cs" />
     <Compile Include="SetExtensions.cs" />
     <Compile Include="IFileSystem.cs" />
     <Compile Include="IUrlResolver.cs" />

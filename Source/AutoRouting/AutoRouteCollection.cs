@@ -20,6 +20,7 @@ using Junior.Route.AutoRouting.ResolvedRelativeUrlMappers;
 using Junior.Route.AutoRouting.ResponseMappers;
 using Junior.Route.AutoRouting.RestrictionMappers;
 using Junior.Route.AutoRouting.RestrictionMappers.Attributes;
+using Junior.Route.AutoRouting.SchemeMappers;
 using Junior.Route.Common;
 using Junior.Route.Routing;
 using Junior.Route.Routing.AuthenticationProviders;
@@ -39,6 +40,7 @@ namespace Junior.Route.AutoRouting
 		private readonly HashSet<INameMapper> _nameMappers = new HashSet<INameMapper>();
 		private readonly HashSet<IResolvedRelativeUrlMapper> _resolvedRelativeUrlMappers = new HashSet<IResolvedRelativeUrlMapper>();
 		private readonly HashSet<IRestrictionMapper> _restrictionMappers = new HashSet<IRestrictionMapper>();
+		private readonly HashSet<ISchemeMapper> _schemeMappers = new HashSet<ISchemeMapper>();
 		private IAuthenticationProvider _authenticationProvider;
 		private IContainer _bundleDependencyContainer;
 		private bool _duplicateRouteNamesAllowed;
@@ -166,6 +168,13 @@ namespace Junior.Route.AutoRouting
 						throw new ApplicationException(String.Format("Unable to determine a route ID for '{0}.{1}'.", matchingType.FullName, matchingMethod.Name));
 					}
 
+					Scheme? scheme = await GetSchemeAsync(matchingType, matchingMethod);
+
+					if (scheme == null)
+					{
+						throw new ApplicationException(String.Format("Unable to determine a route scheme for '{0}.{1}'.", matchingType.FullName, matchingMethod.Name));
+					}
+
 					Type[] ignoredResolvedRelativeUrlMapperTypes = matchingMethod
 						.GetCustomAttributes<IgnoreResolvedRelativeUrlMapperTypeAttribute>()
 						.SelectMany(arg => arg.IgnoredTypes)
@@ -177,7 +186,7 @@ namespace Junior.Route.AutoRouting
 						throw new ApplicationException(String.Format("Unable to determine a route resolved relative URL for {0}.{1}.", matchingType.FullName, matchingMethod.Name));
 					}
 
-					var route = new Routing.Route(name, id.Value, resolvedRelativeUrl);
+					var route = new Routing.Route(name, id.Value, scheme.Value, resolvedRelativeUrl);
 					Type[] ignoredRestrictionMapperTypes = matchingMethod
 						.GetCustomAttributes<IgnoreRestrictionMapperTypeAttribute>()
 						.SelectMany(arg => arg.IgnoredTypes)
@@ -308,6 +317,21 @@ namespace Junior.Route.AutoRouting
 				if (result.ResultType == IdResultType.IdMapped)
 				{
 					return result.Id;
+				}
+			}
+
+			return null;
+		}
+
+		private async Task<Scheme?> GetSchemeAsync(Type matchingType, MethodInfo matchingMethod)
+		{
+			foreach (ISchemeMapper schemeMapper in _schemeMappers)
+			{
+				SchemeResult result = await schemeMapper.MapAsync(matchingType, matchingMethod);
+
+				if (result.ResultType == SchemeResultType.SchemeMapped)
+				{
+					return result.Scheme;
 				}
 			}
 
@@ -516,6 +540,38 @@ namespace Junior.Route.AutoRouting
 
 		#endregion
 
+		#region Scheme mappers
+
+		public AutoRouteCollection SchemeNotSpecified()
+		{
+			_schemeMappers.Add(new NotSpecifiedMapper());
+
+			return this;
+		}
+
+		public AutoRouteCollection SchemeUsingAttribute()
+		{
+			_schemeMappers.Add(new SchemeAttributeMapper());
+
+			return this;
+		}
+
+		public AutoRouteCollection SchemeMappers(IEnumerable<ISchemeMapper> mappers)
+		{
+			mappers.ThrowIfNull("mappers");
+
+			_schemeMappers.AddRange(mappers);
+
+			return this;
+		}
+
+		public AutoRouteCollection SchemeMappers(params ISchemeMapper[] mappers)
+		{
+			return SchemeMappers((IEnumerable<ISchemeMapper>)mappers);
+		}
+
+		#endregion
+
 		#region Resolved relative URL mappers
 
 		public AutoRouteCollection ResolvedRelativeUrlFromRelativeClassNamespaceAndClassName(
@@ -708,7 +764,7 @@ namespace Junior.Route.AutoRouting
 
 		#region Bundles
 
-		public AutoRouteCollection CssBundle(Bundle bundle, string routeName, string relativePath, IComparer<AssetFile> assetOrder, IAssetConcatenator concatenator, IEnumerable<IAssetTransformer> transformers)
+		public AutoRouteCollection CssBundle(Bundle bundle, string routeName, Scheme scheme, string relativePath, IComparer<AssetFile> assetOrder, IAssetConcatenator concatenator, IEnumerable<IAssetTransformer> transformers)
 		{
 			ThrowIfNoBundleDependencyContainer();
 
@@ -720,23 +776,20 @@ namespace Junior.Route.AutoRouting
 			transformers.ThrowIfNull("transformers");
 
 			var watcher = new BundleWatcher(bundle, _bundleDependencyContainer.GetInstance<IFileSystem>(), assetOrder, concatenator, transformers);
-			var route = new CssBundleWatcherRoute(
-				routeName,
-				_bundleDependencyContainer.GetInstance<IGuidFactory>(),
-				relativePath,
-				watcher,
-				_bundleDependencyContainer.GetInstance<IHttpRuntime>(),
-				_bundleDependencyContainer.GetInstance<ISystemClock>());
+			var guidFactory = _bundleDependencyContainer.GetInstance<IGuidFactory>();
+			var httpRuntime = _bundleDependencyContainer.GetInstance<IHttpRuntime>();
+			var systemClock = _bundleDependencyContainer.GetInstance<ISystemClock>();
+			var route = new CssBundleWatcherRoute(routeName, guidFactory.Random(), scheme, relativePath, watcher, httpRuntime, systemClock);
 
 			return AdditionalRoutes(route);
 		}
 
-		public AutoRouteCollection CssBundle(Bundle bundle, string routeName, string relativePath, IComparer<AssetFile> assetOrder, IAssetConcatenator concatenator, params IAssetTransformer[] transformers)
+		public AutoRouteCollection CssBundle(Bundle bundle, string routeName, Scheme scheme, string relativePath, IComparer<AssetFile> assetOrder, IAssetConcatenator concatenator, params IAssetTransformer[] transformers)
 		{
-			return CssBundle(bundle, routeName, relativePath, assetOrder, concatenator, (IEnumerable<IAssetTransformer>)transformers);
+			return CssBundle(bundle, routeName, scheme, relativePath, assetOrder, concatenator, (IEnumerable<IAssetTransformer>)transformers);
 		}
 
-		public AutoRouteCollection CssBundle(Bundle bundle, string routeName, string relativePath, IAssetConcatenator concatenator, IEnumerable<IAssetTransformer> transformers)
+		public AutoRouteCollection CssBundle(Bundle bundle, string routeName, Scheme scheme, string relativePath, IAssetConcatenator concatenator, IEnumerable<IAssetTransformer> transformers)
 		{
 			ThrowIfNoBundleDependencyContainer();
 
@@ -747,20 +800,17 @@ namespace Junior.Route.AutoRouting
 			transformers.ThrowIfNull("transformers");
 
 			var watcher = new BundleWatcher(bundle, _bundleDependencyContainer.GetInstance<IFileSystem>(), concatenator, transformers);
-			var route = new CssBundleWatcherRoute(
-				routeName,
-				_bundleDependencyContainer.GetInstance<IGuidFactory>(),
-				relativePath,
-				watcher,
-				_bundleDependencyContainer.GetInstance<IHttpRuntime>(),
-				_bundleDependencyContainer.GetInstance<ISystemClock>());
+			var guidFactory = _bundleDependencyContainer.GetInstance<IGuidFactory>();
+			var httpRuntime = _bundleDependencyContainer.GetInstance<IHttpRuntime>();
+			var systemClock = _bundleDependencyContainer.GetInstance<ISystemClock>();
+			var route = new CssBundleWatcherRoute(routeName, guidFactory.Random(), scheme, relativePath, watcher, httpRuntime, systemClock);
 
 			return AdditionalRoutes(route);
 		}
 
-		public AutoRouteCollection CssBundle(Bundle bundle, string routeName, string relativePath, IAssetConcatenator concatenator, params IAssetTransformer[] transformers)
+		public AutoRouteCollection CssBundle(Bundle bundle, string routeName, Scheme scheme, string relativePath, IAssetConcatenator concatenator, params IAssetTransformer[] transformers)
 		{
-			return CssBundle(bundle, routeName, relativePath, concatenator, (IEnumerable<IAssetTransformer>)transformers);
+			return CssBundle(bundle, routeName, scheme, relativePath, concatenator, (IEnumerable<IAssetTransformer>)transformers);
 		}
 
 		public AutoRouteCollection CssBundles(IEnumerable<BundleRoute> bundleRoutes)
@@ -771,18 +821,18 @@ namespace Junior.Route.AutoRouting
 			{
 				if (bundleRoute.AssetOrder != null)
 				{
-					CssBundle(bundleRoute.Bundle, bundleRoute.RouteName, bundleRoute.RelativePath, bundleRoute.AssetOrder, bundleRoute.Concatenator, bundleRoute.Transformers);
+					CssBundle(bundleRoute.Bundle, bundleRoute.RouteName, bundleRoute.Scheme, bundleRoute.RelativePath, bundleRoute.AssetOrder, bundleRoute.Concatenator, bundleRoute.Transformers);
 				}
 				else
 				{
-					CssBundle(bundleRoute.Bundle, bundleRoute.RouteName, bundleRoute.RelativePath, bundleRoute.Concatenator, bundleRoute.Transformers);
+					CssBundle(bundleRoute.Bundle, bundleRoute.RouteName, bundleRoute.Scheme, bundleRoute.RelativePath, bundleRoute.Concatenator, bundleRoute.Transformers);
 				}
 			}
 
 			return this;
 		}
 
-		public AutoRouteCollection JavaScriptBundle(Bundle bundle, string routeName, string relativePath, IComparer<AssetFile> assetOrder, IAssetConcatenator concatenator, IEnumerable<IAssetTransformer> transformers)
+		public AutoRouteCollection JavaScriptBundle(Bundle bundle, string routeName, Scheme scheme, string relativePath, IComparer<AssetFile> assetOrder, IAssetConcatenator concatenator, IEnumerable<IAssetTransformer> transformers)
 		{
 			ThrowIfNoBundleDependencyContainer();
 
@@ -794,23 +844,20 @@ namespace Junior.Route.AutoRouting
 			transformers.ThrowIfNull("transformers");
 
 			var watcher = new BundleWatcher(bundle, _bundleDependencyContainer.GetInstance<IFileSystem>(), assetOrder, concatenator, transformers);
-			var route = new JavaScriptBundleWatcherRoute(
-				routeName,
-				_bundleDependencyContainer.GetInstance<IGuidFactory>(),
-				relativePath,
-				watcher,
-				_bundleDependencyContainer.GetInstance<IHttpRuntime>(),
-				_bundleDependencyContainer.GetInstance<ISystemClock>());
+			var guidFactory = _bundleDependencyContainer.GetInstance<IGuidFactory>();
+			var httpRuntime = _bundleDependencyContainer.GetInstance<IHttpRuntime>();
+			var systemClock = _bundleDependencyContainer.GetInstance<ISystemClock>();
+			var route = new JavaScriptBundleWatcherRoute(routeName, guidFactory.Random(), scheme, relativePath, watcher, httpRuntime, systemClock);
 
 			return AdditionalRoutes(route);
 		}
 
-		public AutoRouteCollection JavaScriptBundle(Bundle bundle, string routeName, string relativePath, IComparer<AssetFile> assetOrder, IAssetConcatenator concatenator, params IAssetTransformer[] transformers)
+		public AutoRouteCollection JavaScriptBundle(Bundle bundle, string routeName, Scheme scheme, string relativePath, IComparer<AssetFile> assetOrder, IAssetConcatenator concatenator, params IAssetTransformer[] transformers)
 		{
-			return JavaScriptBundle(bundle, routeName, relativePath, assetOrder, concatenator, (IEnumerable<IAssetTransformer>)transformers);
+			return JavaScriptBundle(bundle, routeName, scheme, relativePath, assetOrder, concatenator, (IEnumerable<IAssetTransformer>)transformers);
 		}
 
-		public AutoRouteCollection JavaScriptBundle(Bundle bundle, string routeName, string relativePath, IAssetConcatenator concatenator, IEnumerable<IAssetTransformer> transformers)
+		public AutoRouteCollection JavaScriptBundle(Bundle bundle, string routeName, Scheme scheme, string relativePath, IAssetConcatenator concatenator, IEnumerable<IAssetTransformer> transformers)
 		{
 			ThrowIfNoBundleDependencyContainer();
 
@@ -821,20 +868,17 @@ namespace Junior.Route.AutoRouting
 			transformers.ThrowIfNull("transformers");
 
 			var watcher = new BundleWatcher(bundle, _bundleDependencyContainer.GetInstance<IFileSystem>(), concatenator, transformers);
-			var route = new JavaScriptBundleWatcherRoute(
-				routeName,
-				_bundleDependencyContainer.GetInstance<IGuidFactory>(),
-				relativePath,
-				watcher,
-				_bundleDependencyContainer.GetInstance<IHttpRuntime>(),
-				_bundleDependencyContainer.GetInstance<ISystemClock>());
+			var guidFactory = _bundleDependencyContainer.GetInstance<IGuidFactory>();
+			var httpRuntime = _bundleDependencyContainer.GetInstance<IHttpRuntime>();
+			var systemClock = _bundleDependencyContainer.GetInstance<ISystemClock>();
+			var route = new JavaScriptBundleWatcherRoute(routeName, guidFactory.Random(), scheme, relativePath, watcher, httpRuntime, systemClock);
 
 			return AdditionalRoutes(route);
 		}
 
-		public AutoRouteCollection JavaScriptBundle(Bundle bundle, string routeName, string relativePath, IAssetConcatenator concatenator, params IAssetTransformer[] transformers)
+		public AutoRouteCollection JavaScriptBundle(Bundle bundle, string routeName, Scheme scheme, string relativePath, IAssetConcatenator concatenator, params IAssetTransformer[] transformers)
 		{
-			return JavaScriptBundle(bundle, routeName, relativePath, concatenator, (IEnumerable<IAssetTransformer>)transformers);
+			return JavaScriptBundle(bundle, routeName, scheme, relativePath, concatenator, (IEnumerable<IAssetTransformer>)transformers);
 		}
 
 		public AutoRouteCollection JavaScriptBundles(IEnumerable<BundleRoute> bundleRoutes)
@@ -845,11 +889,11 @@ namespace Junior.Route.AutoRouting
 			{
 				if (bundleRoute.AssetOrder != null)
 				{
-					JavaScriptBundle(bundleRoute.Bundle, bundleRoute.RouteName, bundleRoute.RelativePath, bundleRoute.AssetOrder, bundleRoute.Concatenator, bundleRoute.Transformers);
+					JavaScriptBundle(bundleRoute.Bundle, bundleRoute.RouteName, bundleRoute.Scheme, bundleRoute.RelativePath, bundleRoute.AssetOrder, bundleRoute.Concatenator, bundleRoute.Transformers);
 				}
 				else
 				{
-					JavaScriptBundle(bundleRoute.Bundle, bundleRoute.RouteName, bundleRoute.RelativePath, bundleRoute.Concatenator, bundleRoute.Transformers);
+					JavaScriptBundle(bundleRoute.Bundle, bundleRoute.RouteName, bundleRoute.Scheme, bundleRoute.RelativePath, bundleRoute.Concatenator, bundleRoute.Transformers);
 				}
 			}
 

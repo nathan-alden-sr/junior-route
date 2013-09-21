@@ -549,6 +549,20 @@ namespace Junior.Route.AutoRouting
 			return this;
 		}
 
+		public AutoRouteCollection SchemeHttp()
+		{
+			_schemeMappers.Add(new HttpMapper());
+
+			return this;
+		}
+
+		public AutoRouteCollection SchemeHttps()
+		{
+			_schemeMappers.Add(new HttpsMapper());
+
+			return this;
+		}
+
 		public AutoRouteCollection SchemeUsingAttribute()
 		{
 			_schemeMappers.Add(new SchemeAttributeMapper());

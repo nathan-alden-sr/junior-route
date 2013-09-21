@@ -151,6 +151,8 @@
     <Compile Include="RestrictionMappers\RestrictionsFromAttributesMapper.cs" />
     <Compile Include="RestrictionMappers\HttpMethodFromMethodsNamedAfterStandardHttpMethodsMapper.cs" />
     <Compile Include="SchemeMappers\Attributes\SchemeAttribute.cs" />
+    <Compile Include="SchemeMappers\HttpMapper.cs" />
+    <Compile Include="SchemeMappers\HttpsMapper.cs" />
     <Compile Include="SchemeMappers\SchemeAttributeMapper.cs" />
     <Compile Include="SchemeMappers\NotSpecifiedMapper.cs" />
     <Compile Include="SchemeMappers\SchemeResult.cs" />

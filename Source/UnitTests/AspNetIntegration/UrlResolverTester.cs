@@ -331,5 +331,37 @@ namespace Junior.Route.UnitTests.AspNetIntegration
 				_configuration.AssertWasCalled(arg => arg.GetPort(Scheme.Http));
 			}
 		}
+
+		[TestFixture]
+		public class When_resolving_route_with_scheme_overridden_by_different_scheme
+		{
+			[SetUp]
+			public void SetUp()
+			{
+				_routeCollection = new RouteCollection
+				{
+					new Route.Routing.Route("name", Guid.NewGuid(), Scheme.Http, "relative")
+				};
+				_configuration = MockRepository.GenerateMock<IUrlResolverConfiguration>();
+				_configuration.Stub(arg => arg.HostName).Return("example.com");
+				_configuration.Stub(arg => arg.GetPort(Scheme.Https)).Return(443);
+				_httpRuntime = MockRepository.GenerateMock<IHttpRuntime>();
+				_httpRuntime.Stub(arg => arg.AppDomainAppVirtualPath).Return("/path");
+				_urlResolver = new UrlResolver(_routeCollection, _configuration, _httpRuntime);
+				_url = _urlResolver.Route(Scheme.Https, "name");
+			}
+
+			private RouteCollection _routeCollection;
+			private IHttpRuntime _httpRuntime;
+			private UrlResolver _urlResolver;
+			private IUrlResolverConfiguration _configuration;
+			private string _url;
+
+			[Test]
+			public void Must_use_overriding_scheme()
+			{
+				Assert.That(_url, Is.EqualTo("https://example.com/path/relative"));
+			}
+		}
 	}
 }

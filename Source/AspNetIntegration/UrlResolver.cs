@@ -75,7 +75,7 @@ namespace Junior.Route.AspNetIntegration
 				throw new ArgumentException(String.Format("Route with name '{0}' was not found.", routeName), "routeName");
 			}
 
-			return Absolute(routes[0].Scheme, routes[0].ResolvedRelativeUrl, args);
+			return Absolute(scheme, routes[0].ResolvedRelativeUrl, args);
 		}
 
 		public string Route(string routeName, params object[] args)

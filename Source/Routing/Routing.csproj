@@ -83,6 +83,8 @@
     <Compile Include="RequestValueComparers\IRequestValueComparer.cs" />
     <Compile Include="HttpMethod.cs" />
     <Compile Include="Responses\StatusAndSubStatusCode.cs" />
+    <Compile Include="Responses\Text\JsonPlainResponse.cs" />
+    <Compile Include="Responses\Text\JsonHtmlResponse.cs" />
     <Compile Include="Restrictions\RefererUrlAbsolutePathRestriction.cs" />
     <Compile Include="Restrictions\MissingHeaderRestriction.cs" />
     <Compile Include="Route.cs" />

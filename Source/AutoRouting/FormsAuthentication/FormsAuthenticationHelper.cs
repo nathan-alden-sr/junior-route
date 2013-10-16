@@ -75,6 +75,10 @@ namespace Junior.Route.AutoRouting.FormsAuthentication
 			{
 				return false;
 			}
+			catch (HttpException)
+			{
+				return false;
+			}
 
 			return ticket != null && !ticket.Expired;
 		}
@@ -97,6 +101,10 @@ namespace Junior.Route.AutoRouting.FormsAuthentication
 				ticket = System.Web.Security.FormsAuthentication.Decrypt(cookie.Value);
 			}
 			catch (ArgumentException)
+			{
+				return null;
+			}
+			catch (HttpException)
 			{
 				return null;
 			}

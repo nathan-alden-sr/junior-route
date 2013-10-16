@@ -2,4 +2,4 @@
 
 [assembly:AssemblyTitle("Junior.Route.AutoRouting")]
 [assembly:AssemblyVersion("13.1.0.0")]
-[assembly:AssemblyFileVersion("13.1.0.0")]
+[assembly:AssemblyFileVersion("13.1.1.0")]

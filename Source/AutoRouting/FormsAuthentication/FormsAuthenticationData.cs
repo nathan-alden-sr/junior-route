@@ -42,9 +42,13 @@ namespace Junior.Route.AutoRouting.FormsAuthentication
 			{
 				FormsAuthenticationTicket ticket = System.Web.Security.FormsAuthentication.Decrypt(cookie.Value);
 
-				return !ticket.Expired ? ticket : null;
+				return ticket != null && !ticket.Expired ? ticket : null;
 			}
 			catch (ArgumentException)
+			{
+				return null;
+			}
+			catch (HttpException)
 			{
 				return null;
 			}

@@ -128,6 +128,12 @@
 												<if condition="restriction.Comparer is CaseSensitivePlainComparer || restriction.Comparer is CaseSensitiveRegexComparer">
 													<span class="flag case-sensitive-flag" title="Case-sensitive">CS</span>
 												</if>
+												<if condition="restriction.Comparer is OptionalCaseInsensitiveRegexComparer || restriction.Comparer is OptionalCaseSensitiveRegexComparer">
+													<span class="flag regular-expression-flag" title="Optional regular expression">ORX</span>
+												</if>
+												<if condition="restriction.Comparer is OptionalCaseSensitivePlainComparer || restriction.Comparer is OptionalCaseSensitiveRegexComparer">
+													<span class="flag case-sensitive-flag" title="Optional case-sensitive">OCS</span>
+												</if>
 											</td>
 										</tr>
 									</for>
@@ -192,6 +198,12 @@
 												<if condition="restriction.Comparer is CaseSensitivePlainComparer || restriction.Comparer is CaseSensitiveRegexComparer">
 													<span class="flag case-sensitive-flag" title="Case-sensitive">CS</span>
 												</if>
+												<if condition="restriction.Comparer is OptionalCaseInsensitiveRegexComparer || restriction.Comparer is OptionalCaseSensitiveRegexComparer">
+													<span class="flag regular-expression-flag" title="Optional regular expression">ORX</span>
+												</if>
+												<if condition="restriction.Comparer is OptionalCaseSensitivePlainComparer || restriction.Comparer is OptionalCaseSensitiveRegexComparer">
+													<span class="flag case-sensitive-flag" title="Optional case-sensitive">OCS</span>
+												</if>
 											</td>
 										</tr>
 									</for>
@@ -216,6 +228,12 @@
 												<if condition="restriction.FieldComparer is CaseSensitivePlainComparer || restriction.FieldComparer is CaseSensitiveRegexComparer">
 													<span class="flag case-sensitive-flag" title="Case-sensitive">CS</span>
 												</if>
+												<if condition="restriction.FieldComparer is OptionalCaseInsensitiveRegexComparer || restriction.FieldComparer is OptionalCaseSensitiveRegexComparer">
+													<span class="flag regular-expression-flag" title="Optional regular expression">ORX</span>
+												</if>
+												<if condition="restriction.FieldComparer is OptionalCaseSensitivePlainComparer || restriction.FieldComparer is OptionalCaseSensitiveRegexComparer">
+													<span class="flag case-sensitive-flag" title="Optional case-sensitive">OCS</span>
+												</if>
 											</td>
 										</tr>
 									</tbody>
@@ -234,6 +252,12 @@
 												</if>
 												<if condition="restriction.ValueComparer is CaseSensitivePlainComparer || restriction.ValueComparer is CaseSensitiveRegexComparer">
 													<span class="flag case-sensitive-flag" title="Case-sensitive">CS</span>
+												</if>
+												<if condition="restriction.ValueComparer is OptionalCaseInsensitiveRegexComparer || restriction.ValueComparer is OptionalCaseSensitiveRegexComparer">
+													<span class="flag regular-expression-flag" title="Optional regular expression">ORX</span>
+												</if>
+												<if condition="restriction.ValueComparer is OptionalCaseSensitivePlainComparer || restriction.ValueComparer is OptionalCaseSensitiveRegexComparer">
+													<span class="flag case-sensitive-flag" title="Optional case-sensitive">OCS</span>
 												</if>
 											</td>
 										</tr>
@@ -309,6 +333,12 @@
 												<if condition="restriction.Comparer is CaseSensitivePlainComparer || restriction.Comparer is CaseSensitiveRegexComparer">
 													<span class="flag case-sensitive-flag" title="Case-sensitive">CS</span>
 												</if>
+												<if condition="restriction.Comparer is OptionalCaseInsensitiveRegexComparer || restriction.Comparer is OptionalCaseSensitiveRegexComparer">
+													<span class="flag regular-expression-flag" title="Optional regular expression">ORX</span>
+												</if>
+												<if condition="restriction.Comparer is OptionalCaseSensitivePlainComparer || restriction.Comparer is OptionalCaseSensitiveRegexComparer">
+													<span class="flag case-sensitive-flag" title="Optional case-sensitive">OCS</span>
+												</if>
 											</td>
 										</tr>
 									</for>
@@ -332,6 +362,12 @@
 												</if>
 												<if condition="restriction.Comparer is CaseSensitivePlainComparer || restriction.Comparer is CaseSensitiveRegexComparer">
 													<span class="flag case-sensitive-flag" title="Case-sensitive">CS</span>
+												</if>
+												<if condition="restriction.Comparer is OptionalCaseInsensitiveRegexComparer || restriction.Comparer is OptionalCaseSensitiveRegexComparer">
+													<span class="flag regular-expression-flag" title="Optional regular expression">ORX</span>
+												</if>
+												<if condition="restriction.Comparer is OptionalCaseSensitivePlainComparer || restriction.Comparer is OptionalCaseSensitiveRegexComparer">
+													<span class="flag case-sensitive-flag" title="Optional case-sensitive">OCS</span>
 												</if>
 											</td>
 										</tr>
@@ -357,6 +393,12 @@
 												<if condition="restriction.Comparer is CaseSensitivePlainComparer || restriction.Comparer is CaseSensitiveRegexComparer">
 													<span class="flag case-sensitive-flag" title="Case-sensitive">CS</span>
 												</if>
+												<if condition="restriction.Comparer is OptionalCaseInsensitiveRegexComparer || restriction.Comparer is OptionalCaseSensitiveRegexComparer">
+													<span class="flag regular-expression-flag" title="Optional regular expression">ORX</span>
+												</if>
+												<if condition="restriction.Comparer is OptionalCaseSensitivePlainComparer || restriction.Comparer is OptionalCaseSensitiveRegexComparer">
+													<span class="flag case-sensitive-flag" title="Optional case-sensitive">OCS</span>
+												</if>
 											</td>
 										</tr>
 									</for>
@@ -381,6 +423,12 @@
 												<if condition="restriction.FieldComparer is CaseSensitivePlainComparer || restriction.FieldComparer is CaseSensitiveRegexComparer">
 													<span class="flag case-sensitive-flag" title="Case-sensitive">CS</span>
 												</if>
+												<if condition="restriction.FieldComparer is OptionalCaseInsensitiveRegexComparer || restriction.FieldComparer is OptionalCaseSensitiveRegexComparer">
+													<span class="flag regular-expression-flag" title="Optional regular expression">ORX</span>
+												</if>
+												<if condition="restriction.FieldComparer is OptionalCaseSensitivePlainComparer || restriction.FieldComparer is OptionalCaseSensitiveRegexComparer">
+													<span class="flag case-sensitive-flag" title="Optional case-sensitive">OCS</span>
+												</if>
 											</td>
 										</tr>
 									</tbody>
@@ -399,6 +447,12 @@
 												</if>
 												<if condition="restriction.ValueComparer is CaseSensitivePlainComparer || restriction.ValueComparer is CaseSensitiveRegexComparer">
 													<span class="flag case-sensitive-flag" title="Case-sensitive">CS</span>
+												</if>
+												<if condition="restriction.ValueComparer is OptionalCaseInsensitiveRegexComparer || restriction.ValueComparer is OptionalCaseSensitiveRegexComparer">
+													<span class="flag regular-expression-flag" title="Optional regular expression">ORX</span>
+												</if>
+												<if condition="restriction.ValueComparer is OptionalCaseSensitivePlainComparer || restriction.ValueComparer is OptionalCaseSensitiveRegexComparer">
+													<span class="flag case-sensitive-flag" title="Optional case-sensitive">OCS</span>
 												</if>
 											</td>
 										</tr>
@@ -434,6 +488,12 @@
 												<if condition="restriction.NameComparer is CaseSensitivePlainComparer || restriction.NameComparer is CaseSensitiveRegexComparer">
 													<span class="flag case-sensitive-flag" title="Case-sensitive">CS</span>
 												</if>
+												<if condition="restriction.NameComparer is OptionalCaseInsensitiveRegexComparer || restriction.NameComparer is OptionalCaseSensitiveRegexComparer">
+													<span class="flag regular-expression-flag" title="Optional regular expression">ORX</span>
+												</if>
+												<if condition="restriction.NameComparer is OptionalCaseSensitivePlainComparer || restriction.NameComparer is OptionalCaseSensitiveRegexComparer">
+													<span class="flag case-sensitive-flag" title="Optional case-sensitive">OCS</span>
+												</if>
 											</td>
 										</tr>
 									</tbody>
@@ -452,6 +512,12 @@
 												</if>
 												<if condition="restriction.ValueComparer is CaseSensitivePlainComparer || restriction.ValueComparer is CaseSensitiveRegexComparer">
 													<span class="flag case-sensitive-flag" title="Case-sensitive">CS</span>
+												</if>
+												<if condition="restriction.ValueComparer is OptionalCaseInsensitiveRegexComparer || restriction.ValueComparer is OptionalCaseSensitiveRegexComparer">
+													<span class="flag regular-expression-flag" title="Optional regular expression">ORX</span>
+												</if>
+												<if condition="restriction.ValueComparer is OptionalCaseSensitivePlainComparer || restriction.ValueComparer is OptionalCaseSensitiveRegexComparer">
+													<span class="flag case-sensitive-flag" title="Optional case-sensitive">OCS</span>
 												</if>
 											</td>
 										</tr>
@@ -481,6 +547,12 @@
 												</if>
 												<if condition="restriction.ValueComparer is CaseSensitivePlainComparer || restriction.ValueComparer is CaseSensitiveRegexComparer">
 													<span class="flag case-sensitive-flag" title="Case-sensitive">CS</span>
+												</if>
+												<if condition="restriction.ValueComparer is OptionalCaseInsensitiveRegexComparer || restriction.ValueComparer is OptionalCaseSensitiveRegexComparer">
+													<span class="flag regular-expression-flag" title="Optional regular expression">ORX</span>
+												</if>
+												<if condition="restriction.ValueComparer is OptionalCaseSensitivePlainComparer || restriction.ValueComparer is OptionalCaseSensitiveRegexComparer">
+													<span class="flag case-sensitive-flag" title="Optional case-sensitive">OCS</span>
 												</if>
 											</td>
 										</tr>

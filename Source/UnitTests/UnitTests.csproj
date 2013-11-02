@@ -62,6 +62,7 @@
     <Compile Include="Assets\FileSystem\DirectoryAssetTester.cs" />
     <Compile Include="Assets\FileSystem\JavaScriptBundleWatcherRouteTester.cs" />
     <Compile Include="Assets\FileSystem\CssBundleWatcherRouteTester.cs" />
+    <Compile Include="AutoRouting\AntiCsrf\Generators\DefaultGeneratorTester.cs" />
     <Compile Include="AutoRouting\AntiCsrf\HtmlGenerators\DefaultGeneratorTester.cs" />
     <Compile Include="AutoRouting\IdMappers\IdResultTester.cs" />
     <Compile Include="AutoRouting\NameMappers\Attributes\NameAttributeTester.cs" />

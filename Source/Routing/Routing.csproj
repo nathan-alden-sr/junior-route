@@ -48,6 +48,8 @@
     </Compile>
     <Compile Include="AntiCsrf\AntiCsrfConfigurationSection.cs" />
     <Compile Include="AntiCsrf\ConfigurationSectionAntiCsrfConfiguration.cs" />
+    <Compile Include="AntiCsrf\Generators\AntiCsrfNonce.cs" />
+    <Compile Include="AntiCsrf\Generators\IAntiCsrfGenerator.cs" />
     <Compile Include="AntiCsrf\HtmlGenerators\IAntiCsrfHtmlGenerator.cs" />
     <Compile Include="AntiCsrf\NonceRepositories\MemoryCacheRepository.cs" />
     <Compile Include="AntiCsrf\NonceRepositories\IAntiCsrfNonceRepository.cs" />

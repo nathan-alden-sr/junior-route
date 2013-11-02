@@ -49,7 +49,7 @@ namespace Junior.Route.UnitTests.ViewEngines.Razor.CodeDomProviderFactories
 			[TestCase(".vb")]
 			public void Must_throw_exception(string extension)
 			{
-				Assert.That(() => _factory.CreateFromFileExtension(extension), Throws.InstanceOf<ArgumentException>());
+				Assert.That(() => _factory.CreateFromFileExtension(extension), Throws.ArgumentException);
 			}
 		}
 

@@ -39,11 +39,9 @@ namespace Junior.Route.UnitTests.AutoRouting.ResponseMappers
 			}
 
 			[Test]
-			[ExpectedException(typeof(ApplicationException))]
-#warning Update to use async Assert.That(..., Throws.InstanceOf<>) when NUnit 2.6.3 becomes available
-			public async void Must_throw_exception()
+			public void Must_throw_exception()
 			{
-				await _retriever.GetParameterValuesAsync(_context, typeof(Endpoint), typeof(Endpoint).GetMethod("Method"));
+				Assert.That(async () => await _retriever.GetParameterValuesAsync(_context, typeof(Endpoint), typeof(Endpoint).GetMethod("Method")), Throws.InstanceOf<ApplicationException>());
 			}
 		}
 

@@ -27,7 +27,7 @@ namespace Junior.Route.UnitTests.Routing
 			[Test]
 			public void Must_throw_exception_and_not_add_duplicates()
 			{
-				Assert.That(() => _routeCollection.Add(new Route.Routing.Route((string)"name2", _id, (Scheme)Scheme.NotSpecified, (string)"route")), Throws.InstanceOf<ArgumentException>());
+				Assert.That(() => _routeCollection.Add(new Route.Routing.Route((string)"name2", _id, (Scheme)Scheme.NotSpecified, (string)"route")), Throws.ArgumentException);
 
 				Route.Routing.Route[] routes = _routeCollection.GetRoutes().ToArray();
 
@@ -71,7 +71,7 @@ namespace Junior.Route.UnitTests.Routing
 			[Test]
 			public void Must_throw_exception_and_not_add_duplicates()
 			{
-				Assert.That(() => _routeCollection.Add(new Route.Routing.Route((string)"name", Guid.NewGuid(), (Scheme)Scheme.NotSpecified, (string)"route")), Throws.InstanceOf<ArgumentException>());
+				Assert.That(() => _routeCollection.Add(new Route.Routing.Route((string)"name", Guid.NewGuid(), (Scheme)Scheme.NotSpecified, (string)"route")), Throws.ArgumentException);
 
 				Route.Routing.Route[] routes = _routeCollection.GetRoutes().ToArray();
 

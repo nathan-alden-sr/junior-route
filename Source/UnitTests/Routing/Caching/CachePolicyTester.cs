@@ -296,7 +296,7 @@ namespace Junior.Route.UnitTests.Routing.Caching
 			[Test]
 			public void Must_require_utc()
 			{
-				Assert.That(() => _cachePolicy.PrivateClientCaching(new DateTime(2012, 1, 1, 0, 0, 0, DateTimeKind.Local)), Throws.InstanceOf<ArgumentException>());
+				Assert.That(() => _cachePolicy.PrivateClientCaching(new DateTime(2012, 1, 1, 0, 0, 0, DateTimeKind.Local)), Throws.ArgumentException);
 			}
 
 			[Test]
@@ -385,7 +385,7 @@ namespace Junior.Route.UnitTests.Routing.Caching
 			[Test]
 			public void Must_require_utc()
 			{
-				Assert.That(() => _cachePolicy.PublicClientCaching(new DateTime(2012, 1, 1, 0, 0, 0, DateTimeKind.Local)), Throws.InstanceOf<ArgumentException>());
+				Assert.That(() => _cachePolicy.PublicClientCaching(new DateTime(2012, 1, 1, 0, 0, 0, DateTimeKind.Local)), Throws.ArgumentException);
 			}
 
 			[Test]

@@ -80,13 +80,11 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers.ModelPropertyMappe
 
 			[Test]
 			[TestCase(typeof(Model), "I")]
-			[ExpectedException(typeof(ApplicationException))]
-#warning Update to use async Assert.That(..., Throws.InstanceOf<>) when NUnit 2.6.3 becomes available
-			public async void Must_throw_exception(Type type, string propertyName)
+			public void Must_throw_exception(Type type, string propertyName)
 			{
 				PropertyInfo propertyInfo = type.GetProperty(propertyName);
 
-				await _mapper.MapAsync(_context, type, propertyInfo);
+				Assert.That(async () => await _mapper.MapAsync(_context, type, propertyInfo), Throws.InstanceOf<ApplicationException>());
 			}
 		}
 

@@ -80,6 +80,10 @@
     <Compile Include="RequestValueComparers\CaseInsensitiveRegexComparer.cs" />
     <Compile Include="RequestValueComparers\CaseSensitivePlainComparer.cs" />
     <Compile Include="RequestValueComparers\CaseSensitiveRegexComparer.cs" />
+    <Compile Include="RequestValueComparers\OptionalCaseInsensitivePlainComparer.cs" />
+    <Compile Include="RequestValueComparers\OptionalCaseInsensitiveRegexComparer.cs" />
+    <Compile Include="RequestValueComparers\OptionalCaseSensitivePlainComparer.cs" />
+    <Compile Include="RequestValueComparers\OptionalCaseSensitiveRegexComparer.cs" />
     <Compile Include="RequestValueComparers\IRequestValueComparer.cs" />
     <Compile Include="HttpMethod.cs" />
     <Compile Include="Responses\StatusAndSubStatusCode.cs" />
@@ -195,7 +199,7 @@
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Newtonsoft.Json.5.0.6\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.5.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />

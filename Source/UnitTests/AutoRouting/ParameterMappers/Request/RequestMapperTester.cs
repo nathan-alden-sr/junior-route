@@ -79,14 +79,12 @@ namespace Junior.Route.UnitTests.AutoRouting.ParameterMappers.Request
 
 			[Test]
 			[TestCase(typeof(Endpoint), "Method", "i")]
-			[ExpectedException(typeof(ApplicationException))]
-#warning Update to use async Assert.That(..., Throws.InstanceOf<>) when NUnit 2.6.3 becomes available
-			public async void Must_throw_exception(Type type, string methodName, string parameterName)
+			public void Must_throw_exception(Type type, string methodName, string parameterName)
 			{
 				MethodInfo methodInfo = type.GetMethod(methodName);
 				ParameterInfo parameterInfo = methodInfo.GetParameters().Single(arg => arg.Name == parameterName);
 
-				await _mapper.MapAsync(_context, type, methodInfo, parameterInfo);
+				Assert.That(async () => await _mapper.MapAsync(_context, type, methodInfo, parameterInfo), Throws.InstanceOf<ApplicationException>());
 			}
 		}
 

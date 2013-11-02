@@ -81,10 +81,9 @@ namespace Junior.Route.UnitTests.AutoRouting
 			}
 
 			[Test]
-#warning Update to use async Assert.That(..., Throws.Nothing) when NUnit 2.6.3 becomes available
-			public async void Must_not_throw_exception()
+			public void Must_not_throw_exception()
 			{
-				await _autoRouteCollection.GenerateRouteCollectionAsync();
+				Assert.That(async () => await _autoRouteCollection.GenerateRouteCollectionAsync(), Throws.Nothing);
 			}
 		}
 
@@ -204,11 +203,9 @@ namespace Junior.Route.UnitTests.AutoRouting
 			}
 
 			[Test]
-			[ExpectedException(typeof(ArgumentException))]
-#warning Update to use async Assert.That(..., Throws.InstanceOf<>) when NUnit 2.6.3 becomes available
-			public async void Must_throw_exception()
+			public void Must_throw_exception()
 			{
-				await _autoRouteCollection.GenerateRouteCollectionAsync();
+				Assert.That(async () => await _autoRouteCollection.GenerateRouteCollectionAsync(), Throws.ArgumentException);
 			}
 		}
 
@@ -262,11 +259,9 @@ namespace Junior.Route.UnitTests.AutoRouting
 			}
 
 			[Test]
-			[ExpectedException(typeof(ArgumentException))]
-#warning Update to use async Assert.That(..., Throws.Nothing) when NUnit 2.6.3 becomes available
-			public async void Must_throw_exception()
+			public void Must_throw_exception()
 			{
-				await _autoRouteCollection.GenerateRouteCollectionAsync();
+				Assert.That(async () => await _autoRouteCollection.GenerateRouteCollectionAsync(), Throws.ArgumentException);
 			}
 		}
 
@@ -904,11 +899,9 @@ namespace Junior.Route.UnitTests.AutoRouting
 			}
 
 			[Test]
-			[ExpectedException(typeof(InvalidOperationException))]
-#warning Update to use async Assert.That(..., Throws.Nothing) when NUnit 2.6.3 becomes available
-			public async void Must_require_restriction_container()
+			public void Must_require_restriction_container()
 			{
-				await _autoRouteCollection.GenerateRouteCollectionAsync();
+				Assert.That(async () => await _autoRouteCollection.GenerateRouteCollectionAsync(), Throws.InvalidOperationException);
 			}
 		}
 

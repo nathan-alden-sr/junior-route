@@ -27,20 +27,16 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.NonceRepositories
 
 			[Test]
 			[Ignore]
-			[ExpectedException(typeof(ArgumentException))]
-#warning Update to use async Assert.That(..., Throws.InstanceOf<>) when NUnit 2.6.3 becomes available
-			public async void Must_require_utc_created_timestamp()
+			public void Must_require_utc_created_timestamp()
 			{
-				await _repository.AddAsync(Guid.NewGuid(), Guid.NewGuid(), DateTime.Now, DateTime.UtcNow);
+				Assert.That(async () => await _repository.AddAsync(Guid.NewGuid(), Guid.NewGuid(), DateTime.Now, DateTime.UtcNow), Throws.ArgumentException);
 			}
 
 			[Test]
 			[Ignore]
-			[ExpectedException(typeof(ArgumentException))]
-#warning Update to use async Assert.That(..., Throws.InstanceOf<>) when NUnit 2.6.3 becomes available
-			public async void Must_require_utc_expires_timestamp()
+			public void Must_require_utc_expires_timestamp()
 			{
-				await _repository.AddAsync(Guid.NewGuid(), Guid.NewGuid(), DateTime.UtcNow, DateTime.Now);
+				Assert.That(async () => await _repository.AddAsync(Guid.NewGuid(), Guid.NewGuid(), DateTime.UtcNow, DateTime.Now), Throws.ArgumentException);
 			}
 		}
 

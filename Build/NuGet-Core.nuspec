@@ -12,7 +12,7 @@
 		<dependencies>
 			<group>
 				<dependency id="JuniorCommon" version="3.8.0"/>
-				<dependency id="Newtonsoft.Json" version="5.0.6"/>
+				<dependency id="Newtonsoft.Json" version="5.0.8"/>
 			</group>
 		</dependencies>
 		<references>

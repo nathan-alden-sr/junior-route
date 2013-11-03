@@ -18,24 +18,18 @@ namespace Junior.Route.UnitTests.AutoRouting.RestrictionMappers.Attributes
 		[TestFixture]
 		public class When_mapping_route_restrictions_using_comparer
 		{
-			[SetUp]
-			public void SetUp()
-			{
-				_attribute = new RefererUrlQueryStringAttribute("field", RequestValueComparer.CaseSensitiveRegex, "value", RequestValueComparer.CaseInsensitiveRegex);
-				_route = new Route.Routing.Route((string)"name", Guid.NewGuid(), (Scheme)Scheme.NotSpecified, (string)"relative");
-				_container = MockRepository.GenerateMock<IContainer>();
-			}
-
-			private RefererUrlQueryStringAttribute _attribute;
-			private Route.Routing.Route _route;
-			private IContainer _container;
-
 			[Test]
-			public void Must_add_restriction()
+			[TestCase(true)]
+			[TestCase(false)]
+			public void Must_add_restriction(bool optional)
 			{
-				_attribute.Map(_route, _container);
+				var route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "relative");
+				var container = MockRepository.GenerateMock<IContainer>();
+				var attribute = new RefererUrlQueryStringAttribute("field", RequestValueComparer.CaseSensitiveRegex, "value", RequestValueComparer.CaseInsensitiveRegex, optional);
 
-				RefererUrlQueryStringRestriction[] restrictions = _route.GetRestrictions<RefererUrlQueryStringRestriction>().ToArray();
+				attribute.Map(route, container);
+
+				RefererUrlQueryStringRestriction[] restrictions = route.GetRestrictions<RefererUrlQueryStringRestriction>().ToArray();
 
 				Assert.That(restrictions, Has.Length.EqualTo(1));
 
@@ -43,30 +37,25 @@ namespace Junior.Route.UnitTests.AutoRouting.RestrictionMappers.Attributes
 				Assert.That(restrictions[0].FieldComparer, Is.SameAs(CaseSensitiveRegexComparer.Instance));
 				Assert.That(restrictions[0].Value, Is.EqualTo("value"));
 				Assert.That(restrictions[0].ValueComparer, Is.SameAs(CaseInsensitiveRegexComparer.Instance));
+				Assert.That(restrictions[0].Optional, Is.EqualTo(optional));
 			}
 		}
 
 		[TestFixture]
 		public class When_mapping_route_restrictions_without_using_comparer
 		{
-			[SetUp]
-			public void SetUp()
-			{
-				_attribute = new RefererUrlQueryStringAttribute("field", "value");
-				_route = new Route.Routing.Route((string)"name", Guid.NewGuid(), (Scheme)Scheme.NotSpecified, (string)"relative");
-				_container = MockRepository.GenerateMock<IContainer>();
-			}
-
-			private RefererUrlQueryStringAttribute _attribute;
-			private Route.Routing.Route _route;
-			private IContainer _container;
-
 			[Test]
-			public void Must_add_restriction()
+			[TestCase(true)]
+			[TestCase(false)]
+			public void Must_add_restriction(bool optional)
 			{
-				_attribute.Map(_route, _container);
+				var route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "relative");
+				var container = MockRepository.GenerateMock<IContainer>();
+				var attribute = new RefererUrlQueryStringAttribute("field", "value", optional);
 
-				RefererUrlQueryStringRestriction[] restrictions = _route.GetRestrictions<RefererUrlQueryStringRestriction>().ToArray();
+				attribute.Map(route, container);
+
+				RefererUrlQueryStringRestriction[] restrictions = route.GetRestrictions<RefererUrlQueryStringRestriction>().ToArray();
 
 				Assert.That(restrictions, Has.Length.EqualTo(1));
 
@@ -74,6 +63,7 @@ namespace Junior.Route.UnitTests.AutoRouting.RestrictionMappers.Attributes
 				Assert.That(restrictions[0].FieldComparer, Is.SameAs(CaseInsensitivePlainComparer.Instance));
 				Assert.That(restrictions[0].Value, Is.EqualTo("value"));
 				Assert.That(restrictions[0].ValueComparer, Is.SameAs(CaseInsensitivePlainComparer.Instance));
+				Assert.That(restrictions[0].Optional, Is.EqualTo(optional));
 			}
 		}
 	}

@@ -18,24 +18,18 @@ namespace Junior.Route.UnitTests.AutoRouting.RestrictionMappers.Attributes
 		[TestFixture]
 		public class When_mapping_route_restrictions_using_comparer
 		{
-			[SetUp]
-			public void SetUp()
-			{
-				_attribute = new CookieAttribute("name", RequestValueComparer.CaseSensitiveRegex, "value", RequestValueComparer.CaseInsensitiveRegex);
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "relative");
-				_container = MockRepository.GenerateMock<IContainer>();
-			}
-
-			private CookieAttribute _attribute;
-			private Route.Routing.Route _route;
-			private IContainer _container;
-
 			[Test]
-			public void Must_add_restriction()
+			[TestCase(true)]
+			[TestCase(false)]
+			public void Must_add_restriction(bool optional)
 			{
-				_attribute.Map(_route, _container);
+				var route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "relative");
+				var container = MockRepository.GenerateMock<IContainer>();
+				var attribute = new CookieAttribute("name", RequestValueComparer.CaseSensitiveRegex, "value", RequestValueComparer.CaseInsensitiveRegex, optional);
 
-				CookieRestriction[] restrictions = _route.GetRestrictions<CookieRestriction>().ToArray();
+				attribute.Map(route, container);
+
+				CookieRestriction[] restrictions = route.GetRestrictions<CookieRestriction>().ToArray();
 
 				Assert.That(restrictions, Has.Length.EqualTo(1));
 
@@ -43,30 +37,25 @@ namespace Junior.Route.UnitTests.AutoRouting.RestrictionMappers.Attributes
 				Assert.That(restrictions[0].NameComparer, Is.SameAs(CaseSensitiveRegexComparer.Instance));
 				Assert.That(restrictions[0].Value, Is.EqualTo("value"));
 				Assert.That(restrictions[0].ValueComparer, Is.SameAs(CaseInsensitiveRegexComparer.Instance));
+				Assert.That(restrictions[0].Optional, Is.EqualTo(optional));
 			}
 		}
 
 		[TestFixture]
 		public class When_mapping_route_restrictions_without_using_comparer
 		{
-			[SetUp]
-			public void SetUp()
-			{
-				_attribute = new CookieAttribute("name", "value");
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "relative");
-				_container = MockRepository.GenerateMock<IContainer>();
-			}
-
-			private CookieAttribute _attribute;
-			private Route.Routing.Route _route;
-			private IContainer _container;
-
 			[Test]
-			public void Must_add_restriction()
+			[TestCase(true)]
+			[TestCase(false)]
+			public void Must_add_restriction(bool optional)
 			{
-				_attribute.Map(_route, _container);
+				var route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "relative");
+				var container = MockRepository.GenerateMock<IContainer>();
+				var attribute = new CookieAttribute("name", "value", optional);
 
-				CookieRestriction[] restrictions = _route.GetRestrictions<CookieRestriction>().ToArray();
+				attribute.Map(route, container);
+
+				CookieRestriction[] restrictions = route.GetRestrictions<CookieRestriction>().ToArray();
 
 				Assert.That(restrictions, Has.Length.EqualTo(1));
 
@@ -74,6 +63,7 @@ namespace Junior.Route.UnitTests.AutoRouting.RestrictionMappers.Attributes
 				Assert.That(restrictions[0].NameComparer, Is.SameAs(CaseInsensitivePlainComparer.Instance));
 				Assert.That(restrictions[0].Value, Is.EqualTo("value"));
 				Assert.That(restrictions[0].ValueComparer, Is.SameAs(CaseInsensitivePlainComparer.Instance));
+				Assert.That(restrictions[0].Optional, Is.EqualTo(optional));
 			}
 		}
 	}

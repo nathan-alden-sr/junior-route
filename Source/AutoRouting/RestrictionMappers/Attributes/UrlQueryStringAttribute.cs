@@ -10,19 +10,21 @@ namespace Junior.Route.AutoRouting.RestrictionMappers.Attributes
 	{
 		private readonly string _field;
 		private readonly RequestValueComparer? _fieldComparer;
+		private readonly bool _optional;
 		private readonly string _value;
 		private readonly RequestValueComparer? _valueComparer;
 
-		public UrlQueryStringAttribute(string field, string value)
+		public UrlQueryStringAttribute(string field, string value, bool optional = false)
 		{
 			field.ThrowIfNull("field");
 			value.ThrowIfNull("value");
 
 			_field = field;
 			_value = value;
+			_optional = optional;
 		}
 
-		public UrlQueryStringAttribute(string field, RequestValueComparer fieldComparer, string value, RequestValueComparer valueComparer)
+		public UrlQueryStringAttribute(string field, RequestValueComparer fieldComparer, string value, RequestValueComparer valueComparer, bool optional = false)
 		{
 			field.ThrowIfNull("field");
 			value.ThrowIfNull("value");
@@ -31,6 +33,7 @@ namespace Junior.Route.AutoRouting.RestrictionMappers.Attributes
 			_fieldComparer = fieldComparer;
 			_value = value;
 			_valueComparer = valueComparer;
+			_optional = optional;
 		}
 
 		public override void Map(Routing.Route route, IContainer container)
@@ -40,11 +43,11 @@ namespace Junior.Route.AutoRouting.RestrictionMappers.Attributes
 
 			if (_fieldComparer != null && _valueComparer != null)
 			{
-				route.RestrictByUrlQueryString(_field, GetComparer(_fieldComparer.Value), _value, GetComparer(_valueComparer.Value));
+				route.RestrictByUrlQueryString(_field, GetComparer(_fieldComparer.Value), _value, GetComparer(_valueComparer.Value), _optional);
 			}
 			else
 			{
-				route.RestrictByUrlQueryString(_field, _value);
+				route.RestrictByUrlQueryString(_field, _value, _optional);
 			}
 		}
 	}

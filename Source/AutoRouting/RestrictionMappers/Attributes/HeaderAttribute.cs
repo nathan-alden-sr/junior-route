@@ -9,19 +9,21 @@ namespace Junior.Route.AutoRouting.RestrictionMappers.Attributes
 	public class HeaderAttribute : RestrictionAttribute
 	{
 		private readonly string _field;
+		private readonly bool _optional;
 		private readonly string _value;
 		private readonly RequestValueComparer? _valueComparer;
 
-		public HeaderAttribute(string field, string value)
+		public HeaderAttribute(string field, string value, bool optional = false)
 		{
 			field.ThrowIfNull("field");
 			value.ThrowIfNull("value");
 
 			_field = field;
 			_value = value;
+			_optional = optional;
 		}
 
-		public HeaderAttribute(string field, string value, RequestValueComparer valueComparer)
+		public HeaderAttribute(string field, string value, RequestValueComparer valueComparer, bool optional = false)
 		{
 			field.ThrowIfNull("field");
 			value.ThrowIfNull("value");
@@ -29,6 +31,7 @@ namespace Junior.Route.AutoRouting.RestrictionMappers.Attributes
 			_field = field;
 			_value = value;
 			_valueComparer = valueComparer;
+			_optional = optional;
 		}
 
 		public override void Map(Routing.Route route, IContainer container)
@@ -38,11 +41,11 @@ namespace Junior.Route.AutoRouting.RestrictionMappers.Attributes
 
 			if (_valueComparer != null)
 			{
-				route.RestrictByHeader(_field, _value, GetComparer(_valueComparer.Value));
+				route.RestrictByHeader(_field, _value, GetComparer(_valueComparer.Value), _optional);
 			}
 			else
 			{
-				route.RestrictByHeader(_field, _value);
+				route.RestrictByHeader(_field, _value, _optional);
 			}
 		}
 	}

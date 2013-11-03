@@ -82,10 +82,6 @@
     <Compile Include="RequestValueComparers\CaseInsensitiveRegexComparer.cs" />
     <Compile Include="RequestValueComparers\CaseSensitivePlainComparer.cs" />
     <Compile Include="RequestValueComparers\CaseSensitiveRegexComparer.cs" />
-    <Compile Include="RequestValueComparers\OptionalCaseInsensitivePlainComparer.cs" />
-    <Compile Include="RequestValueComparers\OptionalCaseInsensitiveRegexComparer.cs" />
-    <Compile Include="RequestValueComparers\OptionalCaseSensitivePlainComparer.cs" />
-    <Compile Include="RequestValueComparers\OptionalCaseSensitiveRegexComparer.cs" />
     <Compile Include="RequestValueComparers\IRequestValueComparer.cs" />
     <Compile Include="HttpMethod.cs" />
     <Compile Include="Responses\StatusAndSubStatusCode.cs" />

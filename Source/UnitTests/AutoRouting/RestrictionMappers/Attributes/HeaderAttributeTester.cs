@@ -18,60 +18,50 @@ namespace Junior.Route.UnitTests.AutoRouting.RestrictionMappers.Attributes
 		[TestFixture]
 		public class When_mapping_route_restrictions_using_comparer
 		{
-			[SetUp]
-			public void SetUp()
-			{
-				_attribute = new HeaderAttribute("field", "value", RequestValueComparer.CaseInsensitiveRegex);
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "relative");
-				_container = MockRepository.GenerateMock<IContainer>();
-			}
-
-			private HeaderAttribute _attribute;
-			private Route.Routing.Route _route;
-			private IContainer _container;
-
 			[Test]
-			public void Must_add_restriction()
+			[TestCase(true)]
+			[TestCase(false)]
+			public void Must_add_restriction(bool optional)
 			{
-				_attribute.Map(_route, _container);
+				var route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "relative");
+				var container = MockRepository.GenerateMock<IContainer>();
+				var attribute = new HeaderAttribute("field", "value", RequestValueComparer.CaseInsensitiveRegex, optional);
 
-				HeaderRestriction[] restrictions = _route.GetRestrictions<HeaderRestriction>().ToArray();
+				attribute.Map(route, container);
+
+				HeaderRestriction[] restrictions = route.GetRestrictions<HeaderRestriction>().ToArray();
 
 				Assert.That(restrictions, Has.Length.EqualTo(1));
 
 				Assert.That(restrictions[0].Field, Is.EqualTo("field"));
 				Assert.That(restrictions[0].Value, Is.EqualTo("value"));
 				Assert.That(restrictions[0].ValueComparer, Is.SameAs(CaseInsensitiveRegexComparer.Instance));
+				Assert.That(restrictions[0].Optional, Is.EqualTo(optional));
 			}
 		}
 
 		[TestFixture]
 		public class When_mapping_route_restrictions_without_using_comparer
 		{
-			[SetUp]
-			public void SetUp()
-			{
-				_attribute = new HeaderAttribute("field", "value");
-				_route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "relative");
-				_container = MockRepository.GenerateMock<IContainer>();
-			}
-
-			private HeaderAttribute _attribute;
-			private Route.Routing.Route _route;
-			private IContainer _container;
-
 			[Test]
-			public void Must_add_restriction()
+			[TestCase(true)]
+			[TestCase(false)]
+			public void Must_add_restriction(bool optional)
 			{
-				_attribute.Map(_route, _container);
+				var route = new Route.Routing.Route("name", Guid.NewGuid(), Scheme.NotSpecified, "relative");
+				var container = MockRepository.GenerateMock<IContainer>();
+				var attribute = new HeaderAttribute("field", "value", optional);
 
-				HeaderRestriction[] restrictions = _route.GetRestrictions<HeaderRestriction>().ToArray();
+				attribute.Map(route, container);
+
+				HeaderRestriction[] restrictions = route.GetRestrictions<HeaderRestriction>().ToArray();
 
 				Assert.That(restrictions, Has.Length.EqualTo(1));
 
 				Assert.That(restrictions[0].Field, Is.EqualTo("field"));
 				Assert.That(restrictions[0].Value, Is.EqualTo("value"));
 				Assert.That(restrictions[0].ValueComparer, Is.SameAs(CaseInsensitivePlainComparer.Instance));
+				Assert.That(restrictions[0].Optional, Is.EqualTo(optional));
 			}
 		}
 	}

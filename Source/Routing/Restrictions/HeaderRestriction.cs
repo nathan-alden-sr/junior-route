@@ -14,10 +14,11 @@ namespace Junior.Route.Routing.Restrictions
 	public class HeaderRestriction : IRestriction, IEquatable<HeaderRestriction>
 	{
 		private readonly string _field;
+		private readonly bool _optional;
 		private readonly string _value;
 		private readonly IRequestValueComparer _valueComparer;
 
-		public HeaderRestriction(string field, string value, IRequestValueComparer valueComparer)
+		public HeaderRestriction(string field, string value, IRequestValueComparer valueComparer, bool optional = false)
 		{
 			field.ThrowIfNull("header");
 			value.ThrowIfNull("value");
@@ -26,6 +27,7 @@ namespace Junior.Route.Routing.Restrictions
 			_field = field;
 			_value = value;
 			_valueComparer = valueComparer;
+			_optional = optional;
 		}
 
 		public string Field
@@ -49,6 +51,14 @@ namespace Junior.Route.Routing.Restrictions
 			get
 			{
 				return _valueComparer;
+			}
+		}
+
+		public bool Optional
+		{
+			get
+			{
+				return _optional;
 			}
 		}
 
@@ -79,7 +89,10 @@ namespace Junior.Route.Routing.Restrictions
 		{
 			request.ThrowIfNull("request");
 
-			return request.Headers.AllKeys.Any(header => String.Equals(_field, header, StringComparison.OrdinalIgnoreCase) && _valueComparer.Matches(_value, request.Headers[header])).AsCompletedTask();
+			IEnumerable<string> matchingKeys = request.Headers.AllKeys.Where(header => String.Equals(_field, header, StringComparison.OrdinalIgnoreCase)).ToArray();
+			bool matchesRequest = ((_optional && !matchingKeys.Any()) || matchingKeys.Any(arg => _valueComparer.Matches(_value, request.Headers[arg])));
+
+			return matchesRequest.AsCompletedTask();
 		}
 
 		public override bool Equals(object obj)
@@ -118,9 +131,10 @@ namespace Junior.Route.Routing.Restrictions
 	{
 		private readonly string _field;
 		private readonly Func<T, bool> _matchDelegate;
+		private readonly bool _optional;
 		private readonly Func<string, IEnumerable<T>> _parseDelegate;
 
-		public HeaderRestriction(string field, Func<string, IEnumerable<T>> parseDelegate, Func<T, bool> matchDelegate)
+		public HeaderRestriction(string field, Func<string, IEnumerable<T>> parseDelegate, Func<T, bool> matchDelegate, bool optional = false)
 		{
 			field.ThrowIfNull("header");
 			parseDelegate.ThrowIfNull("parseDelegate");
@@ -129,10 +143,11 @@ namespace Junior.Route.Routing.Restrictions
 			_field = field;
 			_parseDelegate = parseDelegate;
 			_matchDelegate = matchDelegate;
+			_optional = optional;
 		}
 
-		public HeaderRestriction(string field, Func<string, T> parseDelegate, Func<T, bool> matchDelegate)
-			: this(field, headerValue => parseDelegate(headerValue).ToEnumerable(), matchDelegate)
+		public HeaderRestriction(string field, Func<string, T> parseDelegate, Func<T, bool> matchDelegate, bool optional = false)
+			: this(field, headerValue => parseDelegate(headerValue).ToEnumerable(), matchDelegate, optional)
 		{
 		}
 
@@ -141,6 +156,14 @@ namespace Junior.Route.Routing.Restrictions
 			get
 			{
 				return _field;
+			}
+		}
+
+		public bool Optional
+		{
+			get
+			{
+				return _optional;
 			}
 		}
 
@@ -158,7 +181,10 @@ namespace Junior.Route.Routing.Restrictions
 		{
 			request.ThrowIfNull("request");
 
-			return (request.Headers.AllKeys.Any(header => String.Equals(_field, header, StringComparison.OrdinalIgnoreCase)) && _parseDelegate(request.Headers[_field]).Any(_matchDelegate)).AsCompletedTask();
+			IEnumerable<string> matchingKeys = request.Headers.AllKeys.Where(header => String.Equals(_field, header, StringComparison.OrdinalIgnoreCase)).ToArray();
+			bool matchesRequest = ((_optional && !matchingKeys.Any()) || _parseDelegate(request.Headers[_field]).Any(_matchDelegate));
+
+			return matchesRequest.AsCompletedTask();
 		}
 	}
 }

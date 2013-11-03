@@ -55,21 +55,17 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 		[TestFixture]
 		public class When_creating_instance
 		{
-			[SetUp]
-			public void SetUp()
-			{
-				_restriction = new RefererUrlQueryStringRestriction("field", CaseInsensitivePlainComparer.Instance, "value", CaseSensitiveRegexComparer.Instance);
-			}
-
-			private RefererUrlQueryStringRestriction _restriction;
-
 			[Test]
-			public void Must_set_properties()
+			[TestCase(true)]
+			[TestCase(false)]
+			public void Must_set_properties(bool optional)
 			{
-				Assert.That(_restriction.Field, Is.EqualTo("field"));
-				Assert.That(_restriction.FieldComparer, Is.SameAs(CaseInsensitivePlainComparer.Instance));
-				Assert.That(_restriction.Value, Is.EqualTo("value"));
-				Assert.That(_restriction.ValueComparer, Is.SameAs(CaseSensitiveRegexComparer.Instance));
+				var restriction = new RefererUrlQueryStringRestriction("field", CaseInsensitivePlainComparer.Instance, "value", CaseSensitiveRegexComparer.Instance, optional);
+				Assert.That(restriction.Field, Is.EqualTo("field"));
+				Assert.That(restriction.FieldComparer, Is.SameAs(CaseInsensitivePlainComparer.Instance));
+				Assert.That(restriction.Value, Is.EqualTo("value"));
+				Assert.That(restriction.ValueComparer, Is.SameAs(CaseSensitiveRegexComparer.Instance));
+				Assert.That(restriction.Optional, Is.EqualTo(optional));
 			}
 		}
 
@@ -112,6 +108,27 @@ namespace Junior.Route.UnitTests.Routing.Restrictions
 			public async void Must_not_match()
 			{
 				Assert.That(await _restriction.MatchesRequestAsync(_request), Is.False);
+			}
+		}
+
+		[TestFixture]
+		public class When_testing_if_optional_restriction_matches_request
+		{
+			[SetUp]
+			public void SetUp()
+			{
+				_restriction = new RefererUrlQueryStringRestriction("field", CaseInsensitivePlainComparer.Instance, "value", CaseSensitiveRegexComparer.Instance, true);
+				_request = MockRepository.GenerateMock<HttpRequestBase>();
+				_request.Stub(arg => arg.UrlReferrer).Return(new Uri("http://localhost/path?field1=v"));
+			}
+
+			private RefererUrlQueryStringRestriction _restriction;
+			private HttpRequestBase _request;
+
+			[Test]
+			public async void Must_match()
+			{
+				Assert.That(await _restriction.MatchesRequestAsync(_request), Is.True);
 			}
 		}
 	}

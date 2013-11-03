@@ -103,24 +103,24 @@ namespace Junior.Route.Routing
 
 		#region Restrictions
 
-		public Route RestrictByCookie(string name, string value)
+		public Route RestrictByCookie(string name, string value, bool optional = false)
 		{
-			return AddRestrictions(new CookieRestriction(name, CaseInsensitivePlainComparer.Instance, value, CaseInsensitivePlainComparer.Instance));
+			return AddRestrictions(new CookieRestriction(name, CaseInsensitivePlainComparer.Instance, value, CaseInsensitivePlainComparer.Instance, optional));
 		}
 
-		public Route RestrictByCookie(string name, IRequestValueComparer nameComparer, string value, IRequestValueComparer valueComparer)
+		public Route RestrictByCookie(string name, IRequestValueComparer nameComparer, string value, IRequestValueComparer valueComparer, bool optional = false)
 		{
-			return AddRestrictions(new CookieRestriction(name, nameComparer, value, valueComparer));
+			return AddRestrictions(new CookieRestriction(name, nameComparer, value, valueComparer, optional));
 		}
 
-		public Route RestrictByHeader(string field, string value)
+		public Route RestrictByHeader(string field, string value, bool optional = false)
 		{
-			return AddRestrictions(new HeaderRestriction(field, value, CaseInsensitivePlainComparer.Instance));
+			return AddRestrictions(new HeaderRestriction(field, value, CaseInsensitivePlainComparer.Instance, optional));
 		}
 
-		public Route RestrictByHeader(string field, string value, IRequestValueComparer valueComparer)
+		public Route RestrictByHeader(string field, string value, IRequestValueComparer valueComparer, bool optional = false)
 		{
-			return AddRestrictions(new HeaderRestriction(field, value, valueComparer));
+			return AddRestrictions(new HeaderRestriction(field, value, valueComparer, optional));
 		}
 
 		public Route RestrictByHeader<T>(string field, Func<string, T> parseDelegate, Func<T, bool> matchDelegate)
@@ -545,14 +545,14 @@ namespace Junior.Route.Routing
 			return AddRestrictions(queries.Select(arg => new RefererUrlQueryRestriction(arg, comparer)));
 		}
 
-		public Route RestrictByRefererUrlQueryString(string field, string value)
+		public Route RestrictByRefererUrlQueryString(string field, string value, bool optional = false)
 		{
-			return AddRestrictions(new RefererUrlQueryStringRestriction(field, CaseInsensitivePlainComparer.Instance, value, CaseInsensitivePlainComparer.Instance));
+			return AddRestrictions(new RefererUrlQueryStringRestriction(field, CaseInsensitivePlainComparer.Instance, value, CaseInsensitivePlainComparer.Instance, optional));
 		}
 
-		public Route RestrictByRefererUrlQueryString(string field, IRequestValueComparer fieldComparer, string value, IRequestValueComparer valueComparer)
+		public Route RestrictByRefererUrlQueryString(string field, IRequestValueComparer fieldComparer, string value, IRequestValueComparer valueComparer, bool optional = false)
 		{
-			return AddRestrictions(new RefererUrlQueryStringRestriction(field, fieldComparer, value, valueComparer));
+			return AddRestrictions(new RefererUrlQueryStringRestriction(field, fieldComparer, value, valueComparer, optional));
 		}
 
 		public Route RestrictByRefererUrlScheme(string scheme, IRequestValueComparer comparer)
@@ -704,14 +704,14 @@ namespace Junior.Route.Routing
 			return AddRestrictions(queries.Select(arg => new UrlQueryRestriction(arg, comparer)));
 		}
 
-		public Route RestrictByUrlQueryString(string field, string value)
+		public Route RestrictByUrlQueryString(string field, string value, bool optional = false)
 		{
-			return AddRestrictions(new UrlQueryStringRestriction(field, CaseInsensitivePlainComparer.Instance, value, CaseInsensitivePlainComparer.Instance));
+			return AddRestrictions(new UrlQueryStringRestriction(field, CaseInsensitivePlainComparer.Instance, value, CaseInsensitivePlainComparer.Instance, optional));
 		}
 
-		public Route RestrictByUrlQueryString(string field, IRequestValueComparer fieldComparer, string value, IRequestValueComparer valueComparer)
+		public Route RestrictByUrlQueryString(string field, IRequestValueComparer fieldComparer, string value, IRequestValueComparer valueComparer, bool optional = false)
 		{
-			return AddRestrictions(new UrlQueryStringRestriction(field, fieldComparer, value, valueComparer));
+			return AddRestrictions(new UrlQueryStringRestriction(field, fieldComparer, value, valueComparer, optional));
 		}
 
 		public Route RestrictByUrlRelativePath(string relativePath, IRequestValueComparer comparer, IHttpRuntime httpRuntime)

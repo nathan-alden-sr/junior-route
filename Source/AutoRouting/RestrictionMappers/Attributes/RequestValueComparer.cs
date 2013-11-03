@@ -5,10 +5,6 @@
 		CaseInsensitivePlain,
 		CaseInsensitiveRegex,
 		CaseSensitivePlain,
-		CaseSensitiveRegex,
-		OptionalCaseInsensitivePlain,
-		OptionalCaseInsensitiveRegex,
-		OptionalCaseSensitivePlain,
-		OptionalCaseSensitiveRegex
+		CaseSensitiveRegex
 	}
 }

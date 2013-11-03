@@ -193,10 +193,6 @@
     <Compile Include="Routing\RequestValueComparers\CaseSensitivePlainRequestTester.cs" />
     <Compile Include="Routing\RequestValueComparers\CaseInsensitiveRegexRequestTester.cs" />
     <Compile Include="Routing\RequestValueComparers\CaseSensitiveRegexRequestTester.cs" />
-    <Compile Include="Routing\RequestValueComparers\OptionalCaseInsensitivePlainRequestTester.cs" />
-    <Compile Include="Routing\RequestValueComparers\OptionalCaseInsensitiveRegexRequestTester.cs" />
-    <Compile Include="Routing\RequestValueComparers\OptionalCaseSensitivePlainRequestTester.cs" />
-    <Compile Include="Routing\RequestValueComparers\OptionalCaseSensitiveRegexRequestTester.cs" />
     <Compile Include="Routing\Responses\CookieTester.cs" />
     <Compile Include="Routing\Responses\CookieValueTester.cs" />
     <Compile Include="Routing\Responses\XmlNodeExtensionsTester.cs" />

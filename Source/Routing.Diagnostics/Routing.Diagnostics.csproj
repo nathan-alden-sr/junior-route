@@ -67,7 +67,9 @@
       <Link>JuniorRoute.snk</Link>
     </None>
     <None Include="packages.config" />
-    <None Include="Web\RouteTable.spark" />
+    <None Include="Web\RouteTable.spark">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Web\Content\route-table-view.css" />

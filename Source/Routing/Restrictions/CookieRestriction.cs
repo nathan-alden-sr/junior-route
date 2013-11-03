@@ -15,10 +15,11 @@ namespace Junior.Route.Routing.Restrictions
 	{
 		private readonly string _name;
 		private readonly IRequestValueComparer _nameComparer;
+		private readonly bool _optional;
 		private readonly string _value;
 		private readonly IRequestValueComparer _valueComparer;
 
-		public CookieRestriction(string name, IRequestValueComparer nameComparer, string value, IRequestValueComparer valueComparer)
+		public CookieRestriction(string name, IRequestValueComparer nameComparer, string value, IRequestValueComparer valueComparer, bool optional = false)
 		{
 			name.ThrowIfNull("cookie");
 			nameComparer.ThrowIfNull("cookieComparer");
@@ -29,6 +30,7 @@ namespace Junior.Route.Routing.Restrictions
 			_nameComparer = nameComparer;
 			_value = value;
 			_valueComparer = valueComparer;
+			_optional = optional;
 		}
 
 		public string Name
@@ -63,6 +65,14 @@ namespace Junior.Route.Routing.Restrictions
 			}
 		}
 
+		public bool Optional
+		{
+			get
+			{
+				return _optional;
+			}
+		}
+
 		// ReSharper disable UnusedMember.Local
 		private string DebuggerDisplay
 			// ReSharper restore UnusedMember.Local
@@ -90,9 +100,10 @@ namespace Junior.Route.Routing.Restrictions
 		{
 			request.ThrowIfNull("request");
 
-			IEnumerable<string> matchingKeys = request.Cookies.AllKeys.Where(arg => _nameComparer.Matches(_name, arg));
+			IEnumerable<string> matchingKeys = request.Cookies.AllKeys.Where(arg => _nameComparer.Matches(_name, arg)).ToArray();
+			bool matchesRequest = (_optional && !matchingKeys.Any()) || matchingKeys.Any(arg => _valueComparer.Matches(_value, request.Cookies[arg].Value));
 
-			return matchingKeys.Any(arg => _valueComparer.Matches(_value, request.Cookies[arg].Value)).AsCompletedTask();
+			return matchesRequest.AsCompletedTask();
 		}
 
 		public override bool Equals(object obj)

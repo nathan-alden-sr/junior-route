@@ -21,14 +21,6 @@ namespace Junior.Route.AutoRouting.RestrictionMappers.Attributes
 					return CaseSensitivePlainComparer.Instance;
 				case RequestValueComparer.CaseSensitiveRegex:
 					return CaseSensitiveRegexComparer.Instance;
-				case RequestValueComparer.OptionalCaseInsensitivePlain:
-					return OptionalCaseInsensitivePlainComparer.Instance;
-				case RequestValueComparer.OptionalCaseInsensitiveRegex:
-					return OptionalCaseInsensitiveRegexComparer.Instance;
-				case RequestValueComparer.OptionalCaseSensitivePlain:
-					return OptionalCaseSensitivePlainComparer.Instance;
-				case RequestValueComparer.OptionalCaseSensitiveRegex:
-					return OptionalCaseSensitiveRegexComparer.Instance;
 				default:
 					throw new ArgumentOutOfRangeException("comparer");
 			}

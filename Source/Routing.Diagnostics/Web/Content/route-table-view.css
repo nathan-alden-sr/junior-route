@@ -68,6 +68,11 @@
 	padding: 2px;
 	vertical-align: middle;
 }
+.route-table-view .flag.optional-flag
+{
+	background-color: #ff4040;
+	color: #fff;
+}
 .route-table-view .flag.regular-expression-flag
 {
 	background-color: #008000;

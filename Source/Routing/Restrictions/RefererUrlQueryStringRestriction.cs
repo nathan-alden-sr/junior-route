@@ -18,8 +18,9 @@ namespace Junior.Route.Routing.Restrictions
 		private readonly IRequestValueComparer _fieldComparer;
 		private readonly string _value;
 		private readonly IRequestValueComparer _valueComparer;
+		private readonly bool _optional;
 
-		public RefererUrlQueryStringRestriction(string field, IRequestValueComparer fieldComparer, string value, IRequestValueComparer valueComparer)
+		public RefererUrlQueryStringRestriction(string field, IRequestValueComparer fieldComparer, string value, IRequestValueComparer valueComparer, bool optional = false)
 		{
 			field.ThrowIfNull("key");
 			fieldComparer.ThrowIfNull("keyComparer");
@@ -30,6 +31,7 @@ namespace Junior.Route.Routing.Restrictions
 			_fieldComparer = fieldComparer;
 			_value = value;
 			_valueComparer = valueComparer;
+			_optional = optional;
 		}
 
 		public string Field
@@ -64,6 +66,14 @@ namespace Junior.Route.Routing.Restrictions
 			}
 		}
 
+		public bool Optional
+		{
+			get
+			{
+				return _optional;
+			}
+		}
+
 		// ReSharper disable UnusedMember.Local
 		private string DebuggerDisplay
 			// ReSharper restore UnusedMember.Local
@@ -92,9 +102,10 @@ namespace Junior.Route.Routing.Restrictions
 			request.ThrowIfNull("request");
 
 			NameValueCollection queryString = HttpUtility.ParseQueryString(request.UrlReferrer.Query);
-			IEnumerable<string> matchingKeys = queryString.AllKeys.Where(arg => _fieldComparer.Matches(_field, arg));
+			IEnumerable<string> matchingKeys = queryString.AllKeys.Where(arg => _fieldComparer.Matches(_field, arg)).ToArray();
+			bool matchesRequest = ((_optional && !matchingKeys.Any()) || matchingKeys.Any(arg => _valueComparer.Matches(_value, queryString[arg])));
 
-			return matchingKeys.Any(arg => _valueComparer.Matches(_value, queryString[arg])).AsCompletedTask();
+			return matchesRequest.AsCompletedTask();
 		}
 
 		public override bool Equals(object obj)

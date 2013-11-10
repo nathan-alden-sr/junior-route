@@ -242,19 +242,24 @@ namespace Junior.Route.ViewEngines.Razor.Routing.TemplateRepositories
 					NotifyFilter = NotifyFilters.CreationTime | NotifyFilters.DirectoryName | NotifyFilters.FileName | NotifyFilters.LastWrite | NotifyFilters.Size
 				};
 
+			_fileSystemWatchersByAbsolutePath.Add(absolutePath, fileSystemWatcher);
+
 			fileSystemWatcher.Changed += FileSystemWatcherOnNotification;
 			fileSystemWatcher.Created += FileSystemWatcherOnNotification;
 			fileSystemWatcher.Deleted += FileSystemWatcherOnNotification;
 			fileSystemWatcher.Renamed += FileSystemWatcherOnNotification;
 			fileSystemWatcher.EnableRaisingEvents = true;
-
-			_fileSystemWatchersByAbsolutePath.Add(absolutePath, fileSystemWatcher);
 		}
 
 		private void FileSystemWatcherOnNotification(object sender, FileSystemEventArgs e)
 		{
 			lock (_lockObject)
 			{
+				if (_fileSystemWatchersByAbsolutePath.ContainsKey(e.FullPath))
+				{
+					throw new Exception(String.Format("Received a notification for '{0}' but the path does not exist in the file system watcher collection.", e.FullPath));
+				}
+
 				FileSystemWatcher fileSystemWatcher = _fileSystemWatchersByAbsolutePath[e.FullPath];
 
 				fileSystemWatcher.EnableRaisingEvents = false;

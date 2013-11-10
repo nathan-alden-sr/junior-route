@@ -105,6 +105,12 @@ namespace Junior.Route.UnitTests.Routing.AntiCsrf.CookieManagers
 				Assert.That(_response.Cookies["name"].Value, Is.EqualTo(_sessionId.ToString("N")));
 				_guidFactory.AssertWasNotCalled(arg => arg.Random());
 			}
+
+			[Test]
+			public void Must_set_http_only_flag()
+			{
+				Assert.That(_response.Cookies["name"].HttpOnly, Is.True);
+			}
 		}
 
 		[TestFixture]

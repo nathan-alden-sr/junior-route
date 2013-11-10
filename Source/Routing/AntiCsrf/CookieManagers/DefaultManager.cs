@@ -26,14 +26,12 @@ namespace Junior.Route.Routing.AntiCsrf.CookieManagers
 			request.ThrowIfNull("request");
 			response.ThrowIfNull("response");
 
-			if (request.Cookies.AllKeys.Contains(_configuration.CookieName))
-			{
-				response.Cookies.Set(request.Cookies[_configuration.CookieName]);
-				return Task.Factory.Empty();
-			}
+			string cookieName = _configuration.CookieName;
+			string sessionId = request.Cookies.AllKeys.Contains(cookieName) ? request.Cookies[cookieName].Value : _guidFactory.Random().ToString("N");
 
-			string sessionId = _guidFactory.Random().ToString("N");
-			var cookie = new HttpCookie(_configuration.CookieName, sessionId) { HttpOnly = true };
+			response.Cookies.Remove(cookieName);
+
+			var cookie = new HttpCookie(cookieName, sessionId) { HttpOnly = true };
 
 			response.Cookies.Add(cookie);
 

@@ -255,7 +255,7 @@ namespace Junior.Route.ViewEngines.Razor.Routing.TemplateRepositories
 		{
 			lock (_lockObject)
 			{
-				if (_fileSystemWatchersByAbsolutePath.ContainsKey(e.FullPath))
+				if (!_fileSystemWatchersByAbsolutePath.ContainsKey(e.FullPath))
 				{
 					throw new Exception(String.Format("Received a notification for '{0}' but the path does not exist in the file system watcher collection.", e.FullPath));
 				}

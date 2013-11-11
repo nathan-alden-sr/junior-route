@@ -24,5 +24,15 @@ namespace Junior.Route.Routing.Responses.Audio
 			: base(new Response().AudioWav().ContentEncoding(encoding).Content(content), configurationDelegate)
 		{
 		}
+
+		public WavResponse(Action<Response> configurationDelegate = null)
+			: base(new Response().AudioWav(), configurationDelegate)
+		{
+		}
+
+		public WavResponse(Encoding encoding, Action<Response> configurationDelegate = null)
+			: base(new Response().AudioWav().ContentEncoding(encoding), configurationDelegate)
+		{
+		}
 	}
 }

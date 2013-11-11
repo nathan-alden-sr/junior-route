@@ -16,10 +16,9 @@ using Junior.Route.AutoRouting.IdMappers;
 using Junior.Route.AutoRouting.MethodFilters;
 using Junior.Route.AutoRouting.NameMappers;
 using Junior.Route.AutoRouting.ParameterMappers;
-using Junior.Route.AutoRouting.ResolvedRelativeUrlMappers;
+using Junior.Route.AutoRouting.RelativeUrlResolverMappers;
 using Junior.Route.AutoRouting.ResponseMappers;
 using Junior.Route.AutoRouting.RestrictionMappers;
-using Junior.Route.AutoRouting.RestrictionMappers.Attributes;
 using Junior.Route.AutoRouting.SchemeMappers;
 using Junior.Route.Common;
 using Junior.Route.Routing;
@@ -38,13 +37,14 @@ namespace Junior.Route.AutoRouting
 		private readonly HashSet<IIdMapper> _idMappers = new HashSet<IIdMapper>();
 		private readonly HashSet<IMethodFilter> _methodFilters = new HashSet<IMethodFilter>();
 		private readonly HashSet<INameMapper> _nameMappers = new HashSet<INameMapper>();
-		private readonly HashSet<IResolvedRelativeUrlMapper> _resolvedRelativeUrlMappers = new HashSet<IResolvedRelativeUrlMapper>();
+		private readonly HashSet<IRelativeUrlResolverMapper> _relativeUrlResolverMappers = new HashSet<IRelativeUrlResolverMapper>();
 		private readonly HashSet<IRestrictionMapper> _restrictionMappers = new HashSet<IRestrictionMapper>();
 		private readonly HashSet<ISchemeMapper> _schemeMappers = new HashSet<ISchemeMapper>();
 		private IAuthenticationProvider _authenticationProvider;
 		private IContainer _bundleDependencyContainer;
 		private bool _duplicateRouteNamesAllowed;
 		private IContainer _endpointContainer = new NewInstancePerRouteEndpointContainer();
+		private IContainer _relativeUrlResolverContainer;
 		private IResponseMapper _responseMapper = new NoContentMapper();
 		private IContainer _restrictionContainer;
 
@@ -113,6 +113,15 @@ namespace Junior.Route.AutoRouting
 			return this;
 		}
 
+		public AutoRouteCollection RelativeUrlResolverContainer(IContainer container)
+		{
+			container.ThrowIfNull("container");
+
+			_relativeUrlResolverContainer = container;
+
+			return this;
+		}
+
 		public AutoRouteCollection RestrictionContainer(IContainer container)
 		{
 			container.ThrowIfNull("container");
@@ -136,9 +145,13 @@ namespace Junior.Route.AutoRouting
 			{
 				throw new InvalidOperationException("At least one ID mapper must be provided.");
 			}
-			if (!_resolvedRelativeUrlMappers.Any())
+			if (!_relativeUrlResolverMappers.Any())
 			{
 				throw new InvalidOperationException("At least one resolved relative URL mapper must be provided.");
+			}
+			if (_relativeUrlResolverMappers.Any() && _relativeUrlResolverContainer == null)
+			{
+				throw new InvalidOperationException("Relative URL resolver mappers are configured but no relative URL resolver container was provided.");
 			}
 			if (_restrictionMappers.Any() && _restrictionContainer == null)
 			{
@@ -175,26 +188,15 @@ namespace Junior.Route.AutoRouting
 						throw new ApplicationException(String.Format("Unable to determine a route scheme for '{0}.{1}'.", matchingType.FullName, matchingMethod.Name));
 					}
 
-					Type[] ignoredResolvedRelativeUrlMapperTypes = matchingMethod
-						.GetCustomAttributes<IgnoreResolvedRelativeUrlMapperTypeAttribute>()
-						.SelectMany(arg => arg.IgnoredTypes)
-						.ToArray();
-					string resolvedRelativeUrl = await GetResolvedRelativeUrlAsync(ignoredResolvedRelativeUrlMapperTypes, matchingType, matchingMethod);
+					var route = new Routing.Route(name, id.Value, scheme.Value);
 
-					if (resolvedRelativeUrl == null)
+					foreach (IRelativeUrlResolverMapper relativeUrlResolverMapper in _relativeUrlResolverMappers)
 					{
-						throw new ApplicationException(String.Format("Unable to determine a route resolved relative URL for {0}.{1}.", matchingType.FullName, matchingMethod.Name));
+						relativeUrlResolverMapper.MapAsync(matchingType, matchingMethod, route, _relativeUrlResolverContainer);
 					}
-
-					var route = new Routing.Route(name, id.Value, scheme.Value, resolvedRelativeUrl);
-					Type[] ignoredRestrictionMapperTypes = matchingMethod
-						.GetCustomAttributes<IgnoreRestrictionMapperTypeAttribute>()
-						.SelectMany(arg => arg.IgnoredTypes)
-						.ToArray();
-
-					foreach (IRestrictionMapper restrictionMapper in _restrictionMappers.Where(arg => !ignoredRestrictionMapperTypes.Contains(arg.GetType())))
+					foreach (IRestrictionMapper restrictionMapper in _restrictionMappers)
 					{
-						await restrictionMapper.MapAsync(matchingType, matchingMethod, route, _restrictionContainer);
+						restrictionMapper.Map(matchingType, matchingMethod, route, _restrictionContainer);
 					}
 
 					await _responseMapper.MapAsync(() => _endpointContainer, matchingType, matchingMethod, route);
@@ -226,21 +228,6 @@ namespace Junior.Route.AutoRouting
 			}
 
 			return routes;
-		}
-
-		private async Task<string> GetResolvedRelativeUrlAsync(IEnumerable<Type> ignoredResolvedRelativeUrlMapperTypes, Type matchingType, MethodInfo matchingMethod)
-		{
-			foreach (IResolvedRelativeUrlMapper resolvedRelativeUrlMapper in _resolvedRelativeUrlMappers.Where(arg => !ignoredResolvedRelativeUrlMapperTypes.Contains(arg.GetType())))
-			{
-				ResolvedRelativeUrlResult result = await resolvedRelativeUrlMapper.MapAsync(matchingType, matchingMethod);
-
-				if (result.ResultType == ResolvedRelativeUrlResultType.ResolvedRelativeUrlMapped)
-				{
-					return result.ResolvedRelativeUrl;
-				}
-			}
-
-			return null;
 		}
 
 		private async Task<IEnumerable<Type>> GetMatchingTypesAsync()
@@ -586,38 +573,38 @@ namespace Junior.Route.AutoRouting
 
 		#endregion
 
-		#region Resolved relative URL mappers
+		#region Relative URL resolver mappers
 
-		public AutoRouteCollection ResolvedRelativeUrlFromRelativeClassNamespaceAndClassName(
+		public AutoRouteCollection ResolveRelativeUrlsUsingRelativeClassNamespaceAndClassName(
 			string rootNamespace,
 			bool makeLowercase = true,
 			string wordSeparator = "_",
-			string wordRegexPattern = ResolvedRelativeUrlFromRelativeClassNamespaceAndClassNameMapper.DefaultWordRegexPattern)
+			string wordRegexPattern = RelativeUrlResolverFromRelativeClassNamespaceAndClassNameMapper.DefaultWordRegexPattern)
 		{
-			_resolvedRelativeUrlMappers.Add(new ResolvedRelativeUrlFromRelativeClassNamespaceAndClassNameMapper(rootNamespace, makeLowercase, wordSeparator));
+			_relativeUrlResolverMappers.Add(new RelativeUrlResolverFromRelativeClassNamespaceAndClassNameMapper(rootNamespace, makeLowercase, wordSeparator));
 
 			return this;
 		}
 
-		public AutoRouteCollection ResolvedRelativeUrlUsingAttribute()
+		public AutoRouteCollection ResolveRelativeUrlsUsingAttributes()
 		{
-			_resolvedRelativeUrlMappers.Add(new ResolvedRelativeUrlAttributeMapper());
+			_relativeUrlResolverMappers.Add(new RelativeUrlResolversFromAttributesMapper());
 
 			return this;
 		}
 
-		public AutoRouteCollection ResolvedRelativeUrlMappers(IEnumerable<IResolvedRelativeUrlMapper> mappers)
+		public AutoRouteCollection RelativeUrlResolverMappers(IEnumerable<IRelativeUrlResolverMapper> mappers)
 		{
 			mappers.ThrowIfNull("mappers");
 
-			_resolvedRelativeUrlMappers.AddRange(mappers);
+			_relativeUrlResolverMappers.AddRange(mappers);
 
 			return this;
 		}
 
-		public AutoRouteCollection ResolvedRelativeUrlMappers(params IResolvedRelativeUrlMapper[] mappers)
+		public AutoRouteCollection RelativeUrlResolverMappers(params IRelativeUrlResolverMapper[] mappers)
 		{
-			return ResolvedRelativeUrlMappers((IEnumerable<IResolvedRelativeUrlMapper>)mappers);
+			return RelativeUrlResolverMappers((IEnumerable<IRelativeUrlResolverMapper>)mappers);
 		}
 
 		#endregion
@@ -643,37 +630,11 @@ namespace Junior.Route.AutoRouting
 			return this;
 		}
 
-		public AutoRouteCollection RestrictUsingAttributes<T>()
-			where T : RestrictionAttribute
+		public AutoRouteCollection RestrictUsingAttributes()
 		{
-			_restrictionMappers.Add(new RestrictionsFromAttributesMapper<T>());
+			_restrictionMappers.Add(new RestrictionsFromAttributesMapper());
 
 			return this;
-		}
-
-		public AutoRouteCollection RestrictUsingAttributes(IEnumerable<Type> attributeTypes)
-		{
-			attributeTypes.ThrowIfNull("attributeTypes");
-
-			foreach (Type attributeType in attributeTypes)
-			{
-				_restrictionMappers.Add(new RestrictionsFromAttributesMapper(attributeType));
-			}
-
-			return this;
-		}
-
-		public AutoRouteCollection RestrictUsingAttributes(params Type[] attributeTypes)
-		{
-			return RestrictUsingAttributes((IEnumerable<Type>)attributeTypes);
-		}
-
-		public AutoRouteCollection RestrictUsingAllAttributeTypes()
-		{
-			Assembly assembly = Assembly.GetExecutingAssembly();
-			IEnumerable<Type> mappingAttributeTypes = assembly.GetTypes().Where(arg => arg.IsSubclassOf(typeof(RestrictionAttribute)));
-
-			return RestrictUsingAttributes(mappingAttributeTypes);
 		}
 
 		public AutoRouteCollection RestrictionMappers(IEnumerable<IRestrictionMapper> mappers)

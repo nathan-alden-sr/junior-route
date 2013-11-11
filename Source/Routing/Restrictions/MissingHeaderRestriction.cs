@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Web;
 
 using Junior.Common;
@@ -51,11 +50,11 @@ namespace Junior.Route.Routing.Restrictions
 			return String.Equals(_field, other._field);
 		}
 
-		public Task<bool> MatchesRequestAsync(HttpRequestBase request)
+		public MatchResult MatchesRequest(HttpRequestBase request)
 		{
 			request.ThrowIfNull("request");
 
-			return request.Headers.AllKeys.All(arg => arg != _field).AsCompletedTask();
+			return request.Headers.AllKeys.All(arg => arg != _field) ? MatchResult.RestrictionMatched(this.ToEnumerable()) : MatchResult.RestrictionNotMatched(Enumerable.Empty<IRestriction>(), this.ToEnumerable());
 		}
 
 		public override bool Equals(object obj)

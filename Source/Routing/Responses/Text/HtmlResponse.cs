@@ -44,5 +44,15 @@ namespace Junior.Route.Routing.Responses.Text
 			: base(new Response().TextHtml().ContentEncoding(encoding).Content(content), configurationDelegate)
 		{
 		}
+
+		public HtmlResponse(Action<Response> configurationDelegate = null)
+			: base(new Response().TextHtml(), configurationDelegate)
+		{
+		}
+
+		public HtmlResponse(Encoding encoding, Action<Response> configurationDelegate = null)
+			: base(new Response().TextHtml().ContentEncoding(encoding), configurationDelegate)
+		{
+		}
 	}
 }

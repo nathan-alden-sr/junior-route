@@ -117,8 +117,8 @@ namespace Junior.Route.ViewEngines.Razor
 				}
 
 				return new TemplateWriter(writer =>
-					{
-					});
+				{
+				});
 			}
 
 			return new TemplateWriter(writer => writeDelegate());

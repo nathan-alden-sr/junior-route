@@ -18,9 +18,9 @@ namespace Junior.Route.Assets.FileSystem
 		private readonly object _refreshLockObject = new object();
 		private readonly IAssetTransformer[] _transformers;
 		private readonly Timer _watchTimer = new Timer(500)
-			{
-				AutoReset = false
-			};
+		{
+			AutoReset = false
+		};
 		private readonly object _watchTimerLockObject = new object();
 		private readonly HashSet<FileSystemWatcher> _watchers = new HashSet<FileSystemWatcher>();
 		private string _contents;
@@ -159,14 +159,14 @@ namespace Junior.Route.Assets.FileSystem
 				if (_concatenator != null)
 				{
 					bundleContents = _assetOrder != null
-						                 ? _bundle.GetContents(_fileSystem, _assetOrder, _concatenator, _transformers)
-						                 : _bundle.GetContents(_fileSystem, _concatenator, _transformers);
+						? _bundle.GetContents(_fileSystem, _assetOrder, _concatenator, _transformers)
+						: _bundle.GetContents(_fileSystem, _concatenator, _transformers);
 				}
 				else
 				{
 					bundleContents = _assetOrder != null
-						                 ? _bundle.GetContents(_fileSystem, _assetOrder, _transformers)
-						                 : _bundle.GetContents(_fileSystem, _transformers);
+						? _bundle.GetContents(_fileSystem, _assetOrder, _transformers)
+						: _bundle.GetContents(_fileSystem, _transformers);
 				}
 
 				_contents = bundleContents.Contents;

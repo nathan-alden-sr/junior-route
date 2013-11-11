@@ -9,26 +9,32 @@ namespace Junior.Route.Routing.Caching
 		{
 			get;
 		}
+
 		bool AllowsServerCaching
 		{
 			get;
 		}
+
 		DateTime? ClientCacheExpirationUtcTimestamp
 		{
 			get;
 		}
+
 		TimeSpan? ClientCacheMaxAge
 		{
 			get;
 		}
+
 		DateTime? ServerCacheExpirationUtcTimestamp
 		{
 			get;
 		}
+
 		TimeSpan? ServerCacheMaxAge
 		{
 			get;
 		}
+
 		string ETag
 		{
 			get;

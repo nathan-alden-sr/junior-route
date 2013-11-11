@@ -36,8 +36,8 @@ namespace Junior.Route.Http.RequestHeaders
 			}
 
 			return headerValue == "*"
-				       ? new IfMatchHeader(new EntityTag("*", false)).ToEnumerable()
-				       : headerValue.SplitElements().Select(arg => new IfMatchHeader(EntityTag.Parse(arg)));
+				? new IfMatchHeader(new EntityTag("*", false)).ToEnumerable()
+				: headerValue.SplitElements().Select(arg => new IfMatchHeader(EntityTag.Parse(arg)));
 		}
 	}
 }

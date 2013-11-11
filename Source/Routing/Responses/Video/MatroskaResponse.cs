@@ -24,5 +24,15 @@ namespace Junior.Route.Routing.Responses.Video
 			: base(new Response().VideoMatroska().ContentEncoding(encoding).Content(content), configurationDelegate)
 		{
 		}
+
+		public MatroskaResponse(Action<Response> configurationDelegate = null)
+			: base(new Response().VideoMatroska(), configurationDelegate)
+		{
+		}
+
+		public MatroskaResponse(Encoding encoding, Action<Response> configurationDelegate = null)
+			: base(new Response().VideoMatroska().ContentEncoding(encoding), configurationDelegate)
+		{
+		}
 	}
 }

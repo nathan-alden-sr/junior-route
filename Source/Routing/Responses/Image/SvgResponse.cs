@@ -66,5 +66,15 @@ namespace Junior.Route.Routing.Responses.Image
 			: base(new Response().ImageSvg().ContentEncoding(encoding).Content(content.GetBytes(encoding)), configurationDelegate)
 		{
 		}
+
+		public SvgResponse(Action<Response> configurationDelegate = null)
+			: base(new Response().ImageSvg(), configurationDelegate)
+		{
+		}
+
+		public SvgResponse(Encoding encoding, Action<Response> configurationDelegate = null)
+			: base(new Response().ImageSvg().ContentEncoding(encoding), configurationDelegate)
+		{
+		}
 	}
 }

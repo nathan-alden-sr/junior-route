@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Reflection;
-using System.Threading.Tasks;
 
 using Junior.Common;
 using Junior.Route.AutoRouting.Containers;
@@ -10,7 +9,7 @@ namespace Junior.Route.AutoRouting.RestrictionMappers
 {
 	public class HttpMethodFromMethodsNamedAfterStandardHttpMethodsMapper : IRestrictionMapper
 	{
-		public Task MapAsync(Type type, MethodInfo method, Routing.Route route, IContainer container)
+		public void Map(Type type, MethodInfo method, Routing.Route route, IContainer container)
 		{
 			type.ThrowIfNull("type");
 			method.ThrowIfNull("method");
@@ -24,8 +23,6 @@ namespace Junior.Route.AutoRouting.RestrictionMappers
 			{
 				route.RestrictByMethods(httpMethod);
 			}
-
-			return Task.Factory.Empty();
 		}
 	}
 }

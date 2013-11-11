@@ -66,5 +66,15 @@ namespace Junior.Route.Routing.Responses.Application
 			: base(new Response().ApplicationXHtml().ContentEncoding(encoding).Content(content.GetBytes(encoding)), configurationDelegate)
 		{
 		}
+
+		public XHtmlResponse(Action<Response> configurationDelegate = null)
+			: base(new Response().ApplicationXHtml(), configurationDelegate)
+		{
+		}
+
+		public XHtmlResponse(Encoding encoding, Action<Response> configurationDelegate = null)
+			: base(new Response().ApplicationXHtml().ContentEncoding(encoding), configurationDelegate)
+		{
+		}
 	}
 }

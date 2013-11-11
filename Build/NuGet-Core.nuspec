@@ -8,7 +8,6 @@
 		<description>JuniorRoute is the easy-to-learn, easy-to-use routing framework for .NET. This package provides the core routing framework.</description>
 		<releaseNotes></releaseNotes>
 		<projectUrl>https://nathanalden.github.com/JuniorRoute</projectUrl>
-		<iconUrl>https://docs.google.com/uc?export=download&amp;id=0B8a4O6RATfaXQ2YxekpxbXRfUjQ</iconUrl>
 		<dependencies>
 			<group>
 				<dependency id="JuniorCommon" version="3.8.0"/>

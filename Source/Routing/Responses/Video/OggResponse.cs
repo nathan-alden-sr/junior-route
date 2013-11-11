@@ -24,5 +24,15 @@ namespace Junior.Route.Routing.Responses.Video
 			: base(new Response().VideoOgg().ContentEncoding(encoding).Content(content), configurationDelegate)
 		{
 		}
+
+		public OggResponse(Action<Response> configurationDelegate = null)
+			: base(new Response().VideoOgg(), configurationDelegate)
+		{
+		}
+
+		public OggResponse(Encoding encoding, Action<Response> configurationDelegate = null)
+			: base(new Response().VideoOgg().ContentEncoding(encoding), configurationDelegate)
+		{
+		}
 	}
 }

@@ -24,5 +24,15 @@ namespace Junior.Route.Routing.Responses.Audio
 			: base(new Response().AudioWebM().ContentEncoding(encoding).Content(content), configurationDelegate)
 		{
 		}
+
+		public WebMResponse(Action<Response> configurationDelegate = null)
+			: base(new Response().AudioWebM(), configurationDelegate)
+		{
+		}
+
+		public WebMResponse(Encoding encoding, Action<Response> configurationDelegate = null)
+			: base(new Response().AudioWebM().ContentEncoding(encoding), configurationDelegate)
+		{
+		}
 	}
 }

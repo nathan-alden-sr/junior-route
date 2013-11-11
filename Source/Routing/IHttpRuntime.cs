@@ -8,10 +8,12 @@ namespace Junior.Route.Routing
 		{
 			get;
 		}
+
 		string AppDomainAppVirtualPath
 		{
 			get;
 		}
+
 		Cache Cache
 		{
 			get;

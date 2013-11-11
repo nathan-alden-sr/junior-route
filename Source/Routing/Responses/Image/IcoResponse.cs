@@ -24,5 +24,15 @@ namespace Junior.Route.Routing.Responses.Image
 			: base(new Response().ImageIco().ContentEncoding(encoding).Content(content), configurationDelegate)
 		{
 		}
+
+		public IcoResponse(Action<Response> configurationDelegate = null)
+			: base(new Response().ImageIco(), configurationDelegate)
+		{
+		}
+
+		public IcoResponse(Encoding encoding, Action<Response> configurationDelegate = null)
+			: base(new Response().ImageIco().ContentEncoding(encoding), configurationDelegate)
+		{
+		}
 	}
 }

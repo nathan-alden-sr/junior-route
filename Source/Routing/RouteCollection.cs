@@ -10,15 +10,15 @@ namespace Junior.Route.Routing
 	public class RouteCollection : IRouteCollection
 	{
 		private readonly bool _allowDuplicateRouteNames;
-		private readonly Dictionary<Guid, Routing.Route> _routesById = new Dictionary<Guid, Routing.Route>();
-		private readonly Dictionary<string, List<Routing.Route>> _routesByName = new Dictionary<string, List<Routing.Route>>();
+		private readonly Dictionary<Guid, Route> _routesById = new Dictionary<Guid, Route>();
+		private readonly Dictionary<string, List<Route>> _routesByName = new Dictionary<string, List<Route>>();
 
 		public RouteCollection(bool allowDuplicateRouteNames = false)
 		{
 			_allowDuplicateRouteNames = allowDuplicateRouteNames;
 		}
 
-		public IEnumerator<Routing.Route> GetEnumerator()
+		public IEnumerator<Route> GetEnumerator()
 		{
 			return _routesById.Values.GetEnumerator();
 		}
@@ -28,18 +28,18 @@ namespace Junior.Route.Routing
 			return GetEnumerator();
 		}
 
-		public Routing.Route GetRoute(Guid id)
+		public Route GetRoute(Guid id)
 		{
-			Routing.Route route;
+			Route route;
 
 			return _routesById.TryGetValue(id, out route) ? route : null;
 		}
 
-		public Routing.Route GetRoute(string name)
+		public Route GetRoute(string name)
 		{
 			name.ThrowIfNull("name");
 
-			List<Routing.Route> routes;
+			List<Route> routes;
 
 			if (!_routesByName.TryGetValue(name, out routes))
 			{
@@ -53,25 +53,25 @@ namespace Junior.Route.Routing
 			return routes[0];
 		}
 
-		public IEnumerable<Routing.Route> GetRoutes(string name)
+		public IEnumerable<Route> GetRoutes(string name)
 		{
 			name.ThrowIfNull("name");
 
-			List<Routing.Route> routes;
+			List<Route> routes;
 
-			return _routesByName.TryGetValue(name, out routes) ? routes : Enumerable.Empty<Routing.Route>();
+			return _routesByName.TryGetValue(name, out routes) ? routes : Enumerable.Empty<Route>();
 		}
 
-		public IEnumerable<Routing.Route> GetRoutes()
+		public IEnumerable<Route> GetRoutes()
 		{
 			return _routesById.Values;
 		}
 
-		public RouteCollection Add(IEnumerable<Routing.Route> routes)
+		public RouteCollection Add(IEnumerable<Route> routes)
 		{
 			routes.ThrowIfNull("routes");
 
-			foreach (Routing.Route route in routes)
+			foreach (Route route in routes)
 			{
 				if (_routesById.ContainsKey(route.Id))
 				{
@@ -84,11 +84,11 @@ namespace Junior.Route.Routing
 
 				_routesById.Add(route.Id, route);
 
-				List<Routing.Route> routeList;
+				List<Route> routeList;
 
 				if (!_routesByName.TryGetValue(route.Name, out routeList))
 				{
-					routeList = new List<Routing.Route>();
+					routeList = new List<Route>();
 					_routesByName.Add(route.Name, routeList);
 				}
 				routeList.Add(route);
@@ -97,9 +97,9 @@ namespace Junior.Route.Routing
 			return this;
 		}
 
-		public RouteCollection Add(params Routing.Route[] routes)
+		public RouteCollection Add(params Route[] routes)
 		{
-			return Add((IEnumerable<Routing.Route>)routes);
+			return Add((IEnumerable<Route>)routes);
 		}
 	}
 }

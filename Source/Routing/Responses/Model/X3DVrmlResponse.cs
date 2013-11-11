@@ -44,5 +44,15 @@ namespace Junior.Route.Routing.Responses.Model
 			: base(new Response().ModelX3DVrml().ContentEncoding(encoding).Content(content), configurationDelegate)
 		{
 		}
+
+		public X3DVrmlResponse(Action<Response> configurationDelegate = null)
+			: base(new Response().ModelX3DVrml(), configurationDelegate)
+		{
+		}
+
+		public X3DVrmlResponse(Encoding encoding, Action<Response> configurationDelegate = null)
+			: base(new Response().ModelX3DVrml().ContentEncoding(encoding), configurationDelegate)
+		{
+		}
 	}
 }

@@ -12,11 +12,11 @@ namespace Junior.Route.Assets.YuiCompressor
 		public YuiCssTransformer(CompressionType compressionType = CompressionType.Standard, int lineBreakPosition = -1, bool removeComments = true)
 		{
 			_compressor = new CssCompressor
-				{
-					CompressionType = compressionType,
-					LineBreakPosition = lineBreakPosition,
-					RemoveComments = removeComments
-				};
+			{
+				CompressionType = compressionType,
+				LineBreakPosition = lineBreakPosition,
+				RemoveComments = removeComments
+			};
 		}
 
 		public string Transform(string assetContents)

@@ -24,5 +24,15 @@ namespace Junior.Route.Routing.Responses.Application
 			: base(new Response().ApplicationOctetStream().ContentEncoding(encoding).Content(content), configurationDelegate)
 		{
 		}
+
+		public OctetStreamResponse(Action<Response> configurationDelegate = null)
+			: base(new Response().ApplicationOctetStream(), configurationDelegate)
+		{
+		}
+
+		public OctetStreamResponse(Encoding encoding, Action<Response> configurationDelegate = null)
+			: base(new Response().ApplicationOctetStream().ContentEncoding(encoding), configurationDelegate)
+		{
+		}
 	}
 }

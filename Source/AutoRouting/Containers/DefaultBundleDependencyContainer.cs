@@ -17,12 +17,12 @@ namespace Junior.Route.AutoRouting.Containers
 			fileSystem.ThrowIfNull("fileSystem");
 
 			_container = new Dictionary<Type, object>
-				{
-					{ typeof(IHttpRuntime), httpRuntime },
-					{ typeof(IFileSystem), fileSystem },
-					{ typeof(IGuidFactory), new GuidFactory() },
-					{ typeof(ISystemClock), new SystemClock() }
-				};
+			{
+				{ typeof(IHttpRuntime), httpRuntime },
+				{ typeof(IFileSystem), fileSystem },
+				{ typeof(IGuidFactory), new GuidFactory() },
+				{ typeof(ISystemClock), new SystemClock() }
+			};
 		}
 
 		public T GetInstance<T>()

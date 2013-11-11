@@ -37,8 +37,9 @@ namespace Junior.Route.Assets.FileSystem
 		{
 			lock (_lockObject)
 			{
-				ResolvedRelativeUrl = String.Format("{0}?v={1}", _relativePath, _watcher.Hash);
+				ClearRelativeUrlResolvers();
 				ClearRestrictions();
+				ResolveRelativeUrlsUsingFormatString(String.Format("{0}?v={1}", _relativePath, _watcher.Hash));
 				RestrictByMethods(HttpMethod.Get);
 				RestrictByUrlRelativePath(_relativePath, CaseInsensitivePlainComparer.Instance, _httpRuntime);
 				RestrictByUrlQuery(@"^(?:\?(?i:v=[a-f0-9]{32}))?$", CaseInsensitiveRegexComparer.Instance);

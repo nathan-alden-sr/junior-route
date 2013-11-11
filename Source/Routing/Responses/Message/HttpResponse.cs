@@ -24,5 +24,15 @@ namespace Junior.Route.Routing.Responses.Message
 			: base(new Response().MessageHttp().ContentEncoding(encoding).Content(content), configurationDelegate)
 		{
 		}
+
+		public HttpResponse(Action<Response> configurationDelegate = null)
+			: base(new Response().MessageHttp(), configurationDelegate)
+		{
+		}
+
+		public HttpResponse(Encoding encoding, Action<Response> configurationDelegate = null)
+			: base(new Response().MessageHttp().ContentEncoding(encoding), configurationDelegate)
+		{
+		}
 	}
 }

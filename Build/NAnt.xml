@@ -32,7 +32,7 @@
 		<call target="RunUnitTests"/>
 		<if test="${BuildConfiguration == 'Release'}">
 			<call target="RecreateNuGetResultsDirectory"/>
-			<foreach item="String" in="Core,Assets,Assets-YuiCompressor,AspNetIntegration,Diagnostics,AspNetIntegration-Diagnostics,Core-Diagnostics,AutoRouting,ViewEngines-Razor,ViewEngines-Razor-Routing" delim="," property="SubProject">
+			<foreach item="String" in="Core,Assets,Assets-YuiCompressor,AspNetIntegration,AutoRouting,ViewEngines-Razor,ViewEngines-Razor-Routing" delim="," property="SubProject">
 				<call target="StageNuGetFiles"/>
 				<call target="CreateNuGetPackage"/>
 				<call target="DeleteStagedNuGetFiles"/>
@@ -117,30 +117,6 @@
 			<copy todir="${NuGetStagingBinDirectory}">
 				<fileset basedir="${path::combine(SourceDirectory, path::combine('AspNetIntegration\bin', BuildConfiguration))}">
 					<include name="Junior.Route.AspNetIntegration.*"/>
-				</fileset>
-			</copy>
-		</if>
-		<if test="${SubProject == 'Diagnostics'}">
-			<property name="AssemblyInfoPath" value="${path::combine(SourceDirectory, 'Diagnostics\Properties\AssemblyInfo.cs')}"/>
-			<copy todir="${NuGetStagingBinDirectory}">
-				<fileset basedir="${path::combine(SourceDirectory, path::combine('Diagnostics\bin', BuildConfiguration))}">
-					<include name="Junior.Route.Diagnostics.*"/>
-				</fileset>
-			</copy>
-		</if>
-		<if test="${SubProject == 'AspNetIntegration-Diagnostics'}">
-			<property name="AssemblyInfoPath" value="${path::combine(SourceDirectory, 'AspNetIntegration.Diagnostics\Properties\AssemblyInfo.cs')}"/>
-			<copy todir="${NuGetStagingBinDirectory}">
-				<fileset basedir="${path::combine(SourceDirectory, path::combine('AspNetIntegration.Diagnostics\bin', BuildConfiguration))}">
-					<include name="Junior.Route.AspNetIntegration.Diagnostics.*"/>
-				</fileset>
-			</copy>
-		</if>
-		<if test="${SubProject == 'Core-Diagnostics'}">
-			<property name="AssemblyInfoPath" value="${path::combine(SourceDirectory, 'Routing.Diagnostics\Properties\AssemblyInfo.cs')}"/>
-			<copy todir="${NuGetStagingBinDirectory}">
-				<fileset basedir="${path::combine(SourceDirectory, path::combine('Routing.Diagnostics\bin', BuildConfiguration))}">
-					<include name="Junior.Route.Routing.Diagnostics.*"/>
 				</fileset>
 			</copy>
 		</if>

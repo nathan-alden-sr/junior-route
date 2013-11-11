@@ -24,5 +24,15 @@ namespace Junior.Route.Routing.Responses.Video
 			: base(new Response().VideoQuickTime().ContentEncoding(encoding).Content(content), configurationDelegate)
 		{
 		}
+
+		public QuickTimeResponse(Action<Response> configurationDelegate = null)
+			: base(new Response().VideoQuickTime(), configurationDelegate)
+		{
+		}
+
+		public QuickTimeResponse(Encoding encoding, Action<Response> configurationDelegate = null)
+			: base(new Response().VideoQuickTime().ContentEncoding(encoding), configurationDelegate)
+		{
+		}
 	}
 }

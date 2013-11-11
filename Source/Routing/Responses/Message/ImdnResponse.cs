@@ -66,5 +66,15 @@ namespace Junior.Route.Routing.Responses.Message
 			: base(new Response().MessageImdn().ContentEncoding(encoding).Content(content.GetBytes(encoding)), configurationDelegate)
 		{
 		}
+
+		public ImdnResponse(Action<Response> configurationDelegate = null)
+			: base(new Response().MessageImdn(), configurationDelegate)
+		{
+		}
+
+		public ImdnResponse(Encoding encoding, Action<Response> configurationDelegate = null)
+			: base(new Response().MessageImdn().ContentEncoding(encoding), configurationDelegate)
+		{
+		}
 	}
 }

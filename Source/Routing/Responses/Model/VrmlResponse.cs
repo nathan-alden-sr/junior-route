@@ -44,5 +44,15 @@ namespace Junior.Route.Routing.Responses.Model
 			: base(new Response().ModelVrml().ContentEncoding(encoding).Content(content), configurationDelegate)
 		{
 		}
+
+		public VrmlResponse(Action<Response> configurationDelegate = null)
+			: base(new Response().ModelVrml(), configurationDelegate)
+		{
+		}
+
+		public VrmlResponse(Encoding encoding, Action<Response> configurationDelegate = null)
+			: base(new Response().ModelVrml().ContentEncoding(encoding), configurationDelegate)
+		{
+		}
 	}
 }

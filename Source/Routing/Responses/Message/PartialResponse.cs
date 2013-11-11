@@ -44,5 +44,15 @@ namespace Junior.Route.Routing.Responses.Message
 			: base(new Response().MessagePartial().ContentEncoding(encoding).Content(content), configurationDelegate)
 		{
 		}
+
+		public PartialResponse(Action<Response> configurationDelegate = null)
+			: base(new Response().MessagePartial(), configurationDelegate)
+		{
+		}
+
+		public PartialResponse(Encoding encoding, Action<Response> configurationDelegate = null)
+			: base(new Response().MessagePartial().ContentEncoding(encoding), configurationDelegate)
+		{
+		}
 	}
 }

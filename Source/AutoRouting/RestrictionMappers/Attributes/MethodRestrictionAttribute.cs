@@ -1,0 +1,37 @@
+﻿using System;
+using System.Linq;
+
+using Junior.Common;
+using Junior.Route.AutoRouting.Containers;
+using Junior.Route.Routing;
+
+namespace Junior.Route.AutoRouting.RestrictionMappers.Attributes
+{
+	[AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
+	public class MethodRestrictionAttribute : RestrictionAttribute
+	{
+		private readonly string[] _methods;
+
+		public MethodRestrictionAttribute(params string[] methods)
+		{
+			methods.ThrowIfNull("methods");
+
+			_methods = methods;
+		}
+
+		public MethodRestrictionAttribute(params HttpMethod[] methods)
+		{
+			methods.ThrowIfNull("methods");
+
+			_methods = methods.Select(arg => arg.ToString().ToUpperInvariant()).ToArray();
+		}
+
+		public override void Map(Routing.Route route, IContainer container)
+		{
+			route.ThrowIfNull("route");
+			container.ThrowIfNull("container");
+
+			route.RestrictByMethods(_methods);
+		}
+	}
+}

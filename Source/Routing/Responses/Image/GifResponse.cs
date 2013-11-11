@@ -24,5 +24,15 @@ namespace Junior.Route.Routing.Responses.Image
 			: base(new Response().ImageGif().ContentEncoding(encoding).Content(content), configurationDelegate)
 		{
 		}
+
+		public GifResponse(Action<Response> configurationDelegate = null)
+			: base(new Response().ImageGif(), configurationDelegate)
+		{
+		}
+
+		public GifResponse(Encoding encoding, Action<Response> configurationDelegate = null)
+			: base(new Response().ImageGif().ContentEncoding(encoding), configurationDelegate)
+		{
+		}
 	}
 }

@@ -146,23 +146,23 @@ namespace Junior.Route.Routing.Caching
 		public CachePolicy Clone()
 		{
 			return new CachePolicy
-				{
-					_allowResponseInBrowserHistory = _allowResponseInBrowserHistory,
-					_cacheability = _cacheability,
-					_clientCacheExpirationUtcTimestamp = _clientCacheExpirationUtcTimestamp,
-					_clientCacheMaxAge = _clientCacheMaxAge,
-					_eTag = _eTag,
-					_hasPolicy = _hasPolicy,
-					_ignoreClientCacheControl = _ignoreClientCacheControl,
-					_noStore = _noStore,
-					_noTransforms = _noTransforms,
-					_omitVaryStar = _omitVaryStar,
-					_proxyMaxAge = _proxyMaxAge,
-					_revalidation = _revalidation,
-					_serverCacheExpirationUtcTimestamp = _serverCacheExpirationUtcTimestamp,
-					_serverCacheMaxAge = _serverCacheMaxAge,
-					_allowsServerCaching = _allowsServerCaching
-				};
+			{
+				_allowResponseInBrowserHistory = _allowResponseInBrowserHistory,
+				_cacheability = _cacheability,
+				_clientCacheExpirationUtcTimestamp = _clientCacheExpirationUtcTimestamp,
+				_clientCacheMaxAge = _clientCacheMaxAge,
+				_eTag = _eTag,
+				_hasPolicy = _hasPolicy,
+				_ignoreClientCacheControl = _ignoreClientCacheControl,
+				_noStore = _noStore,
+				_noTransforms = _noTransforms,
+				_omitVaryStar = _omitVaryStar,
+				_proxyMaxAge = _proxyMaxAge,
+				_revalidation = _revalidation,
+				_serverCacheExpirationUtcTimestamp = _serverCacheExpirationUtcTimestamp,
+				_serverCacheMaxAge = _serverCacheMaxAge,
+				_allowsServerCaching = _allowsServerCaching
+			};
 		}
 
 		public CachePolicy PublicClientCaching(DateTime expirationUtcTimestamp)

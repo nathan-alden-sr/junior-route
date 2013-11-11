@@ -66,5 +66,15 @@ namespace Junior.Route.Routing.Responses.Application
 			: base(new Response().ApplicationRss().ContentEncoding(encoding).Content(content.GetBytes(encoding)), configurationDelegate)
 		{
 		}
+
+		public RssResponse(Action<Response> configurationDelegate = null)
+			: base(new Response().ApplicationRss(), configurationDelegate)
+		{
+		}
+
+		public RssResponse(Encoding encoding, Action<Response> configurationDelegate = null)
+			: base(new Response().ApplicationRss().ContentEncoding(encoding), configurationDelegate)
+		{
+		}
 	}
 }

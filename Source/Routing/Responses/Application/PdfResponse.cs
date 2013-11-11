@@ -24,5 +24,15 @@ namespace Junior.Route.Routing.Responses.Application
 			: base(new Response().ApplicationPdf().ContentEncoding(encoding).Content(content), configurationDelegate)
 		{
 		}
+
+		public PdfResponse(Action<Response> configurationDelegate = null)
+			: base(new Response().ApplicationPdf(), configurationDelegate)
+		{
+		}
+
+		public PdfResponse(Encoding encoding, Action<Response> configurationDelegate = null)
+			: base(new Response().ApplicationPdf().ContentEncoding(encoding), configurationDelegate)
+		{
+		}
 	}
 }

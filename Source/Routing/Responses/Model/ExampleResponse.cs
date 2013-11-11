@@ -44,5 +44,15 @@ namespace Junior.Route.Routing.Responses.Model
 			: base(new Response().ModelExample().ContentEncoding(encoding).Content(content), configurationDelegate)
 		{
 		}
+
+		public ExampleResponse(Action<Response> configurationDelegate = null)
+			: base(new Response().ModelExample(), configurationDelegate)
+		{
+		}
+
+		public ExampleResponse(Encoding encoding, Action<Response> configurationDelegate = null)
+			: base(new Response().ModelExample().ContentEncoding(encoding), configurationDelegate)
+		{
+		}
 	}
 }

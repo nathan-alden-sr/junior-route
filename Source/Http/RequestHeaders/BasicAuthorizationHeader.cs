@@ -73,8 +73,8 @@ namespace Junior.Route.Http.RequestHeaders
 			string[] useridAndPasswordParts = useridAndPassword.Split(':');
 
 			return useridAndPasswordParts.Length == 2 && Regex.IsMatch(useridAndPasswordParts[0], UseridRegexPattern) && Regex.IsMatch(useridAndPasswordParts[1], PasswordRegexPattern)
-				       ? new BasicAuthorizationHeader(spaceSplitParts[0], useridAndPasswordParts[0], useridAndPasswordParts[1])
-				       : null;
+				? new BasicAuthorizationHeader(spaceSplitParts[0], useridAndPasswordParts[0], useridAndPasswordParts[1])
+				: null;
 		}
 	}
 }

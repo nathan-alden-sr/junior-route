@@ -66,5 +66,15 @@ namespace Junior.Route.Routing.Responses.Application
 			: base(new Response().ApplicationSoap().ContentEncoding(encoding).Content(content.GetBytes(encoding)), configurationDelegate)
 		{
 		}
+
+		public SoapResponse(Action<Response> configurationDelegate = null)
+			: base(new Response().ApplicationSoap(), configurationDelegate)
+		{
+		}
+
+		public SoapResponse(Encoding encoding, Action<Response> configurationDelegate = null)
+			: base(new Response().ApplicationSoap().ContentEncoding(encoding), configurationDelegate)
+		{
+		}
 	}
 }

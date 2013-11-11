@@ -24,5 +24,15 @@ namespace Junior.Route.Routing.Responses.Audio
 			: base(new Response().AudioMp4().ContentEncoding(encoding).Content(content), configurationDelegate)
 		{
 		}
+
+		public Mp4Response(Action<Response> configurationDelegate = null)
+			: base(new Response().AudioMp4(), configurationDelegate)
+		{
+		}
+
+		public Mp4Response(Encoding encoding, Action<Response> configurationDelegate = null)
+			: base(new Response().AudioMp4().ContentEncoding(encoding), configurationDelegate)
+		{
+		}
 	}
 }

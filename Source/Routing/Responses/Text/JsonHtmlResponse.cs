@@ -66,5 +66,15 @@ namespace Junior.Route.Routing.Responses.Text
 			: base(new Response().TextHtml().ContentEncoding(encoding).Content(() => JsonConvert.SerializeObject(content, serializerSettings)))
 		{
 		}
+
+		public JsonHtmlResponse(Action<Response> configurationDelegate = null)
+			: base(new Response().TextHtml(), configurationDelegate)
+		{
+		}
+
+		public JsonHtmlResponse(Encoding encoding, Action<Response> configurationDelegate = null)
+			: base(new Response().TextHtml().ContentEncoding(encoding), configurationDelegate)
+		{
+		}
 	}
 }

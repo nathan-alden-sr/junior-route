@@ -44,5 +44,15 @@ namespace Junior.Route.Routing.Responses.Text
 			: base(new Response().TextCsv().ContentEncoding(encoding).Content(content), configurationDelegate)
 		{
 		}
+
+		public CsvResponse(Action<Response> configurationDelegate = null)
+			: base(new Response().TextCsv(), configurationDelegate)
+		{
+		}
+
+		public CsvResponse(Encoding encoding, Action<Response> configurationDelegate = null)
+			: base(new Response().TextCsv().ContentEncoding(encoding), configurationDelegate)
+		{
+		}
 	}
 }

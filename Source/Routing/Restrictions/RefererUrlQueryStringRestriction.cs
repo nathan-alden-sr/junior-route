@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Web;
 
 using Junior.Common;
@@ -16,9 +15,9 @@ namespace Junior.Route.Routing.Restrictions
 	{
 		private readonly string _field;
 		private readonly IRequestValueComparer _fieldComparer;
+		private readonly bool _optional;
 		private readonly string _value;
 		private readonly IRequestValueComparer _valueComparer;
-		private readonly bool _optional;
 
 		public RefererUrlQueryStringRestriction(string field, IRequestValueComparer fieldComparer, string value, IRequestValueComparer valueComparer, bool optional = false)
 		{
@@ -97,15 +96,16 @@ namespace Junior.Route.Routing.Restrictions
 			return String.Equals(_field, other._field) && Equals(_fieldComparer, other._fieldComparer) && String.Equals(_value, other._value) && Equals(_valueComparer, other._valueComparer);
 		}
 
-		public Task<bool> MatchesRequestAsync(HttpRequestBase request)
+		public MatchResult MatchesRequest(HttpRequestBase request)
 		{
 			request.ThrowIfNull("request");
 
 			NameValueCollection queryString = HttpUtility.ParseQueryString(request.UrlReferrer.Query);
 			IEnumerable<string> matchingKeys = queryString.AllKeys.Where(arg => _fieldComparer.Matches(_field, arg)).ToArray();
-			bool matchesRequest = ((_optional && !matchingKeys.Any()) || matchingKeys.Any(arg => _valueComparer.Matches(_value, queryString[arg])));
 
-			return matchesRequest.AsCompletedTask();
+			return (_optional && !matchingKeys.Any()) || matchingKeys.Any(arg => _valueComparer.Matches(_value, queryString[arg]))
+				? MatchResult.RestrictionMatched(this.ToEnumerable())
+				: MatchResult.RestrictionNotMatched(Enumerable.Empty<IRestriction>(), this.ToEnumerable());
 		}
 
 		public override bool Equals(object obj)

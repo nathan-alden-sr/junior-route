@@ -115,13 +115,13 @@ namespace Junior.Route.Routing.Responses
 		public HttpCookie GetHttpCookie()
 		{
 			var cookie = new HttpCookie(_name, _value)
-				{
-					Domain = Domain,
-					Expires = Expires,
-					HttpOnly = HttpOnly,
-					Path = Path,
-					Secure = Secure
-				};
+			{
+				Domain = Domain,
+				Expires = Expires,
+				HttpOnly = HttpOnly,
+				Path = Path,
+				Secure = Secure
+			};
 
 			return cookie;
 		}

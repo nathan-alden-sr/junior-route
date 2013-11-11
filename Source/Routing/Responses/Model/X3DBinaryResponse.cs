@@ -24,5 +24,15 @@ namespace Junior.Route.Routing.Responses.Model
 			: base(new Response().ModelX3DBinary().ContentEncoding(encoding).Content(content), configurationDelegate)
 		{
 		}
+
+		public X3DBinaryResponse(Action<Response> configurationDelegate = null)
+			: base(new Response().ModelX3DBinary(), configurationDelegate)
+		{
+		}
+
+		public X3DBinaryResponse(Encoding encoding, Action<Response> configurationDelegate = null)
+			: base(new Response().ModelX3DBinary().ContentEncoding(encoding), configurationDelegate)
+		{
+		}
 	}
 }

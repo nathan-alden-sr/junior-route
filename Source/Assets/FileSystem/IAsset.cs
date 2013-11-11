@@ -12,6 +12,7 @@ namespace Junior.Route.Assets.FileSystem
 		{
 			get;
 		}
+
 		Encoding Encoding
 		{
 			get;

@@ -66,5 +66,15 @@ namespace Junior.Route.Routing.Responses.Application
 			: base(new Response().ApplicationAtom().ContentEncoding(encoding).Content(content.GetBytes(encoding)), configurationDelegate)
 		{
 		}
+
+		public AtomResponse(Action<Response> configurationDelegate = null)
+			: base(new Response().ApplicationAtom(), configurationDelegate)
+		{
+		}
+
+		public AtomResponse(Encoding encoding, Action<Response> configurationDelegate = null)
+			: base(new Response().ApplicationAtom().ContentEncoding(encoding), configurationDelegate)
+		{
+		}
 	}
 }

@@ -236,11 +236,11 @@ namespace Junior.Route.ViewEngines.Razor.Routing.TemplateRepositories
 		private void AddFileSystemWatcher(string absolutePath)
 		{
 			var fileSystemWatcher = new FileSystemWatcher(Path.GetDirectoryName(absolutePath), Path.GetFileName(absolutePath))
-				{
-					EnableRaisingEvents = false,
-					IncludeSubdirectories = false,
-					NotifyFilter = NotifyFilters.CreationTime | NotifyFilters.DirectoryName | NotifyFilters.FileName | NotifyFilters.LastWrite | NotifyFilters.Size
-				};
+			{
+				EnableRaisingEvents = false,
+				IncludeSubdirectories = false,
+				NotifyFilter = NotifyFilters.CreationTime | NotifyFilters.DirectoryName | NotifyFilters.FileName | NotifyFilters.LastWrite | NotifyFilters.Size
+			};
 
 			_fileSystemWatchersByAbsolutePath.Add(absolutePath, fileSystemWatcher);
 
@@ -255,12 +255,13 @@ namespace Junior.Route.ViewEngines.Razor.Routing.TemplateRepositories
 		{
 			lock (_lockObject)
 			{
-				if (!_fileSystemWatchersByAbsolutePath.ContainsKey(e.FullPath))
-				{
-					throw new Exception(String.Format("Received a notification for '{0}' but the path does not exist in the file system watcher collection.", e.FullPath));
-				}
+				FileSystemWatcher fileSystemWatcher;
 
-				FileSystemWatcher fileSystemWatcher = _fileSystemWatchersByAbsolutePath[e.FullPath];
+				// Multiple notifications can be sent at the same time for the same file, so ignore if the watcher was already removed
+				if (!_fileSystemWatchersByAbsolutePath.TryGetValue(e.FullPath, out fileSystemWatcher))
+				{
+					return;
+				}
 
 				fileSystemWatcher.EnableRaisingEvents = false;
 				_fileSystemWatchersByAbsolutePath.Remove(e.FullPath);

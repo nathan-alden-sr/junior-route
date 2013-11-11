@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 using Junior.Common;
 using Junior.Route.Routing.Restrictions;
@@ -8,15 +9,15 @@ namespace Junior.Route.Routing
 	public class MatchResult
 	{
 		private readonly string _cacheKey;
-		private readonly HashSet<IRestriction> _matchedRestrictions;
+		private readonly IEnumerable<IRestriction> _matchedRestrictions;
 		private readonly MatchResultType _resultType;
-		private readonly HashSet<IRestriction> _unmatchedRestrictions;
+		private readonly IEnumerable<IRestriction> _unmatchedRestrictions;
 
-		private MatchResult(MatchResultType resultType, IEnumerable<IRestriction> matchedRestrictions, IEnumerable<IRestriction> unmatchedRestrictions = null, string cacheKey = null)
+		private MatchResult(MatchResultType resultType, IEnumerable<IRestriction> matchedRestrictions, IEnumerable<IRestriction> unmatchedRestrictions, string cacheKey = null)
 		{
 			_resultType = resultType;
-			_matchedRestrictions = new HashSet<IRestriction>(matchedRestrictions ?? new IRestriction[0]);
-			_unmatchedRestrictions = new HashSet<IRestriction>(unmatchedRestrictions ?? new IRestriction[0]);
+			_unmatchedRestrictions = unmatchedRestrictions.ToArray();
+			_matchedRestrictions = matchedRestrictions.ToArray();
 			_cacheKey = cacheKey;
 		}
 
@@ -57,7 +58,7 @@ namespace Junior.Route.Routing
 			matchedRestrictions.ThrowIfNull("matchedRestrictions");
 			cacheKey.ThrowIfNull("cacheKey");
 
-			return new MatchResult(MatchResultType.RouteMatched, matchedRestrictions, null, cacheKey);
+			return new MatchResult(MatchResultType.RouteMatched, matchedRestrictions, Enumerable.Empty<IRestriction>(), cacheKey);
 		}
 
 		public static MatchResult RouteNotMatched(IEnumerable<IRestriction> matchedRestrictions, IEnumerable<IRestriction> unmatchedRestrictions)

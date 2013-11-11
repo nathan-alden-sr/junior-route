@@ -24,5 +24,15 @@ namespace Junior.Route.Routing.Responses.Image
 			: base(new Response().ImageJpeg().ContentEncoding(encoding).Content(content), configurationDelegate)
 		{
 		}
+
+		public JpegResponse(Action<Response> configurationDelegate = null)
+			: base(new Response().ImageJpeg(), configurationDelegate)
+		{
+		}
+
+		public JpegResponse(Encoding encoding, Action<Response> configurationDelegate = null)
+			: base(new Response().ImageJpeg().ContentEncoding(encoding), configurationDelegate)
+		{
+		}
 	}
 }

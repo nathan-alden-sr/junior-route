@@ -1,5 +1,5 @@
 ﻿using System.Reflection;
 
 [assembly:AssemblyTitle("Junior.Route.AspNetIntegration")]
-[assembly:AssemblyVersion("13.0.0.0")]
-[assembly:AssemblyFileVersion("13.0.1.0")]
+[assembly:AssemblyVersion("14.0.0.0")]
+[assembly:AssemblyFileVersion("14.0.0.0")]

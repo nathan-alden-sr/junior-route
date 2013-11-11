@@ -24,5 +24,15 @@ namespace Junior.Route.Routing.Responses.Audio
 			: base(new Response().AudioVorbis().ContentEncoding(encoding).Content(content), configurationDelegate)
 		{
 		}
+
+		public VorbisResponse(Action<Response> configurationDelegate = null)
+			: base(new Response().AudioVorbis(), configurationDelegate)
+		{
+		}
+
+		public VorbisResponse(Encoding encoding, Action<Response> configurationDelegate = null)
+			: base(new Response().AudioVorbis().ContentEncoding(encoding), configurationDelegate)
+		{
+		}
 	}
 }

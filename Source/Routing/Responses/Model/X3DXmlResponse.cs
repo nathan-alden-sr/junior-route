@@ -66,5 +66,15 @@ namespace Junior.Route.Routing.Responses.Model
 			: base(new Response().ModelX3DXml().ContentEncoding(encoding).Content(content.GetBytes(encoding)), configurationDelegate)
 		{
 		}
+
+		public X3DXmlResponse(Action<Response> configurationDelegate = null)
+			: base(new Response().ModelX3DXml(), configurationDelegate)
+		{
+		}
+
+		public X3DXmlResponse(Encoding encoding, Action<Response> configurationDelegate = null)
+			: base(new Response().ModelX3DXml().ContentEncoding(encoding), configurationDelegate)
+		{
+		}
 	}
 }

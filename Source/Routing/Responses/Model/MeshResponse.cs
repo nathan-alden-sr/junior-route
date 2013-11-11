@@ -44,5 +44,15 @@ namespace Junior.Route.Routing.Responses.Model
 			: base(new Response().ModelMesh().ContentEncoding(encoding).Content(content), configurationDelegate)
 		{
 		}
+
+		public MeshResponse(Action<Response> configurationDelegate = null)
+			: base(new Response().ModelMesh(), configurationDelegate)
+		{
+		}
+
+		public MeshResponse(Encoding encoding, Action<Response> configurationDelegate = null)
+			: base(new Response().ModelMesh().ContentEncoding(encoding), configurationDelegate)
+		{
+		}
 	}
 }

@@ -44,5 +44,15 @@ namespace Junior.Route.Routing.Responses.Text
 			: base(new Response().TextVCard().ContentEncoding(encoding).Content(content), configurationDelegate)
 		{
 		}
+
+		public VCardResponse(Action<Response> configurationDelegate = null)
+			: base(new Response().TextVCard(), configurationDelegate)
+		{
+		}
+
+		public VCardResponse(Encoding encoding, Action<Response> configurationDelegate = null)
+			: base(new Response().TextVCard().ContentEncoding(encoding), configurationDelegate)
+		{
+		}
 	}
 }

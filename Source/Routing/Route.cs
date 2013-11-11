@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -10,6 +9,7 @@ using Junior.Common;
 using Junior.Route.Common;
 using Junior.Route.Http.RequestHeaders;
 using Junior.Route.Routing.AuthenticationProviders;
+using Junior.Route.Routing.RelativeUrlResolvers;
 using Junior.Route.Routing.RequestValueComparers;
 using Junior.Route.Routing.Responses;
 using Junior.Route.Routing.Restrictions;
@@ -21,24 +21,13 @@ namespace Junior.Route.Routing
 	{
 		private readonly Guid _id;
 		private readonly string _name;
-		private readonly Dictionary<Type, HashSet<IRestriction>> _restrictionsByRestrictionType = new Dictionary<Type, HashSet<IRestriction>>();
+		private readonly HashSet<IRelativeUrlResolver> _relativeUrlResolvers = new HashSet<IRelativeUrlResolver>();
+		private readonly HashSet<IRestriction> _restrictions = new HashSet<IRestriction>();
 		private readonly Scheme _scheme;
 		private IAuthenticationProvider _authenticationProvider;
-		private string _resolvedRelativeUrl;
 		private Func<HttpContextBase, Task<IResponse>> _responseDelegate = context => new Response().NoContent().AsCompletedTask<IResponse>();
 
-		public Route(string name, Guid id, Scheme scheme, string resolvedRelativeUrl)
-		{
-			name.ThrowIfNull("name");
-			resolvedRelativeUrl.ThrowIfNull("resolvedRelativeUrl");
-
-			_name = name;
-			_id = id;
-			_scheme = scheme;
-			_resolvedRelativeUrl = resolvedRelativeUrl;
-		}
-
-		protected Route(string name, Guid id, Scheme scheme)
+		public Route(string name, Guid id, Scheme scheme)
 		{
 			name.ThrowIfNull("name");
 
@@ -71,20 +60,6 @@ namespace Junior.Route.Routing
 			}
 		}
 
-		public string ResolvedRelativeUrl
-		{
-			get
-			{
-				return _resolvedRelativeUrl;
-			}
-			protected set
-			{
-				value.ThrowIfNull("value");
-
-				_resolvedRelativeUrl = value;
-			}
-		}
-
 		public Type ResponseType
 		{
 			get;
@@ -97,9 +72,48 @@ namespace Junior.Route.Routing
 		{
 			get
 			{
-				return String.Format("Name={0}; Id={1}; Restrictions={2}; Response={3}", _name, _id, String.Join(", ", GetRestrictionTypes().Select(arg => arg.Name)), ResponseType.IfNotNull(arg => arg.Name) ?? "None");
+				return String.Format("Name={0}; Id={1}; Response={2}", _name, _id, ResponseType.IfNotNull(arg => arg.Name) ?? "None");
 			}
 		}
+
+		#region Relative URL Resolvers
+
+		public Route ResolveRelativeUrlsUsingString(string relativeUrl)
+		{
+			_relativeUrlResolvers.Add(new StringRelativeUrlResolver(relativeUrl));
+
+			return this;
+		}
+
+		public Route ResolveRelativeUrlsUsingFormatString(string format)
+		{
+			_relativeUrlResolvers.Add(new FormatStringRelativeUrlResolver(format));
+
+			return this;
+		}
+
+		public Route AddRelativeUrlResolvers(IEnumerable<IRelativeUrlResolver> resolvers)
+		{
+			resolvers.ThrowIfNull("resolvers");
+
+			_relativeUrlResolvers.AddRange(resolvers);
+
+			return this;
+		}
+
+		public Route AddRelativeUrlResolvers(params IRelativeUrlResolver[] resolvers)
+		{
+			return AddRelativeUrlResolvers((IEnumerable<IRelativeUrlResolver>)resolvers);
+		}
+
+		public Route ClearRelativeUrlResolvers()
+		{
+			_relativeUrlResolvers.Clear();
+
+			return this;
+		}
+
+		#endregion
 
 		#region Restrictions
 
@@ -761,19 +775,7 @@ namespace Junior.Route.Routing
 		{
 			restrictions.ThrowIfNull("restrictions");
 
-			foreach (IRestriction restriction in restrictions)
-			{
-				Type restrictionType = restriction.GetType();
-				HashSet<IRestriction> restrictionHashSet;
-
-				if (!_restrictionsByRestrictionType.TryGetValue(restrictionType, out restrictionHashSet))
-				{
-					restrictionHashSet = new HashSet<IRestriction>();
-					_restrictionsByRestrictionType.Add(restrictionType, restrictionHashSet);
-				}
-
-				restrictionHashSet.Add(restriction);
-			}
+			_restrictions.AddRange(restrictions);
 
 			return this;
 		}
@@ -783,65 +785,9 @@ namespace Junior.Route.Routing
 			return AddRestrictions((IEnumerable<IRestriction>)restrictions);
 		}
 
-		public bool HasRestrictions<T>()
-			where T : IRestriction
-		{
-			return _restrictionsByRestrictionType.ContainsKey(typeof(T));
-		}
-
-		public bool HasRestrictions(Type restrictionType)
-		{
-			restrictionType.ThrowIfNull("restrictionType");
-
-			return _restrictionsByRestrictionType.ContainsKey(restrictionType);
-		}
-
-		public bool HasGenericRestrictions(Type restrictionGenericTypeDefinition)
-		{
-			restrictionGenericTypeDefinition.ThrowIfNull("restrictionGenericTypeDefinition");
-
-			return _restrictionsByRestrictionType.Keys.Any(arg => arg.IsGenericType && arg.GetGenericTypeDefinition() == restrictionGenericTypeDefinition);
-		}
-
-		public IEnumerable<IRestriction> GetRestrictions()
-		{
-			return _restrictionsByRestrictionType.Values.SelectMany(arg => arg);
-		}
-
-		public IEnumerable<T> GetRestrictions<T>()
-			where T : IRestriction
-		{
-			HashSet<IRestriction> restrictions;
-
-			return _restrictionsByRestrictionType.TryGetValue(typeof(T), out restrictions) ? restrictions.Cast<T>() : Enumerable.Empty<T>();
-		}
-
-		public IEnumerable GetRestrictions(Type restrictionType)
-		{
-			restrictionType.ThrowIfNull("restrictionType");
-
-			HashSet<IRestriction> restrictions;
-
-			return _restrictionsByRestrictionType.TryGetValue(restrictionType, out restrictions) ? restrictions : Enumerable.Empty<IRestriction>();
-		}
-
-		public IEnumerable GetGenericRestrictions(Type restrictionGenericTypeDefinition)
-		{
-			restrictionGenericTypeDefinition.ThrowIfNull("restrictionGenericTypeDefinition");
-
-			return _restrictionsByRestrictionType.Keys
-				.Where(arg => arg.IsGenericType && arg.GetGenericTypeDefinition() == restrictionGenericTypeDefinition)
-				.SelectMany(arg => _restrictionsByRestrictionType[arg]);
-		}
-
-		public IEnumerable<Type> GetRestrictionTypes()
-		{
-			return _restrictionsByRestrictionType.Keys;
-		}
-
 		public void ClearRestrictions()
 		{
-			_restrictionsByRestrictionType.Clear();
+			_restrictions.Clear();
 		}
 
 		#endregion
@@ -969,22 +915,30 @@ namespace Junior.Route.Routing
 
 		#endregion
 
-		public async Task<MatchResult> MatchesRequestAsync(HttpRequestBase request)
+		public string ResolveRelativeUrl(params object[] args)
 		{
-			request.ThrowIfNull("request");
-
-			IRestriction[] restrictions = GetRestrictions().ToArray();
-			var matchingRestrictions = new List<IRestriction>();
-
-			foreach (IRestriction restriction in restrictions)
+			foreach (IRelativeUrlResolver relativeUrlResolver in _relativeUrlResolvers)
 			{
-				if (await restriction.MatchesRequestAsync(request))
+				ResolveResult resolveResult = relativeUrlResolver.Resolve(args);
+
+				if (resolveResult.ResultType == ResolveResultType.UrlResolved)
 				{
-					matchingRestrictions.Add(restriction);
+					return resolveResult.RelativeUrl;
 				}
 			}
 
-			return restrictions.Length == matchingRestrictions.Count ? MatchResult.RouteMatched(matchingRestrictions, _id.ToString()) : MatchResult.RouteNotMatched(matchingRestrictions, restrictions.Except(matchingRestrictions));
+			throw new Exception("No relative URL resolver generated a relative URL.");
+		}
+
+		public MatchResult MatchesRequest(HttpRequestBase request)
+		{
+			request.ThrowIfNull("request");
+
+			Restrictions.MatchResult matchResult = new AndRestriction(_restrictions).MatchesRequest(request);
+
+			return matchResult.ResultType == Restrictions.MatchResultType.RestrictionMatched
+				? MatchResult.RouteMatched(matchResult.MatchedRestrictions, _id.ToString())
+				: MatchResult.RouteNotMatched(matchResult.MatchedRestrictions, matchResult.UnmatchedRestrictions);
 		}
 
 		public async Task<AuthenticateResult> AuthenticateAsync(HttpRequestBase request, HttpResponseBase response)

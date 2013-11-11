@@ -66,5 +66,15 @@ namespace Junior.Route.Routing.Responses.Application
 			: base(new Response().ApplicationJson().ContentEncoding(encoding).Content(() => JsonConvert.SerializeObject(content, serializerSettings)))
 		{
 		}
+
+		public JsonResponse(Action<Response> configurationDelegate = null)
+			: base(new Response().ApplicationJson(), configurationDelegate)
+		{
+		}
+
+		public JsonResponse(Encoding encoding, Action<Response> configurationDelegate = null)
+			: base(new Response().ApplicationJson().ContentEncoding(encoding), configurationDelegate)
+		{
+		}
 	}
 }

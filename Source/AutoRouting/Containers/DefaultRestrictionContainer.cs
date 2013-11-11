@@ -15,9 +15,9 @@ namespace Junior.Route.AutoRouting.Containers
 			httpRuntime.ThrowIfNull("httpRuntime");
 
 			_container = new Dictionary<Type, object>
-				{
-					{ typeof(IHttpRuntime), httpRuntime }
-				};
+			{
+				{ typeof(IHttpRuntime), httpRuntime }
+			};
 		}
 
 		public T GetInstance<T>()

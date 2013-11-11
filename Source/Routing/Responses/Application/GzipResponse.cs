@@ -24,5 +24,15 @@ namespace Junior.Route.Routing.Responses.Application
 			: base(new Response().ApplicationGzip().ContentEncoding(encoding).Content(content), configurationDelegate)
 		{
 		}
+
+		public GzipResponse(Action<Response> configurationDelegate = null)
+			: base(new Response().ApplicationGzip(), configurationDelegate)
+		{
+		}
+
+		public GzipResponse(Encoding encoding, Action<Response> configurationDelegate = null)
+			: base(new Response().ApplicationGzip().ContentEncoding(encoding), configurationDelegate)
+		{
+		}
 	}
 }

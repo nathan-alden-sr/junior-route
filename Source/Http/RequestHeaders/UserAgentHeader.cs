@@ -34,10 +34,10 @@ namespace Junior.Route.Http.RequestHeaders
 			}
 
 			return Regex.IsMatch(headerValue, RegexPattern)
-				       ? headerValue.SplitSpaces()
-					         .Where(arg => !Regex.IsMatch(arg, CommonRegexPatterns.Comment))
-					         .Select(arg => new UserAgentHeader(arg))
-				       : Enumerable.Empty<UserAgentHeader>();
+				? headerValue.SplitSpaces()
+					.Where(arg => !Regex.IsMatch(arg, CommonRegexPatterns.Comment))
+					.Select(arg => new UserAgentHeader(arg))
+				: Enumerable.Empty<UserAgentHeader>();
 		}
 	}
 }

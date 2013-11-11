@@ -24,5 +24,15 @@ namespace Junior.Route.Routing.Responses.Video
 			: base(new Response().VideoFlv().ContentEncoding(encoding).Content(content), configurationDelegate)
 		{
 		}
+
+		public FlvResponse(Action<Response> configurationDelegate = null)
+			: base(new Response().VideoFlv(), configurationDelegate)
+		{
+		}
+
+		public FlvResponse(Encoding encoding, Action<Response> configurationDelegate = null)
+			: base(new Response().VideoFlv().ContentEncoding(encoding), configurationDelegate)
+		{
+		}
 	}
 }

@@ -15,7 +15,7 @@ namespace Junior.Route.ViewEngines.Razor.TemplateCodeBuilders
 {
 	public abstract class TemplateCodeBuilder : ITemplateCodeBuilder
 	{
-		private static readonly string[] _defaultNamespaces = new[] { "System", "System.Collections.Generic", "System.Linq" };
+		private static readonly string[] _defaultNamespaces = { "System", "System.Collections.Generic", "System.Linq" };
 		private static readonly string _namespace = typeof(TemplateCodeBuilder).Namespace + ".DynamicTemplates";
 		private readonly RazorCodeLanguage _codeLanguage;
 
@@ -37,12 +37,12 @@ namespace Junior.Route.ViewEngines.Razor.TemplateCodeBuilders
 			string templateWriterNamespaceAndTypeName = MakeGlobalNamespace(typeof(TemplateWriter).FullName);
 
 			var host = new RazorEngineHost(_codeLanguage, () => new HtmlMarkupParser())
-				{
-					DefaultBaseClass = defaultBaseClass,
-					DefaultClassName = className,
-					DefaultNamespace = _namespace,
-					GeneratedClassContext = new GeneratedClassContext("Execute", "Write", "WriteLiteral", "WriteTo", "WriteLiteralTo", templateWriterNamespaceAndTypeName, "DefineSection")
-				};
+			{
+				DefaultBaseClass = defaultBaseClass,
+				DefaultClassName = className,
+				DefaultNamespace = _namespace,
+				GeneratedClassContext = new GeneratedClassContext("Execute", "Write", "WriteLiteral", "WriteTo", "WriteLiteralTo", templateWriterNamespaceAndTypeName, "DefineSection")
+			};
 
 			IEnumerable<string> namespaces = _defaultNamespaces.Concat(namespaceImports).Distinct();
 

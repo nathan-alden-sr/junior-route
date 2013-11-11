@@ -44,5 +44,15 @@ namespace Junior.Route.Routing.Responses.Multipart
 			: base(new Response().MultipartEncrypted().ContentEncoding(encoding).Content(content), configurationDelegate)
 		{
 		}
+
+		public EncryptedResponse(Action<Response> configurationDelegate = null)
+			: base(new Response().MultipartEncrypted(), configurationDelegate)
+		{
+		}
+
+		public EncryptedResponse(Encoding encoding, Action<Response> configurationDelegate = null)
+			: base(new Response().MultipartEncrypted().ContentEncoding(encoding), configurationDelegate)
+		{
+		}
 	}
 }

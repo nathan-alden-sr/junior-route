@@ -12,9 +12,9 @@ namespace Junior.Route.ViewEngines.Razor.TemplateAssemblyReferenceResolvers
 		public IEnumerable<string> ResolveAssemblyLocations()
 		{
 			var assemblies = new List<Assembly>(AppDomain.CurrentDomain.GetAssemblies().Where(arg => !arg.IsDynamic && !String.IsNullOrEmpty(arg.Location)))
-				{
-					typeof(RuntimeBinderException).Assembly
-				};
+			{
+				typeof(RuntimeBinderException).Assembly
+			};
 
 			return assemblies.Select(arg => arg.Location).ToArray();
 		}

@@ -51,10 +51,10 @@ namespace Junior.Route.Http.RequestHeaders
 			}
 
 			return Regex.IsMatch(headerValue, _elementsRegexPattern)
-				       ? headerValue.SplitElements()
-					         .Select(arg => arg.SplitSpaces())
-					         .Select(arg => new ViaHeader(arg[0], arg[1]))
-				       : Enumerable.Empty<ViaHeader>();
+				? headerValue.SplitElements()
+					.Select(arg => arg.SplitSpaces())
+					.Select(arg => new ViaHeader(arg[0], arg[1]))
+				: Enumerable.Empty<ViaHeader>();
 		}
 	}
 }

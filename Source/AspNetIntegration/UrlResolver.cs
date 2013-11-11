@@ -75,7 +75,7 @@ namespace Junior.Route.AspNetIntegration
 				throw new ArgumentException(String.Format("Route with name '{0}' was not found.", routeName), "routeName");
 			}
 
-			return Absolute(scheme, routes[0].ResolvedRelativeUrl, args);
+			return Absolute(scheme, routes[0].ResolveRelativeUrl(args));
 		}
 
 		public string Route(string routeName, params object[] args)
@@ -93,7 +93,7 @@ namespace Junior.Route.AspNetIntegration
 				throw new ArgumentException(String.Format("Route with name '{0}' was not found.", routeName), "routeName");
 			}
 
-			return Absolute(routes[0].Scheme, routes[0].ResolvedRelativeUrl, args);
+			return Absolute(routes[0].Scheme, routes[0].ResolveRelativeUrl(args));
 		}
 
 		public string Route(Scheme scheme, Guid routeId, params object[] args)
@@ -105,7 +105,7 @@ namespace Junior.Route.AspNetIntegration
 				throw new ArgumentException(String.Format("Route with ID '{0}' was not found.", routeId), "routeId");
 			}
 
-			return Absolute(route.ResolvedRelativeUrl, args);
+			return Absolute(route.ResolveRelativeUrl(args));
 		}
 
 		public string Route(Guid routeId, params object[] args)
@@ -117,7 +117,7 @@ namespace Junior.Route.AspNetIntegration
 				throw new ArgumentException(String.Format("Route with ID '{0}' was not found.", routeId), "routeId");
 			}
 
-			return Absolute(route.ResolvedRelativeUrl, args);
+			return Absolute(route.ResolveRelativeUrl(args));
 		}
 	}
 }

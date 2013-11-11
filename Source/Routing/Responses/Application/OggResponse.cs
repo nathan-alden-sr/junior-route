@@ -24,5 +24,15 @@ namespace Junior.Route.Routing.Responses.Application
 			: base(new Response().ApplicationOgg().ContentEncoding(encoding).Content(content), configurationDelegate)
 		{
 		}
+
+		public OggResponse(Action<Response> configurationDelegate = null)
+			: base(new Response().ApplicationOgg(), configurationDelegate)
+		{
+		}
+
+		public OggResponse(Encoding encoding, Action<Response> configurationDelegate = null)
+			: base(new Response().ApplicationOgg().ContentEncoding(encoding), configurationDelegate)
+		{
+		}
 	}
 }

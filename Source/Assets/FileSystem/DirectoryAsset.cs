@@ -62,9 +62,9 @@ namespace Junior.Route.Assets.FileSystem
 			string directory = fileSystem.AbsolutePath(_relativeDirectory);
 
 			return new FileSystemWatcher(directory, _searchPattern)
-				{
-					IncludeSubdirectories = _searchOption == SearchOption.AllDirectories
-				};
+			{
+				IncludeSubdirectories = _searchOption == SearchOption.AllDirectories
+			};
 		}
 	}
 }

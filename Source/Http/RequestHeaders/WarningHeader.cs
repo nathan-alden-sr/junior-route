@@ -75,10 +75,10 @@ namespace Junior.Route.Http.RequestHeaders
 			}
 
 			return Regex.IsMatch(headerValue, _elementsRegexPattern)
-				       ? headerValue.SplitElements()
-					         .Select(arg => arg.SplitOnSpacesOutsideQuotes().ToArray())
-					         .Select(arg => new WarningHeader(Int32.Parse(arg[0]), arg[1], arg[2].RemoveOptionalQuotes(), arg.Length == 4 ? arg[3].RemoveOptionalQuotes().ParseHttpDate() : null))
-				       : Enumerable.Empty<WarningHeader>();
+				? headerValue.SplitElements()
+					.Select(arg => arg.SplitOnSpacesOutsideQuotes().ToArray())
+					.Select(arg => new WarningHeader(Int32.Parse(arg[0]), arg[1], arg[2].RemoveOptionalQuotes(), arg.Length == 4 ? arg[3].RemoveOptionalQuotes().ParseHttpDate() : null))
+				: Enumerable.Empty<WarningHeader>();
 		}
 	}
 }

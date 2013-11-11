@@ -24,5 +24,15 @@ namespace Junior.Route.Routing.Responses.Video
 			: base(new Response().VideoWebM().ContentEncoding(encoding).Content(content), configurationDelegate)
 		{
 		}
+
+		public WebMResponse(Action<Response> configurationDelegate = null)
+			: base(new Response().VideoWebM(), configurationDelegate)
+		{
+		}
+
+		public WebMResponse(Encoding encoding, Action<Response> configurationDelegate = null)
+			: base(new Response().VideoWebM().ContentEncoding(encoding), configurationDelegate)
+		{
+		}
 	}
 }

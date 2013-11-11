@@ -38,12 +38,12 @@ namespace Junior.Route.ViewEngines.Razor.TemplateCompilers
 
 			BuildCodeResult buildCodeResult = templateCodeBuilder.BuildCode<TTemplate>(templateContents, className, typeConfigurationDelegate, namespaceImports);
 			var parameters = new CompilerParameters
-				{
-					GenerateInMemory = true,
-					GenerateExecutable = false,
-					IncludeDebugInformation = false,
-					CompilerOptions = "/target:library /optimize"
-				};
+			{
+				GenerateInMemory = true,
+				GenerateExecutable = false,
+				IncludeDebugInformation = false,
+				CompilerOptions = "/target:library /optimize"
+			};
 			string[] assemblyLocations = _referenceResolver.ResolveAssemblyLocations().ToArray();
 
 			parameters.ReferencedAssemblies.AddRange(assemblyLocations);

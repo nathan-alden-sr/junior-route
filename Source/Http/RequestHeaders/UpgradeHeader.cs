@@ -45,10 +45,10 @@ namespace Junior.Route.Http.RequestHeaders
 			}
 
 			return Regex.IsMatch(headerValue, _elementsRegexPattern)
-				       ? headerValue.SplitElements()
-					         .Select(arg => arg.Split('/'))
-					         .Select(arg => new UpgradeHeader(arg[0], arg.Length == 2 ? arg[1] : null))
-				       : Enumerable.Empty<UpgradeHeader>();
+				? headerValue.SplitElements()
+					.Select(arg => arg.Split('/'))
+					.Select(arg => new UpgradeHeader(arg[0], arg.Length == 2 ? arg[1] : null))
+				: Enumerable.Empty<UpgradeHeader>();
 		}
 	}
 }

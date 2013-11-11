@@ -44,5 +44,15 @@ namespace Junior.Route.Routing.Responses.Application
 			: base(new Response().ApplicationJavaScript().ContentEncoding(encoding).Content(content), configurationDelegate)
 		{
 		}
+
+		public JavaScriptResponse(Action<Response> configurationDelegate = null)
+			: base(new Response().ApplicationJavaScript(), configurationDelegate)
+		{
+		}
+
+		public JavaScriptResponse(Encoding encoding, Action<Response> configurationDelegate = null)
+			: base(new Response().ApplicationJavaScript().ContentEncoding(encoding), configurationDelegate)
+		{
+		}
 	}
 }

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Web;
 
 using Junior.Common;
@@ -85,14 +84,15 @@ namespace Junior.Route.Routing.Restrictions
 			return String.Equals(_field, other._field) && String.Equals(_value, other._value) && Equals(_valueComparer, other._valueComparer);
 		}
 
-		public Task<bool> MatchesRequestAsync(HttpRequestBase request)
+		public MatchResult MatchesRequest(HttpRequestBase request)
 		{
 			request.ThrowIfNull("request");
 
 			IEnumerable<string> matchingKeys = request.Headers.AllKeys.Where(header => String.Equals(_field, header, StringComparison.OrdinalIgnoreCase)).ToArray();
-			bool matchesRequest = ((_optional && !matchingKeys.Any()) || matchingKeys.Any(arg => _valueComparer.Matches(_value, request.Headers[arg])));
 
-			return matchesRequest.AsCompletedTask();
+			return (_optional && !matchingKeys.Any()) || matchingKeys.Any(arg => _valueComparer.Matches(_value, request.Headers[arg]))
+				? MatchResult.RestrictionMatched(this.ToEnumerable())
+				: MatchResult.RestrictionNotMatched(Enumerable.Empty<IRestriction>(), this.ToEnumerable());
 		}
 
 		public override bool Equals(object obj)
@@ -177,14 +177,15 @@ namespace Junior.Route.Routing.Restrictions
 			}
 		}
 
-		public Task<bool> MatchesRequestAsync(HttpRequestBase request)
+		public MatchResult MatchesRequest(HttpRequestBase request)
 		{
 			request.ThrowIfNull("request");
 
 			IEnumerable<string> matchingKeys = request.Headers.AllKeys.Where(header => String.Equals(_field, header, StringComparison.OrdinalIgnoreCase)).ToArray();
-			bool matchesRequest = ((_optional && !matchingKeys.Any()) || _parseDelegate(request.Headers[_field]).Any(_matchDelegate));
 
-			return matchesRequest.AsCompletedTask();
+			return (_optional && !matchingKeys.Any()) || _parseDelegate(request.Headers[_field]).Any(_matchDelegate)
+				? MatchResult.RestrictionMatched(this.ToEnumerable())
+				: MatchResult.RestrictionNotMatched(Enumerable.Empty<IRestriction>(), this.ToEnumerable());
 		}
 	}
 }

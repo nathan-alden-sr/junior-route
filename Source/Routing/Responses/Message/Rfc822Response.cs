@@ -44,5 +44,15 @@ namespace Junior.Route.Routing.Responses.Message
 			: base(new Response().MessageRfc822().ContentEncoding(encoding).Content(content), configurationDelegate)
 		{
 		}
+
+		public Rfc822Response(Action<Response> configurationDelegate = null)
+			: base(new Response().MessageRfc822(), configurationDelegate)
+		{
+		}
+
+		public Rfc822Response(Encoding encoding, Action<Response> configurationDelegate = null)
+			: base(new Response().MessageRfc822().ContentEncoding(encoding), configurationDelegate)
+		{
+		}
 	}
 }

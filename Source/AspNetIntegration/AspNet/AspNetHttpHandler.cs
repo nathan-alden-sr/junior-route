@@ -112,37 +112,22 @@ namespace Junior.Route.AspNetIntegration.AspNet
 				await _antiCsrfCookieManager.ConfigureCookieAsync(request, response);
 			}
 			{
-				IEnumerable<RouteMatchResult> routeMatchResults = await GetRouteMatchResultsAsync(request);
+				IEnumerable<RouteMatchResult> routeMatchResults = _routes.Select(arg => new RouteMatchResult(arg, arg.MatchesRequest(request)));
 				IEnumerable<Task<ResponseGenerators.ResponseResult>> responseResultTasks = _responseGenerators.Select(arg => arg.GetResponseAsync(new HttpContextWrapper(context), routeMatchResults));
 
 				foreach (Task<ResponseGenerators.ResponseResult> responseResultTask in responseResultTasks)
 				{
 					ResponseGenerators.ResponseResult responseResult = await responseResultTask;
 
-					if (responseResult.ResultType == ResponseGenerators.ResponseResultType.ResponseGenerated)
+					if (responseResult.ResultType != ResponseGenerators.ResponseResultType.ResponseGenerated)
 					{
-						await ProcessResponseAsync(context, await responseResult.Response, responseResult.CacheKey);
-						return;
+						continue;
 					}
+
+					await ProcessResponseAsync(context, await responseResult.Response, responseResult.CacheKey);
+					return;
 				}
 			}
-		}
-
-		private async Task<IEnumerable<RouteMatchResult>> GetRouteMatchResultsAsync(HttpRequestBase request)
-		{
-			var routeMatchResults = new List<RouteMatchResult>();
-
-			foreach (Routing.Route route in _routes)
-			{
-				MatchResult result = await route.MatchesRequestAsync(request);
-
-				if (result.ResultType == MatchResultType.RouteMatched)
-				{
-					routeMatchResults.Add(new RouteMatchResult(route, result));
-				}
-			}
-
-			return routeMatchResults;
 		}
 
 		private async Task ProcessResponseAsync(HttpContext context, IResponse response, string cacheKey)

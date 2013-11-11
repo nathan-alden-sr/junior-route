@@ -44,5 +44,15 @@ namespace Junior.Route.Routing.Responses.Application
 			: base(new Response().ApplicationPostscript().ContentEncoding(encoding).Content(content), configurationDelegate)
 		{
 		}
+
+		public PostscriptResponse(Action<Response> configurationDelegate = null)
+			: base(new Response().ApplicationPostscript(), configurationDelegate)
+		{
+		}
+
+		public PostscriptResponse(Encoding encoding, Action<Response> configurationDelegate = null)
+			: base(new Response().ApplicationPostscript().ContentEncoding(encoding), configurationDelegate)
+		{
+		}
 	}
 }

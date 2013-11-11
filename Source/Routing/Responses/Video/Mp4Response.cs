@@ -24,5 +24,15 @@ namespace Junior.Route.Routing.Responses.Video
 			: base(new Response().VideoMp4().ContentEncoding(encoding).Content(content), configurationDelegate)
 		{
 		}
+
+		public Mp4Response(Action<Response> configurationDelegate = null)
+			: base(new Response().VideoMp4(), configurationDelegate)
+		{
+		}
+
+		public Mp4Response(Encoding encoding, Action<Response> configurationDelegate = null)
+			: base(new Response().VideoMp4().ContentEncoding(encoding), configurationDelegate)
+		{
+		}
 	}
 }

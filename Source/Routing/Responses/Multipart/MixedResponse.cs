@@ -44,5 +44,15 @@ namespace Junior.Route.Routing.Responses.Multipart
 			: base(new Response().MultipartMixed().ContentEncoding(encoding).Content(content), configurationDelegate)
 		{
 		}
+
+		public MixedResponse(Action<Response> configurationDelegate = null)
+			: base(new Response().MultipartMixed(), configurationDelegate)
+		{
+		}
+
+		public MixedResponse(Encoding encoding, Action<Response> configurationDelegate = null)
+			: base(new Response().MultipartMixed().ContentEncoding(encoding), configurationDelegate)
+		{
+		}
 	}
 }

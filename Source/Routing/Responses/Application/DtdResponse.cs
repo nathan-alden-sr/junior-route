@@ -44,5 +44,15 @@ namespace Junior.Route.Routing.Responses.Application
 			: base(new Response().ApplicationDtd().ContentEncoding(encoding).Content(content), configurationDelegate)
 		{
 		}
+
+		public DtdResponse(Action<Response> configurationDelegate = null)
+			: base(new Response().ApplicationDtd(), configurationDelegate)
+		{
+		}
+
+		public DtdResponse(Encoding encoding, Action<Response> configurationDelegate = null)
+			: base(new Response().ApplicationDtd().ContentEncoding(encoding), configurationDelegate)
+		{
+		}
 	}
 }

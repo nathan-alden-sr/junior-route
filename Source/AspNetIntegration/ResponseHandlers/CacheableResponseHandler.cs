@@ -15,14 +15,14 @@ namespace Junior.Route.AspNetIntegration.ResponseHandlers
 {
 	public class CacheableResponseHandler : IResponseHandler
 	{
-		private static readonly StatusAndSubStatusCode[] _cacheableStatusCodes = new[]
-			{
-				new StatusAndSubStatusCode(HttpStatusCode.OK),
-				new StatusAndSubStatusCode(HttpStatusCode.NonAuthoritativeInformation),
-				new StatusAndSubStatusCode(HttpStatusCode.MultipleChoices),
-				new StatusAndSubStatusCode(HttpStatusCode.MovedPermanently),
-				new StatusAndSubStatusCode(HttpStatusCode.Gone)
-			};
+		private static readonly StatusAndSubStatusCode[] _cacheableStatusCodes =
+		{
+			new StatusAndSubStatusCode(HttpStatusCode.OK),
+			new StatusAndSubStatusCode(HttpStatusCode.NonAuthoritativeInformation),
+			new StatusAndSubStatusCode(HttpStatusCode.MultipleChoices),
+			new StatusAndSubStatusCode(HttpStatusCode.MovedPermanently),
+			new StatusAndSubStatusCode(HttpStatusCode.Gone)
+		};
 		private readonly ISystemClock _systemClock;
 
 		public CacheableResponseHandler(ISystemClock systemClock)
@@ -184,8 +184,8 @@ namespace Junior.Route.AspNetIntegration.ResponseHandlers
 			if (cacheOnServer)
 			{
 				DateTime expirationUtcTimestamp = suggestedResponse.CachePolicy.ServerCacheExpirationUtcTimestamp != null
-					                                  ? suggestedResponse.CachePolicy.ServerCacheExpirationUtcTimestamp.Value
-					                                  : _systemClock.UtcDateTime + suggestedResponse.CachePolicy.ServerCacheMaxAge.Value;
+					? suggestedResponse.CachePolicy.ServerCacheExpirationUtcTimestamp.Value
+					: _systemClock.UtcDateTime + suggestedResponse.CachePolicy.ServerCacheMaxAge.Value;
 
 				await cache.AddAsync(cacheKey, cacheResponse, expirationUtcTimestamp);
 			}

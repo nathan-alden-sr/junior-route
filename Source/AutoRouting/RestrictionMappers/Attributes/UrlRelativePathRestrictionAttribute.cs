@@ -20,13 +20,6 @@ namespace Junior.Route.AutoRouting.RestrictionMappers.Attributes
 			_comparer = comparer;
 		}
 
-		public UrlRelativePathRestrictionAttribute(params string[] relativePaths)
-		{
-			relativePaths.ThrowIfNull("relativePaths");
-
-			_relativePaths = relativePaths;
-		}
-
 		public override void Map(Routing.Route route, IContainer container)
 		{
 			route.ThrowIfNull("route");

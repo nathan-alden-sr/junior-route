@@ -49,8 +49,10 @@
     <Compile Include="AuthenticationStrategies\AuthenticateAttributeStrategy.cs" />
     <Compile Include="AuthenticationStrategies\IAuthenticationStrategy.cs" />
     <Compile Include="BundleRoute.cs" />
-    <Compile Include="Containers\DefaultBundleDependencyContainer.cs" />
-    <Compile Include="Containers\DefaultRestrictionContainer.cs" />
+    <Compile Include="CustomMapperMappers\Attributes\CustomMapperAttribute.cs" />
+    <Compile Include="CustomMapperMappers\CustomMapperFromAttributeMapper.cs" />
+    <Compile Include="CustomMapperMappers\ICustomMapper.cs" />
+    <Compile Include="CustomMapperMappers\ICustomMapperMapper.cs" />
     <Compile Include="FormsAuthentication\ConfigurationSectionFormsAuthenticationConfiguration.cs" />
     <Compile Include="FormsAuthentication\FormsAuthenticationConfigurationSection.cs" />
     <Compile Include="FormsAuthentication\FormsAuthenticationHelper.cs" />
@@ -97,7 +99,6 @@
     <Compile Include="ResponseMappers\IMappedDelegateContext.cs" />
     <Compile Include="ResponseMappers\IMappedDelegateContextFactory.cs" />
     <Compile Include="RestrictionMappers\Attributes\CookieRestrictionAttribute.cs" />
-    <Compile Include="RestrictionMappers\Attributes\CustomRestrictionMapperAttribute.cs" />
     <Compile Include="RestrictionMappers\Attributes\FormContentTypeHeaderRestrictionAttribute.cs" />
     <Compile Include="RestrictionMappers\Attributes\UrlAuthorityRestrictionAttribute.cs" />
     <Compile Include="RestrictionMappers\Attributes\UrlFragmentRestrictionAttribute.cs" />
@@ -134,9 +135,7 @@
     <Compile Include="ClassFilters\NameStartsWithFilter.cs" />
     <Compile Include="MethodFilters\DelegateFilter.cs" />
     <Compile Include="MethodFilters\IMethodFilter.cs" />
-    <Compile Include="Containers\NewInstancePerRouteEndpointContainer.cs" />
     <Compile Include="Containers\IContainer.cs" />
-    <Compile Include="Containers\SingleInstancePerRouteEndpointContainer.cs" />
     <Compile Include="ParameterMappers\DataConversionErrorHandling.cs" />
     <Compile Include="ParameterMappers\DefaultValueMapper.cs" />
     <Compile Include="ParameterMappers\IParameterMapper.cs" />
@@ -146,7 +145,6 @@
     <Compile Include="ResponseMappers\ResponseMethodReturnTypeMapper.cs" />
     <Compile Include="ResponseMappers\NoContentMapper.cs" />
     <Compile Include="ResponseMappers\ParameterValueRetriever.cs" />
-    <Compile Include="RestrictionMappers\ICustomRestrictionMapper.cs" />
     <Compile Include="RestrictionMappers\UrlRelativePathFromRelativeClassNamespaceAndClassNameMapper.cs" />
     <Compile Include="RestrictionMappers\IRestrictionMapper.cs" />
     <Compile Include="RestrictionMappers\RestrictionsFromAttributesMapper.cs" />

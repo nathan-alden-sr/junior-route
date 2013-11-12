@@ -1,8 +1,8 @@
 ﻿using Junior.Route.AutoRouting.Containers;
 
-namespace Junior.Route.AutoRouting.RestrictionMappers
+namespace Junior.Route.AutoRouting.CustomMapperMappers
 {
-	public interface ICustomRestrictionMapper
+	public interface ICustomMapper
 	{
 		void Map(Routing.Route route, IContainer container);
 	}

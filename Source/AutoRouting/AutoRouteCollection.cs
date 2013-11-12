@@ -11,6 +11,7 @@ using Junior.Route.AutoRouting.AuthenticationProviders;
 using Junior.Route.AutoRouting.AuthenticationStrategies;
 using Junior.Route.AutoRouting.ClassFilters;
 using Junior.Route.AutoRouting.Containers;
+using Junior.Route.AutoRouting.CustomMapperMappers;
 using Junior.Route.AutoRouting.FormsAuthentication;
 using Junior.Route.AutoRouting.IdMappers;
 using Junior.Route.AutoRouting.MethodFilters;
@@ -34,6 +35,7 @@ namespace Junior.Route.AutoRouting
 		private readonly HashSet<Assembly> _assemblies = new HashSet<Assembly>();
 		private readonly HashSet<IAuthenticationStrategy> _authenticationStrategies = new HashSet<IAuthenticationStrategy>();
 		private readonly HashSet<IClassFilter> _classFilters = new HashSet<IClassFilter>();
+		private readonly HashSet<ICustomMapperMapper> _customMapperMappers = new HashSet<ICustomMapperMapper>();
 		private readonly HashSet<IIdMapper> _idMappers = new HashSet<IIdMapper>();
 		private readonly HashSet<IMethodFilter> _methodFilters = new HashSet<IMethodFilter>();
 		private readonly HashSet<INameMapper> _nameMappers = new HashSet<INameMapper>();
@@ -41,12 +43,9 @@ namespace Junior.Route.AutoRouting
 		private readonly HashSet<IRestrictionMapper> _restrictionMappers = new HashSet<IRestrictionMapper>();
 		private readonly HashSet<ISchemeMapper> _schemeMappers = new HashSet<ISchemeMapper>();
 		private IAuthenticationProvider _authenticationProvider;
-		private IContainer _bundleDependencyContainer;
+		private IContainer _container;
 		private bool _duplicateRouteNamesAllowed;
-		private IContainer _endpointContainer = new NewInstancePerRouteEndpointContainer();
-		private IContainer _relativeUrlResolverContainer;
 		private IResponseMapper _responseMapper = new NoContentMapper();
-		private IContainer _restrictionContainer;
 
 		public AutoRouteCollection(bool duplicateRouteNamesAllowed = false)
 		{
@@ -81,52 +80,11 @@ namespace Junior.Route.AutoRouting
 			return Assemblies((IEnumerable<Assembly>)assemblies);
 		}
 
-		public AutoRouteCollection NewInstancePerRouteContainer()
-		{
-			_endpointContainer = new NewInstancePerRouteEndpointContainer();
-
-			return this;
-		}
-
-		public AutoRouteCollection SingleInstancePerRouteContainer()
-		{
-			_endpointContainer = new SingleInstancePerRouteEndpointContainer();
-
-			return this;
-		}
-
-		public AutoRouteCollection EndpointContainer(IContainer container)
+		public AutoRouteCollection Container(IContainer container)
 		{
 			container.ThrowIfNull("container");
 
-			_endpointContainer = container;
-
-			return this;
-		}
-
-		public AutoRouteCollection BundleDependencyContainer(IContainer container)
-		{
-			container.ThrowIfNull("container");
-
-			_bundleDependencyContainer = container;
-
-			return this;
-		}
-
-		public AutoRouteCollection RelativeUrlResolverContainer(IContainer container)
-		{
-			container.ThrowIfNull("container");
-
-			_relativeUrlResolverContainer = container;
-
-			return this;
-		}
-
-		public AutoRouteCollection RestrictionContainer(IContainer container)
-		{
-			container.ThrowIfNull("container");
-
-			_restrictionContainer = container;
+			_container = container;
 
 			return this;
 		}
@@ -145,17 +103,17 @@ namespace Junior.Route.AutoRouting
 			{
 				throw new InvalidOperationException("At least one ID mapper must be provided.");
 			}
-			if (!_relativeUrlResolverMappers.Any())
+			if (_relativeUrlResolverMappers.Any() && _container == null)
 			{
-				throw new InvalidOperationException("At least one resolved relative URL mapper must be provided.");
+				throw new InvalidOperationException("Relative URL resolver mappers are configured but no container was provided.");
 			}
-			if (_relativeUrlResolverMappers.Any() && _relativeUrlResolverContainer == null)
+			if (_restrictionMappers.Any() && _container == null)
 			{
-				throw new InvalidOperationException("Relative URL resolver mappers are configured but no relative URL resolver container was provided.");
+				throw new InvalidOperationException("Restriction mappers are configured but no container was provided.");
 			}
-			if (_restrictionMappers.Any() && _restrictionContainer == null)
+			if (_customMapperMappers.Any() && _container == null)
 			{
-				throw new InvalidOperationException("Restriction mappers are configured but no restriction container was provided.");
+				throw new InvalidOperationException("Custom mapper mappers are configured but no container was provided.");
 			}
 
 			var routes = new RouteCollection(_duplicateRouteNamesAllowed);
@@ -192,14 +150,18 @@ namespace Junior.Route.AutoRouting
 
 					foreach (IRelativeUrlResolverMapper relativeUrlResolverMapper in _relativeUrlResolverMappers)
 					{
-						relativeUrlResolverMapper.MapAsync(matchingType, matchingMethod, route, _relativeUrlResolverContainer);
+						relativeUrlResolverMapper.Map(matchingType, matchingMethod, route, _container);
 					}
 					foreach (IRestrictionMapper restrictionMapper in _restrictionMappers)
 					{
-						restrictionMapper.Map(matchingType, matchingMethod, route, _restrictionContainer);
+						restrictionMapper.Map(matchingType, matchingMethod, route, _container);
+					}
+					foreach (ICustomMapperMapper customMapperMapper in _customMapperMappers)
+					{
+						customMapperMapper.Map(matchingType, matchingMethod, route, _container);
 					}
 
-					await _responseMapper.MapAsync(() => _endpointContainer, matchingType, matchingMethod, route);
+					await _responseMapper.MapAsync(() => _container, matchingType, matchingMethod, route);
 
 					if (_authenticationProvider != null)
 					{
@@ -325,11 +287,11 @@ namespace Junior.Route.AutoRouting
 			return null;
 		}
 
-		private void ThrowIfNoBundleDependencyContainer()
+		private void ThrowIfNoContainer()
 		{
-			if (_bundleDependencyContainer == null)
+			if (_container == null)
 			{
-				throw new InvalidOperationException("No bundle dependency container was provided.");
+				throw new InvalidOperationException("No container was provided.");
 			}
 		}
 
@@ -573,6 +535,31 @@ namespace Junior.Route.AutoRouting
 
 		#endregion
 
+		#region Custom mapper mappers
+
+		public AutoRouteCollection MapCustomMappersUsingAttribute()
+		{
+			_customMapperMappers.Add(new CustomMapperFromAttributeMapper());
+
+			return this;
+		}
+
+		public AutoRouteCollection CustomMapperMappers(IEnumerable<ICustomMapperMapper> mappers)
+		{
+			mappers.ThrowIfNull("mappers");
+
+			_customMapperMappers.AddRange(mappers);
+
+			return this;
+		}
+
+		public AutoRouteCollection CustomMapperMappers(params ICustomMapperMapper[] mappers)
+		{
+			return CustomMapperMappers((IEnumerable<ICustomMapperMapper>)mappers);
+		}
+
+		#endregion
+
 		#region Relative URL resolver mappers
 
 		public AutoRouteCollection ResolveRelativeUrlsUsingRelativeClassNamespaceAndClassName(
@@ -741,7 +728,7 @@ namespace Junior.Route.AutoRouting
 
 		public AutoRouteCollection CssBundle(Bundle bundle, string routeName, Scheme scheme, string relativePath, IComparer<AssetFile> assetOrder, IAssetConcatenator concatenator, IEnumerable<IAssetTransformer> transformers)
 		{
-			ThrowIfNoBundleDependencyContainer();
+			ThrowIfNoContainer();
 
 			bundle.ThrowIfNull("bundle");
 			routeName.ThrowIfNull("routeName");
@@ -750,10 +737,10 @@ namespace Junior.Route.AutoRouting
 			concatenator.ThrowIfNull("concatenator");
 			transformers.ThrowIfNull("transformers");
 
-			var watcher = new BundleWatcher(bundle, _bundleDependencyContainer.GetInstance<IFileSystem>(), assetOrder, concatenator, transformers);
-			var guidFactory = _bundleDependencyContainer.GetInstance<IGuidFactory>();
-			var httpRuntime = _bundleDependencyContainer.GetInstance<IHttpRuntime>();
-			var systemClock = _bundleDependencyContainer.GetInstance<ISystemClock>();
+			var watcher = new BundleWatcher(bundle, _container.GetInstance<IFileSystem>(), assetOrder, concatenator, transformers);
+			var guidFactory = _container.GetInstance<IGuidFactory>();
+			var httpRuntime = _container.GetInstance<IHttpRuntime>();
+			var systemClock = _container.GetInstance<ISystemClock>();
 			var route = new CssBundleWatcherRoute(routeName, guidFactory.Random(), scheme, relativePath, watcher, httpRuntime, systemClock);
 
 			return AdditionalRoutes(route);
@@ -766,7 +753,7 @@ namespace Junior.Route.AutoRouting
 
 		public AutoRouteCollection CssBundle(Bundle bundle, string routeName, Scheme scheme, string relativePath, IAssetConcatenator concatenator, IEnumerable<IAssetTransformer> transformers)
 		{
-			ThrowIfNoBundleDependencyContainer();
+			ThrowIfNoContainer();
 
 			bundle.ThrowIfNull("bundle");
 			routeName.ThrowIfNull("routeName");
@@ -774,10 +761,10 @@ namespace Junior.Route.AutoRouting
 			concatenator.ThrowIfNull("concatenator");
 			transformers.ThrowIfNull("transformers");
 
-			var watcher = new BundleWatcher(bundle, _bundleDependencyContainer.GetInstance<IFileSystem>(), concatenator, transformers);
-			var guidFactory = _bundleDependencyContainer.GetInstance<IGuidFactory>();
-			var httpRuntime = _bundleDependencyContainer.GetInstance<IHttpRuntime>();
-			var systemClock = _bundleDependencyContainer.GetInstance<ISystemClock>();
+			var watcher = new BundleWatcher(bundle, _container.GetInstance<IFileSystem>(), concatenator, transformers);
+			var guidFactory = _container.GetInstance<IGuidFactory>();
+			var httpRuntime = _container.GetInstance<IHttpRuntime>();
+			var systemClock = _container.GetInstance<ISystemClock>();
 			var route = new CssBundleWatcherRoute(routeName, guidFactory.Random(), scheme, relativePath, watcher, httpRuntime, systemClock);
 
 			return AdditionalRoutes(route);
@@ -809,7 +796,7 @@ namespace Junior.Route.AutoRouting
 
 		public AutoRouteCollection JavaScriptBundle(Bundle bundle, string routeName, Scheme scheme, string relativePath, IComparer<AssetFile> assetOrder, IAssetConcatenator concatenator, IEnumerable<IAssetTransformer> transformers)
 		{
-			ThrowIfNoBundleDependencyContainer();
+			ThrowIfNoContainer();
 
 			bundle.ThrowIfNull("bundle");
 			routeName.ThrowIfNull("routeName");
@@ -818,10 +805,10 @@ namespace Junior.Route.AutoRouting
 			concatenator.ThrowIfNull("concatenator");
 			transformers.ThrowIfNull("transformers");
 
-			var watcher = new BundleWatcher(bundle, _bundleDependencyContainer.GetInstance<IFileSystem>(), assetOrder, concatenator, transformers);
-			var guidFactory = _bundleDependencyContainer.GetInstance<IGuidFactory>();
-			var httpRuntime = _bundleDependencyContainer.GetInstance<IHttpRuntime>();
-			var systemClock = _bundleDependencyContainer.GetInstance<ISystemClock>();
+			var watcher = new BundleWatcher(bundle, _container.GetInstance<IFileSystem>(), assetOrder, concatenator, transformers);
+			var guidFactory = _container.GetInstance<IGuidFactory>();
+			var httpRuntime = _container.GetInstance<IHttpRuntime>();
+			var systemClock = _container.GetInstance<ISystemClock>();
 			var route = new JavaScriptBundleWatcherRoute(routeName, guidFactory.Random(), scheme, relativePath, watcher, httpRuntime, systemClock);
 
 			return AdditionalRoutes(route);
@@ -834,7 +821,7 @@ namespace Junior.Route.AutoRouting
 
 		public AutoRouteCollection JavaScriptBundle(Bundle bundle, string routeName, Scheme scheme, string relativePath, IAssetConcatenator concatenator, IEnumerable<IAssetTransformer> transformers)
 		{
-			ThrowIfNoBundleDependencyContainer();
+			ThrowIfNoContainer();
 
 			bundle.ThrowIfNull("bundle");
 			routeName.ThrowIfNull("routeName");
@@ -842,10 +829,10 @@ namespace Junior.Route.AutoRouting
 			concatenator.ThrowIfNull("concatenator");
 			transformers.ThrowIfNull("transformers");
 
-			var watcher = new BundleWatcher(bundle, _bundleDependencyContainer.GetInstance<IFileSystem>(), concatenator, transformers);
-			var guidFactory = _bundleDependencyContainer.GetInstance<IGuidFactory>();
-			var httpRuntime = _bundleDependencyContainer.GetInstance<IHttpRuntime>();
-			var systemClock = _bundleDependencyContainer.GetInstance<ISystemClock>();
+			var watcher = new BundleWatcher(bundle, _container.GetInstance<IFileSystem>(), concatenator, transformers);
+			var guidFactory = _container.GetInstance<IGuidFactory>();
+			var httpRuntime = _container.GetInstance<IHttpRuntime>();
+			var systemClock = _container.GetInstance<ISystemClock>();
 			var route = new JavaScriptBundleWatcherRoute(routeName, guidFactory.Random(), scheme, relativePath, watcher, httpRuntime, systemClock);
 
 			return AdditionalRoutes(route);

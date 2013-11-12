@@ -28,7 +28,7 @@ namespace Junior.Route.AutoRouting.RelativeUrlResolverMappers
 			_wordRegexPattern = wordRegexPattern;
 		}
 
-		public void MapAsync(Type type, MethodInfo method, Routing.Route route, IContainer container)
+		public void Map(Type type, MethodInfo method, Routing.Route route, IContainer container)
 		{
 			type.ThrowIfNull("type");
 			method.ThrowIfNull("method");

@@ -4,21 +4,22 @@ using System.Reflection;
 
 using Junior.Common;
 using Junior.Route.AutoRouting.Containers;
-using Junior.Route.AutoRouting.RestrictionMappers.Attributes;
+using Junior.Route.AutoRouting.CustomMapperMappers.Attributes;
 
-namespace Junior.Route.AutoRouting.RestrictionMappers
+namespace Junior.Route.AutoRouting.CustomMapperMappers
 {
-	public class RestrictionsFromAttributesMapper : IRestrictionMapper
+	public class CustomMapperFromAttributeMapper : ICustomMapperMapper
 	{
 		public void Map(Type type, MethodInfo method, Routing.Route route, IContainer container)
 		{
 			type.ThrowIfNull("type");
 			method.ThrowIfNull("method");
 			route.ThrowIfNull("route");
+			container.ThrowIfNull("container");
 
-			IEnumerable<RestrictionAttribute> attributes = method.GetCustomAttributes<RestrictionAttribute>(false);
+			IEnumerable<CustomMapperAttribute> attributes = method.GetCustomAttributes<CustomMapperAttribute>(false);
 
-			foreach (RestrictionAttribute attribute in attributes)
+			foreach (CustomMapperAttribute attribute in attributes)
 			{
 				attribute.Map(route, container);
 			}

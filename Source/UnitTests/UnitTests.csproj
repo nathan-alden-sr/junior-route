@@ -41,7 +41,7 @@
     <AssemblyOriginatorKeyFile>..\JuniorRoute.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="AutoRouting\RestrictionMappers\Attributes\CustomRestrictionMapperAttributeTester.cs" />
+    <Compile Include="AutoRouting\CustomMappers\Attributes\CustomRelativeUrlResolverMapperAttributeTester.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

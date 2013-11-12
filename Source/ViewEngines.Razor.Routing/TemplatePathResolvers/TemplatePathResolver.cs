@@ -25,7 +25,7 @@ namespace Junior.Route.ViewEngines.Razor.Routing.TemplatePathResolvers
 			relativePath.ThrowIfNull("relativePath");
 
 			string extension = Path.GetExtension(relativePath);
-			string absolutePathWithoutExtension = Path.Combine(Path.Combine(_httpRuntime.AppDomainAppPath, Path.GetDirectoryName(relativePath)), Path.GetFileNameWithoutExtension(relativePath));
+			string absolutePathWithoutExtension = Path.Combine(_httpRuntime.AppDomainAppPath, Path.GetDirectoryName(relativePath), Path.GetFileNameWithoutExtension(relativePath));
 
 			return absolutePathWithoutExtension + (!String.IsNullOrEmpty(extension) ? extension : _extension);
 		}

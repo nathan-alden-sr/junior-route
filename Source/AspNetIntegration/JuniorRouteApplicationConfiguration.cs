@@ -3,15 +3,13 @@ using System.Linq;
 using System.Web;
 
 using Junior.Common;
-using Junior.Route.AspNetIntegration.ErrorHandlers;
 using Junior.Route.AspNetIntegration.RequestFilters;
 
 namespace Junior.Route.AspNetIntegration
 {
 	public class JuniorRouteApplicationConfiguration
 	{
-		private IErrorHandler[] _errorHandlers = new IErrorHandler[0];
-		private IRequestFilter[] _requestFilters = new IRequestFilter[0];
+		private IEnumerable<IRequestFilter> _requestFilters = Enumerable.Empty<IRequestFilter>();
 
 		public IHttpHandler HttpHandler
 		{
@@ -19,19 +17,11 @@ namespace Junior.Route.AspNetIntegration
 			private set;
 		}
 
-		public IRequestFilter[] RequestFilters
+		public IEnumerable<IRequestFilter> RequestFilters
 		{
 			get
 			{
 				return _requestFilters;
-			}
-		}
-
-		public IErrorHandler[] ErrorHandlers
-		{
-			get
-			{
-				return _errorHandlers;
 			}
 		}
 
@@ -56,20 +46,6 @@ namespace Junior.Route.AspNetIntegration
 		protected JuniorRouteApplicationConfiguration SetRequestFilters(params IRequestFilter[] filters)
 		{
 			return SetRequestFilters((IEnumerable<IRequestFilter>)filters);
-		}
-
-		protected JuniorRouteApplicationConfiguration SetErrorHandlers(IEnumerable<IErrorHandler> handlers)
-		{
-			handlers.ThrowIfNull("handlers");
-
-			_errorHandlers = handlers.ToArray();
-
-			return this;
-		}
-
-		protected JuniorRouteApplicationConfiguration SetErrorHandlers(params IErrorHandler[] handlers)
-		{
-			return SetErrorHandlers((IEnumerable<IErrorHandler>)handlers);
 		}
 	}
 }

@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mime;
+using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
 using System.Web;
 
 using Junior.Common;
+using Junior.Route.AspNetIntegration.ErrorHandlers;
 using Junior.Route.AspNetIntegration.ResponseGenerators;
 using Junior.Route.AspNetIntegration.ResponseHandlers;
 using Junior.Route.Routing;
@@ -26,19 +28,22 @@ namespace Junior.Route.AspNetIntegration.AspNet
 		private readonly IAntiCsrfNonceValidator _antiCsrfNonceValidator;
 		private readonly IAntiCsrfResponseGenerator _antiCsrfResponseGenerator;
 		private readonly ICache _cache;
+		private readonly IEnumerable<IErrorHandler> _errorHandlers;
 		private readonly IResponseGenerator[] _responseGenerators;
 		private readonly IResponseHandler[] _responseHandlers;
 		private readonly IRouteCollection _routes;
 
-		public AspNetHttpHandler(IRouteCollection routes, ICache cache, IEnumerable<IResponseGenerator> responseGenerators, IEnumerable<IResponseHandler> responseHandlers)
+		public AspNetHttpHandler(IRouteCollection routes, ICache cache, IEnumerable<IResponseGenerator> responseGenerators, IEnumerable<IResponseHandler> responseHandlers, IEnumerable<IErrorHandler> errorHandlers)
 		{
 			routes.ThrowIfNull("routes");
 			cache.ThrowIfNull("cache");
 			responseGenerators.ThrowIfNull("responseGenerators");
 			responseHandlers.ThrowIfNull("responseHandlers");
+			errorHandlers.ThrowIfNull("errorHandlers");
 
 			_routes = routes;
 			_cache = cache;
+			_errorHandlers = errorHandlers;
 			_responseGenerators = responseGenerators.ToArray();
 			_responseHandlers = responseHandlers.ToArray();
 		}
@@ -48,6 +53,7 @@ namespace Junior.Route.AspNetIntegration.AspNet
 			ICache cache,
 			IEnumerable<IResponseGenerator> responseGenerators,
 			IEnumerable<IResponseHandler> responseHandlers,
+			IEnumerable<IErrorHandler> errorHandlers,
 			IAntiCsrfCookieManager antiCsrfCookieManager,
 			IAntiCsrfNonceValidator antiCsrfNonceValidator,
 			IAntiCsrfResponseGenerator antiCsrfResponseGenerator)
@@ -56,12 +62,14 @@ namespace Junior.Route.AspNetIntegration.AspNet
 			cache.ThrowIfNull("cache");
 			responseGenerators.ThrowIfNull("responseGenerators");
 			responseHandlers.ThrowIfNull("responseHandlers");
+			errorHandlers.ThrowIfNull("errorHandlers");
 			antiCsrfCookieManager.ThrowIfNull("antiCsrfSessionManager");
 			antiCsrfNonceValidator.ThrowIfNull("antiCsrfTokenValidator");
 			antiCsrfResponseGenerator.ThrowIfNull("antiCsrfResponseGenerator");
 
 			_routes = routes;
 			_cache = cache;
+			_errorHandlers = errorHandlers;
 			_responseGenerators = responseGenerators.ToArray();
 			_responseHandlers = responseHandlers.ToArray();
 			_antiCsrfCookieManager = antiCsrfCookieManager;
@@ -81,52 +89,79 @@ namespace Junior.Route.AspNetIntegration.AspNet
 		{
 			context.ThrowIfNull("context");
 
-			var request = new HttpRequestWrapper(context.Request);
-			var response = new HttpResponseWrapper(context.Response);
+			var contextWrapper = new HttpContextWrapper(context);
+			var requestWrapper = new HttpRequestWrapper(context.Request);
+			var responseWrapper = new HttpResponseWrapper(context.Response);
+			ExceptionDispatchInfo exceptionDispatchInfo = null;
 
-			if (_antiCsrfCookieManager != null && _antiCsrfNonceValidator != null && _antiCsrfResponseGenerator != null)
+			try
 			{
-				if (!String.IsNullOrEmpty(context.Request.ContentType))
+				if (_antiCsrfCookieManager != null && _antiCsrfNonceValidator != null && _antiCsrfResponseGenerator != null)
 				{
-					try
+					if (!String.IsNullOrEmpty(context.Request.ContentType))
 					{
-						var contentType = new ContentType(context.Request.ContentType);
-
-						if (String.Equals(contentType.MediaType, "application/x-www-form-urlencoded", StringComparison.OrdinalIgnoreCase) || String.Equals(contentType.MediaType, "multipart/form-data", StringComparison.OrdinalIgnoreCase))
+						try
 						{
-							ValidationResult validationResult = await _antiCsrfNonceValidator.ValidateAsync(request);
-							ResponseResult responseResult = await _antiCsrfResponseGenerator.GetResponseAsync(validationResult);
+							var contentType = new ContentType(context.Request.ContentType);
 
-							if (responseResult.ResultType == ResponseResultType.ResponseGenerated)
+							if (String.Equals(contentType.MediaType, "application/x-www-form-urlencoded", StringComparison.OrdinalIgnoreCase) || String.Equals(contentType.MediaType, "multipart/form-data", StringComparison.OrdinalIgnoreCase))
 							{
-								await ProcessResponseAsync(context, responseResult.Response, null);
-								return;
+								ValidationResult validationResult = await _antiCsrfNonceValidator.ValidateAsync(requestWrapper);
+								ResponseResult responseResult = await _antiCsrfResponseGenerator.GetResponseAsync(validationResult);
+
+								if (responseResult.ResultType == ResponseResultType.ResponseGenerated)
+								{
+									await ProcessResponseAsync(context, responseResult.Response, null);
+									return;
+								}
 							}
 						}
+						catch (FormatException)
+						{
+						}
 					}
-					catch (FormatException)
+
+					await _antiCsrfCookieManager.ConfigureCookieAsync(requestWrapper, responseWrapper);
+				}
+				{
+					IEnumerable<RouteMatchResult> routeMatchResults = _routes.Select(arg => new RouteMatchResult(arg, arg.MatchesRequest(requestWrapper)));
+					IEnumerable<Task<ResponseGenerators.ResponseResult>> responseResultTasks = _responseGenerators.Select(arg => arg.GetResponseAsync(contextWrapper, routeMatchResults));
+
+					foreach (Task<ResponseGenerators.ResponseResult> responseResultTask in responseResultTasks)
 					{
+						ResponseGenerators.ResponseResult responseResult = await responseResultTask;
+
+						if (responseResult.ResultType != ResponseGenerators.ResponseResultType.ResponseGenerated)
+						{
+							continue;
+						}
+
+						await ProcessResponseAsync(context, await responseResult.Response, responseResult.CacheKey);
+						return;
 					}
 				}
-
-				await _antiCsrfCookieManager.ConfigureCookieAsync(request, response);
 			}
+			catch (Exception exception)
 			{
-				IEnumerable<RouteMatchResult> routeMatchResults = _routes.Select(arg => new RouteMatchResult(arg, arg.MatchesRequest(request)));
-				IEnumerable<Task<ResponseGenerators.ResponseResult>> responseResultTasks = _responseGenerators.Select(arg => arg.GetResponseAsync(new HttpContextWrapper(context), routeMatchResults));
+				exceptionDispatchInfo = ExceptionDispatchInfo.Capture(exception);
+			}
 
-				foreach (Task<ResponseGenerators.ResponseResult> responseResultTask in responseResultTasks)
+			if (exceptionDispatchInfo != null)
+			{
+				foreach (IErrorHandler errorHandler in _errorHandlers)
 				{
-					ResponseGenerators.ResponseResult responseResult = await responseResultTask;
-
-					if (responseResult.ResultType != ResponseGenerators.ResponseResultType.ResponseGenerated)
+					if ((await errorHandler.HandleAsync(contextWrapper)).ResultType != HandleResultType.Handled)
 					{
 						continue;
 					}
 
-					await ProcessResponseAsync(context, await responseResult.Response, responseResult.CacheKey);
-					return;
+					exceptionDispatchInfo = null;
+					break;
 				}
+			}
+			if (exceptionDispatchInfo != null)
+			{
+				exceptionDispatchInfo.Throw();
 			}
 		}
 

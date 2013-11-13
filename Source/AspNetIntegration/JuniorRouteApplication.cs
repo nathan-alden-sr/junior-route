@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 
 using Junior.Common;
-using Junior.Route.AspNetIntegration.ErrorHandlers;
 using Junior.Route.AspNetIntegration.RequestFilters;
 
 namespace Junior.Route.AspNetIntegration
@@ -34,11 +34,12 @@ namespace Junior.Route.AspNetIntegration
 				throw new InvalidOperationException("No configuration was provided.");
 			}
 
-			application.PostAuthenticateRequest += OnApplicationOnPostAuthenticateRequest;
-			application.Error += ApplicationOnError;
+			var postAuthenticateRequestHandler = new EventHandlerTaskAsyncHelper(OnApplicationOnPostAuthenticateRequest);
+
+			application.AddOnPostAuthenticateRequestAsync(postAuthenticateRequestHandler.BeginEventHandler, postAuthenticateRequestHandler.EndEventHandler);
 		}
 
-		private static async void OnApplicationOnPostAuthenticateRequest(object sender, EventArgs e)
+		private static async Task OnApplicationOnPostAuthenticateRequest(object sender, EventArgs e)
 		{
 			var context = new HttpContextWrapper(HttpContext.Current);
 			IRequestFilter[] requestFilters = _configuration.RequestFilters.ToArray();
@@ -51,27 +52,12 @@ namespace Junior.Route.AspNetIntegration
 
 			foreach (IRequestFilter requestFilter in _configuration.RequestFilters)
 			{
-				if ((await requestFilter.FilterAsync(context)).ResultType == FilterResultType.UseJuniorRouteHandler)
-				{
-					context.RemapHandler(_configuration.HttpHandler);
-					return;
-				}
-			}
-		}
-
-		private static async void ApplicationOnError(object sender, EventArgs e)
-		{
-			var application = (HttpApplication)sender;
-			var context = new HttpContextWrapper(application.Context);
-
-			foreach (IErrorHandler errorHandler in _configuration.ErrorHandlers)
-			{
-				if ((await errorHandler.HandleAsync(context)).ResultType != HandleResultType.Handled)
+				if ((await requestFilter.FilterAsync(context)).ResultType != FilterResultType.UseJuniorRouteHandler)
 				{
 					continue;
 				}
 
-				application.Server.ClearError();
+				context.RemapHandler(_configuration.HttpHandler);
 				return;
 			}
 		}

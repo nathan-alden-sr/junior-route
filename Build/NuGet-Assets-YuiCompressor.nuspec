@@ -11,7 +11,7 @@
 		<dependencies>
 			<group>
 				<dependency id="JuniorCommon" version="3.8.0"/>
-				<dependency id="JuniorRoute.Assets" version="9.0.0"/>
+				<dependency id="JuniorRoute.Assets" version="10.0.0"/>
 				<dependency id="YUICompressor.NET" version="2.3.0"/>
 			</group>
 		</dependencies>

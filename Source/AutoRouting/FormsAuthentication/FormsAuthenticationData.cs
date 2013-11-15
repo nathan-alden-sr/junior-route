@@ -1,4 +1,5 @@
 using System;
+using System.Security.Cryptography;
 using System.Web;
 using System.Web.Security;
 
@@ -49,6 +50,10 @@ namespace Junior.Route.AutoRouting.FormsAuthentication
 				return null;
 			}
 			catch (HttpException)
+			{
+				return null;
+			}
+			catch (CryptographicException)
 			{
 				return null;
 			}

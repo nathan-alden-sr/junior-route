@@ -5,7 +5,7 @@ namespace Junior.Route.Routing.AntiCsrf
 {
 	public class ConfigurationSectionAntiCsrfConfiguration : IAntiCsrfConfiguration
 	{
-		private readonly AntiCsrfConfigurationSection _configurationSection = (AntiCsrfConfigurationSection)ConfigurationManager.GetSection("antiCsrfHelper") ?? new AntiCsrfConfigurationSection();
+		private readonly AntiCsrfConfigurationSection _configurationSection = (AntiCsrfConfigurationSection)ConfigurationManager.GetSection("antiCsrf") ?? new AntiCsrfConfigurationSection();
 
 		public bool Enabled
 		{

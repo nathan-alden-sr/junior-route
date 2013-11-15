@@ -46,4 +46,4 @@ packages/
 
 # Exceptions
 !Build/nant-0.92/bin
-!Build/NUnit-2.6.2/bin
+!Build/NUnit-2.6.3/bin

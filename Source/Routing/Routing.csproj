@@ -83,6 +83,10 @@
     <Compile Include="RelativeUrlResolvers\ResolveResultType.cs" />
     <Compile Include="RelativeUrlResolvers\FormatStringRelativeUrlResolver.cs" />
     <Compile Include="RelativeUrlResolvers\StringRelativeUrlResolver.cs" />
+    <Compile Include="RequestValidators\AntiCsrfRequestValidator.cs" />
+    <Compile Include="RequestValidators\IRequestValidator.cs" />
+    <Compile Include="RequestValidators\ValidateResult.cs" />
+    <Compile Include="RequestValidators\ValidateResultType.cs" />
     <Compile Include="RequestValueComparers\CaseInsensitivePlainComparer.cs" />
     <Compile Include="RequestValueComparers\CaseInsensitiveRegexComparer.cs" />
     <Compile Include="RequestValueComparers\CaseSensitivePlainComparer.cs" />

@@ -47,5 +47,9 @@ namespace Junior.Route.AspNetIntegration
 		{
 			return SetRequestFilters((IEnumerable<IRequestFilter>)filters);
 		}
+
+		public virtual void ShutDown()
+		{
+		}
 	}
 }

@@ -39,6 +39,16 @@ namespace Junior.Route.AspNetIntegration
 			application.AddOnPostAuthenticateRequestAsync(postAuthenticateRequestHandler.BeginEventHandler, postAuthenticateRequestHandler.EndEventHandler);
 		}
 
+		public static void ShutDown()
+		{
+			if (_configuration == null)
+			{
+				throw new InvalidOperationException("No configuration was provided.");
+			}
+
+			_configuration.ShutDown();
+		}
+
 		private static async Task OnApplicationOnPostAuthenticateRequest(object sender, EventArgs e)
 		{
 			var context = new HttpContextWrapper(HttpContext.Current);

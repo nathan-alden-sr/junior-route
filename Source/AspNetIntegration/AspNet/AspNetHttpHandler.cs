@@ -105,7 +105,7 @@ namespace Junior.Route.AspNetIntegration.AspNet
 			{
 				foreach (IErrorHandler errorHandler in _errorHandlers)
 				{
-					if ((await errorHandler.HandleAsync(contextWrapper)).ResultType != HandleResultType.Handled)
+					if ((await errorHandler.HandleAsync(contextWrapper, exceptionDispatchInfo.SourceException)).ResultType != HandleResultType.Handled)
 					{
 						continue;
 					}
